@@ -123,10 +123,15 @@ class SpectrumNetbox(SpectrumInterface):
 
     def get_spectrum_api_param(self, spectrum_command: int,
                                length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO) -> int:
+        param_values_each_device = self.get_spectrum_api_param_all_devices(spectrum_command, length)
+        return check_settings_constant_across_devices(param_values_each_device, str(spectrum_command))
+
+    def get_spectrum_api_param_all_devices(self, spectrum_command: int,
+                                           length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO) -> List[int]:
         param_values_each_device = []
         for device in self._devices:
             param_values_each_device.append(device.get_spectrum_api_param(spectrum_command, length))
-        return check_settings_constant_across_devices(param_values_each_device, str(spectrum_command))
+        return param_values_each_device
 
 
 def are_all_values_equal(values: List[int]) -> bool:
