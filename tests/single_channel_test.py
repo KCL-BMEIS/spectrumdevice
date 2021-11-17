@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from pyspecde.spectrum_device import spectrum_channel_factory
-from tests.mock_spectrum_device import mock_spectrum_card_factory
+from pyspecde.hardware_model.spectrum_channel import spectrum_channel_factory
+from tests.mock_spectrum_hardware import mock_spectrum_card_factory
 
 
 class SingleChannelTest(TestCase):

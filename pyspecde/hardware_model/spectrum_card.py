@@ -1,146 +1,18 @@
-from abc import ABC
 from functools import reduce
 from operator import or_
 from typing import List, Optional
 
-from pyspecde.spectrum_exceptions import (
-    SpectrumIOError,
-    SpectrumExternalTriggerNotEnabled,
-    SpectrumNoTransferBufferDefined,
-    SpectrumTriggerOperationNotImplemented,
-)
-from third_party.specde.py_header.regs import (
-    SPC_MIINST_MODULES,
-    SPC_MIINST_CHPERMODULE,
-    SPC_CHENABLE,
-    SPC_MEMSIZE,
-    SPC_POSTTRIGGER,
-    SPC_CARDMODE,
-    SPC_TIMEOUT,
-    SPC_TRIG_ORMASK,
-    SPC_TRIG_ANDMASK,
-    SPC_CLOCKMODE,
-    SPC_SAMPLERATE,
-    M2CMD_CARD_START,
-    SPC_M2CMD,
-    M2CMD_DATA_STARTDMA,
-    M2CMD_CARD_ENABLETRIGGER,
-    M2CMD_CARD_STOP,
-    M2CMD_CARD_DISABLETRIGGER,
-    M2CMD_DATA_STOPDMA,
-)
-
-from pyspecde.spectrum_interface import (
-    SpectrumInterface,
-    SpectrumChannelInterface,
-    SpectrumIntLengths,
-)
-from pyspecde.sdk_translation_layer import (
-    DEVICE_HANDLE_TYPE,
-    TransferBuffer,
-    AcquisitionMode,
-    TriggerSource,
-    ExternalTriggerMode,
-    EXTERNAL_TRIGGER_MODE_COMMANDS,
-    EXTERNAL_TRIGGER_LEVEL_COMMANDS,
-    ClockMode,
-    VERTICAL_RANGE_COMMANDS,
-    VERTICAL_OFFSET_COMMANDS,
-    SpectrumChannelName,
-    spectrum_handle_factory,
-    destroy_handle,
-    get_spectrum_i32_api_param,
-    get_spectrum_i64_api_param,
-    set_spectrum_i32_api_param,
-    set_spectrum_i64_api_param,
-    set_transfer_buffer,
-)
-
-
-def create_visa_string_from_ip(ip_address: str, instrument_number: int) -> str:
-    return f"TCPIP::{ip_address}::inst{instrument_number}::INSTR"
-
-
-class SpectrumChannel(SpectrumChannelInterface):
-    def __init__(self, name: SpectrumChannelName, parent_device: SpectrumInterface):
-        self._name: SpectrumChannelName = name
-        self._parent_device = parent_device
-        self._enabled = True
-
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, SpectrumChannel):
-            return (self.name == other.name) and (self._parent_device == other._parent_device)
-        else:
-            raise NotImplementedError()
-
-    @property
-    def name(self) -> SpectrumChannelName:
-        return self._name
-
-    @property
-    def _number(self) -> int:
-        return int(self.name.name.split("CHANNEL")[-1])
-
-    @property
-    def enabled(self) -> bool:
-        return self._enabled
-
-    def set_enabled(self, enabled: bool) -> None:
-        self._enabled = enabled
-        self._parent_device.apply_channel_enabling()
-
-    @property
-    def vertical_range_mv(self) -> int:
-        return self._parent_device.get_spectrum_api_param(VERTICAL_RANGE_COMMANDS[self._number])
-
-    def set_vertical_range_mv(self, vertical_range: int) -> None:
-        self._parent_device.set_spectrum_api_param(VERTICAL_RANGE_COMMANDS[self._number], vertical_range)
-
-    @property
-    def vertical_offset_percent(self) -> int:
-        return self._parent_device.get_spectrum_api_param(VERTICAL_OFFSET_COMMANDS[self._number])
-
-    def set_vertical_offset_percent(self, offset: int) -> None:
-        self._parent_device.set_spectrum_api_param(VERTICAL_OFFSET_COMMANDS[self._number], offset)
-
-
-def spectrum_channel_factory(channel_number: int, parent_device: SpectrumInterface) -> SpectrumChannel:
-    return SpectrumChannel(SpectrumChannelName[f"CHANNEL{channel_number}"], parent_device)
-
-
-class SpectrumDevice(SpectrumInterface, ABC):
-    def run(self) -> None:
-        self.start_dma()
-        self.set_spectrum_api_param(SPC_M2CMD, M2CMD_CARD_START | M2CMD_CARD_ENABLETRIGGER)
-
-    def stop(self) -> None:
-        self.stop_dma()
-        self.set_spectrum_api_param(SPC_M2CMD, M2CMD_CARD_STOP | M2CMD_CARD_DISABLETRIGGER)
-
-    def set_spectrum_api_param(
-        self,
-        spectrum_command: int,
-        value: int,
-        length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,
-    ) -> None:
-        if length == SpectrumIntLengths.THIRTY_TWO:
-            set_spectrum_i32_api_param(self.handle, spectrum_command, value)
-        elif length == SpectrumIntLengths.SIXTY_FOUR:
-            set_spectrum_i64_api_param(self.handle, spectrum_command, value)
-        else:
-            raise ValueError("Spectrum integer length not recognised.")
-
-    def get_spectrum_api_param(
-        self,
-        spectrum_command: int,
-        length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,
-    ) -> int:
-        if length == SpectrumIntLengths.THIRTY_TWO:
-            return get_spectrum_i32_api_param(self.handle, spectrum_command)
-        elif length == SpectrumIntLengths.SIXTY_FOUR:
-            return get_spectrum_i64_api_param(self.handle, spectrum_command)
-        else:
-            raise ValueError("Spectrum integer length not recognised.")
+from pyspecde.sdk_translation_layer import DEVICE_HANDLE_TYPE, TriggerSource, TransferBuffer, set_transfer_buffer, \
+    destroy_handle, ExternalTriggerMode, EXTERNAL_TRIGGER_MODE_COMMANDS, EXTERNAL_TRIGGER_LEVEL_COMMANDS, \
+    AcquisitionMode, ClockMode, spectrum_handle_factory
+from pyspecde.hardware_model.spectrum_channel import spectrum_channel_factory
+from pyspecde.hardware_model.spectrum_device import SpectrumDevice
+from pyspecde.spectrum_exceptions import SpectrumNoTransferBufferDefined, SpectrumIOError, \
+    SpectrumExternalTriggerNotEnabled, SpectrumTriggerOperationNotImplemented
+from pyspecde.hardware_model.spectrum_interface import SpectrumChannelInterface, SpectrumIntLengths
+from third_party.specde.py_header.regs import SPC_M2CMD, M2CMD_DATA_STARTDMA, M2CMD_DATA_STOPDMA, SPC_TRIG_ORMASK, \
+    SPC_TRIG_ANDMASK, SPC_CHENABLE, SPC_MIINST_MODULES, SPC_MIINST_CHPERMODULE, SPC_MEMSIZE, SPC_POSTTRIGGER, \
+    SPC_CARDMODE, SPC_TIMEOUT, SPC_CLOCKMODE, SPC_SAMPLERATE
 
 
 class SpectrumCard(SpectrumDevice):

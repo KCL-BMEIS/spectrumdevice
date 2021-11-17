@@ -1,13 +1,13 @@
 from numpy import zeros, array
 
-from pyspecde.spectrum_device import SpectrumChannel
+from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
 from pyspecde.sdk_translation_layer import SpectrumChannelName, TransferBuffer, BufferType, BufferDirection
-from pyspecde.spectrum_star_hub import SpectrumStarHub
-from tests.mock_spectrum_device import (
+from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub
+from tests.mock_spectrum_hardware import (
     mock_spectrum_star_hub_factory,
     NUM_CHANNELS_IN_MOCK_MODULE,
-    NUM_MODULES_IN_MOCK_DEVICE,
-    NUM_DEVICES_IN_MOCK_NETBOX,
+    NUM_MODULES_IN_MOCK_CARD,
+    NUM_DEVICES_IN_MOCK_STAR_HUB,
 )
 from tests.single_card_test import SingleCardTest
 from third_party.specde.py_header.regs import (
@@ -29,7 +29,7 @@ class StarHubTest(SingleCardTest):
 
     def test_count_channels(self) -> None:
         channels = self._device.channels
-        expected_num_channels = NUM_CHANNELS_IN_MOCK_MODULE * NUM_MODULES_IN_MOCK_DEVICE * NUM_DEVICES_IN_MOCK_NETBOX
+        expected_num_channels = NUM_CHANNELS_IN_MOCK_MODULE * NUM_MODULES_IN_MOCK_CARD * NUM_DEVICES_IN_MOCK_STAR_HUB
         self.assertEqual(len(channels), expected_num_channels)
 
     def test_channel_enabling(self) -> None:

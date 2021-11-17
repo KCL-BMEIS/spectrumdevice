@@ -2,29 +2,29 @@ from unittest import TestCase
 
 from numpy import zeros
 
-from pyspecde.spectrum_device import SpectrumChannel
+from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
 from pyspecde.spectrum_exceptions import SpectrumDeviceNotConnected, SpectrumExternalTriggerNotEnabled, \
     SpectrumTriggerOperationNotImplemented
-from pyspecde.spectrum_interface import (
-    SpectrumInterface,
+from pyspecde.hardware_model.spectrum_interface import (
+    SpectrumDeviceInterface,
 )
 from pyspecde.sdk_translation_layer import AcquisitionMode, TriggerSource, ClockMode, SpectrumChannelName, \
     TransferBuffer, BufferType, BufferDirection, ExternalTriggerMode
-from tests.mock_spectrum_device import (
+from tests.mock_spectrum_hardware import (
     mock_spectrum_card_factory,
     NUM_CHANNELS_IN_MOCK_MODULE,
-    NUM_MODULES_IN_MOCK_DEVICE,
+    NUM_MODULES_IN_MOCK_CARD,
 )
-from third_party.specde.py_header.regs import CHANNEL0, CHANNEL2, CHANNEL4, CHANNEL6, SPC_CHENABLE, SPC_M2CMD
+from third_party.specde.py_header.regs import CHANNEL0, CHANNEL2, CHANNEL4, CHANNEL6, SPC_CHENABLE
 
 
 class SingleCardTest(TestCase):
     def setUp(self) -> None:
-        self._device: SpectrumInterface = mock_spectrum_card_factory()
+        self._device: SpectrumDeviceInterface = mock_spectrum_card_factory()
 
     def test_count_channels(self) -> None:
         channels = self._device.channels
-        expected_num_channels = NUM_CHANNELS_IN_MOCK_MODULE * NUM_MODULES_IN_MOCK_DEVICE
+        expected_num_channels = NUM_CHANNELS_IN_MOCK_MODULE * NUM_MODULES_IN_MOCK_CARD
         self.assertEqual(len(channels), expected_num_channels)
 
     def test_get_channels(self) -> None:

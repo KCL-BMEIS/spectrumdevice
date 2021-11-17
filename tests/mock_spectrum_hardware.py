@@ -1,22 +1,22 @@
 from typing import cast
 
-from pyspecde.spectrum_device import SpectrumCard
+from pyspecde.hardware_model.spectrum_card import SpectrumCard
 from pyspecde.spectrum_exceptions import SpectrumDeviceNotConnected
-from pyspecde.spectrum_interface import SpectrumIntLengths
+from pyspecde.hardware_model.spectrum_interface import SpectrumIntLengths
 from pyspecde.sdk_translation_layer import DEVICE_HANDLE_TYPE, TransferBuffer
-from pyspecde.spectrum_star_hub import SpectrumStarHub
+from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub
 from third_party.specde.py_header.regs import SPC_MIINST_MODULES, SPC_MIINST_CHPERMODULE
 from tests.mock_pyspcm import drv_handle
 
 NUM_CHANNELS_IN_MOCK_MODULE = 4
-NUM_MODULES_IN_MOCK_DEVICE = 2
-NUM_DEVICES_IN_MOCK_NETBOX = 2
+NUM_MODULES_IN_MOCK_CARD = 2
+NUM_DEVICES_IN_MOCK_STAR_HUB = 2
 
 
 class MockSpectrumCard(SpectrumCard):
     def __init__(self, handle: DEVICE_HANDLE_TYPE):
         self._param_dict = {
-            SPC_MIINST_MODULES: NUM_MODULES_IN_MOCK_DEVICE,
+            SPC_MIINST_MODULES: NUM_MODULES_IN_MOCK_CARD,
             SPC_MIINST_CHPERMODULE: NUM_CHANNELS_IN_MOCK_MODULE,
         }
         super().__init__(handle)
@@ -60,6 +60,6 @@ def mock_spectrum_card_factory() -> MockSpectrumCard:
 
 
 def mock_spectrum_star_hub_factory() -> SpectrumStarHub:
-    cards = [mock_spectrum_card_factory() for _ in range(NUM_DEVICES_IN_MOCK_NETBOX)]
+    cards = [mock_spectrum_card_factory() for _ in range(NUM_DEVICES_IN_MOCK_STAR_HUB)]
     mock_hub_handle = cast(DEVICE_HANDLE_TYPE, drv_handle)
     return SpectrumStarHub(mock_hub_handle, cards, 0)

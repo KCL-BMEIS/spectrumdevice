@@ -3,14 +3,12 @@ from functools import reduce
 from operator import or_
 from typing import List, Sequence
 
-from pyspecde.spectrum_device import (
-    create_visa_string_from_ip,
-    SpectrumCard,
-    spectrum_card_factory,
+from pyspecde.hardware_model.spectrum_device import (
     SpectrumDevice,
 )
+from pyspecde.hardware_model.spectrum_card import SpectrumCard, spectrum_card_factory
 from pyspecde.spectrum_exceptions import SpectrumSettingsMismatchError
-from pyspecde.spectrum_interface import (
+from pyspecde.hardware_model.spectrum_interface import (
     SpectrumChannelInterface,
     SpectrumIntLengths,
 )
@@ -199,3 +197,7 @@ def check_settings_constant_across_devices(values: List[int], setting_name: str)
         return values[0]
     else:
         raise SpectrumSettingsMismatchError(f"Devices have different {setting_name} settings")
+
+
+def create_visa_string_from_ip(ip_address: str, instrument_number: int) -> str:
+    return f"TCPIP::{ip_address}::inst{instrument_number}::INSTR"

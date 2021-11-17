@@ -52,7 +52,7 @@ class SpectrumIntLengths(Enum):
     SIXTY_FOUR = 1
 
 
-class SpectrumInterface(ABC):
+class SpectrumDeviceInterface(ABC):
     @property
     @abstractmethod
     def handle(self) -> DEVICE_HANDLE_TYPE:
