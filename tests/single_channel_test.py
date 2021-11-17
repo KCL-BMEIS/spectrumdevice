@@ -14,10 +14,10 @@ class SingleDeviceTest(TestCase):
 
     def test_vertical_range(self) -> None:
         v_range = 10
-        self._channel.vertical_range_mv = v_range
+        self._channel.set_vertical_range_mv(v_range)
         self.assertEqual(v_range, self._channel.vertical_range_mv)
 
     def test_vertical_offset(self) -> None:
         offset = 1
-        self._channel.vertical_offset_percent = offset
+        self._channel.set_vertical_offset_percent(offset)
         self.assertEqual(offset, self._channel.vertical_offset_percent)

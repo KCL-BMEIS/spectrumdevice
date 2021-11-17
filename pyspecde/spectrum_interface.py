@@ -137,34 +137,31 @@ class SpectrumChannelInterface(ABC):
     def name(self) -> SpectrumChannelName:
         raise NotImplementedError
 
-    @property  # type: ignore
+    @property
     @abstractmethod
     def enabled(self) -> bool:
         raise NotImplementedError
 
-    @enabled.setter  # type: ignore
     @abstractmethod
-    def enabled(self, enabled: bool) -> None:
+    def set_enabled(self, enabled: bool) -> None:
         raise NotImplementedError
 
-    @property  # type: ignore
+    @property
     @abstractmethod
     def vertical_range_mv(self) -> int:
         raise NotImplementedError()
 
-    @vertical_range_mv.setter  # type: ignore
     @abstractmethod
-    def vertical_range_mv(self, vertical_range: int) -> int:
+    def set_vertical_range_mv(self, vertical_range: int) -> None:
         raise NotImplementedError()
 
-    @property  # type: ignore
+    @property
     @abstractmethod
     def vertical_offset_percent(self) -> int:
         raise NotImplementedError()
 
-    @vertical_offset_percent.setter  # type: ignore
     @abstractmethod
-    def vertical_offset_percent(self, offset: int) -> int:
+    def set_vertical_offset_percent(self, offset: int) -> None:
         raise NotImplementedError()
 
 
@@ -187,74 +184,67 @@ class SpectrumInterface(ABC):
     def channels(self) -> List[SpectrumChannelInterface]:
         raise NotImplementedError()
 
-    @property  # type: ignore
+    @property
     @abstractmethod
     def acquisition_length_bytes(self) -> int:
         raise NotImplementedError()
 
-    @acquisition_length_bytes.setter  # type: ignore
     @abstractmethod
-    def acquisition_length_bytes(self, length_in_bytes: int) -> None:
+    def set_acquisition_length_bytes(self, length_in_bytes: int) -> None:
         raise NotImplementedError()
 
-    @property  # type: ignore
+    @property
     @abstractmethod
     def post_trigger_length_bytes(self) -> int:
         raise NotImplementedError()
 
-    @post_trigger_length_bytes.setter  # type: ignore
     @abstractmethod
-    def post_trigger_length_bytes(self, length_in_bytes: int) -> None:
+    def set_post_trigger_length_bytes(self, length_in_bytes: int) -> None:
         raise NotImplementedError()
 
-    @property  # type: ignore
+    @property
     @abstractmethod
     def acquisition_mode(self) -> AcquisitionMode:
         raise NotImplementedError()
 
-    @acquisition_mode.setter  # type: ignore
     @abstractmethod
-    def acquisition_mode(self, mode: AcquisitionMode) -> None:
+    def set_acquisition_mode(self, mode: AcquisitionMode) -> None:
         raise NotImplementedError()
 
-    @property  # type: ignore
+    @property
     @abstractmethod
     def timeout_ms(self) -> int:
         raise NotImplementedError()
 
-    @timeout_ms.setter  # type: ignore
     @abstractmethod
-    def timeout_ms(self, timeout_in_ms: int) -> None:
+    def set_timeout_ms(self, timeout_in_ms: int) -> None:
         raise NotImplementedError()
 
-    @property  # type: ignore
+    @property
     @abstractmethod
     def trigger_sources(self) -> List[TriggerSource]:
         raise NotImplementedError()
 
-    @trigger_sources.setter  # type: ignore
     @abstractmethod
-    def trigger_sources(self, source: List[TriggerSource]) -> None:
+    def set_trigger_sources(self, source: List[TriggerSource]) -> None:
         raise NotImplementedError()
 
-    @property  # type: ignore
+    @property
     @abstractmethod
     def clock_mode(self) -> ClockMode:
         raise NotImplementedError()
 
-    @clock_mode.setter  # type: ignore
     @abstractmethod
-    def clock_mode(self, mode: ClockMode) -> None:
+    def set_clock_mode(self, mode: ClockMode) -> None:
         raise NotImplementedError()
 
-    @property  # type: ignore
+    @property
     @abstractmethod
     def sample_rate_hz(self) -> int:
         raise NotImplementedError()
 
-    @sample_rate_hz.setter  # type: ignore
     @abstractmethod
-    def sample_rate_hz(self, rate: int) -> None:
+    def set_sample_rate_hz(self, rate: int) -> None:
         raise NotImplementedError()
 
     @abstractmethod

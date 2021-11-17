@@ -33,14 +33,14 @@ class NetboxTest(SingleDeviceTest):
     def test_channel_enabling(self) -> None:
         spectrum_command_to_enable_some_channels_dev_1 = CHANNEL0 | CHANNEL2 | CHANNEL4 | CHANNEL6
         spectrum_command_to_enable_some_channels_dev_2 = CHANNEL1 | CHANNEL3 | CHANNEL5 | CHANNEL7
-        self._device.channels[1].enabled = False
-        self._device.channels[3].enabled = False
-        self._device.channels[5].enabled = False
-        self._device.channels[7].enabled = False
-        self._device.channels[8].enabled = False
-        self._device.channels[10].enabled = False
-        self._device.channels[12].enabled = False
-        self._device.channels[14].enabled = False
+        self._device.channels[1].set_enabled(False)
+        self._device.channels[3].set_enabled(False)
+        self._device.channels[5].set_enabled(False)
+        self._device.channels[7].set_enabled(False)
+        self._device.channels[8].set_enabled(False)
+        self._device.channels[10].set_enabled(False)
+        self._device.channels[12].set_enabled(False)
+        self._device.channels[14].set_enabled(False)
 
         device_1_result = self._device.get_spectrum_api_param_all_devices(SPC_CHENABLE)[0]
         device_2_result = self._device.get_spectrum_api_param_all_devices(SPC_CHENABLE)[1]

@@ -42,45 +42,45 @@ class SingleDeviceTest(TestCase):
 
     def test_channel_enabling(self) -> None:
         spectrum_command_to_enable_some_channels = CHANNEL0 | CHANNEL2 | CHANNEL4 | CHANNEL6
-        self._device.channels[1].enabled = False
-        self._device.channels[3].enabled = False
-        self._device.channels[5].enabled = False
-        self._device.channels[7].enabled = False
+        self._device.channels[1].set_enabled(False)
+        self._device.channels[3].set_enabled(False)
+        self._device.channels[5].set_enabled(False)
+        self._device.channels[7].set_enabled(False)
         self.assertEqual(spectrum_command_to_enable_some_channels, self._device.get_spectrum_api_param(SPC_CHENABLE))
 
     def test_acquisition_length(self) -> None:
         acquisition_length = 4096
-        self._device.acquisition_length_bytes = acquisition_length
+        self._device.set_acquisition_length_bytes(acquisition_length)
         self.assertEqual(acquisition_length, self._device.acquisition_length_bytes)
 
     def test_post_trigger_length(self) -> None:
         post_trigger_length = 2048
-        self._device.post_trigger_length_bytes = post_trigger_length
+        self._device.set_post_trigger_length_bytes(post_trigger_length)
         self.assertEqual(post_trigger_length, self._device.post_trigger_length_bytes)
 
     def test_acquisition_mode(self) -> None:
         acquisition_mode = AcquisitionMode.SPC_REC_STD_SINGLE
-        self._device.acquisition_mode = acquisition_mode
+        self._device.set_acquisition_mode(acquisition_mode)
         self.assertEqual(acquisition_mode, self._device.acquisition_mode)
 
     def test_timeout(self) -> None:
         timeout = 1000
-        self._device.timeout_ms = 1000
+        self._device.set_timeout_ms(1000)
         self.assertEqual(timeout, self._device.timeout_ms)
 
     def test_trigger_sources(self) -> None:
         sources = [TriggerSource.SPC_TMASK_EXT0]
-        self._device.trigger_sources = sources
+        self._device.set_trigger_sources(sources)
         self.assertEqual(sources, self._device.trigger_sources)
 
     def test_clock_mode(self) -> None:
         mode = ClockMode.SPC_CM_INTPLL
-        self._device.clock_mode = mode
+        self._device.set_clock_mode(mode)
         self.assertEqual(mode, self._device.clock_mode)
 
     def test_sample_rate(self) -> None:
         rate = 3000000
-        self._device.sample_rate_hz = rate
+        self._device.set_sample_rate_hz(rate)
         self.assertEqual(rate, self._device.sample_rate_hz)
 
     def test_disconnect(self) -> None:

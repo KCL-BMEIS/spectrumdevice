@@ -37,10 +37,9 @@ class SpectrumNetbox(SpectrumInterface):
             lengths.append(d.acquisition_length_bytes)
         return check_settings_constant_across_devices(lengths, __name__)
 
-    @acquisition_length_bytes.setter
-    def acquisition_length_bytes(self, length_in_bytes: int) -> None:
+    def set_acquisition_length_bytes(self, length_in_bytes: int) -> None:
         for d in self._devices:
-            d.acquisition_length_bytes = length_in_bytes  # type: ignore
+            d.set_acquisition_length_bytes(length_in_bytes)
 
     @property
     def post_trigger_length_bytes(self) -> int:
@@ -49,10 +48,9 @@ class SpectrumNetbox(SpectrumInterface):
             lengths.append(d.post_trigger_length_bytes)
         return check_settings_constant_across_devices(lengths, __name__)
 
-    @post_trigger_length_bytes.setter
-    def post_trigger_length_bytes(self, length_in_bytes: int) -> None:
+    def set_post_trigger_length_bytes(self, length_in_bytes: int) -> None:
         for d in self._devices:
-            d.post_trigger_length_bytes = length_in_bytes  # type: ignore
+            d.set_post_trigger_length_bytes(length_in_bytes)
 
     @property
     def acquisition_mode(self) -> AcquisitionMode:
@@ -61,10 +59,9 @@ class SpectrumNetbox(SpectrumInterface):
             modes.append(d.acquisition_mode)
         return AcquisitionMode(check_settings_constant_across_devices([m.value for m in modes], __name__))
 
-    @acquisition_mode.setter
-    def acquisition_mode(self, mode: AcquisitionMode) -> None:
+    def set_acquisition_mode(self, mode: AcquisitionMode) -> None:
         for d in self._devices:
-            d.acquisition_mode = mode  # type: ignore
+            d.set_acquisition_mode(mode)
 
     @property
     def timeout_ms(self) -> int:
@@ -73,10 +70,9 @@ class SpectrumNetbox(SpectrumInterface):
             timeouts.append(d.timeout_ms)
         return check_settings_constant_across_devices(timeouts, __name__)
 
-    @timeout_ms.setter
-    def timeout_ms(self, timeout_ms: int) -> None:
+    def set_timeout_ms(self, timeout_ms: int) -> None:
         for d in self._devices:
-            d.timeout_ms = timeout_ms  # type: ignore
+            d.set_timeout_ms(timeout_ms)
 
     @property
     def trigger_sources(self) -> List[TriggerSource]:
@@ -88,10 +84,9 @@ class SpectrumNetbox(SpectrumInterface):
         check_settings_constant_across_devices(or_of_sources, __name__)
         return sources_all_devices[0]
 
-    @trigger_sources.setter
-    def trigger_sources(self, sources: List[TriggerSource]) -> None:
+    def set_trigger_sources(self, sources: List[TriggerSource]) -> None:
         for d in self._devices:
-            d.trigger_sources = sources  # type: ignore
+            d.set_trigger_sources(sources)
 
     @property
     def clock_mode(self) -> ClockMode:
@@ -100,10 +95,9 @@ class SpectrumNetbox(SpectrumInterface):
             modes.append(d.clock_mode)
         return ClockMode(check_settings_constant_across_devices([m.value for m in modes], __name__))
 
-    @clock_mode.setter
-    def clock_mode(self, mode: ClockMode) -> None:
+    def set_clock_mode(self, mode: ClockMode) -> None:
         for d in self._devices:
-            d.clock_mode = mode  # type: ignore
+            d.set_clock_mode(mode)
 
     @property
     def sample_rate_hz(self) -> int:
@@ -112,10 +106,9 @@ class SpectrumNetbox(SpectrumInterface):
             rates.append(d.sample_rate_hz)
         return check_settings_constant_across_devices(rates, __name__)
 
-    @sample_rate_hz.setter
-    def sample_rate_hz(self, rate: int) -> None:
+    def set_sample_rate_hz(self, rate: int) -> None:
         for d in self._devices:
-            d.sample_rate_hz = rate  # type: ignore
+            d.set_sample_rate_hz(rate)
 
     def disconnect(self) -> None:
         for d in self._devices:

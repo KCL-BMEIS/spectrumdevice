@@ -1,5 +1,6 @@
 import platform
 import ctypes
+from typing import Any
 
 oPlatform = platform.architecture()
 if oPlatform[0] == "64bit":
@@ -18,7 +19,7 @@ int32 = ctypes.c_int32
 int64 = ctypes.c_int64
 
 
-def spcm_dwGetParam_i32(handle: ctypes.c_void_p, command: int, value: ctypes.c_void_p) -> None:
+def spcm_dwGetParam_i32(handle: ctypes.c_void_p, command: int, value: Any) -> None:
     pass
 
 
@@ -26,7 +27,7 @@ def spcm_dwSetParam_i32(handle: ctypes.c_void_p, command: int, value: int) -> No
     pass
 
 
-def spcm_dwGetParam_i64(handle: ctypes.c_void_p, command: int, value: ctypes.c_void_p) -> None:
+def spcm_dwGetParam_i64(handle: ctypes.c_void_p, command: int, value: Any) -> None:
     pass
 
 

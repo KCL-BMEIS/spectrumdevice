@@ -1,6 +1,6 @@
 [flake8]
-exclude = .bzr,.hg,.git,__pycache__,.tox,xono/_version.py,versioneer.py,setup.py,.eggs,*xono/app/nav/__init__.py,third_party
+exclude = .bzr,.hg,.git,__pycache__,.tox,setup.py,.eggs,third_party
 max-line-length = 120
-application_import_names = xono, tests, sandbox # Not exactly what we want, but makes the check compatible with PyCharm's behaviour
+application_import_names = pyspecde, tests
 import-order-style = pycharm
 ignore=E127,E126,W504,W503,F541,E501

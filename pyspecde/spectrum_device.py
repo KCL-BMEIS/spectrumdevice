@@ -83,8 +83,7 @@ class SpectrumChannel(SpectrumChannelInterface):
     def enabled(self) -> bool:
         return self._enabled
 
-    @enabled.setter
-    def enabled(self, enabled: bool) -> None:
+    def set_enabled(self, enabled: bool) -> None:
         self._enabled = enabled
         self._parent_device.apply_channel_enabling()
 
@@ -92,16 +91,14 @@ class SpectrumChannel(SpectrumChannelInterface):
     def vertical_range_mv(self) -> int:
         return self._parent_device.get_spectrum_api_param(VERTICAL_RANGE_COMMANDS[self._number])
 
-    @vertical_range_mv.setter
-    def vertical_range_mv(self, vertical_range: int) -> None:
+    def set_vertical_range_mv(self, vertical_range: int) -> None:
         self._parent_device.set_spectrum_api_param(VERTICAL_RANGE_COMMANDS[self._number], vertical_range)
 
     @property
     def vertical_offset_percent(self) -> int:
         return self._parent_device.get_spectrum_api_param(VERTICAL_OFFSET_COMMANDS[self._number])
 
-    @vertical_offset_percent.setter
-    def vertical_offset_percent(self, offset: int) -> None:
+    def set_vertical_offset_percent(self, offset: int) -> None:
         self._parent_device.set_spectrum_api_param(VERTICAL_OFFSET_COMMANDS[self._number], offset)
 
 
@@ -144,32 +141,28 @@ class SpectrumDevice(SpectrumInterface):
     def acquisition_length_bytes(self) -> int:
         return self.get_spectrum_api_param(SPC_MEMSIZE)
 
-    @acquisition_length_bytes.setter
-    def acquisition_length_bytes(self, length_in_bytes: int) -> None:
+    def set_acquisition_length_bytes(self, length_in_bytes: int) -> None:
         self.set_spectrum_api_param(SPC_MEMSIZE, length_in_bytes)
 
     @property
     def post_trigger_length_bytes(self) -> int:
         return self.get_spectrum_api_param(SPC_POSTTRIGGER)
 
-    @post_trigger_length_bytes.setter
-    def post_trigger_length_bytes(self, length_in_bytes: int) -> None:
+    def set_post_trigger_length_bytes(self, length_in_bytes: int) -> None:
         self.set_spectrum_api_param(SPC_POSTTRIGGER, length_in_bytes)
 
     @property
     def acquisition_mode(self) -> AcquisitionMode:
         return AcquisitionMode(self.get_spectrum_api_param(SPC_CARDMODE))
 
-    @acquisition_mode.setter
-    def acquisition_mode(self, mode: AcquisitionMode) -> None:
+    def set_acquisition_mode(self, mode: AcquisitionMode) -> None:
         self.set_spectrum_api_param(SPC_CARDMODE, mode.value)
 
     @property
     def timeout_ms(self) -> int:
         return self.get_spectrum_api_param(SPC_TIMEOUT)
 
-    @timeout_ms.setter
-    def timeout_ms(self, timeout_in_ms: int) -> None:
+    def set_timeout_ms(self, timeout_in_ms: int) -> None:
         self.set_spectrum_api_param(SPC_TIMEOUT, timeout_in_ms)
 
     @property
@@ -180,8 +173,7 @@ class SpectrumDevice(SpectrumInterface):
         else:
             return self._trigger_sources
 
-    @trigger_sources.setter
-    def trigger_sources(self, sources: List[TriggerSource]) -> None:
+    def set_trigger_sources(self, sources: List[TriggerSource]) -> None:
         self._trigger_sources = sources
         or_of_sources = reduce(or_, [s.value for s in sources])
         self.set_spectrum_api_param(SPC_TRIG_ORMASK, or_of_sources)
@@ -191,16 +183,14 @@ class SpectrumDevice(SpectrumInterface):
     def clock_mode(self) -> ClockMode:
         return ClockMode(self.get_spectrum_api_param(SPC_CLOCKMODE))
 
-    @clock_mode.setter
-    def clock_mode(self, mode: ClockMode) -> None:
+    def set_clock_mode(self, mode: ClockMode) -> None:
         self.set_spectrum_api_param(SPC_CLOCKMODE, mode.value)
 
     @property
     def sample_rate_hz(self) -> int:
         return self.get_spectrum_api_param(SPC_SAMPLERATE, SpectrumIntLengths.SIXTY_FOUR)
 
-    @sample_rate_hz.setter
-    def sample_rate_hz(self, rate: int) -> None:
+    def set_sample_rate_hz(self, rate: int) -> None:
         self.set_spectrum_api_param(SPC_SAMPLERATE, rate, SpectrumIntLengths.SIXTY_FOUR)
 
     def set_spectrum_api_param(
