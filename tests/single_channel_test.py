@@ -1,12 +1,12 @@
 from unittest import TestCase
 
 from pyspecde.spectrum_device import spectrum_channel_factory
-from tests.mock_spectrum_device import mock_spectrum_device_factory
+from tests.mock_spectrum_device import mock_spectrum_card_factory
 
 
-class SingleDeviceTest(TestCase):
+class SingleChannelTest(TestCase):
     def setUp(self) -> None:
-        self._device = mock_spectrum_device_factory()
+        self._device = mock_spectrum_card_factory()
         self._channel = spectrum_channel_factory(0, self._device)
 
     def test_enabled(self) -> None:

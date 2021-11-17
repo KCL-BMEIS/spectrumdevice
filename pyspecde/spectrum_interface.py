@@ -2,132 +2,14 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List
 
-from third_party.specde.py_header.regs import (
-    SPC_REC_STD_SINGLE,
-    SPC_REC_FIFO_MULTI,
-    SPC_TMASK_SOFTWARE,
-    SPC_TMASK_EXT0,
-    SPC_CM_INTPLL,
-    CHANNEL0,
-    CHANNEL1,
-    CHANNEL2,
-    CHANNEL3,
-    CHANNEL4,
-    CHANNEL5,
-    CHANNEL6,
-    CHANNEL7,
-    CHANNEL8,
-    CHANNEL9,
-    CHANNEL10,
-    CHANNEL11,
-    CHANNEL12,
-    CHANNEL13,
-    CHANNEL14,
-    CHANNEL15,
-    SPC_AMP1,
-    SPC_AMP2,
-    SPC_AMP3,
-    SPC_AMP4,
-    SPC_AMP5,
-    SPC_AMP6,
-    SPC_AMP7,
-    SPC_AMP8,
-    SPC_AMP11,
-    SPC_AMP10,
-    SPC_AMP9,
-    SPC_AMP12,
-    SPC_AMP13,
-    SPC_AMP14,
-    SPC_AMP15,
-    SPC_AMP0,
-    SPC_OFFS0,
-    SPC_OFFS1,
-    SPC_OFFS2,
-    SPC_OFFS3,
-    SPC_OFFS4,
-    SPC_OFFS5,
-    SPC_OFFS7,
-    SPC_OFFS6,
-    SPC_OFFS8,
-    SPC_OFFS9,
-    SPC_OFFS10,
-    SPC_OFFS11,
-    SPC_OFFS12,
-    SPC_OFFS13,
-    SPC_OFFS14,
-    SPC_OFFS15,
-)
-
-
-class AcquisitionMode(Enum):
-    SPC_REC_STD_SINGLE = SPC_REC_STD_SINGLE
-    SPC_REC_FIFO_MULTI = SPC_REC_FIFO_MULTI
-
-
-class TriggerSource(Enum):
-    SPC_TMASK_SOFTWARE = SPC_TMASK_SOFTWARE
-    SPC_TMASK_EXT0 = SPC_TMASK_EXT0
-
-
-class ClockMode(Enum):
-    SPC_CM_INTPLL = SPC_CM_INTPLL
-
-
-class SpectrumChannelName(Enum):
-    CHANNEL0 = CHANNEL0
-    CHANNEL1 = CHANNEL1
-    CHANNEL2 = CHANNEL2
-    CHANNEL3 = CHANNEL3
-    CHANNEL4 = CHANNEL4
-    CHANNEL5 = CHANNEL5
-    CHANNEL6 = CHANNEL6
-    CHANNEL7 = CHANNEL7
-    CHANNEL8 = CHANNEL8
-    CHANNEL9 = CHANNEL9
-    CHANNEL10 = CHANNEL10
-    CHANNEL11 = CHANNEL11
-    CHANNEL12 = CHANNEL12
-    CHANNEL13 = CHANNEL13
-    CHANNEL14 = CHANNEL14
-    CHANNEL15 = CHANNEL15
-
-
-VERTICAL_RANGE_COMMANDS = (
-    SPC_AMP0,
-    SPC_AMP1,
-    SPC_AMP2,
-    SPC_AMP3,
-    SPC_AMP4,
-    SPC_AMP5,
-    SPC_AMP6,
-    SPC_AMP7,
-    SPC_AMP8,
-    SPC_AMP9,
-    SPC_AMP10,
-    SPC_AMP11,
-    SPC_AMP12,
-    SPC_AMP13,
-    SPC_AMP14,
-    SPC_AMP15,
-)
-
-VERTICAL_OFFSET_COMMANDS = (
-    SPC_OFFS0,
-    SPC_OFFS1,
-    SPC_OFFS2,
-    SPC_OFFS3,
-    SPC_OFFS4,
-    SPC_OFFS5,
-    SPC_OFFS6,
-    SPC_OFFS7,
-    SPC_OFFS8,
-    SPC_OFFS9,
-    SPC_OFFS10,
-    SPC_OFFS11,
-    SPC_OFFS12,
-    SPC_OFFS13,
-    SPC_OFFS14,
-    SPC_OFFS15,
+from pyspecde.sdk_translation_layer import (
+    DEVICE_HANDLE_TYPE,
+    TransferBuffer,
+    AcquisitionMode,
+    TriggerSource,
+    ExternalTriggerMode,
+    ClockMode,
+    SpectrumChannelName,
 )
 
 
@@ -171,12 +53,42 @@ class SpectrumIntLengths(Enum):
 
 
 class SpectrumInterface(ABC):
+    @property
+    @abstractmethod
+    def handle(self) -> DEVICE_HANDLE_TYPE:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def run(self) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def stop(self) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def start_dma(self) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def stop_dma(self) -> None:
+        raise NotImplementedError()
+
     @abstractmethod
     def disconnect(self) -> None:
         raise NotImplementedError()
 
     @abstractmethod
     def apply_channel_enabling(self) -> None:
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def transfer_buffer(self) -> TransferBuffer:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_transfer_buffer(self, buffer: TransferBuffer) -> None:
         raise NotImplementedError()
 
     @property
@@ -227,6 +139,24 @@ class SpectrumInterface(ABC):
 
     @abstractmethod
     def set_trigger_sources(self, source: List[TriggerSource]) -> None:
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def external_trigger_mode(self) -> ExternalTriggerMode:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_external_trigger_mode(self, mode: ExternalTriggerMode) -> None:
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def external_trigger_level_mv(self) -> int:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_external_trigger_level_mv(self, level: int) -> None:
         raise NotImplementedError()
 
     @property
