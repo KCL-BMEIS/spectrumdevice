@@ -225,7 +225,8 @@ class SpectrumCard(SpectrumDevice):
     @property
     def _active_external_triggers(self) -> List[TriggerSource]:
         return [
-            TriggerSource(val) for val in list(set(EXTERNAL_TRIGGER_MODE_COMMANDS.keys()) & set(self._trigger_sources))
+            TriggerSource(val) for val in list(set(EXTERNAL_TRIGGER_MODE_COMMANDS.keys())
+                                               & set([source.value for source in self._trigger_sources]))
         ]
 
     @property

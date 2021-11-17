@@ -24,6 +24,18 @@ class MockSpectrumCard(SpectrumCard):
     def disconnect(self) -> None:
         raise SpectrumDeviceNotConnected("Cannot disconnect mock device")
 
+    def start_dma(self) -> None:
+        raise SpectrumDeviceNotConnected("Cannot start dma on mock device")
+
+    def stop_dma(self) -> None:
+        raise SpectrumDeviceNotConnected("Cannot stop dma on mock device")
+
+    def run(self) -> None:
+        raise SpectrumDeviceNotConnected("Cannot run mock device")
+
+    def stop(self) -> None:
+        raise SpectrumDeviceNotConnected("Cannot stop mock device")
+
     def set_transfer_buffer(self, buffer: TransferBuffer) -> None:
         self._transfer_buffer = buffer
 

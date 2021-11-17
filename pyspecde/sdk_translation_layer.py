@@ -1,9 +1,9 @@
 from ctypes import c_void_p, create_string_buffer, byref
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from enum import Enum
 from typing import NewType
 
-from numpy import ndarray
+from numpy import ndarray, array
 
 from third_party.specde.py_header.regs import (
     SPC_REC_STD_SINGLE,
@@ -137,6 +137,13 @@ class TransferBuffer:
     @property
     def notify_size_bytes(self) -> int:
         return self.data_buffer.size * self.data_buffer.itemsize
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, TransferBuffer):
+            return (self.card_handle == other.card_handle) and (self.type == other.type)\
+                   and (self.direction == other.direction)\
+                   and (self.board_memory_offset_bytes == other.board_memory_offset_bytes)\
+                   and (self.data_buffer == other.data_buffer).all()
 
 
 class AcquisitionMode(Enum):
