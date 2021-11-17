@@ -2,16 +2,24 @@ from unittest import TestCase
 
 from pyspecde.spectrum_device import SpectrumChannel
 from pyspecde.spectrum_exceptions import SpectrumDeviceNotConnected
-from pyspecde.spectrum_interface import SpectrumChannelName, AcquisitionMode, TriggerSource, ClockMode
-from tests.mock_spectrum_device import mock_spectrum_device_factory, NUM_CHANNELS_IN_MOCK_MODULE, \
-    NUM_MODULES_IN_MOCK_DEVICE
+from pyspecde.spectrum_interface import (
+    SpectrumChannelName,
+    AcquisitionMode,
+    TriggerSource,
+    ClockMode,
+    SpectrumInterface,
+)
+from tests.mock_spectrum_device import (
+    mock_spectrum_device_factory,
+    NUM_CHANNELS_IN_MOCK_MODULE,
+    NUM_MODULES_IN_MOCK_DEVICE,
+)
 from third_party.specde.py_header.regs import CHANNEL0, CHANNEL2, CHANNEL4, CHANNEL6, SPC_CHENABLE
 
 
 class SingleDeviceTest(TestCase):
-
     def setUp(self) -> None:
-        self._device = mock_spectrum_device_factory()
+        self._device: SpectrumInterface = mock_spectrum_device_factory()
 
     def test_count_channels(self) -> None:
         channels = self._device.channels
@@ -20,14 +28,16 @@ class SingleDeviceTest(TestCase):
 
     def test_get_channels(self) -> None:
         channels = self._device.channels
-        expected_channels = [SpectrumChannel(SpectrumChannelName.CHANNEL0, self._device),
-                             SpectrumChannel(SpectrumChannelName.CHANNEL1, self._device),
-                             SpectrumChannel(SpectrumChannelName.CHANNEL2, self._device),
-                             SpectrumChannel(SpectrumChannelName.CHANNEL3, self._device),
-                             SpectrumChannel(SpectrumChannelName.CHANNEL4, self._device),
-                             SpectrumChannel(SpectrumChannelName.CHANNEL5, self._device),
-                             SpectrumChannel(SpectrumChannelName.CHANNEL6, self._device),
-                             SpectrumChannel(SpectrumChannelName.CHANNEL7, self._device)]
+        expected_channels = [
+            SpectrumChannel(SpectrumChannelName.CHANNEL0, self._device),
+            SpectrumChannel(SpectrumChannelName.CHANNEL1, self._device),
+            SpectrumChannel(SpectrumChannelName.CHANNEL2, self._device),
+            SpectrumChannel(SpectrumChannelName.CHANNEL3, self._device),
+            SpectrumChannel(SpectrumChannelName.CHANNEL4, self._device),
+            SpectrumChannel(SpectrumChannelName.CHANNEL5, self._device),
+            SpectrumChannel(SpectrumChannelName.CHANNEL6, self._device),
+            SpectrumChannel(SpectrumChannelName.CHANNEL7, self._device),
+        ]
         self.assertEqual(expected_channels, channels)
 
     def test_channel_enabling(self) -> None:

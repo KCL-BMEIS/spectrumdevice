@@ -4,12 +4,17 @@ from typing import List, Sequence
 
 from pyspecde.spectrum_device import networked_spectrum_device_factory
 from pyspecde.spectrum_exceptions import SpectrumSettingsMismatchError
-from pyspecde.spectrum_interface import SpectrumInterface, AcquisitionMode, TriggerSource,\
-    ClockMode, SpectrumChannelInterface, SpectrumIntLengths
+from pyspecde.spectrum_interface import (
+    SpectrumInterface,
+    AcquisitionMode,
+    TriggerSource,
+    ClockMode,
+    SpectrumChannelInterface,
+    SpectrumIntLengths,
+)
 
 
 class SpectrumNetbox(SpectrumInterface):
-
     def __init__(self, devices: Sequence[SpectrumInterface]):
         self._devices = devices
         self.apply_channel_enabling()
@@ -116,18 +121,28 @@ class SpectrumNetbox(SpectrumInterface):
         for d in self._devices:
             d.disconnect()
 
-    def set_spectrum_api_param(self, spectrum_command: int, value: int,
-                               length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO) -> None:
+    def set_spectrum_api_param(
+        self,
+        spectrum_command: int,
+        value: int,
+        length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,
+    ) -> None:
         for device in self._devices:
             device.set_spectrum_api_param(spectrum_command, value, length)
 
-    def get_spectrum_api_param(self, spectrum_command: int,
-                               length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO) -> int:
+    def get_spectrum_api_param(
+        self,
+        spectrum_command: int,
+        length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,
+    ) -> int:
         param_values_each_device = self.get_spectrum_api_param_all_devices(spectrum_command, length)
         return check_settings_constant_across_devices(param_values_each_device, str(spectrum_command))
 
-    def get_spectrum_api_param_all_devices(self, spectrum_command: int,
-                                           length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO) -> List[int]:
+    def get_spectrum_api_param_all_devices(
+        self,
+        spectrum_command: int,
+        length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,
+    ) -> List[int]:
         param_values_each_device = []
         for device in self._devices:
             param_values_each_device.append(device.get_spectrum_api_param(spectrum_command, length))
@@ -142,10 +157,12 @@ def check_settings_constant_across_devices(values: List[int], setting_name: str)
     if are_all_values_equal(values):
         return values[0]
     else:
-        raise SpectrumSettingsMismatchError(f'Devices have different {setting_name} settings')
+        raise SpectrumSettingsMismatchError(f"Devices have different {setting_name} settings")
 
 
 def spectrum_netbox_factory(ip_address: str) -> SpectrumNetbox:
-    devices = [networked_spectrum_device_factory(ip_address, 0),
-               networked_spectrum_device_factory(ip_address, 1)]
+    devices = [
+        networked_spectrum_device_factory(ip_address, 0),
+        networked_spectrum_device_factory(ip_address, 1),
+    ]
     return SpectrumNetbox(devices)

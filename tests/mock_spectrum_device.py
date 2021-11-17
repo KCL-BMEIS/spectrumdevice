@@ -13,21 +13,24 @@ NUM_DEVICES_IN_MOCK_NETBOX = 2
 
 
 class MockSpectrumDevice(SpectrumDevice):
-
     def __init__(self, handle: DEVICE_HANDLE_TYPE):
-        self._param_dict = {SPC_MIINST_MODULES: NUM_MODULES_IN_MOCK_DEVICE,
-                            SPC_MIINST_CHPERMODULE: NUM_CHANNELS_IN_MOCK_MODULE}
+        self._param_dict = {
+            SPC_MIINST_MODULES: NUM_MODULES_IN_MOCK_DEVICE,
+            SPC_MIINST_CHPERMODULE: NUM_CHANNELS_IN_MOCK_MODULE,
+        }
         super().__init__(handle)
 
     def disconnect(self) -> None:
-        raise SpectrumDeviceNotConnected('Cannot disconnect mock device')
+        raise SpectrumDeviceNotConnected("Cannot disconnect mock device")
 
-    def set_spectrum_api_param(self, spectrum_command: int, value: int,
-                               length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO) -> None:
+    def set_spectrum_api_param(
+        self, spectrum_command: int, value: int, length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO
+    ) -> None:
         self._param_dict[spectrum_command] = value
 
-    def get_spectrum_api_param(self, spectrum_command: int,
-                               length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO) -> int:
+    def get_spectrum_api_param(
+        self, spectrum_command: int, length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO
+    ) -> int:
         if spectrum_command in self._param_dict:
             return self._param_dict[spectrum_command]
         else:

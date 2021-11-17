@@ -4,27 +4,62 @@ from operator import or_
 from typing import List, NewType
 
 from pyspecde.spectrum_exceptions import SpectrumIOError
-from third_party.specde.py_header.regs import SPC_MIINST_MODULES, SPC_MIINST_CHPERMODULE, SPC_CHENABLE, SPC_MEMSIZE, \
-    SPC_POSTTRIGGER, SPC_CARDMODE, SPC_TIMEOUT, SPC_TRIG_ORMASK, SPC_TRIG_ANDMASK, SPC_CLOCKMODE, SPC_SAMPLERATE
-try:
-    from third_party.specde.pyspcm import int32, spcm_dwGetParam_i32, spcm_dwSetParam_i32, spcm_hOpen, \
-        spcm_vClose, spcm_dwSetParam_i64, int64, spcm_dwGetParam_i64
-except OSError:
-    from tests.mock_pyspcm import int32, spcm_dwGetParam_i32, spcm_dwSetParam_i32, spcm_hOpen, \
-        spcm_vClose, spcm_dwSetParam_i64, int64, spcm_dwGetParam_i64
-from pyspecde.spectrum_interface import SpectrumInterface, AcquisitionMode, TriggerSource, \
-    ClockMode, SpectrumChannelName, SpectrumChannelInterface, SpectrumIntLengths, VERTICAL_RANGE_COMMANDS, \
-    VERTICAL_OFFSET_COMMANDS
+from third_party.specde.py_header.regs import (
+    SPC_MIINST_MODULES,
+    SPC_MIINST_CHPERMODULE,
+    SPC_CHENABLE,
+    SPC_MEMSIZE,
+    SPC_POSTTRIGGER,
+    SPC_CARDMODE,
+    SPC_TIMEOUT,
+    SPC_TRIG_ORMASK,
+    SPC_TRIG_ANDMASK,
+    SPC_CLOCKMODE,
+    SPC_SAMPLERATE,
+)
 
-DEVICE_HANDLE_TYPE = NewType('DEVICE_HANDLE_TYPE', c_void_p)
+try:
+    from third_party.specde.pyspcm import (
+        int32,
+        spcm_dwGetParam_i32,
+        spcm_dwSetParam_i32,
+        spcm_hOpen,
+        spcm_vClose,
+        spcm_dwSetParam_i64,
+        int64,
+        spcm_dwGetParam_i64,
+    )
+except OSError:
+    from tests.mock_pyspcm import (
+        int32,
+        spcm_dwGetParam_i32,
+        spcm_dwSetParam_i32,
+        spcm_hOpen,
+        spcm_vClose,
+        spcm_dwSetParam_i64,
+        int64,
+        spcm_dwGetParam_i64,
+    )
+from pyspecde.spectrum_interface import (
+    SpectrumInterface,
+    AcquisitionMode,
+    TriggerSource,
+    ClockMode,
+    SpectrumChannelName,
+    SpectrumChannelInterface,
+    SpectrumIntLengths,
+    VERTICAL_RANGE_COMMANDS,
+    VERTICAL_OFFSET_COMMANDS,
+)
+
+DEVICE_HANDLE_TYPE = NewType("DEVICE_HANDLE_TYPE", c_void_p)
 
 
 def create_visa_string_from_ip(ip_address: str, instrument_number: int) -> str:
-    return f'TCPIP::{ip_address}::inst{instrument_number}::INSTR'
+    return f"TCPIP::{ip_address}::inst{instrument_number}::INSTR"
 
 
 class SpectrumChannel(SpectrumChannelInterface):
-
     def __init__(self, name: SpectrumChannelName, parent_device: SpectrumInterface):
         self._name: SpectrumChannelName = name
         self._parent_device = parent_device
@@ -42,7 +77,7 @@ class SpectrumChannel(SpectrumChannelInterface):
 
     @property
     def _number(self) -> int:
-        return int(self.name.name.split('CHANNEL')[-1])
+        return int(self.name.name.split("CHANNEL")[-1])
 
     @property
     def enabled(self) -> bool:
@@ -71,7 +106,7 @@ class SpectrumChannel(SpectrumChannelInterface):
 
 
 def spectrum_channel_factory(channel_number: int, parent_device: SpectrumInterface) -> SpectrumChannel:
-    return SpectrumChannel(SpectrumChannelName[f'CHANNEL{channel_number}'], parent_device)
+    return SpectrumChannel(SpectrumChannelName[f"CHANNEL{channel_number}"], parent_device)
 
 
 class SpectrumDevice(SpectrumInterface):
@@ -141,7 +176,7 @@ class SpectrumDevice(SpectrumInterface):
     def trigger_sources(self) -> List[TriggerSource]:
         or_of_sources = self.get_spectrum_api_param(SPC_TRIG_ORMASK)
         if or_of_sources != reduce(or_, [s.value for s in self._trigger_sources]):
-            raise SpectrumIOError('Trigger sources configured on device do not match those previously set.')
+            raise SpectrumIOError("Trigger sources configured on device do not match those previously set.")
         else:
             return self._trigger_sources
 
@@ -168,18 +203,25 @@ class SpectrumDevice(SpectrumInterface):
     def sample_rate_hz(self, rate: int) -> None:
         self.set_spectrum_api_param(SPC_SAMPLERATE, rate, SpectrumIntLengths.SIXTY_FOUR)
 
-    def set_spectrum_api_param(self, spectrum_command: int, value: int,
-                               length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO) -> None:
+    def set_spectrum_api_param(
+        self,
+        spectrum_command: int,
+        value: int,
+        length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,
+    ) -> None:
         if length == SpectrumIntLengths.THIRTY_TWO:
             set_param_callable = spcm_dwSetParam_i32
         elif length == SpectrumIntLengths.SIXTY_FOUR:
             set_param_callable = spcm_dwSetParam_i64
         else:
-            raise ValueError('Spectrum integer length not recognised.')
+            raise ValueError("Spectrum integer length not recognised.")
         set_param_callable(self._handle, spectrum_command, value)
 
-    def get_spectrum_api_param(self, spectrum_command: int,
-                               length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO) -> int:
+    def get_spectrum_api_param(
+        self,
+        spectrum_command: int,
+        length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,
+    ) -> int:
         if length == SpectrumIntLengths.THIRTY_TWO:
             param = int32(0)
             get_param_callable = spcm_dwGetParam_i32
@@ -187,13 +229,13 @@ class SpectrumDevice(SpectrumInterface):
             param = int64(0)  # type: ignore
             get_param_callable = spcm_dwGetParam_i64
         else:
-            raise ValueError('Spectrum integer length not recognised.')
+            raise ValueError("Spectrum integer length not recognised.")
         get_param_callable(self._handle, spectrum_command, byref(param))
         return param.value
 
 
 def spectrum_device_factory(visa_string: str) -> SpectrumDevice:
-    return SpectrumDevice(spcm_hOpen(create_string_buffer(bytes(visa_string, encoding='utf8'))))
+    return SpectrumDevice(DEVICE_HANDLE_TYPE(spcm_hOpen(create_string_buffer(bytes(visa_string, encoding="utf8")))))
 
 
 def networked_spectrum_device_factory(ip_address: str, device_number: int) -> SpectrumDevice:

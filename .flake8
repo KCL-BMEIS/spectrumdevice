@@ -3,4 +3,4 @@ exclude = .bzr,.hg,.git,__pycache__,.tox,xono/_version.py,versioneer.py,setup.py
 max-line-length = 120
 application_import_names = xono, tests, sandbox # Not exactly what we want, but makes the check compatible with PyCharm's behaviour
 import-order-style = pycharm
-ignore=E127,E126,W504,W503,F541
+ignore=E127,E126,W504,W503,F541,E501
