@@ -1,5 +1,7 @@
+from numpy import zeros, array
+
 from pyspecde.spectrum_device import SpectrumChannel
-from pyspecde.sdk_translation_layer import SpectrumChannelName
+from pyspecde.sdk_translation_layer import SpectrumChannelName, TransferBuffer, BufferType, BufferDirection
 from pyspecde.spectrum_star_hub import SpectrumStarHub
 from tests.mock_spectrum_device import (
     mock_spectrum_star_hub_factory,
@@ -68,3 +70,11 @@ class StarHubTest(SingleCardTest):
             SpectrumChannel(SpectrumChannelName.CHANNEL7, self._device._child_cards[1]),
         ]
         self.assertEqual(expected_channels, channels)
+
+    def test_transfer_buffer(self) -> None:
+        buffer = TransferBuffer(self._device.handle, BufferType.SPCM_BUF_DATA, BufferDirection.SPCM_DIR_CARDTOPC,
+                                0, zeros(4096))
+        self._device.set_transfer_buffer(buffer)
+        with self.assertRaises(NotImplementedError):
+            _ = self._device.transfer_buffer
+        self.assertTrue((array(self._device.transfer_buffers) == buffer).all())

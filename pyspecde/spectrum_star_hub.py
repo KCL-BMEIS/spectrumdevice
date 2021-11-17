@@ -109,7 +109,7 @@ class SpectrumStarHub(SpectrumDevice):
     @property
     def transfer_buffer(self) -> TransferBuffer:
         raise NotImplementedError(
-            "StarHubs have create one transfer buffer per device. Access them using the " ".transfer_buffers property."
+            "StarHubs create one transfer buffer per device. Access them using the " ".transfer_buffers property."
         )
 
     @property
