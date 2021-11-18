@@ -1,8 +1,14 @@
 from numpy import zeros, array
 
 from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
-from pyspecde.sdk_translation_layer import SpectrumChannelName, TransferBuffer, BufferType, BufferDirection
-from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub
+from pyspecde.sdk_translation_layer import (
+    SpectrumChannelName,
+    TransferBuffer,
+    BufferType,
+    BufferDirection,
+    MOCK_SDK_MODE,
+)
+from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub, spectrum_star_hub_factory
 from tests.mock_spectrum_hardware import (
     mock_spectrum_star_hub_factory,
     NUM_CHANNELS_IN_MOCK_MODULE,
@@ -20,15 +26,28 @@ from third_party.specde.py_header.regs import (
     CHANNEL1,
     CHANNEL5,
     CHANNEL7,
+    SPC_SYNC_ENABLEMASK,
 )
+
+# todo: move to a unit test configuration file
+TEST_START_HUB_IP_ADDRESS = "192.168.0.11"
+NUM_CARDS_IN_TEST_STAR_HUB = 2
 
 
 class StarHubTest(SingleCardTest):
     def setUp(self) -> None:
-        self._device: SpectrumStarHub = mock_spectrum_star_hub_factory()
+        if MOCK_SDK_MODE:
+            self._device: SpectrumStarHub = mock_spectrum_star_hub_factory()
+        else:
+            self._device = spectrum_star_hub_factory(TEST_START_HUB_IP_ADDRESS, NUM_CARDS_IN_TEST_STAR_HUB)
+
+    def test_init(self) -> None:
+        hub = mock_spectrum_star_hub_factory()
+        self.assertEqual(3, hub.get_spectrum_api_param(SPC_SYNC_ENABLEMASK))
 
     def test_count_channels(self) -> None:
         channels = self._device.channels
+        # todo: include case for real device
         expected_num_channels = NUM_CHANNELS_IN_MOCK_MODULE * NUM_MODULES_IN_MOCK_CARD * NUM_DEVICES_IN_MOCK_STAR_HUB
         self.assertEqual(len(channels), expected_num_channels)
 
@@ -51,6 +70,7 @@ class StarHubTest(SingleCardTest):
 
     def test_get_channels(self) -> None:
         channels = self._device.channels
+        # todo: include case for real device
         expected_channels = [
             SpectrumChannel(SpectrumChannelName.CHANNEL0, self._device._child_cards[0]),
             SpectrumChannel(SpectrumChannelName.CHANNEL1, self._device._child_cards[0]),
@@ -72,8 +92,9 @@ class StarHubTest(SingleCardTest):
         self.assertEqual(expected_channels, channels)
 
     def test_transfer_buffer(self) -> None:
-        buffer = TransferBuffer(self._device.handle, BufferType.SPCM_BUF_DATA, BufferDirection.SPCM_DIR_CARDTOPC,
-                                0, zeros(4096))
+        buffer = TransferBuffer(
+            self._device.handle, BufferType.SPCM_BUF_DATA, BufferDirection.SPCM_DIR_CARDTOPC, 0, zeros(4096)
+        )
         self._device.set_transfer_buffer(buffer)
         with self.assertRaises(NotImplementedError):
             _ = self._device.transfer_buffer

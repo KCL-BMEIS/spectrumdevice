@@ -2,17 +2,44 @@ from functools import reduce
 from operator import or_
 from typing import List, Optional
 
-from pyspecde.sdk_translation_layer import DEVICE_HANDLE_TYPE, TriggerSource, TransferBuffer, set_transfer_buffer, \
-    destroy_handle, ExternalTriggerMode, EXTERNAL_TRIGGER_MODE_COMMANDS, EXTERNAL_TRIGGER_LEVEL_COMMANDS, \
-    AcquisitionMode, ClockMode, spectrum_handle_factory
+from pyspecde.sdk_translation_layer import (
+    DEVICE_HANDLE_TYPE,
+    TriggerSource,
+    TransferBuffer,
+    set_transfer_buffer,
+    destroy_handle,
+    ExternalTriggerMode,
+    EXTERNAL_TRIGGER_MODE_COMMANDS,
+    EXTERNAL_TRIGGER_LEVEL_COMMANDS,
+    AcquisitionMode,
+    ClockMode,
+    spectrum_handle_factory,
+)
 from pyspecde.hardware_model.spectrum_channel import spectrum_channel_factory
 from pyspecde.hardware_model.spectrum_device import SpectrumDevice
-from pyspecde.spectrum_exceptions import SpectrumNoTransferBufferDefined, SpectrumIOError, \
-    SpectrumExternalTriggerNotEnabled, SpectrumTriggerOperationNotImplemented
+from pyspecde.spectrum_exceptions import (
+    SpectrumNoTransferBufferDefined,
+    SpectrumIOError,
+    SpectrumExternalTriggerNotEnabled,
+    SpectrumTriggerOperationNotImplemented,
+)
 from pyspecde.hardware_model.spectrum_interface import SpectrumChannelInterface, SpectrumIntLengths
-from third_party.specde.py_header.regs import SPC_M2CMD, M2CMD_DATA_STARTDMA, M2CMD_DATA_STOPDMA, SPC_TRIG_ORMASK, \
-    SPC_TRIG_ANDMASK, SPC_CHENABLE, SPC_MIINST_MODULES, SPC_MIINST_CHPERMODULE, SPC_MEMSIZE, SPC_POSTTRIGGER, \
-    SPC_CARDMODE, SPC_TIMEOUT, SPC_CLOCKMODE, SPC_SAMPLERATE
+from third_party.specde.py_header.regs import (
+    SPC_M2CMD,
+    M2CMD_DATA_STARTDMA,
+    M2CMD_DATA_STOPDMA,
+    SPC_TRIG_ORMASK,
+    SPC_TRIG_ANDMASK,
+    SPC_CHENABLE,
+    SPC_MIINST_MODULES,
+    SPC_MIINST_CHPERMODULE,
+    SPC_MEMSIZE,
+    SPC_POSTTRIGGER,
+    SPC_CARDMODE,
+    SPC_TIMEOUT,
+    SPC_CLOCKMODE,
+    SPC_SAMPLERATE,
+)
 
 
 class SpectrumCard(SpectrumDevice):
@@ -97,8 +124,10 @@ class SpectrumCard(SpectrumDevice):
     @property
     def _active_external_triggers(self) -> List[TriggerSource]:
         return [
-            TriggerSource(val) for val in list(set(EXTERNAL_TRIGGER_MODE_COMMANDS.keys())
-                                               & set([source.value for source in self._trigger_sources]))
+            TriggerSource(val)
+            for val in list(
+                set(EXTERNAL_TRIGGER_MODE_COMMANDS.keys()) & set([source.value for source in self._trigger_sources])
+            )
         ]
 
     @property

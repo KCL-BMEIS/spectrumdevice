@@ -1,9 +1,9 @@
 from ctypes import c_void_p, create_string_buffer, byref
-from dataclasses import dataclass, fields
+from dataclasses import dataclass
 from enum import Enum
 from typing import NewType
 
-from numpy import ndarray, array
+from numpy import ndarray
 
 from third_party.specde.py_header.regs import (
     SPC_REC_STD_SINGLE,
@@ -88,6 +88,8 @@ try:
         int64,
         spcm_dwDefTransfer_i64,
     )
+
+    MOCK_SDK_MODE = False
 except OSError:
     from tests.mock_pyspcm import (
         SPCM_BUF_DATA,
@@ -103,6 +105,8 @@ except OSError:
         int64,
         spcm_dwDefTransfer_i64,
     )
+
+    MOCK_SDK_MODE = True
 
 DEVICE_HANDLE_TYPE = NewType("DEVICE_HANDLE_TYPE", c_void_p)
 
@@ -140,10 +144,15 @@ class TransferBuffer:
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, TransferBuffer):
-            return (self.card_handle == other.card_handle) and (self.type == other.type)\
-                   and (self.direction == other.direction)\
-                   and (self.board_memory_offset_bytes == other.board_memory_offset_bytes)\
-                   and (self.data_buffer == other.data_buffer).all()
+            return (
+                (self.card_handle == other.card_handle)
+                and (self.type == other.type)
+                and (self.direction == other.direction)
+                and (self.board_memory_offset_bytes == other.board_memory_offset_bytes)
+                and (self.data_buffer == other.data_buffer).all()
+            )
+        else:
+            raise NotImplementedError()
 
 
 class AcquisitionMode(Enum):

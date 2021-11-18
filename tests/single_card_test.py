@@ -2,14 +2,28 @@ from unittest import TestCase
 
 from numpy import zeros
 
+from pyspecde.hardware_model.spectrum_card import spectrum_card_factory
 from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
-from pyspecde.spectrum_exceptions import SpectrumDeviceNotConnected, SpectrumExternalTriggerNotEnabled, \
-    SpectrumTriggerOperationNotImplemented
+from pyspecde.hardware_model.spectrum_star_hub import create_visa_string_from_ip
+from pyspecde.spectrum_exceptions import (
+    SpectrumDeviceNotConnected,
+    SpectrumExternalTriggerNotEnabled,
+    SpectrumTriggerOperationNotImplemented,
+)
 from pyspecde.hardware_model.spectrum_interface import (
     SpectrumDeviceInterface,
 )
-from pyspecde.sdk_translation_layer import AcquisitionMode, TriggerSource, ClockMode, SpectrumChannelName, \
-    TransferBuffer, BufferType, BufferDirection, ExternalTriggerMode
+from pyspecde.sdk_translation_layer import (
+    AcquisitionMode,
+    TriggerSource,
+    ClockMode,
+    SpectrumChannelName,
+    TransferBuffer,
+    BufferType,
+    BufferDirection,
+    ExternalTriggerMode,
+    MOCK_SDK_MODE,
+)
 from tests.mock_spectrum_hardware import (
     mock_spectrum_card_factory,
     NUM_CHANNELS_IN_MOCK_MODULE,
@@ -17,18 +31,27 @@ from tests.mock_spectrum_hardware import (
 )
 from third_party.specde.py_header.regs import CHANNEL0, CHANNEL2, CHANNEL4, CHANNEL6, SPC_CHENABLE
 
+# todo: move to a unit test configuration file
+TEST_CARD_IP_ADDRESS = "192.168.0.11"
+TEST_CARD_DEVICE_NUM = 0
+
 
 class SingleCardTest(TestCase):
     def setUp(self) -> None:
-        self._device: SpectrumDeviceInterface = mock_spectrum_card_factory()
+        if MOCK_SDK_MODE:
+            self._device: SpectrumDeviceInterface = mock_spectrum_card_factory()
+        else:
+            self._device = spectrum_card_factory(create_visa_string_from_ip(TEST_CARD_IP_ADDRESS, TEST_CARD_DEVICE_NUM))
 
     def test_count_channels(self) -> None:
         channels = self._device.channels
+        # todo: include case for real device
         expected_num_channels = NUM_CHANNELS_IN_MOCK_MODULE * NUM_MODULES_IN_MOCK_CARD
         self.assertEqual(len(channels), expected_num_channels)
 
     def test_get_channels(self) -> None:
         channels = self._device.channels
+        # todo: include case for real device
         expected_channels = [
             SpectrumChannel(SpectrumChannelName.CHANNEL0, self._device),
             SpectrumChannel(SpectrumChannelName.CHANNEL1, self._device),
@@ -111,19 +134,32 @@ class SingleCardTest(TestCase):
         self.assertEqual(rate, self._device.sample_rate_hz)
 
     def test_transfer_buffer(self) -> None:
-        buffer = TransferBuffer(self._device.handle, BufferType.SPCM_BUF_DATA, BufferDirection.SPCM_DIR_CARDTOPC,
-                                0, zeros(4096))
+        buffer = TransferBuffer(
+            self._device.handle, BufferType.SPCM_BUF_DATA, BufferDirection.SPCM_DIR_CARDTOPC, 0, zeros(4096)
+        )
         self._device.set_transfer_buffer(buffer)
         self.assertEqual(buffer, self._device.transfer_buffer)
 
     def test_disconnect(self) -> None:
-        with self.assertRaises(SpectrumDeviceNotConnected):
-            self._device.disconnect()
+        if MOCK_SDK_MODE:
+            with self.assertRaises(SpectrumDeviceNotConnected):
+                self._device.disconnect()
+        else:
+            # todo: implement disconnect test for real device
+            raise NotImplementedError()
 
     def test_run(self) -> None:
-        with self.assertRaises(SpectrumDeviceNotConnected):
-            self._device.run()
+        if MOCK_SDK_MODE:
+            with self.assertRaises(SpectrumDeviceNotConnected):
+                self._device.run()
+        else:
+            # todo: implement run test for real device
+            raise NotImplementedError()
 
     def test_stop(self) -> None:
-        with self.assertRaises(SpectrumDeviceNotConnected):
-            self._device.stop()
+        if MOCK_SDK_MODE:
+            with self.assertRaises(SpectrumDeviceNotConnected):
+                self._device.stop()
+        else:
+            # todo: imlement stop test for reeal device
+            raise NotImplementedError()

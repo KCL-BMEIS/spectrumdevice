@@ -35,9 +35,9 @@ class SpectrumStarHub(SpectrumDevice):
         self._child_cards = child_cards
         self._master_card = child_cards[master_card_index]
         self._triggering_card = child_cards[master_card_index]
-        self._child_card_logical_indices = (2 ** n for n in range(len(self._child_cards)))
+        child_card_logical_indices = (2 ** n for n in range(len(self._child_cards)))
         self._hub_handle = hub_handle
-        all_cards_binary_mask = reduce(or_, self._child_card_logical_indices)
+        all_cards_binary_mask = reduce(or_, child_card_logical_indices)
         self.set_spectrum_api_param(SPC_SYNC_ENABLEMASK, all_cards_binary_mask)
         self._transfer_buffers: List[TransferBuffer] = []
 
