@@ -1,6 +1,10 @@
+from functools import reduce
+from operator import or_
+from typing import Tuple, List
 from unittest import TestCase
 
-from numpy import zeros
+from numpy import zeros, arange
+from numpy.random import randint, shuffle
 
 from pyspecde.hardware_model.spectrum_card import spectrum_card_factory
 from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
@@ -8,7 +12,7 @@ from pyspecde.hardware_model.spectrum_star_hub import create_visa_string_from_ip
 from pyspecde.spectrum_exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumExternalTriggerNotEnabled,
-    SpectrumTriggerOperationNotImplemented,
+    SpectrumTriggerOperationNotImplemented, SpectrumApiCallFailed,
 )
 from pyspecde.hardware_model.spectrum_interface import (
     SpectrumDeviceInterface,
@@ -21,56 +25,58 @@ from pyspecde.sdk_translation_layer import (
     TransferBuffer,
     BufferType,
     BufferDirection,
-    ExternalTriggerMode,
-    MOCK_SDK_MODE,
+    ExternalTriggerMode
 )
-from tests.mock_spectrum_hardware import (
-    mock_spectrum_card_factory,
-    NUM_CHANNELS_IN_MOCK_MODULE,
-    NUM_MODULES_IN_MOCK_CARD,
-)
-from third_party.specde.py_header.regs import CHANNEL0, CHANNEL2, CHANNEL4, CHANNEL6, SPC_CHENABLE
-
-# todo: move to a unit test configuration file
-TEST_CARD_IP_ADDRESS = "192.168.0.11"
-TEST_CARD_DEVICE_NUM = 0
+from tests.mock_spectrum_hardware import mock_spectrum_card_factory
+from tests.test_configuration import TEST_SPECTRUM_CARD_CONFIG, SpectrumTestMode, SINGLE_CARD_TEST_MODE, \
+    SpectrumCardConfig
+from third_party.specde.py_header.regs import SPC_CHENABLE
 
 
 class SingleCardTest(TestCase):
     def setUp(self) -> None:
-        if MOCK_SDK_MODE:
+        self._MOCK_MODE = SINGLE_CARD_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
+        if self._MOCK_MODE:
             self._device: SpectrumDeviceInterface = mock_spectrum_card_factory()
         else:
-            self._device = spectrum_card_factory(create_visa_string_from_ip(TEST_CARD_IP_ADDRESS, TEST_CARD_DEVICE_NUM))
+            self._device = spectrum_card_factory(create_visa_string_from_ip(TEST_SPECTRUM_CARD_CONFIG.ip_address,
+                                                                            TEST_SPECTRUM_CARD_CONFIG.visa_device_num))
+
+        self._all_spectrum_channel_identifiers = [c.value for c in SpectrumChannelName]
+        self._all_spectrum_channel_identifiers.sort()  # Enums are unordered so ensure channels are in ascending order
 
     def test_count_channels(self) -> None:
         channels = self._device.channels
-        # todo: include case for real device
-        expected_num_channels = NUM_CHANNELS_IN_MOCK_MODULE * NUM_MODULES_IN_MOCK_CARD
-        self.assertEqual(len(channels), expected_num_channels)
+        self.assertEqual(len(channels), TEST_SPECTRUM_CARD_CONFIG.num_channels)
 
     def test_get_channels(self) -> None:
         channels = self._device.channels
-        # todo: include case for real device
-        expected_channels = [
-            SpectrumChannel(SpectrumChannelName.CHANNEL0, self._device),
-            SpectrumChannel(SpectrumChannelName.CHANNEL1, self._device),
-            SpectrumChannel(SpectrumChannelName.CHANNEL2, self._device),
-            SpectrumChannel(SpectrumChannelName.CHANNEL3, self._device),
-            SpectrumChannel(SpectrumChannelName.CHANNEL4, self._device),
-            SpectrumChannel(SpectrumChannelName.CHANNEL5, self._device),
-            SpectrumChannel(SpectrumChannelName.CHANNEL6, self._device),
-            SpectrumChannel(SpectrumChannelName.CHANNEL7, self._device),
-        ]
+
+        expected_channels = [SpectrumChannel(SpectrumChannelName(self._all_spectrum_channel_identifiers[i]),
+                                             self._device)
+                             for i in range(TEST_SPECTRUM_CARD_CONFIG.num_channels)]
         self.assertEqual(expected_channels, channels)
 
+    def _get_randomly_enable_channels(self, card_config: SpectrumCardConfig) -> Tuple[int, List[int]]:
+        # Randomly choose channels to enable and manually create enabling command
+        channel_indices = arange(card_config.num_channels)
+        num_channels_to_enable = randint(card_config.num_channels) + 1
+        shuffle(channel_indices)
+        indices_of_channels_to_enable = channel_indices[:num_channels_to_enable]
+        ids_of_channels_to_enable = [self._all_spectrum_channel_identifiers[i]
+                                     for i in indices_of_channels_to_enable]
+        enable_channels_command = reduce(or_, ids_of_channels_to_enable)
+        return enable_channels_command, list(indices_of_channels_to_enable)
+
     def test_channel_enabling(self) -> None:
-        spectrum_command_to_enable_some_channels = CHANNEL0 | CHANNEL2 | CHANNEL4 | CHANNEL6
-        self._device.channels[1].set_enabled(False)
-        self._device.channels[3].set_enabled(False)
-        self._device.channels[5].set_enabled(False)
-        self._device.channels[7].set_enabled(False)
-        self.assertEqual(spectrum_command_to_enable_some_channels, self._device.get_spectrum_api_param(SPC_CHENABLE))
+
+        enable_ch_command, indices_of_ch_to_enable = self._get_randomly_enable_channels(TEST_SPECTRUM_CARD_CONFIG)
+        for i, channel in enumerate(self._device.channels):
+            if i in indices_of_ch_to_enable:
+                self._device.channels[i].set_enabled(True)
+            else:
+                self._device.channels[i].set_enabled(False)
+        self.assertEqual(enable_ch_command, self._device.get_spectrum_api_param(SPC_CHENABLE))
 
     def test_acquisition_length(self) -> None:
         acquisition_length = 4096
@@ -141,15 +147,18 @@ class SingleCardTest(TestCase):
         self.assertEqual(buffer, self._device.transfer_buffer)
 
     def test_disconnect(self) -> None:
-        if MOCK_SDK_MODE:
+        if self._MOCK_MODE:
             with self.assertRaises(SpectrumDeviceNotConnected):
                 self._device.disconnect()
         else:
-            # todo: implement disconnect test for real device
-            raise NotImplementedError()
+            self._device.set_acquisition_length_bytes(4096)
+            self.assertTrue(self._device.acquisition_length_bytes > 0)
+            self._device.disconnect()
+            with self.assertRaises(SpectrumApiCallFailed):
+                self._device.set_acquisition_length_bytes(4096)
 
     def test_run(self) -> None:
-        if MOCK_SDK_MODE:
+        if self._MOCK_MODE:
             with self.assertRaises(SpectrumDeviceNotConnected):
                 self._device.run()
         else:
@@ -157,9 +166,9 @@ class SingleCardTest(TestCase):
             raise NotImplementedError()
 
     def test_stop(self) -> None:
-        if MOCK_SDK_MODE:
+        if self._MOCK_MODE:
             with self.assertRaises(SpectrumDeviceNotConnected):
                 self._device.stop()
         else:
-            # todo: imlement stop test for reeal device
+            # todo: imlement stop test for real device
             raise NotImplementedError()

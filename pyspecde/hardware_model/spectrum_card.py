@@ -153,7 +153,10 @@ class SpectrumCard(SpectrumDevice):
 
     def apply_channel_enabling(self) -> None:
         enabled_channel_spectrum_values = [channel.name.value for channel in self.channels if channel.enabled]
-        bitwise_or_of_enabled_channels = reduce(or_, enabled_channel_spectrum_values)
+        if len(enabled_channel_spectrum_values) > 0:
+            bitwise_or_of_enabled_channels = reduce(or_, enabled_channel_spectrum_values)
+        else:
+            bitwise_or_of_enabled_channels = 0
         self.set_spectrum_api_param(SPC_CHENABLE, bitwise_or_of_enabled_channels)
 
     def _init_channels(self) -> List[SpectrumChannelInterface]:

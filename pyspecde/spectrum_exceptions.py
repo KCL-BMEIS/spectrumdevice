@@ -26,3 +26,13 @@ class SpectrumNoTransferBufferDefined(IOError):
 class SpectrumTriggerOperationNotImplemented(NotImplementedError):
     def __init__(self, msg: str) -> None:
         super().__init__(f"Operation is not implemented for the requested trigger channel: {msg}")
+
+
+class SpectrumApiCallFailed(IOError):
+
+    def __init__(self, call_description: str, error_code: int) -> None:
+        super().__init__(f'"{call_description}" failed with a {self.error_code_string(error_code)}')
+
+    @classmethod
+    def error_code_string(cls, error_code: int) -> str:
+        return f'Spectrum API error code: 0x{error_code:08x}'

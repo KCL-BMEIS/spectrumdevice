@@ -1,10 +1,12 @@
 from ctypes import c_void_p, create_string_buffer, byref
 from dataclasses import dataclass
 from enum import Enum
-from typing import NewType
+from functools import wraps
+from typing import NewType, Tuple, Callable
 
 from numpy import ndarray
 
+from pyspecde.spectrum_exceptions import SpectrumApiCallFailed, SpectrumIOError
 from third_party.specde.py_header.regs import (
     SPC_REC_STD_SINGLE,
     SPC_REC_FIFO_MULTI,
@@ -72,6 +74,7 @@ from third_party.specde.py_header.regs import (
     CHANNEL14,
     CHANNEL15,
 )
+from third_party.specde.py_header.spcerr import ERR_OK, ERR_LASTERR, ERR_TIMEOUT, ERR_ABORT
 
 try:
     from third_party.specde.pyspcm import (
@@ -89,7 +92,7 @@ try:
         spcm_dwDefTransfer_i64,
     )
 
-    MOCK_SDK_MODE = False
+    SPECTRUM_DRIVERS_FOUND = True
 except OSError:
     from tests.mock_pyspcm import (
         SPCM_BUF_DATA,
@@ -105,8 +108,8 @@ except OSError:
         int64,
         spcm_dwDefTransfer_i64,
     )
-
-    MOCK_SDK_MODE = True
+    print('Spectrum drivers not found. Hardware cannot be communicated with. Tests can be run in MOCK_HARDWARE mode.')
+    SPECTRUM_DRIVERS_FOUND = False
 
 DEVICE_HANDLE_TYPE = NewType("DEVICE_HANDLE_TYPE", c_void_p)
 
@@ -247,28 +250,51 @@ class SpectrumChannelName(Enum):
     CHANNEL15 = CHANNEL15
 
 
+def error_handler(func: Callable) -> Callable:
+    unraised_error_codes: Tuple[int, int, int, int] = (ERR_OK,  # success
+                                                       ERR_LASTERR,
+                                                       # last error (which should ordinarily have been raised)
+                                                       ERR_TIMEOUT,  # no data yet, continue trying
+                                                       ERR_ABORT,
+                                                       # another thread has caused an error (which should ordinarily
+                                                       # have been raised)
+                                                       )
+    reported_unraised_error_codes = unraised_error_codes[1:]
+
+    @wraps(func)
+    def wrapper(*args, **kwargs) -> None:
+        error_code = func(*args, **kwargs)
+        if error_code not in unraised_error_codes:
+            raise SpectrumApiCallFailed(func.__name__, error_code)
+        elif error_code in reported_unraised_error_codes:
+            print('%s yielded a %s (which is not raised)', func.__name__,
+                  SpectrumApiCallFailed.error_code_string(error_code))
+
+    return wrapper
+
+
 def get_spectrum_i32_api_param(device_handle: DEVICE_HANDLE_TYPE, spectrum_command: int) -> int:
     param = int32(0)
-    spcm_dwGetParam_i32(device_handle, spectrum_command, byref(param))
+    error_handler(spcm_dwGetParam_i32)(device_handle, spectrum_command, byref(param))
     return param.value
 
 
 def get_spectrum_i64_api_param(device_handle: DEVICE_HANDLE_TYPE, spectrum_command: int) -> int:
     param = int64(0)
-    spcm_dwGetParam_i64(device_handle, spectrum_command, byref(param))
+    error_handler(spcm_dwGetParam_i64)(device_handle, spectrum_command, byref(param))
     return param.value
 
 
 def set_spectrum_i32_api_param(device_handle: DEVICE_HANDLE_TYPE, spectrum_command: int, value: int) -> None:
-    spcm_dwGetParam_i32(device_handle, spectrum_command, value)
+    error_handler(spcm_dwGetParam_i32)(device_handle, spectrum_command, value)
 
 
 def set_spectrum_i64_api_param(device_handle: DEVICE_HANDLE_TYPE, spectrum_command: int, value: int) -> None:
-    spcm_dwGetParam_i64(device_handle, spectrum_command, value)
+    error_handler(spcm_dwGetParam_i64)(device_handle, spectrum_command, value)
 
 
 def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffer) -> None:
-    spcm_dwDefTransfer_i64(
+    error_handler(spcm_dwDefTransfer_i64)(
         device_handle,
         buffer.type.value,
         buffer.direction.value,
@@ -280,8 +306,14 @@ def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffe
 
 
 def spectrum_handle_factory(visa_string: str) -> DEVICE_HANDLE_TYPE:
-    return DEVICE_HANDLE_TYPE(spcm_hOpen(create_string_buffer(bytes(visa_string, encoding="utf8"))))
+    try:
+        return DEVICE_HANDLE_TYPE(spcm_hOpen(create_string_buffer(bytes(visa_string, encoding="utf8"))))
+    except RuntimeError as er:
+        SpectrumIOError(f'Could not connect to Spectrum card: {er}')
 
 
 def destroy_handle(handle: DEVICE_HANDLE_TYPE) -> None:
-    spcm_vClose(handle)
+    try:
+        spcm_vClose(handle)
+    except RuntimeError as er:
+        SpectrumIOError(f'Could not disconnect from Spectrum card: {er}')
