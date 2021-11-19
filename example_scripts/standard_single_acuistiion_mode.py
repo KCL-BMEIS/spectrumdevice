@@ -1,12 +1,13 @@
 from matplotlib.pyplot import plot
-from numpy import zeros, int16
 
 from pyspecde.hardware_model.spectrum_card import spectrum_card_factory
 from pyspecde.hardware_model.spectrum_star_hub import create_visa_string_from_ip
-from pyspecde.sdk_translation_layer import AcquisitionMode, TransferBuffer, BufferType, BufferDirection, \
-    transfer_buffer_factory
+from pyspecde.sdk_translation_layer import (
+    AcquisitionMode,
+    transfer_buffer_factory,
+)
 
-device_ip = '192.168.0.1'
+device_ip = "192.168.0.1"
 
 window_length_samples = 16384
 bit_depth = 16

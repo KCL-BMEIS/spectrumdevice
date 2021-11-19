@@ -18,7 +18,7 @@ SINGLE_CARD_TEST_MODE = SpectrumTestMode.MOCK_HARDWARE
 STAR_HUB_TEST_MODE = SpectrumTestMode.MOCK_HARDWARE
 
 # Set IP address of real spectrum device (for use if TestMode.REAL_HARDWARE is set above)
-REAL_DEVICE_IP = '192.168.0.1'
+REAL_DEVICE_IP = "192.168.0.1"
 
 
 # Configure a spectrum card for mock and real tests. For real tests, settings must match the real hardware.
@@ -39,8 +39,10 @@ class SpectrumCardConfig:
 @dataclass
 class SpectrumStarHubConfig:
     ip_address: str = REAL_DEVICE_IP
-    card_configs: Sequence[SpectrumCardConfig] = (SpectrumCardConfig(visa_device_num=0),
-                                                  SpectrumCardConfig(visa_device_num=1))
+    card_configs: Sequence[SpectrumCardConfig] = (
+        SpectrumCardConfig(visa_device_num=0),
+        SpectrumCardConfig(visa_device_num=1),
+    )
 
     @property
     def num_cards(self) -> int:
@@ -51,9 +53,12 @@ TEST_SPECTRUM_CARD_CONFIG = SpectrumCardConfig()
 TEST_SPECTRUM_STAR_HUB_CONFIG = SpectrumStarHubConfig()
 
 if SINGLE_CARD_TEST_MODE == SpectrumTestMode.REAL_HARDWARE and not SPECTRUM_DRIVERS_FOUND:
-    raise SpectrumIOError('Cannot run single card tests in REAL_HARDWARE mode because no Spectrum drivers were found.'
-                          'Set SINGLE_CARD_TEST_MODE = SpectrumTestMode.MOCK_HARDWARE in test_configuration.py.')
+    raise SpectrumIOError(
+        "Cannot run single card tests in REAL_HARDWARE mode because no Spectrum drivers were found."
+        "Set SINGLE_CARD_TEST_MODE = SpectrumTestMode.MOCK_HARDWARE in test_configuration.py."
+    )
 if STAR_HUB_TEST_MODE == SpectrumTestMode.REAL_HARDWARE and not SPECTRUM_DRIVERS_FOUND:
-    raise SpectrumIOError('Cannot run star-hub tests in REAL_HARDWARE mode because no Spectrum drivers were found'
-                          'Set STAR_HUB_TEST_MODE = SpectrumTestMode.MOCK_HARDWARE in test_configuration.py.')
-
+    raise SpectrumIOError(
+        "Cannot run star-hub tests in REAL_HARDWARE mode because no Spectrum drivers were found"
+        "Set STAR_HUB_TEST_MODE = SpectrumTestMode.MOCK_HARDWARE in test_configuration.py."
+    )

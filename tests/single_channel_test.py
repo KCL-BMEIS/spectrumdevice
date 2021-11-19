@@ -12,8 +12,11 @@ class SingleChannelTest(TestCase):
         if SINGLE_CARD_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE:
             self._device: SpectrumCard = mock_spectrum_card_factory()
         else:
-            self._device = spectrum_card_factory(create_visa_string_from_ip(TEST_SPECTRUM_CARD_CONFIG.ip_address,
-                                                                            TEST_SPECTRUM_CARD_CONFIG.visa_device_num))
+            self._device = spectrum_card_factory(
+                create_visa_string_from_ip(
+                    TEST_SPECTRUM_CARD_CONFIG.ip_address, TEST_SPECTRUM_CARD_CONFIG.visa_device_num
+                )
+            )
         self._channel = spectrum_channel_factory(0, self._device)
 
     def test_enabled(self) -> None:

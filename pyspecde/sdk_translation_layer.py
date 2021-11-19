@@ -2,7 +2,7 @@ from ctypes import c_void_p, create_string_buffer, byref
 from dataclasses import dataclass
 from enum import Enum
 from functools import wraps
-from typing import NewType, Tuple, Callable
+from typing import NewType, Tuple, Callable, Any
 
 from numpy import ndarray, zeros, int16
 
@@ -72,7 +72,8 @@ from third_party.specde.py_header.regs import (
     CHANNEL12,
     CHANNEL13,
     CHANNEL14,
-    CHANNEL15, SPC_REC_FIFO_SINGLE,
+    CHANNEL15,
+    SPC_REC_FIFO_SINGLE,
 )
 from third_party.specde.py_header.spcerr import ERR_OK, ERR_LASTERR, ERR_TIMEOUT, ERR_ABORT
 
@@ -108,7 +109,8 @@ except OSError:
         int64,
         spcm_dwDefTransfer_i64,
     )
-    print('Spectrum drivers not found. Hardware cannot be communicated with. Tests can be run in MOCK_HARDWARE mode.')
+
+    print("Spectrum drivers not found. Hardware cannot be communicated with. Tests can be run in MOCK_HARDWARE mode.")
     SPECTRUM_DRIVERS_FOUND = False
 
 DEVICE_HANDLE_TYPE = NewType("DEVICE_HANDLE_TYPE", c_void_p)
@@ -146,16 +148,21 @@ class TransferBuffer:
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, TransferBuffer):
-            return ((self.type == other.type)
-                    and (self.direction == other.direction)
-                    and (self.board_memory_offset_bytes == other.board_memory_offset_bytes)
-                    and (self.data_buffer == other.data_buffer).all())
+            return (
+                (self.type == other.type)
+                and (self.direction == other.direction)
+                and (self.board_memory_offset_bytes == other.board_memory_offset_bytes)
+                and (self.data_buffer == other.data_buffer).all()
+            )
         else:
             raise NotImplementedError()
 
 
-def transfer_buffer_factory(size_in_samples: int, type: BufferType = BufferType.SPCM_BUF_DATA,
-                            direction: BufferDirection = BufferDirection.SPCM_DIR_CARDTOPC) -> TransferBuffer:
+def transfer_buffer_factory(
+    size_in_samples: int,
+    type: BufferType = BufferType.SPCM_BUF_DATA,
+    direction: BufferDirection = BufferDirection.SPCM_DIR_CARDTOPC,
+) -> TransferBuffer:
     data_buffer = zeros(size_in_samples, int16)
     return TransferBuffer(type=type, direction=direction, board_memory_offset_bytes=0, data_buffer=data_buffer)
 
@@ -254,24 +261,28 @@ class SpectrumChannelName(Enum):
 
 
 def error_handler(func: Callable) -> Callable:
-    unraised_error_codes: Tuple[int, int, int, int] = (ERR_OK,  # success
-                                                       ERR_LASTERR,
-                                                       # last error (which should ordinarily have been raised)
-                                                       ERR_TIMEOUT,  # no data yet, continue trying
-                                                       ERR_ABORT,
-                                                       # another thread has caused an error (which should ordinarily
-                                                       # have been raised)
-                                                       )
+    unraised_error_codes: Tuple[int, int, int, int] = (
+        ERR_OK,  # success
+        ERR_LASTERR,
+        # last error (which should ordinarily have been raised)
+        ERR_TIMEOUT,  # no data yet, continue trying
+        ERR_ABORT,
+        # another thread has caused an error (which should ordinarily
+        # have been raised)
+    )
     reported_unraised_error_codes = unraised_error_codes[1:]
 
     @wraps(func)
-    def wrapper(*args, **kwargs) -> None:
+    def wrapper(*args: Any, **kwargs: Any) -> None:
         error_code = func(*args, **kwargs)
         if error_code not in unraised_error_codes:
             raise SpectrumApiCallFailed(func.__name__, error_code)
         elif error_code in reported_unraised_error_codes:
-            print('%s yielded a %s (which is not raised)', func.__name__,
-                  SpectrumApiCallFailed.error_code_string(error_code))
+            print(
+                "%s yielded a %s (which is not raised)",
+                func.__name__,
+                SpectrumApiCallFailed.error_code_string(error_code),
+            )
 
     return wrapper
 
@@ -310,13 +321,14 @@ def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffe
 
 def spectrum_handle_factory(visa_string: str) -> DEVICE_HANDLE_TYPE:
     try:
-        return DEVICE_HANDLE_TYPE(spcm_hOpen(create_string_buffer(bytes(visa_string, encoding="utf8"))))
+        handle = DEVICE_HANDLE_TYPE(spcm_hOpen(create_string_buffer(bytes(visa_string, encoding="utf8"))))
     except RuntimeError as er:
-        SpectrumIOError(f'Could not connect to Spectrum card: {er}')
+        SpectrumIOError(f"Could not connect to Spectrum card: {er}")
+    return handle
 
 
 def destroy_handle(handle: DEVICE_HANDLE_TYPE) -> None:
     try:
         spcm_vClose(handle)
     except RuntimeError as er:
-        SpectrumIOError(f'Could not disconnect from Spectrum card: {er}')
+        SpectrumIOError(f"Could not disconnect from Spectrum card: {er}")

@@ -38,7 +38,8 @@ from third_party.specde.py_header.regs import (
     SPC_CARDMODE,
     SPC_TIMEOUT,
     SPC_CLOCKMODE,
-    SPC_SAMPLERATE, M2CMD_DATA_WAITDMA,
+    SPC_SAMPLERATE,
+    M2CMD_DATA_WAITDMA,
 )
 
 

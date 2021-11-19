@@ -29,10 +29,9 @@ class SpectrumTriggerOperationNotImplemented(NotImplementedError):
 
 
 class SpectrumApiCallFailed(IOError):
-
     def __init__(self, call_description: str, error_code: int) -> None:
         super().__init__(f'"{call_description}" failed with a {self.error_code_string(error_code)}')
 
     @classmethod
     def error_code_string(cls, error_code: int) -> str:
-        return f'Spectrum API error code: 0x{error_code:08x}'
+        return f"Spectrum API error code: 0x{error_code:08x}"

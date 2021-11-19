@@ -1,12 +1,7 @@
 from numpy import zeros, array
 
 from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
-from pyspecde.sdk_translation_layer import (
-    SpectrumChannelName,
-    TransferBuffer,
-    BufferType,
-    BufferDirection
-)
+from pyspecde.sdk_translation_layer import SpectrumChannelName, TransferBuffer, BufferType, BufferDirection
 from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub, spectrum_star_hub_factory
 from tests.mock_spectrum_hardware import mock_spectrum_star_hub_factory
 from tests.single_card_test import SingleCardTest
@@ -20,11 +15,13 @@ class StarHubTest(SingleCardTest):
         if self._MOCK_MODE:
             self._device: SpectrumStarHub = mock_spectrum_star_hub_factory()
         else:
-            self._device = spectrum_star_hub_factory(TEST_SPECTRUM_STAR_HUB_CONFIG.ip_address,
-                                                     TEST_SPECTRUM_STAR_HUB_CONFIG.num_cards)
+            self._device = spectrum_star_hub_factory(
+                TEST_SPECTRUM_STAR_HUB_CONFIG.ip_address, TEST_SPECTRUM_STAR_HUB_CONFIG.num_cards
+            )
 
-        self._expected_num_channels = array([card.num_channels
-                                             for card in TEST_SPECTRUM_STAR_HUB_CONFIG.card_configs]).sum()
+        self._expected_num_channels = array(
+            [card.num_channels for card in TEST_SPECTRUM_STAR_HUB_CONFIG.card_configs]
+        ).sum()
 
         self._all_spectrum_channel_identifiers = [c.value for c in SpectrumChannelName]
         self._all_spectrum_channel_identifiers.sort()  # Enums are unordered so ensure channels are in ascending order
@@ -56,8 +53,9 @@ class StarHubTest(SingleCardTest):
             else:
                 channel.set_enabled(False)
 
-        for result, expected_result in zip(self._device.get_spectrum_api_param_all_cards(SPC_CHENABLE),
-                                           enable_channels_commands):
+        for result, expected_result in zip(
+            self._device.get_spectrum_api_param_all_cards(SPC_CHENABLE), enable_channels_commands
+        ):
             self.assertEqual(expected_result, result)
 
     def test_get_channels(self) -> None:
@@ -65,15 +63,16 @@ class StarHubTest(SingleCardTest):
 
         expected_channels = []
         for n, card_config in enumerate(TEST_SPECTRUM_STAR_HUB_CONFIG.card_configs):
-            expected_channels += [SpectrumChannel(SpectrumChannelName(self._all_spectrum_channel_identifiers[i]),
-                                                  self._device._child_cards[n])
-                                  for i in range(card_config.num_channels)]
+            expected_channels += [
+                SpectrumChannel(
+                    SpectrumChannelName(self._all_spectrum_channel_identifiers[i]), self._device._child_cards[n]
+                )
+                for i in range(card_config.num_channels)
+            ]
         self.assertEqual(expected_channels, channels)
 
     def test_transfer_buffer(self) -> None:
-        buffer = TransferBuffer(
-            self._device.handle, BufferType.SPCM_BUF_DATA, BufferDirection.SPCM_DIR_CARDTOPC, 0, zeros(4096)
-        )
+        buffer = TransferBuffer(BufferType.SPCM_BUF_DATA, BufferDirection.SPCM_DIR_CARDTOPC, 0, zeros(4096))
         self._device.set_transfer_buffer(buffer)
         with self.assertRaises(NotImplementedError):
             _ = self._device.transfer_buffer

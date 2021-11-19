@@ -12,7 +12,8 @@ from pyspecde.hardware_model.spectrum_star_hub import create_visa_string_from_ip
 from pyspecde.spectrum_exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumExternalTriggerNotEnabled,
-    SpectrumTriggerOperationNotImplemented, SpectrumApiCallFailed,
+    SpectrumTriggerOperationNotImplemented,
+    SpectrumApiCallFailed,
 )
 from pyspecde.hardware_model.spectrum_interface import (
     SpectrumDeviceInterface,
@@ -25,11 +26,15 @@ from pyspecde.sdk_translation_layer import (
     TransferBuffer,
     BufferType,
     BufferDirection,
-    ExternalTriggerMode
+    ExternalTriggerMode,
 )
 from tests.mock_spectrum_hardware import mock_spectrum_card_factory
-from tests.test_configuration import TEST_SPECTRUM_CARD_CONFIG, SpectrumTestMode, SINGLE_CARD_TEST_MODE, \
-    SpectrumCardConfig
+from tests.test_configuration import (
+    TEST_SPECTRUM_CARD_CONFIG,
+    SpectrumTestMode,
+    SINGLE_CARD_TEST_MODE,
+    SpectrumCardConfig,
+)
 from third_party.specde.py_header.regs import SPC_CHENABLE
 
 
@@ -39,8 +44,11 @@ class SingleCardTest(TestCase):
         if self._MOCK_MODE:
             self._device: SpectrumDeviceInterface = mock_spectrum_card_factory()
         else:
-            self._device = spectrum_card_factory(create_visa_string_from_ip(TEST_SPECTRUM_CARD_CONFIG.ip_address,
-                                                                            TEST_SPECTRUM_CARD_CONFIG.visa_device_num))
+            self._device = spectrum_card_factory(
+                create_visa_string_from_ip(
+                    TEST_SPECTRUM_CARD_CONFIG.ip_address, TEST_SPECTRUM_CARD_CONFIG.visa_device_num
+                )
+            )
 
         self._all_spectrum_channel_identifiers = [c.value for c in SpectrumChannelName]
         self._all_spectrum_channel_identifiers.sort()  # Enums are unordered so ensure channels are in ascending order
@@ -52,9 +60,10 @@ class SingleCardTest(TestCase):
     def test_get_channels(self) -> None:
         channels = self._device.channels
 
-        expected_channels = [SpectrumChannel(SpectrumChannelName(self._all_spectrum_channel_identifiers[i]),
-                                             self._device)
-                             for i in range(TEST_SPECTRUM_CARD_CONFIG.num_channels)]
+        expected_channels = [
+            SpectrumChannel(SpectrumChannelName(self._all_spectrum_channel_identifiers[i]), self._device)
+            for i in range(TEST_SPECTRUM_CARD_CONFIG.num_channels)
+        ]
         self.assertEqual(expected_channels, channels)
 
     def _get_randomly_enable_channels(self, card_config: SpectrumCardConfig) -> Tuple[int, List[int]]:
@@ -63,8 +72,7 @@ class SingleCardTest(TestCase):
         num_channels_to_enable = randint(card_config.num_channels) + 1
         shuffle(channel_indices)
         indices_of_channels_to_enable = channel_indices[:num_channels_to_enable]
-        ids_of_channels_to_enable = [self._all_spectrum_channel_identifiers[i]
-                                     for i in indices_of_channels_to_enable]
+        ids_of_channels_to_enable = [self._all_spectrum_channel_identifiers[i] for i in indices_of_channels_to_enable]
         enable_channels_command = reduce(or_, ids_of_channels_to_enable)
         return enable_channels_command, list(indices_of_channels_to_enable)
 
@@ -73,9 +81,9 @@ class SingleCardTest(TestCase):
         enable_ch_command, indices_of_ch_to_enable = self._get_randomly_enable_channels(TEST_SPECTRUM_CARD_CONFIG)
         for i, channel in enumerate(self._device.channels):
             if i in indices_of_ch_to_enable:
-                self._device.channels[i].set_enabled(True)
+                channel.set_enabled(True)
             else:
-                self._device.channels[i].set_enabled(False)
+                channel.set_enabled(False)
         self.assertEqual(enable_ch_command, self._device.get_spectrum_api_param(SPC_CHENABLE))
 
     def test_acquisition_length(self) -> None:
@@ -140,9 +148,7 @@ class SingleCardTest(TestCase):
         self.assertEqual(rate, self._device.sample_rate_hz)
 
     def test_transfer_buffer(self) -> None:
-        buffer = TransferBuffer(
-            self._device.handle, BufferType.SPCM_BUF_DATA, BufferDirection.SPCM_DIR_CARDTOPC, 0, zeros(4096)
-        )
+        buffer = TransferBuffer(BufferType.SPCM_BUF_DATA, BufferDirection.SPCM_DIR_CARDTOPC, 0, zeros(4096))
         self._device.set_transfer_buffer(buffer)
         self.assertEqual(buffer, self._device.transfer_buffer)
 

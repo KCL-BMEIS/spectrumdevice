@@ -15,11 +15,10 @@ class SpectrumChannel(SpectrumChannelInterface):
             raise NotImplementedError()
 
     def __str__(self) -> str:
-        return f'{self._name.name} of device {self._parent_device}'
+        return f"{self._name.name} of device {self._parent_device}"
 
     def __repr__(self) -> str:
         return str(self)
-
 
     @property
     def name(self) -> SpectrumChannelName:

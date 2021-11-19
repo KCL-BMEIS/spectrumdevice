@@ -26,7 +26,6 @@ from third_party.specde.py_header.regs import SPC_SYNC_ENABLEMASK
 
 
 class SpectrumStarHub(SpectrumDevice):
-
     def __init__(
         self,
         hub_handle: DEVICE_HANDLE_TYPE,
