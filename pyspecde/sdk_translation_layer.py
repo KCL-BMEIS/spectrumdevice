@@ -4,7 +4,7 @@ from enum import Enum
 from functools import wraps
 from typing import NewType, Tuple, Callable
 
-from numpy import ndarray
+from numpy import ndarray, zeros, int16
 
 from pyspecde.spectrum_exceptions import SpectrumApiCallFailed, SpectrumIOError
 from third_party.specde.py_header.regs import (
@@ -72,7 +72,7 @@ from third_party.specde.py_header.regs import (
     CHANNEL12,
     CHANNEL13,
     CHANNEL14,
-    CHANNEL15,
+    CHANNEL15, SPC_REC_FIFO_SINGLE,
 )
 from third_party.specde.py_header.spcerr import ERR_OK, ERR_LASTERR, ERR_TIMEOUT, ERR_ABORT
 
@@ -127,7 +127,6 @@ class BufferDirection(Enum):
 
 @dataclass
 class TransferBuffer:
-    card_handle: DEVICE_HANDLE_TYPE
     type: BufferType
     direction: BufferDirection
     board_memory_offset_bytes: int
@@ -147,19 +146,23 @@ class TransferBuffer:
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, TransferBuffer):
-            return (
-                (self.card_handle == other.card_handle)
-                and (self.type == other.type)
-                and (self.direction == other.direction)
-                and (self.board_memory_offset_bytes == other.board_memory_offset_bytes)
-                and (self.data_buffer == other.data_buffer).all()
-            )
+            return ((self.type == other.type)
+                    and (self.direction == other.direction)
+                    and (self.board_memory_offset_bytes == other.board_memory_offset_bytes)
+                    and (self.data_buffer == other.data_buffer).all())
         else:
             raise NotImplementedError()
 
 
+def transfer_buffer_factory(size_in_samples: int, type: BufferType = BufferType.SPCM_BUF_DATA,
+                            direction: BufferDirection = BufferDirection.SPCM_DIR_CARDTOPC) -> TransferBuffer:
+    data_buffer = zeros(size_in_samples, int16)
+    return TransferBuffer(type=type, direction=direction, board_memory_offset_bytes=0, data_buffer=data_buffer)
+
+
 class AcquisitionMode(Enum):
     SPC_REC_STD_SINGLE = SPC_REC_STD_SINGLE
+    SPC_REC_FIFO_SINGLE = SPC_REC_FIFO_SINGLE
     SPC_REC_FIFO_MULTI = SPC_REC_FIFO_MULTI
 
 

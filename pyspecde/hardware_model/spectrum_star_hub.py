@@ -26,6 +26,7 @@ from third_party.specde.py_header.regs import SPC_SYNC_ENABLEMASK
 
 
 class SpectrumStarHub(SpectrumDevice):
+
     def __init__(
         self,
         hub_handle: DEVICE_HANDLE_TYPE,
@@ -46,13 +47,17 @@ class SpectrumStarHub(SpectrumDevice):
         for card in self._child_cards:
             card.disconnect()
 
-    def start_dma(self) -> None:
+    def start_transfer(self) -> None:
         for card in self._child_cards:
-            card.start_dma()
+            card.start_transfer()
 
-    def stop_dma(self) -> None:
+    def stop_transfer(self) -> None:
         for card in self._child_cards:
-            card.stop_dma()
+            card.stop_transfer()
+
+    def wait_for_transfer_to_complete(self) -> None:
+        for card in self._child_cards:
+            card.wait_for_transfer_to_complete()
 
     @property
     def handle(self) -> DEVICE_HANDLE_TYPE:
@@ -107,7 +112,7 @@ class SpectrumStarHub(SpectrumDevice):
     @property
     def transfer_buffer(self) -> TransferBuffer:
         raise NotImplementedError(
-            "StarHubs create one transfer buffer per device. Access them using the " ".transfer_buffers property."
+            "StarHubs create one transfer buffer per card. Access them using the " ".transfer_buffers property."
         )
 
     @property
@@ -127,26 +132,26 @@ class SpectrumStarHub(SpectrumDevice):
         return channels
 
     @property
-    def acquisition_length_bytes(self) -> int:
+    def acquisition_length_samples(self) -> int:
         lengths = []
         for d in self._child_cards:
-            lengths.append(d.acquisition_length_bytes)
+            lengths.append(d.acquisition_length_samples)
         return check_settings_constant_across_devices(lengths, __name__)
 
-    def set_acquisition_length_bytes(self, length_in_bytes: int) -> None:
+    def set_acquisition_length_samples(self, length_in_samples: int) -> None:
         for d in self._child_cards:
-            d.set_acquisition_length_bytes(length_in_bytes)
+            d.set_acquisition_length_samples(length_in_samples)
 
     @property
-    def post_trigger_length_bytes(self) -> int:
+    def post_trigger_length_samples(self) -> int:
         lengths = []
         for d in self._child_cards:
-            lengths.append(d.post_trigger_length_bytes)
+            lengths.append(d.post_trigger_length_samples)
         return check_settings_constant_across_devices(lengths, __name__)
 
-    def set_post_trigger_length_bytes(self, length_in_bytes: int) -> None:
+    def set_post_trigger_length_samples(self, length_in_samples: int) -> None:
         for d in self._child_cards:
-            d.set_post_trigger_length_bytes(length_in_bytes)
+            d.set_post_trigger_length_samples(length_in_samples)
 
     @property
     def acquisition_mode(self) -> AcquisitionMode:

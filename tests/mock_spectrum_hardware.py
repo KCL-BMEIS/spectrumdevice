@@ -19,11 +19,14 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
             SPC_MIINST_CHPERMODULE: TEST_SPECTRUM_CARD_CONFIG.num_channels_per_module,
         }
 
-    def run(self) -> None:
+    def start_acquisition(self) -> None:
         raise SpectrumDeviceNotConnected("Cannot run mock device")
 
-    def stop(self) -> None:
+    def stop_acquisition(self) -> None:
         raise SpectrumDeviceNotConnected("Cannot stop mock device")
+
+    def wait_for_acquisition_to_complete(self) -> None:
+        raise SpectrumDeviceNotConnected("Cannot run mock device")
 
     def set_spectrum_api_param(
         self, spectrum_command: int, value: int, length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO
@@ -48,10 +51,10 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
     def disconnect(self) -> None:
         raise SpectrumDeviceNotConnected("Cannot disconnect mock card")
 
-    def start_dma(self) -> None:
+    def start_transfer(self) -> None:
         raise SpectrumDeviceNotConnected("Cannot start dma on mock device")
 
-    def stop_dma(self) -> None:
+    def stop_transfer(self) -> None:
         raise SpectrumDeviceNotConnected("Cannot stop dma on mock device")
 
     def set_transfer_buffer(self, buffer: TransferBuffer) -> None:

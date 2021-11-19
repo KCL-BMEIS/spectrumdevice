@@ -38,7 +38,7 @@ from third_party.specde.py_header.regs import (
     SPC_CARDMODE,
     SPC_TIMEOUT,
     SPC_CLOCKMODE,
-    SPC_SAMPLERATE,
+    SPC_SAMPLERATE, M2CMD_DATA_WAITDMA,
 )
 
 
@@ -50,11 +50,14 @@ class SpectrumCard(SpectrumDevice):
         self._transfer_buffer: Optional[TransferBuffer] = None
         self.apply_channel_enabling()
 
-    def start_dma(self) -> None:
+    def start_transfer(self) -> None:
         self.set_spectrum_api_param(SPC_M2CMD, M2CMD_DATA_STARTDMA)
 
-    def stop_dma(self) -> None:
+    def stop_transfer(self) -> None:
         self.set_spectrum_api_param(SPC_M2CMD, M2CMD_DATA_STOPDMA)
+
+    def wait_for_transfer_to_complete(self) -> None:
+        self.set_spectrum_api_param(SPC_M2CMD, M2CMD_DATA_WAITDMA)
 
     @property
     def transfer_buffer(self) -> TransferBuffer:
@@ -166,18 +169,18 @@ class SpectrumCard(SpectrumDevice):
         return [spectrum_channel_factory(n, self) for n in range(total_channels)]
 
     @property
-    def acquisition_length_bytes(self) -> int:
+    def acquisition_length_samples(self) -> int:
         return self.get_spectrum_api_param(SPC_MEMSIZE)
 
-    def set_acquisition_length_bytes(self, length_in_bytes: int) -> None:
-        self.set_spectrum_api_param(SPC_MEMSIZE, length_in_bytes)
+    def set_acquisition_length_samples(self, length_in_samples: int) -> None:
+        self.set_spectrum_api_param(SPC_MEMSIZE, length_in_samples)
 
     @property
-    def post_trigger_length_bytes(self) -> int:
+    def post_trigger_length_samples(self) -> int:
         return self.get_spectrum_api_param(SPC_POSTTRIGGER)
 
-    def set_post_trigger_length_bytes(self, length_in_bytes: int) -> None:
-        self.set_spectrum_api_param(SPC_POSTTRIGGER, length_in_bytes)
+    def set_post_trigger_length_samples(self, length_in_samples: int) -> None:
+        self.set_spectrum_api_param(SPC_POSTTRIGGER, length_in_samples)
 
     @property
     def acquisition_mode(self) -> AcquisitionMode:

@@ -10,7 +10,8 @@ setup(
     version=0.1,
     include_package_data=True,
     install_requires=[
-        "numpy==1.21.4"
+        "numpy==1.21.4",
+        "matplotlib==3.5.0"
     ],
     extras_require={
         "dev": dev_deps,

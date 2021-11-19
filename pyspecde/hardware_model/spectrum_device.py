@@ -5,7 +5,7 @@ from third_party.specde.py_header.regs import (
     SPC_M2CMD,
     M2CMD_CARD_ENABLETRIGGER,
     M2CMD_CARD_STOP,
-    M2CMD_CARD_DISABLETRIGGER,
+    M2CMD_CARD_DISABLETRIGGER, M2CMD_CARD_WAITREADY,
 )
 
 from pyspecde.hardware_model.spectrum_interface import (
@@ -21,13 +21,14 @@ from pyspecde.sdk_translation_layer import (
 
 
 class SpectrumDevice(SpectrumDeviceInterface, ABC):
-    def run(self) -> None:
-        self.start_dma()
+    def start_acquisition(self) -> None:
         self.set_spectrum_api_param(SPC_M2CMD, M2CMD_CARD_START | M2CMD_CARD_ENABLETRIGGER)
 
-    def stop(self) -> None:
-        self.stop_dma()
+    def stop_acquisition(self) -> None:
         self.set_spectrum_api_param(SPC_M2CMD, M2CMD_CARD_STOP | M2CMD_CARD_DISABLETRIGGER)
+
+    def wait_for_acquisition_to_complete(self) -> None:
+        self.set_spectrum_api_param(SPC_M2CMD, M2CMD_CARD_WAITREADY)
 
     def set_spectrum_api_param(
         self,

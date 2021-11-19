@@ -80,13 +80,13 @@ class SingleCardTest(TestCase):
 
     def test_acquisition_length(self) -> None:
         acquisition_length = 4096
-        self._device.set_acquisition_length_bytes(acquisition_length)
-        self.assertEqual(acquisition_length, self._device.acquisition_length_bytes)
+        self._device.set_acquisition_length_samples(acquisition_length)
+        self.assertEqual(acquisition_length, self._device.acquisition_length_samples)
 
     def test_post_trigger_length(self) -> None:
         post_trigger_length = 2048
-        self._device.set_post_trigger_length_bytes(post_trigger_length)
-        self.assertEqual(post_trigger_length, self._device.post_trigger_length_bytes)
+        self._device.set_post_trigger_length_samples(post_trigger_length)
+        self.assertEqual(post_trigger_length, self._device.post_trigger_length_samples)
 
     def test_acquisition_mode(self) -> None:
         acquisition_mode = AcquisitionMode.SPC_REC_STD_SINGLE
@@ -151,16 +151,16 @@ class SingleCardTest(TestCase):
             with self.assertRaises(SpectrumDeviceNotConnected):
                 self._device.disconnect()
         else:
-            self._device.set_acquisition_length_bytes(4096)
-            self.assertTrue(self._device.acquisition_length_bytes > 0)
+            self._device.set_acquisition_length_samples(4096)
+            self.assertTrue(self._device.acquisition_length_samples > 0)
             self._device.disconnect()
             with self.assertRaises(SpectrumApiCallFailed):
-                self._device.set_acquisition_length_bytes(4096)
+                self._device.set_acquisition_length_samples(4096)
 
     def test_run(self) -> None:
         if self._MOCK_MODE:
             with self.assertRaises(SpectrumDeviceNotConnected):
-                self._device.run()
+                self._device.start_acquisition()
         else:
             # todo: implement run test for real device
             raise NotImplementedError()
@@ -168,7 +168,7 @@ class SingleCardTest(TestCase):
     def test_stop(self) -> None:
         if self._MOCK_MODE:
             with self.assertRaises(SpectrumDeviceNotConnected):
-                self._device.stop()
+                self._device.stop_acquisition()
         else:
             # todo: imlement stop test for real device
             raise NotImplementedError()

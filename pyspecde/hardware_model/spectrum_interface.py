@@ -59,19 +59,27 @@ class SpectrumDeviceInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def run(self) -> None:
+    def start_acquisition(self) -> None:
         raise NotImplementedError()
 
     @abstractmethod
-    def stop(self) -> None:
+    def stop_acquisition(self) -> None:
         raise NotImplementedError()
 
     @abstractmethod
-    def start_dma(self) -> None:
+    def wait_for_acquisition_to_complete(self) -> None:
         raise NotImplementedError()
 
     @abstractmethod
-    def stop_dma(self) -> None:
+    def start_transfer(self) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def stop_transfer(self) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def wait_for_transfer_to_complete(self) -> None:
         raise NotImplementedError()
 
     @abstractmethod
@@ -98,20 +106,20 @@ class SpectrumDeviceInterface(ABC):
 
     @property
     @abstractmethod
-    def acquisition_length_bytes(self) -> int:
+    def acquisition_length_samples(self) -> int:
         raise NotImplementedError()
 
     @abstractmethod
-    def set_acquisition_length_bytes(self, length_in_bytes: int) -> None:
+    def set_acquisition_length_samples(self, length_in_samples: int) -> None:
         raise NotImplementedError()
 
     @property
     @abstractmethod
-    def post_trigger_length_bytes(self) -> int:
+    def post_trigger_length_samples(self) -> int:
         raise NotImplementedError()
 
     @abstractmethod
-    def set_post_trigger_length_bytes(self, length_in_bytes: int) -> None:
+    def set_post_trigger_length_samples(self, length_in_samples: int) -> None:
         raise NotImplementedError()
 
     @property
