@@ -19,11 +19,11 @@ class SingleChannelTest(TestCase):
             )
         self._channel = spectrum_channel_factory(0, self._device)
 
-    def test_enabled(self) -> None:
-        self.assertTrue(self._channel.enabled)
+    def tearDown(self) -> None:
+        self._channel._parent_device.disconnect()
 
     def test_vertical_range(self) -> None:
-        v_range = 10
+        v_range = 5000
         self._channel.set_vertical_range_mv(v_range)
         self.assertEqual(v_range, self._channel.vertical_range_mv)
 

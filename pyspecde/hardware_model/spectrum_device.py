@@ -1,5 +1,6 @@
 from abc import ABC
 
+from pyspecde.spectrum_exceptions import SpectrumDeviceNotConnected
 from third_party.specde.py_header.regs import (
     M2CMD_CARD_START,
     SPC_M2CMD,
@@ -37,21 +38,27 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         value: int,
         length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,
     ) -> None:
-        if length == SpectrumIntLengths.THIRTY_TWO:
-            set_spectrum_i32_api_param(self.handle, spectrum_command, value)
-        elif length == SpectrumIntLengths.SIXTY_FOUR:
-            set_spectrum_i64_api_param(self.handle, spectrum_command, value)
+        if self.connected:
+            if length == SpectrumIntLengths.THIRTY_TWO:
+                set_spectrum_i32_api_param(self.handle, spectrum_command, value)
+            elif length == SpectrumIntLengths.SIXTY_FOUR:
+                set_spectrum_i64_api_param(self.handle, spectrum_command, value)
+            else:
+                raise ValueError("Spectrum integer length not recognised.")
         else:
-            raise ValueError("Spectrum integer length not recognised.")
+            raise SpectrumDeviceNotConnected('The device has been disconnected.')
 
     def get_spectrum_api_param(
         self,
         spectrum_command: int,
         length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,
     ) -> int:
-        if length == SpectrumIntLengths.THIRTY_TWO:
-            return get_spectrum_i32_api_param(self.handle, spectrum_command)
-        elif length == SpectrumIntLengths.SIXTY_FOUR:
-            return get_spectrum_i64_api_param(self.handle, spectrum_command)
+        if self.connected:
+            if length == SpectrumIntLengths.THIRTY_TWO:
+                return get_spectrum_i32_api_param(self.handle, spectrum_command)
+            elif length == SpectrumIntLengths.SIXTY_FOUR:
+                return get_spectrum_i64_api_param(self.handle, spectrum_command)
+            else:
+                raise ValueError("Spectrum integer length not recognised.")
         else:
-            raise ValueError("Spectrum integer length not recognised.")
+            raise SpectrumDeviceNotConnected('The device has been disconnected.')

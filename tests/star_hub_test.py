@@ -3,6 +3,7 @@ from numpy import zeros, array
 from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
 from pyspecde.sdk_translation_layer import SpectrumChannelName, TransferBuffer, BufferType, BufferDirection
 from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub, spectrum_star_hub_factory
+from pyspecde.spectrum_exceptions import SpectrumInvalidNumberOfEnabledChannels
 from tests.mock_spectrum_hardware import mock_spectrum_star_hub_factory
 from tests.single_card_test import SingleCardTest
 from tests.test_configuration import TEST_SPECTRUM_STAR_HUB_CONFIG, STAR_HUB_TEST_MODE, SpectrumTestMode
@@ -26,6 +27,9 @@ class StarHubTest(SingleCardTest):
         self._all_spectrum_channel_identifiers = [c.value for c in SpectrumChannelName]
         self._all_spectrum_channel_identifiers.sort()  # Enums are unordered so ensure channels are in ascending order
 
+    def tearDown(self) -> None:
+        self._device.disconnect()
+
     def test_init(self) -> None:
         hub = mock_spectrum_star_hub_factory()
         self.assertEqual(3, hub.get_spectrum_api_param(SPC_SYNC_ENABLEMASK))
@@ -34,29 +38,20 @@ class StarHubTest(SingleCardTest):
         channels = self._device.channels
         self.assertEqual(len(channels), self._expected_num_channels)
 
-    def test_channel_enabling(self) -> None:
+    def test_enable_one_channel(self) -> None:
+        with self.assertRaises(SpectrumInvalidNumberOfEnabledChannels):
+            self._device.set_enabled_channels([0])
 
-        total_channel_count = 0
-        star_hub_indices_of_channels_to_enable = []
-        enable_channels_commands = []
+    def test_enable_two_channels(self) -> None:
 
-        for card_config in TEST_SPECTRUM_STAR_HUB_CONFIG.card_configs:
-            enable_channels_command, indices_of_channels_to_enable = self._get_randomly_enable_channels(card_config)
-            enable_channels_commands.append(enable_channels_command)
-            star_hub_indices_of_channels_to_enable += list(array(indices_of_channels_to_enable) + total_channel_count)
-            total_channel_count += card_config.num_channels
+        channels_each_card = [card.num_channels for card in TEST_SPECTRUM_STAR_HUB_CONFIG.card_configs]
+        num_channels_card_0 = channels_each_card[0]
 
-        # Enable only selected channels
-        for i, channel in enumerate(self._device.channels):
-            if i in star_hub_indices_of_channels_to_enable:
-                channel.set_enabled(True)
-            else:
-                channel.set_enabled(False)
-
-        for result, expected_result in zip(
-            self._device.get_spectrum_api_param_all_cards(SPC_CHENABLE), enable_channels_commands
-        ):
-            self.assertEqual(expected_result, result)
+        self._device.set_enabled_channels([0, num_channels_card_0])
+        card_one_expected_command = self._all_spectrum_channel_identifiers[0]
+        card_two_expected_command = self._all_spectrum_channel_identifiers[0]
+        self.assertEqual(card_one_expected_command, self._device._child_cards[0].get_spectrum_api_param(SPC_CHENABLE))
+        self.assertEqual(card_two_expected_command, self._device._child_cards[0].get_spectrum_api_param(SPC_CHENABLE))
 
     def test_get_channels(self) -> None:
         channels = self._device.channels

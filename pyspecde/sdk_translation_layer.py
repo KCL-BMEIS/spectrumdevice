@@ -2,7 +2,7 @@ from ctypes import c_void_p, create_string_buffer, byref
 from dataclasses import dataclass
 from enum import Enum
 from functools import wraps
-from typing import NewType, Tuple, Callable, Any
+from typing import Dict, NewType, Callable, Any
 
 from numpy import ndarray, zeros, int16
 
@@ -75,7 +75,9 @@ from third_party.specde.py_header.regs import (
     CHANNEL15,
     SPC_REC_FIFO_SINGLE,
 )
-from third_party.specde.py_header.spcerr import ERR_OK, ERR_LASTERR, ERR_TIMEOUT, ERR_ABORT
+from third_party.specde.py_header.spcerr import ERR_INVALIDHANDLE, ERR_OK, ERR_LASTERR, ERR_SETUP, ERR_TIMEOUT, \
+    ERR_ABORT, \
+    ERR_VALUE
 
 try:
     from third_party.specde.pyspcm import (
@@ -84,6 +86,8 @@ try:
         SPCM_BUF_TIMESTAMP,
         SPCM_DIR_PCTOCARD,
         SPCM_DIR_CARDTOPC,
+        spcm_dwSetParam_i32,
+        spcm_dwSetParam_i64,
         spcm_hOpen,
         spcm_vClose,
         int32,
@@ -101,6 +105,8 @@ except OSError:
         SPCM_BUF_TIMESTAMP,
         SPCM_DIR_PCTOCARD,
         SPCM_DIR_CARDTOPC,
+        spcm_dwSetParam_i32,
+        spcm_dwSetParam_i64,
         spcm_hOpen,
         spcm_vClose,
         int32,
@@ -261,29 +267,35 @@ class SpectrumChannelName(Enum):
 
 
 def error_handler(func: Callable) -> Callable:
-    unraised_error_codes: Tuple[int, int, int, int] = (
-        ERR_OK,  # success
-        ERR_LASTERR,
-        # last error (which should ordinarily have been raised)
-        ERR_TIMEOUT,  # no data yet, continue trying
-        ERR_ABORT,
-        # another thread has caused an error (which should ordinarily
-        # have been raised)
-    )
-    reported_unraised_error_codes = unraised_error_codes[1:]
+
+    unreported_unraised_error_codes = {ERR_OK: 'Execution OK, no error'}
+
+    reported_unraised_error_codes: Dict[int, str] = {
+        ERR_LASTERR: 'Old error waiting to be read. Please read the full error information before proceeding. The '
+                     'driver is locked until the error information can be read.',
+        ERR_TIMEOUT: 'A timeout occurred while waiting for an interrupt.',
+        ERR_ABORT: 'Abort of wait function. The function has been aborted from another thread.'
+    }
+
+    known_raised_error_codes = {
+        ERR_VALUE: 'The value for this register is not in a valid range. The allowed values and ragnes are listed in'
+                   'the board specific documentation.',
+        ERR_INVALIDHANDLE: 'The used handle is not valid.',
+        ERR_SETUP: 'The programmed setup for the card is not valid.'
+    }
 
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> None:
         error_code = func(*args, **kwargs)
-        if error_code not in unraised_error_codes:
-            raise SpectrumApiCallFailed(func.__name__, error_code)
+        if error_code in unreported_unraised_error_codes:
+            pass
         elif error_code in reported_unraised_error_codes:
-            print(
-                "%s yielded a %s (which is not raised)",
-                func.__name__,
-                SpectrumApiCallFailed.error_code_string(error_code),
-            )
-
+            print(f"Unraised spectrum error from {func.__name__}: {reported_unraised_error_codes[error_code]} "
+                  f"({error_code})")
+        elif error_code in known_raised_error_codes:
+            raise SpectrumApiCallFailed(func.__name__, error_code, known_raised_error_codes[error_code])
+        else:
+            raise SpectrumApiCallFailed(func.__name__, error_code, f'command or value {args[1]}.')
     return wrapper
 
 
@@ -300,11 +312,11 @@ def get_spectrum_i64_api_param(device_handle: DEVICE_HANDLE_TYPE, spectrum_comma
 
 
 def set_spectrum_i32_api_param(device_handle: DEVICE_HANDLE_TYPE, spectrum_command: int, value: int) -> None:
-    error_handler(spcm_dwGetParam_i32)(device_handle, spectrum_command, value)
+    error_handler(spcm_dwSetParam_i32)(device_handle, spectrum_command, value)
 
 
 def set_spectrum_i64_api_param(device_handle: DEVICE_HANDLE_TYPE, spectrum_command: int, value: int) -> None:
-    error_handler(spcm_dwGetParam_i64)(device_handle, spectrum_command, value)
+    error_handler(spcm_dwSetParam_i64)(device_handle, spectrum_command, value)
 
 
 def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffer) -> None:
@@ -322,6 +334,7 @@ def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffe
 def spectrum_handle_factory(visa_string: str) -> DEVICE_HANDLE_TYPE:
     try:
         handle = DEVICE_HANDLE_TYPE(spcm_hOpen(create_string_buffer(bytes(visa_string, encoding="utf8"))))
+        # handle = spcm_hOpen(create_string_buffer(bytes(visa_string, encoding="utf8")))
     except RuntimeError as er:
         SpectrumIOError(f"Could not connect to Spectrum card: {er}")
     return handle

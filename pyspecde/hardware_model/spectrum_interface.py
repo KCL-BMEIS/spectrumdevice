@@ -21,15 +21,6 @@ class SpectrumChannelInterface(ABC):
 
     @property
     @abstractmethod
-    def enabled(self) -> bool:
-        raise NotImplementedError
-
-    @abstractmethod
-    def set_enabled(self, enabled: bool) -> None:
-        raise NotImplementedError
-
-    @property
-    @abstractmethod
     def vertical_range_mv(self) -> int:
         raise NotImplementedError()
 
@@ -53,6 +44,12 @@ class SpectrumIntLengths(Enum):
 
 
 class SpectrumDeviceInterface(ABC):
+
+    @property
+    @abstractmethod
+    def connected(self) -> bool:
+        raise NotImplementedError()
+
     @property
     @abstractmethod
     def handle(self) -> DEVICE_HANDLE_TYPE:
@@ -102,6 +99,15 @@ class SpectrumDeviceInterface(ABC):
     @property
     @abstractmethod
     def channels(self) -> List[SpectrumChannelInterface]:
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def enabled_channels(self) -> List[int]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_enabled_channels(self, channels_nums: List[int]) -> None:
         raise NotImplementedError()
 
     @property

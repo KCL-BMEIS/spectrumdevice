@@ -53,6 +53,10 @@ class SingleCardTest(TestCase):
         self._all_spectrum_channel_identifiers = [c.value for c in SpectrumChannelName]
         self._all_spectrum_channel_identifiers.sort()  # Enums are unordered so ensure channels are in ascending order
 
+    def tearDown(self) -> None:
+        if not self._MOCK_MODE:
+            self._device.disconnect()
+
     def test_count_channels(self) -> None:
         channels = self._device.channels
         self.assertEqual(len(channels), TEST_SPECTRUM_CARD_CONFIG.num_channels)
@@ -66,25 +70,14 @@ class SingleCardTest(TestCase):
         ]
         self.assertEqual(expected_channels, channels)
 
-    def _get_randomly_enable_channels(self, card_config: SpectrumCardConfig) -> Tuple[int, List[int]]:
-        # Randomly choose channels to enable and manually create enabling command
-        channel_indices = arange(card_config.num_channels)
-        num_channels_to_enable = randint(card_config.num_channels) + 1
-        shuffle(channel_indices)
-        indices_of_channels_to_enable = channel_indices[:num_channels_to_enable]
-        ids_of_channels_to_enable = [self._all_spectrum_channel_identifiers[i] for i in indices_of_channels_to_enable]
-        enable_channels_command = reduce(or_, ids_of_channels_to_enable)
-        return enable_channels_command, list(indices_of_channels_to_enable)
+    def test_enable_one_channel(self) -> None:
+        self._device.set_enabled_channels([0])
+        self.assertEqual(self._all_spectrum_channel_identifiers[0], self._device.get_spectrum_api_param(SPC_CHENABLE))
 
-    def test_channel_enabling(self) -> None:
-
-        enable_ch_command, indices_of_ch_to_enable = self._get_randomly_enable_channels(TEST_SPECTRUM_CARD_CONFIG)
-        for i, channel in enumerate(self._device.channels):
-            if i in indices_of_ch_to_enable:
-                channel.set_enabled(True)
-            else:
-                channel.set_enabled(False)
-        self.assertEqual(enable_ch_command, self._device.get_spectrum_api_param(SPC_CHENABLE))
+    def test_enable_two_channels(self) -> None:
+        self._device.set_enabled_channels([0, 1])
+        expected_command = self._all_spectrum_channel_identifiers[0] | self._all_spectrum_channel_identifiers[1]
+        self.assertEqual(expected_command, self._device.get_spectrum_api_param(SPC_CHENABLE))
 
     def test_acquisition_length(self) -> None:
         acquisition_length = 4096
@@ -125,14 +118,14 @@ class SingleCardTest(TestCase):
     def test_external_trigger_level(self) -> None:
         with self.assertRaises(SpectrumExternalTriggerNotEnabled):
             _ = self._device.external_trigger_level_mv
-        level = 100
+        level = 10
         with self.assertRaises(SpectrumExternalTriggerNotEnabled):
             self._device.set_external_trigger_level_mv(level)
         with self.assertRaises(SpectrumTriggerOperationNotImplemented):
             sources = [TriggerSource.SPC_TMASK_EXT3]
             self._device.set_trigger_sources(sources)
             self._device.set_external_trigger_level_mv(level)
-        sources = [TriggerSource.SPC_TMASK_EXT2]
+        sources = [TriggerSource.SPC_TMASK_EXT0]
         self._device.set_trigger_sources(sources)
         self._device.set_external_trigger_level_mv(level)
         self.assertEqual(level, self._device.external_trigger_level_mv)
@@ -143,7 +136,7 @@ class SingleCardTest(TestCase):
         self.assertEqual(mode, self._device.clock_mode)
 
     def test_sample_rate(self) -> None:
-        rate = 3000000
+        rate = 20000000
         self._device.set_sample_rate_hz(rate)
         self.assertEqual(rate, self._device.sample_rate_hz)
 
@@ -158,10 +151,11 @@ class SingleCardTest(TestCase):
                 self._device.disconnect()
         else:
             self._device.set_acquisition_length_samples(4096)
-            self.assertTrue(self._device.acquisition_length_samples > 0)
+            self.assertTrue(self._device.acquisition_length_samples == 4096)
             self._device.disconnect()
-            with self.assertRaises(SpectrumApiCallFailed):
+            with self.assertRaises(SpectrumDeviceNotConnected):
                 self._device.set_acquisition_length_samples(4096)
+            self.setUp()
 
     def test_run(self) -> None:
         if self._MOCK_MODE:

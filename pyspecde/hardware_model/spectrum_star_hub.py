@@ -3,6 +3,8 @@ from functools import reduce
 from operator import or_
 from typing import List, Sequence
 
+from numpy import arange
+
 from pyspecde.hardware_model.spectrum_device import (
     SpectrumDevice,
 )
@@ -32,7 +34,9 @@ class SpectrumStarHub(SpectrumDevice):
         child_cards: Sequence[SpectrumCard],
         master_card_index: int,
     ):
+        self._connected = True
         self._child_cards = child_cards
+        self._enabled_channels: List[int] = self._get_first_channel_number_of_each_card()
         self._master_card = child_cards[master_card_index]
         self._triggering_card = child_cards[master_card_index]
         child_card_logical_indices = (2 ** n for n in range(len(self._child_cards)))
@@ -41,10 +45,15 @@ class SpectrumStarHub(SpectrumDevice):
         self.set_spectrum_api_param(SPC_SYNC_ENABLEMASK, all_cards_binary_mask)
         self._transfer_buffers: List[TransferBuffer] = []
 
+    def _get_first_channel_number_of_each_card(self) -> List[int]:
+        return [0] + [len(self._child_cards[n + 1].channels) for n in range(len(self._child_cards) - 1)]
+
     def disconnect(self) -> None:
-        destroy_handle(self._hub_handle)
+        if self._connected:
+            destroy_handle(self._hub_handle)
         for card in self._child_cards:
             card.disconnect()
+        self._connected = False
 
     def start_transfer(self) -> None:
         for card in self._child_cards:
@@ -61,6 +70,10 @@ class SpectrumStarHub(SpectrumDevice):
     @property
     def handle(self) -> DEVICE_HANDLE_TYPE:
         return self._hub_handle
+
+    @property
+    def connected(self) -> bool:
+        return self._connected
 
     def set_triggering_card(self, card_index: int) -> None:
         self._triggering_card = self._child_cards[card_index]
@@ -107,6 +120,22 @@ class SpectrumStarHub(SpectrumDevice):
     def apply_channel_enabling(self) -> None:
         for d in self._child_cards:
             d.apply_channel_enabling()
+
+    @property
+    def enabled_channels(self) -> List[int]:
+        return self._enabled_channels
+
+    def set_enabled_channels(self, channels_nums: List[int]) -> None:
+
+        channels_to_enable_all_cards = channels_nums
+
+        for child_card in self._child_cards:
+            n_channels_in_card = len(child_card.channels)
+            channels_to_enable_this_card = list(set(arange(n_channels_in_card)) & set(channels_to_enable_all_cards))
+            num_channels_to_enable_this_card = len(channels_to_enable_this_card)
+            child_card.set_enabled_channels(channels_to_enable_this_card)
+            channels_to_enable_all_cards = [num - n_channels_in_card
+                                            for num in channels_nums[num_channels_to_enable_this_card:]]
 
     @property
     def transfer_buffer(self) -> TransferBuffer:
@@ -204,4 +233,4 @@ def check_settings_constant_across_devices(values: List[int], setting_name: str)
 
 
 def create_visa_string_from_ip(ip_address: str, instrument_number: int) -> str:
-    return f"TCPIP::{ip_address}::inst{instrument_number}::INSTR"
+    return f"TCPIP[0]::{ip_address}::inst{instrument_number}::INSTR"

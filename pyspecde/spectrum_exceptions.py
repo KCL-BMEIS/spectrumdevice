@@ -28,9 +28,14 @@ class SpectrumTriggerOperationNotImplemented(NotImplementedError):
         super().__init__(f"Operation is not implemented for the requested trigger channel: {msg}")
 
 
+class SpectrumInvalidNumberOfEnabledChannels(IOError):
+    def __init__(self, msg: str) -> None:
+        super().__init__(f"Invalid number of channels. Only 1, 2, 4 or 8 channels can be enabled: {msg}")
+
+
 class SpectrumApiCallFailed(IOError):
-    def __init__(self, call_description: str, error_code: int) -> None:
-        super().__init__(f'"{call_description}" failed with a {self.error_code_string(error_code)}')
+    def __init__(self, call_description: str, error_code: int, message: str = 'Unknown', ) -> None:
+        super().__init__(f'"{call_description}" failed with "{message}" ({self.error_code_string(error_code)})')
 
     @classmethod
     def error_code_string(cls, error_code: int) -> str:

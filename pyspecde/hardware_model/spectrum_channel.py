@@ -29,14 +29,6 @@ class SpectrumChannel(SpectrumChannelInterface):
         return int(self.name.name.split("CHANNEL")[-1])
 
     @property
-    def enabled(self) -> bool:
-        return self._enabled
-
-    def set_enabled(self, enabled: bool) -> None:
-        self._enabled = enabled
-        self._parent_device.apply_channel_enabling()
-
-    @property
     def vertical_range_mv(self) -> int:
         return self._parent_device.get_spectrum_api_param(VERTICAL_RANGE_COMMANDS[self._number])
 
