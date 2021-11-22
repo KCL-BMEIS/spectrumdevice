@@ -28,7 +28,8 @@ class StarHubTest(SingleCardTest):
         self._all_spectrum_channel_identifiers.sort()  # Enums are unordered so ensure channels are in ascending order
 
     def tearDown(self) -> None:
-        self._device.disconnect()
+        if not self._MOCK_MODE:
+            self._device.disconnect()
 
     def test_init(self) -> None:
         hub = mock_spectrum_star_hub_factory()

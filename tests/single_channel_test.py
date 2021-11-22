@@ -20,7 +20,8 @@ class SingleChannelTest(TestCase):
         self._channel = spectrum_channel_factory(0, self._device)
 
     def tearDown(self) -> None:
-        self._channel._parent_device.disconnect()
+        if SINGLE_CARD_TEST_MODE == SpectrumTestMode.REAL_HARDWARE:
+            self._channel._parent_device.disconnect()
 
     def test_vertical_range(self) -> None:
         v_range = 5000
