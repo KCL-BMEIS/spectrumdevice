@@ -16,7 +16,7 @@ from pyspecde.hardware_model.spectrum_interface import (
     SpectrumIntLengths,
 )
 from pyspecde.sdk_translation_layer import (
-    DEVICE_HANDLE_TYPE,
+    DEVICE_STATUS_TYPE, StatusCode, DEVICE_HANDLE_TYPE,
     TransferBuffer,
     AcquisitionMode,
     TriggerSource,
@@ -25,7 +25,7 @@ from pyspecde.sdk_translation_layer import (
     spectrum_handle_factory,
     destroy_handle,
 )
-from third_party.specde.py_header.regs import SPC_SYNC_ENABLEMASK
+from third_party.specde.py_header.regs import SPC_M2STATUS, SPC_SYNC_ENABLEMASK
 
 
 class SpectrumStarHub(SpectrumDevice):
@@ -50,6 +50,10 @@ class SpectrumStarHub(SpectrumDevice):
         for card in self._child_cards:
             card.disconnect()
         self._connected = False
+
+    @property
+    def status(self) -> DEVICE_STATUS_TYPE:
+        return [card.status for card in self._child_cards]
 
     def start_transfer(self) -> None:
         for card in self._child_cards:

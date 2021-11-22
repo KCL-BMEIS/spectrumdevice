@@ -5,10 +5,10 @@ from typing import List, Optional
 from numpy import ndarray
 
 from pyspecde.sdk_translation_layer import (
-    DEVICE_HANDLE_TYPE,
+    CARD_STATUS_TYPE, StatusCode, DEVICE_HANDLE_TYPE,
     TriggerSource,
     TransferBuffer,
-    set_transfer_buffer,
+    decode_card_status, set_transfer_buffer,
     destroy_handle,
     ExternalTriggerMode,
     EXTERNAL_TRIGGER_MODE_COMMANDS,
@@ -33,7 +33,7 @@ from third_party.specde.py_header.regs import (
     SPC_M2CMD,
     M2CMD_DATA_STARTDMA,
     M2CMD_DATA_STOPDMA,
-    SPC_TRIG_ORMASK,
+    SPC_M2STATUS, SPC_TRIG_ORMASK,
     SPC_TRIG_ANDMASK,
     SPC_CHENABLE,
     SPC_MIINST_MODULES,
@@ -57,6 +57,10 @@ class SpectrumCard(SpectrumDevice):
         self._enabled_channels: List[int] = [0]
         self._transfer_buffer: Optional[TransferBuffer] = None
         self.apply_channel_enabling()
+
+    @property
+    def status(self) -> CARD_STATUS_TYPE:
+        return decode_card_status(self.get_spectrum_api_param(SPC_M2STATUS))
 
     def start_transfer(self) -> None:
         self.set_spectrum_api_param(SPC_M2CMD, M2CMD_DATA_STARTDMA)
