@@ -1,40 +1,23 @@
-from functools import reduce
-from operator import or_
-from typing import Tuple, List
 from unittest import TestCase
 
-from numpy import zeros, arange
-from numpy.random import randint, shuffle
+from numpy import zeros
 
 from pyspecde.hardware_model.spectrum_card import spectrum_card_factory
 from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
+from pyspecde.hardware_model.spectrum_interface import (
+    SpectrumDeviceInterface,
+)
 from pyspecde.hardware_model.spectrum_star_hub import create_visa_string_from_ip
+from pyspecde.sdk_translation_layer import (AcquisitionMode, BufferDirection, BufferType, ClockMode,
+                                            ExternalTriggerMode, SpectrumChannelName, TransferBuffer, TriggerSource,
+                                            transfer_buffer_factory)
 from pyspecde.spectrum_exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumExternalTriggerNotEnabled,
     SpectrumTriggerOperationNotImplemented,
-    SpectrumApiCallFailed,
-)
-from pyspecde.hardware_model.spectrum_interface import (
-    SpectrumDeviceInterface,
-)
-from pyspecde.sdk_translation_layer import (
-    AcquisitionMode,
-    TriggerSource,
-    ClockMode,
-    SpectrumChannelName,
-    TransferBuffer,
-    BufferType,
-    BufferDirection,
-    ExternalTriggerMode,
 )
 from tests.mock_spectrum_hardware import mock_spectrum_card_factory
-from tests.test_configuration import (
-    TEST_SPECTRUM_CARD_CONFIG,
-    SpectrumTestMode,
-    SINGLE_CARD_TEST_MODE,
-    SpectrumCardConfig,
-)
+from tests.test_configuration import (SINGLE_CARD_TEST_MODE, SpectrumTestMode, TEST_SPECTRUM_CARD_CONFIG)
 from third_party.specde.py_header.regs import SPC_CHENABLE
 
 
@@ -157,13 +140,28 @@ class SingleCardTest(TestCase):
                 self._device.set_acquisition_length_samples(4096)
             self.setUp()
 
-    def test_run(self) -> None:
+    def test_acquisition(self) -> None:
         if self._MOCK_MODE:
             with self.assertRaises(SpectrumDeviceNotConnected):
                 self._device.start_acquisition()
         else:
-            # todo: implement run test for real device
-            raise NotImplementedError()
+            window_length_samples = 16384
+            acquisition_timeout_ms = 1000
+            self._device.set_enabled_channels([0])
+            self._device.set_trigger_sources([TriggerSource.SPC_TMASK_SOFTWARE])
+            self._device.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
+            self._device.set_acquisition_length_samples(window_length_samples)
+            self._device.set_post_trigger_length_samples(window_length_samples)
+            self._device.set_timeout_ms(acquisition_timeout_ms)
+            self._device.start_acquisition()
+            self._device.wait_for_acquisition_to_complete()
+            transfer_buffer = transfer_buffer_factory(window_length_samples * len(self._device.enabled_channels))
+            self._device.set_transfer_buffer(transfer_buffer)
+            self._device.start_transfer()
+            self._device.wait_for_transfer_to_complete()
+            acquired_waveform = self._device.transfer_buffer.data_buffer
+            self.assertEqual(len(acquired_waveform), window_length_samples)
+            self.assertTrue(acquired_waveform.sum() != 0.0)
 
     def test_stop(self) -> None:
         if self._MOCK_MODE:

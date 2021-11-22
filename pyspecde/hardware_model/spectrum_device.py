@@ -46,7 +46,7 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
             else:
                 raise ValueError("Spectrum integer length not recognised.")
         else:
-            raise SpectrumDeviceNotConnected('The device has been disconnected.')
+            raise SpectrumDeviceNotConnected("The device has been disconnected.")
 
     def get_spectrum_api_param(
         self,
@@ -61,4 +61,4 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
             else:
                 raise ValueError("Spectrum integer length not recognised.")
         else:
-            raise SpectrumDeviceNotConnected('The device has been disconnected.')
+            raise SpectrumDeviceNotConnected("The device has been disconnected.")

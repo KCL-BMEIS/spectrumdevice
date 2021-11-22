@@ -34,7 +34,12 @@ class SpectrumInvalidNumberOfEnabledChannels(IOError):
 
 
 class SpectrumApiCallFailed(IOError):
-    def __init__(self, call_description: str, error_code: int, message: str = 'Unknown', ) -> None:
+    def __init__(
+        self,
+        call_description: str,
+        error_code: int,
+        message: str = "Unknown",
+    ) -> None:
         super().__init__(f'"{call_description}" failed with "{message}" ({self.error_code_string(error_code)})')
 
     @classmethod

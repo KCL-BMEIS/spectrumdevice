@@ -18,7 +18,8 @@ from pyspecde.sdk_translation_layer import (
 from pyspecde.hardware_model.spectrum_channel import spectrum_channel_factory
 from pyspecde.hardware_model.spectrum_device import SpectrumDevice
 from pyspecde.spectrum_exceptions import (
-    SpectrumInvalidNumberOfEnabledChannels, SpectrumNoTransferBufferDefined,
+    SpectrumInvalidNumberOfEnabledChannels,
+    SpectrumNoTransferBufferDefined,
     SpectrumIOError,
     SpectrumExternalTriggerNotEnabled,
     SpectrumTriggerOperationNotImplemented,
@@ -105,7 +106,7 @@ class SpectrumCard(SpectrumDevice):
             self._enabled_channels = channels_nums
             self.apply_channel_enabling()
         else:
-            raise SpectrumInvalidNumberOfEnabledChannels(f'{len(channels_nums)} cannot be enabled at once.')
+            raise SpectrumInvalidNumberOfEnabledChannels(f"{len(channels_nums)} cannot be enabled at once.")
 
     @property
     def trigger_sources(self) -> List[TriggerSource]:
@@ -180,8 +181,9 @@ class SpectrumCard(SpectrumDevice):
             bitwise_or_of_enabled_channels = reduce(or_, enabled_channel_spectrum_values)
             self.set_spectrum_api_param(SPC_CHENABLE, bitwise_or_of_enabled_channels)
         else:
-            raise SpectrumInvalidNumberOfEnabledChannels(f'Cannot enable {len(enabled_channel_spectrum_values)} '
-                                                         f'channels on one card.')
+            raise SpectrumInvalidNumberOfEnabledChannels(
+                f"Cannot enable {len(enabled_channel_spectrum_values)} " f"channels on one card."
+            )
 
     def _init_channels(self) -> List[SpectrumChannelInterface]:
         num_modules = self.get_spectrum_api_param(SPC_MIINST_MODULES)

@@ -75,9 +75,15 @@ from third_party.specde.py_header.regs import (
     CHANNEL15,
     SPC_REC_FIFO_SINGLE,
 )
-from third_party.specde.py_header.spcerr import ERR_INVALIDHANDLE, ERR_OK, ERR_LASTERR, ERR_SETUP, ERR_TIMEOUT, \
-    ERR_ABORT, \
-    ERR_VALUE
+from third_party.specde.py_header.spcerr import (
+    ERR_INVALIDHANDLE,
+    ERR_OK,
+    ERR_LASTERR,
+    ERR_SETUP,
+    ERR_TIMEOUT,
+    ERR_ABORT,
+    ERR_VALUE,
+)
 
 try:
     from third_party.specde.pyspcm import (
@@ -268,20 +274,20 @@ class SpectrumChannelName(Enum):
 
 def error_handler(func: Callable) -> Callable:
 
-    unreported_unraised_error_codes = {ERR_OK: 'Execution OK, no error'}
+    unreported_unraised_error_codes = {ERR_OK: "Execution OK, no error"}
 
     reported_unraised_error_codes: Dict[int, str] = {
-        ERR_LASTERR: 'Old error waiting to be read. Please read the full error information before proceeding. The '
-                     'driver is locked until the error information can be read.',
-        ERR_TIMEOUT: 'A timeout occurred while waiting for an interrupt.',
-        ERR_ABORT: 'Abort of wait function. The function has been aborted from another thread.'
+        ERR_LASTERR: "Old error waiting to be read. Please read the full error information before proceeding. The "
+        "driver is locked until the error information can be read.",
+        ERR_TIMEOUT: "A timeout occurred while waiting for an interrupt.",
+        ERR_ABORT: "Abort of wait function. The function has been aborted from another thread.",
     }
 
     known_raised_error_codes = {
-        ERR_VALUE: 'The value for this register is not in a valid range. The allowed values and ragnes are listed in'
-                   'the board specific documentation.',
-        ERR_INVALIDHANDLE: 'The used handle is not valid.',
-        ERR_SETUP: 'The programmed setup for the card is not valid.'
+        ERR_VALUE: "The value for this register is not in a valid range. The allowed values and ragnes are listed in"
+        "the board specific documentation.",
+        ERR_INVALIDHANDLE: "The used handle is not valid.",
+        ERR_SETUP: "The programmed setup for the card is not valid.",
     }
 
     @wraps(func)
@@ -290,12 +296,15 @@ def error_handler(func: Callable) -> Callable:
         if error_code in unreported_unraised_error_codes:
             pass
         elif error_code in reported_unraised_error_codes:
-            print(f"Unraised spectrum error from {func.__name__}: {reported_unraised_error_codes[error_code]} "
-                  f"({error_code})")
+            print(
+                f"Unraised spectrum error from {func.__name__}: {reported_unraised_error_codes[error_code]} "
+                f"({error_code})"
+            )
         elif error_code in known_raised_error_codes:
             raise SpectrumApiCallFailed(func.__name__, error_code, known_raised_error_codes[error_code])
         else:
-            raise SpectrumApiCallFailed(func.__name__, error_code, f'command or value {args[1]}.')
+            raise SpectrumApiCallFailed(func.__name__, error_code, f"command or value {args[1]}.")
+
     return wrapper
 
 

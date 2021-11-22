@@ -44,7 +44,6 @@ class SpectrumIntLengths(Enum):
 
 
 class SpectrumDeviceInterface(ABC):
-
     @property
     @abstractmethod
     def connected(self) -> bool:

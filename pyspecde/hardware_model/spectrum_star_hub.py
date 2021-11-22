@@ -134,8 +134,9 @@ class SpectrumStarHub(SpectrumDevice):
             channels_to_enable_this_card = list(set(arange(n_channels_in_card)) & set(channels_to_enable_all_cards))
             num_channels_to_enable_this_card = len(channels_to_enable_this_card)
             child_card.set_enabled_channels(channels_to_enable_this_card)
-            channels_to_enable_all_cards = [num - n_channels_in_card
-                                            for num in channels_nums[num_channels_to_enable_this_card:]]
+            channels_to_enable_all_cards = [
+                num - n_channels_in_card for num in channels_nums[num_channels_to_enable_this_card:]
+            ]
 
     @property
     def transfer_buffer(self) -> TransferBuffer:
