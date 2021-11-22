@@ -7,7 +7,7 @@ from pyspecde.sdk_translation_layer import (
     transfer_buffer_factory,
 )
 
-device_ip = "192.168.0.1"
+device_ip = "169.254.142.75"
 
 window_length_samples = 16384
 bit_depth = 16

@@ -51,12 +51,6 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
     def disconnect(self) -> None:
         raise SpectrumDeviceNotConnected("Cannot disconnect mock card")
 
-    def start_transfer(self) -> None:
-        raise SpectrumDeviceNotConnected("Cannot start dma on mock device")
-
-    def stop_transfer(self) -> None:
-        raise SpectrumDeviceNotConnected("Cannot stop dma on mock device")
-
     def set_transfer_buffer(self, buffer: TransferBuffer) -> None:
         self._transfer_buffer = buffer
 
@@ -65,6 +59,15 @@ class MockSpectrumStarHub(SpectrumStarHub, MockSpectrumDevice):
     def __init__(self, hub_handle: DEVICE_HANDLE_TYPE, child_cards: Sequence[SpectrumCard], master_card_index: int):
         MockSpectrumDevice.__init__(self)
         SpectrumStarHub.__init__(self, hub_handle, child_cards, master_card_index)
+
+    def disconnect(self) -> None:
+        raise SpectrumDeviceNotConnected("Cannot disconnect mock card")
+
+    def start_transfer(self) -> None:
+        raise SpectrumDeviceNotConnected("Cannot stop dma on mock device")
+
+    def stop_transfer(self) -> None:
+        raise SpectrumDeviceNotConnected("Cannot stop dma on mock device")
 
     @property
     def transfer_buffer(self) -> TransferBuffer:
