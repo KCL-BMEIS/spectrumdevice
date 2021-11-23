@@ -31,6 +31,7 @@ netbox.set_transfer_buffer()
 netbox.start_transfer()
 netbox.wait_for_transfer_to_complete()
 acquired_waveforms = netbox.get_waveforms()
+netbox.reset()
 netbox.disconnect()
 
 # Plot waveforms

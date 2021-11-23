@@ -2,14 +2,22 @@ from ctypes import c_void_p, create_string_buffer, byref
 from dataclasses import dataclass
 from enum import Enum
 from functools import wraps
-from typing import Dict, List, NewType, Callable, Any, Tuple, Union
+from typing import Dict, List, NewType, Callable, Any
 
 from numpy import ndarray, zeros, int16
 
 from pyspecde.spectrum_exceptions import SpectrumApiCallFailed, SpectrumIOError
 from third_party.specde.py_header.regs import (
-    M2STAT_CARD_PRETRIGGER, M2STAT_CARD_READY, M2STAT_CARD_SEGMENT_PRETRG, M2STAT_CARD_TRIGGER, M2STAT_DATA_BLOCKREADY,
-    M2STAT_DATA_END, M2STAT_DATA_ERROR, M2STAT_DATA_OVERRUN, M2STAT_EXTRA_BLOCKREADY, M2STAT_NONE, SPC_REC_STD_SINGLE,
+    M2STAT_CARD_PRETRIGGER,
+    M2STAT_CARD_READY,
+    M2STAT_CARD_SEGMENT_PRETRG,
+    M2STAT_CARD_TRIGGER,
+    M2STAT_DATA_BLOCKREADY,
+    M2STAT_DATA_END,
+    M2STAT_DATA_ERROR,
+    M2STAT_DATA_OVERRUN,
+    M2STAT_NONE,
+    SPC_REC_STD_SINGLE,
     SPC_REC_FIFO_MULTI,
     SPC_TMASK_SOFTWARE,
     SPC_TMASK_EXT0,
@@ -197,19 +205,19 @@ class StatusCode(Enum):
     M2STAT_EXTRA_ERROR = M2STAT_DATA_ERROR
 
 
-CARD_STATUS_TYPE = NewType("CARD_STATUS_TYPE", Tuple[StatusCode, StatusCode, StatusCode])
-DEVICE_STATUS_TYPE = NewType("DEVICE_STATUS_TYPE", Union[CARD_STATUS_TYPE, List[CARD_STATUS_TYPE]])
+CARD_STATUS_TYPE = NewType("CARD_STATUS_TYPE", List[StatusCode])
+STAR_HUB_STATUS_TYPE = NewType("STAR_HUB_STATUS_TYPE", List[CARD_STATUS_TYPE])
 
 
-def decode_card_status(code: int) -> CARD_STATUS_TYPE:
-    card_status_start_value = M2STAT_CARD_PRETRIGGER
-    data_status_start_value = M2STAT_DATA_BLOCKREADY
-    extra_status_start_value = M2STAT_EXTRA_BLOCKREADY
-    hex_mask = f'{code:4x}'.replace(' ', '0')
-    card_status = StatusCode(int(hex_mask[3]) + card_status_start_value - 1)
-    data_status = StatusCode(int(hex_mask[1]) + data_status_start_value - 1)
-    extra_status = StatusCode(int(hex_mask[0]) + extra_status_start_value - 1)
-    return CARD_STATUS_TYPE((card_status, data_status, extra_status))
+def decode_status(code: int) -> CARD_STATUS_TYPE:
+    try:
+        return CARD_STATUS_TYPE([StatusCode(code)])
+    except ValueError:
+        possible_status_codes = sorted([s.value for s in StatusCode])
+        active_status_codes = list(
+            filter(lambda x: x > 0, [possible_status & code for possible_status in possible_status_codes])
+        )
+        return CARD_STATUS_TYPE([StatusCode(active_status) for active_status in active_status_codes])
 
 
 class AcquisitionMode(Enum):

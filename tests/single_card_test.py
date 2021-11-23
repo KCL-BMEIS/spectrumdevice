@@ -173,11 +173,3 @@ class SingleCardTest(TestCase):
         self._device.set_transfer_buffer(transfer_buffer)
         self._device.start_transfer()
         self._device.wait_for_transfer_to_complete()
-
-    def test_stop(self) -> None:
-        if self._MOCK_MODE:
-            with self.assertRaises(SpectrumDeviceNotConnected):
-                self._device.stop_acquisition()
-        else:
-            # todo: imlement stop test for real device
-            raise NotImplementedError()

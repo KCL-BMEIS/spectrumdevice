@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from numpy import ndarray
 
 from pyspecde.sdk_translation_layer import (
+    CARD_STATUS_TYPE,
     DEVICE_HANDLE_TYPE,
+    STAR_HUB_STATUS_TYPE,
     TransferBuffer,
     AcquisitionMode,
     TriggerSource,
@@ -49,6 +51,14 @@ class SpectrumDeviceInterface(ABC):
     @property
     @abstractmethod
     def connected(self) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def reset(self) -> None:
+        raise NotImplementedError()
+
+    @property
+    def status(self) -> Union[CARD_STATUS_TYPE, STAR_HUB_STATUS_TYPE]:
         raise NotImplementedError()
 
     @property

@@ -2,6 +2,7 @@ from abc import ABC
 
 from pyspecde.spectrum_exceptions import SpectrumDeviceNotConnected
 from third_party.specde.py_header.regs import (
+    M2CMD_CARD_RESET,
     M2CMD_CARD_START,
     SPC_M2CMD,
     M2CMD_CARD_ENABLETRIGGER,
@@ -22,6 +23,9 @@ from pyspecde.sdk_translation_layer import (
 
 
 class SpectrumDevice(SpectrumDeviceInterface, ABC):
+    def reset(self) -> None:
+        self.set_spectrum_api_param(SPC_M2CMD, M2CMD_CARD_RESET)
+
     def start_acquisition(self) -> None:
         self.set_spectrum_api_param(SPC_M2CMD, M2CMD_CARD_START | M2CMD_CARD_ENABLETRIGGER)
 
