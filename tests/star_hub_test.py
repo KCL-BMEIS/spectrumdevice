@@ -17,8 +17,9 @@ class StarHubTest(SingleCardTest):
             self._device: SpectrumStarHub = mock_spectrum_star_hub_factory()
         else:
             self._device = spectrum_star_hub_factory(
-                TEST_SPECTRUM_STAR_HUB_CONFIG.ip_address, TEST_SPECTRUM_STAR_HUB_CONFIG.num_cards,
-                TEST_SPECTRUM_STAR_HUB_CONFIG.master_card_index
+                TEST_SPECTRUM_STAR_HUB_CONFIG.ip_address,
+                TEST_SPECTRUM_STAR_HUB_CONFIG.num_cards,
+                TEST_SPECTRUM_STAR_HUB_CONFIG.master_card_index,
             )
 
         self._expected_num_channels = array(
@@ -80,8 +81,9 @@ class StarHubTest(SingleCardTest):
             with self.assertRaises(SpectrumDeviceNotConnected):
                 self._device.start_acquisition()
         else:
-            first_channel_each_card = [0] + [len(self._device._child_cards[n + 1].channels)
-                                             for n in range(len(self._device._child_cards) - 1)]
+            first_channel_each_card = [0] + [
+                len(self._device._child_cards[n + 1].channels) for n in range(len(self._device._child_cards) - 1)
+            ]
             window_length_samples = 16384
             acquisition_timeout_ms = 1000
             self._device.set_enabled_channels(first_channel_each_card)

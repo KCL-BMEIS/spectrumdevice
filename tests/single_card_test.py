@@ -8,16 +8,24 @@ from pyspecde.hardware_model.spectrum_interface import (
     SpectrumDeviceInterface,
 )
 from pyspecde.hardware_model.spectrum_star_hub import create_visa_string_from_ip
-from pyspecde.sdk_translation_layer import (AcquisitionMode, BufferDirection, BufferType, ClockMode,
-                                            ExternalTriggerMode, SpectrumChannelName, TransferBuffer, TriggerSource,
-                                            transfer_buffer_factory)
+from pyspecde.sdk_translation_layer import (
+    AcquisitionMode,
+    BufferDirection,
+    BufferType,
+    ClockMode,
+    ExternalTriggerMode,
+    SpectrumChannelName,
+    TransferBuffer,
+    TriggerSource,
+    transfer_buffer_factory,
+)
 from pyspecde.spectrum_exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumExternalTriggerNotEnabled,
     SpectrumTriggerOperationNotImplemented,
 )
 from tests.mock_spectrum_hardware import mock_spectrum_card_factory
-from tests.test_configuration import (SINGLE_CARD_TEST_MODE, SpectrumTestMode, TEST_SPECTRUM_CARD_CONFIG)
+from tests.test_configuration import SINGLE_CARD_TEST_MODE, SpectrumTestMode, TEST_SPECTRUM_CARD_CONFIG
 from third_party.specde.py_header.regs import SPC_CHENABLE
 
 
@@ -148,20 +156,23 @@ class SingleCardTest(TestCase):
             window_length_samples = 16384
             acquisition_timeout_ms = 1000
             self._device.set_enabled_channels([0])
-            self._device.set_trigger_sources([TriggerSource.SPC_TMASK_SOFTWARE])
-            self._device.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
-            self._device.set_acquisition_length_samples(window_length_samples)
-            self._device.set_post_trigger_length_samples(window_length_samples)
-            self._device.set_timeout_ms(acquisition_timeout_ms)
-            self._device.start_acquisition()
-            self._device.wait_for_acquisition_to_complete()
-            transfer_buffer = transfer_buffer_factory(window_length_samples * len(self._device.enabled_channels))
-            self._device.set_transfer_buffer(transfer_buffer)
-            self._device.start_transfer()
-            self._device.wait_for_transfer_to_complete()
+            self._simple_acquisition(window_length_samples, acquisition_timeout_ms)
             acquired_waveform = self._device.transfer_buffer.data_buffer
             self.assertEqual(len(acquired_waveform), window_length_samples)
             self.assertTrue(acquired_waveform.sum() != 0.0)
+
+    def _simple_acquisition(self, window_length_samples: int, acquisition_timeout_ms: int) -> None:
+        self._device.set_trigger_sources([TriggerSource.SPC_TMASK_SOFTWARE])
+        self._device.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
+        self._device.set_acquisition_length_samples(window_length_samples)
+        self._device.set_post_trigger_length_samples(window_length_samples)
+        self._device.set_timeout_ms(acquisition_timeout_ms)
+        self._device.start_acquisition()
+        self._device.wait_for_acquisition_to_complete()
+        transfer_buffer = transfer_buffer_factory(window_length_samples * len(self._device.enabled_channels))
+        self._device.set_transfer_buffer(transfer_buffer)
+        self._device.start_transfer()
+        self._device.wait_for_transfer_to_complete()
 
     def test_stop(self) -> None:
         if self._MOCK_MODE:

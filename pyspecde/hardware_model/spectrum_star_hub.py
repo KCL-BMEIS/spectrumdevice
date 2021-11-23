@@ -23,7 +23,7 @@ from pyspecde.sdk_translation_layer import (
     ExternalTriggerMode,
     ClockMode,
     spectrum_handle_factory,
-    destroy_handle
+    destroy_handle,
 )
 from third_party.specde.py_header.regs import SPC_SYNC_ENABLEMASK
 
