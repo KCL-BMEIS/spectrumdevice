@@ -1,11 +1,11 @@
 from abc import ABC
-from typing import cast, Sequence
+from typing import Optional, cast, Sequence
 
 from pyspecde.hardware_model.spectrum_card import SpectrumCard
 from pyspecde.hardware_model.spectrum_device import SpectrumDevice
 from pyspecde.spectrum_exceptions import SpectrumDeviceNotConnected
 from pyspecde.hardware_model.spectrum_interface import SpectrumIntLengths
-from pyspecde.sdk_translation_layer import DEVICE_HANDLE_TYPE, TransferBuffer
+from pyspecde.sdk_translation_layer import DEVICE_HANDLE_TYPE, TransferBuffer, transfer_buffer_factory
 from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub
 from tests.test_configuration import TEST_SPECTRUM_STAR_HUB_CONFIG, TEST_SPECTRUM_CARD_CONFIG
 from third_party.specde.py_header.regs import SPC_MIINST_MODULES, SPC_MIINST_CHPERMODULE
@@ -51,8 +51,13 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
     def disconnect(self) -> None:
         raise SpectrumDeviceNotConnected("Cannot disconnect mock card")
 
-    def set_transfer_buffer(self, buffer: TransferBuffer) -> None:
-        self._transfer_buffer = buffer
+    def set_transfer_buffer(self, buffer: Optional[TransferBuffer] = None) -> None:
+        if buffer:
+            self._transfer_buffer = buffer
+        else:
+            self._transfer_buffer = transfer_buffer_factory(
+                self.acquisition_length_samples * len(self.enabled_channels)
+            )
 
 
 class MockSpectrumStarHub(SpectrumStarHub, MockSpectrumDevice):

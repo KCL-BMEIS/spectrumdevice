@@ -1,9 +1,10 @@
 from copy import deepcopy
 from functools import reduce
 from operator import or_
-from typing import List, Sequence
+from typing import List, Optional, Sequence
 
 from numpy import arange
+from numpy.core.records import ndarray
 
 from pyspecde.hardware_model.spectrum_device import (
     SpectrumDevice,
@@ -22,7 +23,7 @@ from pyspecde.sdk_translation_layer import (
     ExternalTriggerMode,
     ClockMode,
     spectrum_handle_factory,
-    destroy_handle,
+    destroy_handle
 )
 from third_party.specde.py_header.regs import SPC_SYNC_ENABLEMASK
 
@@ -36,17 +37,12 @@ class SpectrumStarHub(SpectrumDevice):
     ):
         self._connected = True
         self._child_cards = child_cards
-        self._enabled_channels: List[int] = self._get_first_channel_number_of_each_card()
         self._master_card = child_cards[master_card_index]
         self._triggering_card = child_cards[master_card_index]
         child_card_logical_indices = (2 ** n for n in range(len(self._child_cards)))
         self._hub_handle = hub_handle
         all_cards_binary_mask = reduce(or_, child_card_logical_indices)
         self.set_spectrum_api_param(SPC_SYNC_ENABLEMASK, all_cards_binary_mask)
-        self._transfer_buffers: List[TransferBuffer] = []
-
-    def _get_first_channel_number_of_each_card(self) -> List[int]:
-        return [0] + [len(self._child_cards[n + 1].channels) for n in range(len(self._child_cards) - 1)]
 
     def disconnect(self) -> None:
         if self._connected:
@@ -123,7 +119,12 @@ class SpectrumStarHub(SpectrumDevice):
 
     @property
     def enabled_channels(self) -> List[int]:
-        return self._enabled_channels
+        enabled_channels = []
+        n_channels_in_previous_card = 0
+        for card in self._child_cards:
+            enabled_channels += [channel_num + n_channels_in_previous_card for channel_num in card.enabled_channels]
+            n_channels_in_previous_card = len(card.channels)
+        return enabled_channels
 
     def set_enabled_channels(self, channels_nums: List[int]) -> None:
 
@@ -146,12 +147,26 @@ class SpectrumStarHub(SpectrumDevice):
 
     @property
     def transfer_buffers(self) -> List[TransferBuffer]:
-        return self._transfer_buffers
+        return [card.transfer_buffer for card in self._child_cards]
 
-    def set_transfer_buffer(self, buffer: TransferBuffer) -> None:
-        self._transfer_buffers = [deepcopy(buffer) for _ in range(len(self._child_cards))]
-        for card, buffer in zip(self._child_cards, self._transfer_buffers):
-            card.set_transfer_buffer(buffer)
+    def set_transfer_buffer(self, buffer: Optional[TransferBuffer] = None) -> None:
+        if buffer:
+            buffers = [deepcopy(buffer) for _ in range(len(self._child_cards))]
+            for card, buffer in zip(self._child_cards, buffers):
+                card.set_transfer_buffer(buffer)
+        else:
+            for card in self._child_cards:
+                card.set_transfer_buffer()
+
+    def wait_for_acquisition_to_complete(self) -> None:
+        for card in self._child_cards:
+            card.wait_for_acquisition_to_complete()
+
+    def get_waveforms(self) -> List[ndarray]:
+        waveforms = []
+        for card in self._child_cards:
+            waveforms += card.get_waveforms()
+        return waveforms
 
     @property
     def channels(self) -> List[SpectrumChannelInterface]:
@@ -215,11 +230,11 @@ class SpectrumStarHub(SpectrumDevice):
         return param_values_each_device
 
 
-def spectrum_star_hub_factory(ip_address: str, num_cards: int) -> SpectrumStarHub:
+def spectrum_star_hub_factory(ip_address: str, num_cards: int, master_card_index: int) -> SpectrumStarHub:
     card_visa_strings = [create_visa_string_from_ip(ip_address, card_num) for card_num in range(num_cards)]
     cards = [spectrum_card_factory(visa_string) for visa_string in card_visa_strings]
     hub_handle = spectrum_handle_factory("sync0")
-    return SpectrumStarHub(hub_handle, cards, 0)
+    return SpectrumStarHub(hub_handle, cards, master_card_index)
 
 
 def are_all_values_equal(values: List[int]) -> bool:

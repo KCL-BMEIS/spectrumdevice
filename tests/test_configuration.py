@@ -43,6 +43,7 @@ class SpectrumStarHubConfig:
         SpectrumCardConfig(visa_device_num=0),
         SpectrumCardConfig(visa_device_num=1),
     )
+    master_card_index = 1
 
     @property
     def num_cards(self) -> int:

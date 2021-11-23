@@ -2,6 +2,8 @@ from functools import reduce
 from operator import or_
 from typing import List, Optional
 
+from numpy import ndarray
+
 from pyspecde.sdk_translation_layer import (
     DEVICE_HANDLE_TYPE,
     TriggerSource,
@@ -14,6 +16,7 @@ from pyspecde.sdk_translation_layer import (
     AcquisitionMode,
     ClockMode,
     spectrum_handle_factory,
+    transfer_buffer_factory,
 )
 from pyspecde.hardware_model.spectrum_channel import spectrum_channel_factory
 from pyspecde.hardware_model.spectrum_device import SpectrumDevice
@@ -26,6 +29,7 @@ from pyspecde.spectrum_exceptions import (
 )
 from pyspecde.hardware_model.spectrum_interface import SpectrumChannelInterface, SpectrumIntLengths
 from third_party.specde.py_header.regs import (
+    M2CMD_CARD_WAITREADY,
     SPC_M2CMD,
     M2CMD_DATA_STARTDMA,
     M2CMD_DATA_STOPDMA,
@@ -70,9 +74,25 @@ class SpectrumCard(SpectrumDevice):
         else:
             raise SpectrumNoTransferBufferDefined("Cannot find TransferBuffer.")
 
-    def set_transfer_buffer(self, buffer: TransferBuffer) -> None:
-        self._transfer_buffer = buffer
-        set_transfer_buffer(self.handle, buffer)
+    def set_transfer_buffer(self, buffer: Optional[TransferBuffer] = None) -> None:
+        if buffer:
+            self._transfer_buffer = buffer
+        else:
+            self._transfer_buffer = transfer_buffer_factory(
+                self.acquisition_length_samples * len(self.enabled_channels)
+            )
+        set_transfer_buffer(self.handle, self._transfer_buffer)
+
+    def get_waveforms(self) -> List[ndarray]:
+        waveforms = []
+        for i in range(len(self.enabled_channels)):
+            start_sample = i * self.acquisition_length_samples
+            stop_sample = start_sample + self.acquisition_length_samples
+            waveforms.append(self.transfer_buffer.data_buffer[start_sample:stop_sample])
+        return waveforms
+
+    def wait_for_acquisition_to_complete(self) -> None:
+        self.set_spectrum_api_param(SPC_M2CMD, M2CMD_CARD_WAITREADY)
 
     def disconnect(self) -> None:
         if self.connected:

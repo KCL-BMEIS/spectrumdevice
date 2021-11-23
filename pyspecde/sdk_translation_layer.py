@@ -79,6 +79,7 @@ from third_party.specde.py_header.spcerr import (
     ERR_INVALIDHANDLE,
     ERR_OK,
     ERR_LASTERR,
+    ERR_RUNNING,
     ERR_SETUP,
     ERR_TIMEOUT,
     ERR_ABORT,
@@ -284,10 +285,12 @@ def error_handler(func: Callable) -> Callable:
     }
 
     known_raised_error_codes = {
-        ERR_VALUE: "The value for this register is not in a valid range. The allowed values and ragnes are listed in"
+        ERR_VALUE: "The value for this register is not in a valid range. The allowed values and ranges are listed in"
         "the board specific documentation.",
         ERR_INVALIDHANDLE: "The used handle is not valid.",
         ERR_SETUP: "The programmed setup for the card is not valid.",
+        ERR_RUNNING: "The board is still running. this function is not available now or this register is not accessible"
+        " now.",
     }
 
     @wraps(func)

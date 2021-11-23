@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import List
+from typing import List, Optional
+
+from numpy import ndarray
 
 from pyspecde.sdk_translation_layer import (
     DEVICE_HANDLE_TYPE,
@@ -92,7 +94,11 @@ class SpectrumDeviceInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def set_transfer_buffer(self, buffer: TransferBuffer) -> None:
+    def set_transfer_buffer(self, buffer: Optional[TransferBuffer] = None) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_waveforms(self) -> List[ndarray]:
         raise NotImplementedError()
 
     @property

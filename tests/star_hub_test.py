@@ -3,7 +3,7 @@ from numpy import zeros, array
 from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
 from pyspecde.sdk_translation_layer import SpectrumChannelName, TransferBuffer, BufferType, BufferDirection
 from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub, spectrum_star_hub_factory
-from pyspecde.spectrum_exceptions import SpectrumInvalidNumberOfEnabledChannels
+from pyspecde.spectrum_exceptions import SpectrumDeviceNotConnected, SpectrumInvalidNumberOfEnabledChannels
 from tests.mock_spectrum_hardware import mock_spectrum_star_hub_factory
 from tests.single_card_test import SingleCardTest
 from tests.test_configuration import TEST_SPECTRUM_STAR_HUB_CONFIG, STAR_HUB_TEST_MODE, SpectrumTestMode
@@ -17,7 +17,8 @@ class StarHubTest(SingleCardTest):
             self._device: SpectrumStarHub = mock_spectrum_star_hub_factory()
         else:
             self._device = spectrum_star_hub_factory(
-                TEST_SPECTRUM_STAR_HUB_CONFIG.ip_address, TEST_SPECTRUM_STAR_HUB_CONFIG.num_cards
+                TEST_SPECTRUM_STAR_HUB_CONFIG.ip_address, TEST_SPECTRUM_STAR_HUB_CONFIG.num_cards,
+                TEST_SPECTRUM_STAR_HUB_CONFIG.master_card_index
             )
 
         self._expected_num_channels = array(
@@ -73,3 +74,21 @@ class StarHubTest(SingleCardTest):
         with self.assertRaises(NotImplementedError):
             _ = self._device.transfer_buffer
         self.assertTrue((array(self._device.transfer_buffers) == buffer).all())
+
+    def test_acquisition(self) -> None:
+        if self._MOCK_MODE:
+            with self.assertRaises(SpectrumDeviceNotConnected):
+                self._device.start_acquisition()
+        else:
+            first_channel_each_card = [0] + [len(self._device._child_cards[n + 1].channels)
+                                             for n in range(len(self._device._child_cards) - 1)]
+            window_length_samples = 16384
+            acquisition_timeout_ms = 1000
+            self._device.set_enabled_channels(first_channel_each_card)
+            self._simple_acquisition(window_length_samples, acquisition_timeout_ms)
+            acquired_waveforms = self._device.get_waveforms()
+            self.assertEqual(len(acquired_waveforms), len(first_channel_each_card))
+            waveform_lengths = array([len(wfm) for wfm in acquired_waveforms])
+            self.assertTrue((waveform_lengths == window_length_samples).all())
+            waveform_sums = array([wfm.sum() for wfm in acquired_waveforms])
+            self.assertTrue((waveform_sums != 0.0).all())
