@@ -42,7 +42,7 @@ def spcm_dwSetParam_i64(handle: ctypes.c_void_p, command: int, value: int) -> No
     pass
 
 
-def spcm_hOpen(string_buffer: ctypes.Array[ctypes.c_char]) -> ctypes.c_void_p:
+def spcm_hOpen(string_buffer: ctypes.c_char_p) -> ctypes.c_void_p:
     pass
 
 
