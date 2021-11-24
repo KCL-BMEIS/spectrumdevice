@@ -82,7 +82,9 @@ from third_party.specde.py_header.regs import (
     CHANNEL13,
     CHANNEL14,
     CHANNEL15,
-    SPC_REC_FIFO_SINGLE,
+    SPC_REC_FIFO_SINGLE, SPCM_XMODE_DISABLE, SPCM_XMODE_ASYNCIN, SPCM_XMODE_ASYNCOUT, SPCM_XMODE_DIGIN,
+    SPCM_XMODE_TRIGIN, SPCM_XMODE_DIGOUT, SPCM_XMODE_TRIGOUT, SPCM_XMODE_RUNSTATE, SPCM_XMODE_ARMSTATE,
+    SPCM_XMODE_CONTOUTMARK,
 )
 from third_party.specde.py_header.spcerr import (
     ERR_INVALIDHANDLE,
@@ -313,6 +315,19 @@ class SpectrumChannelName(Enum):
     CHANNEL15 = CHANNEL15
 
 
+class IOLineMode(Enum):
+    SPCM_XMODE_DISABLE = SPCM_XMODE_DISABLE
+    SPCM_XMODE_ASYNCIN = SPCM_XMODE_ASYNCIN
+    SPCM_XMODE_ASYNCOUT = SPCM_XMODE_ASYNCOUT
+    SPCM_XMODE_DIGIN = SPCM_XMODE_DIGIN
+    SPCM_XMODE_TRIGIN = SPCM_XMODE_TRIGIN
+    SPCM_XMODE_DIGOUT = SPCM_XMODE_DIGOUT
+    SPCM_XMODE_TRIGOUT = SPCM_XMODE_TRIGOUT
+    SPCM_XMODE_RUNSTATE = SPCM_XMODE_RUNSTATE
+    SPCM_XMODE_ARMSTATE = SPCM_XMODE_ARMSTATE
+    SPCM_XMODE_CONTOUTMARK = SPCM_XMODE_CONTOUTMARK
+
+
 def error_handler(func: Callable) -> Callable:
 
     unreported_unraised_error_codes = {ERR_OK: "Execution OK, no error"}
@@ -385,11 +400,9 @@ def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffe
 
 def spectrum_handle_factory(visa_string: str) -> DEVICE_HANDLE_TYPE:
     try:
-        handle = DEVICE_HANDLE_TYPE(spcm_hOpen(create_string_buffer(bytes(visa_string, encoding="utf8"))))
-        # handle = spcm_hOpen(create_string_buffer(bytes(visa_string, encoding="utf8")))
+        return DEVICE_HANDLE_TYPE(spcm_hOpen(create_string_buffer(bytes(visa_string, encoding="utf8"))))
     except RuntimeError as er:
         SpectrumIOError(f"Could not connect to Spectrum card: {er}")
-    return handle
 
 
 def destroy_handle(handle: DEVICE_HANDLE_TYPE) -> None:
