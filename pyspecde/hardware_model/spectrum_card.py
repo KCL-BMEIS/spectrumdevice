@@ -104,12 +104,9 @@ class SpectrumCard(SpectrumDevice):
         set_transfer_buffer(self.handle, self._transfer_buffer)
 
     def get_waveforms(self) -> List[ndarray]:
-        waveforms = []
-        for i in range(len(self.enabled_channels)):
-            start_sample = i * self.acquisition_length_samples
-            stop_sample = start_sample + self.acquisition_length_samples
-            waveforms.append(self.transfer_buffer.data_buffer[start_sample:stop_sample])
-        return waveforms
+        waveforms_in_columns = self.transfer_buffer.data_buffer.reshape((self.acquisition_length_samples,
+                                                                        len(self.enabled_channels)))
+        return [waveform for waveform in waveforms_in_columns.T]
 
     def wait_for_acquisition_to_complete(self) -> None:
         self.set_spectrum_api_param(SPC_M2CMD, M2CMD_CARD_WAITREADY)
