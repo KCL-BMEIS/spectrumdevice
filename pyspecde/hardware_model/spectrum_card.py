@@ -1,6 +1,6 @@
 from functools import reduce
 from operator import or_
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from numpy import ndarray
 
@@ -19,6 +19,13 @@ from pyspecde.sdk_translation_layer import (
     ClockMode,
     spectrum_handle_factory,
     transfer_buffer_factory,
+    decode_available_io_modes,
+    CardFeature,
+    decode_card_features,
+    decode_advanced_card_features,
+    AdvancedCardFeature,
+    AvailableIOModes,
+    create_available_modes_enum_meta,
 )
 from pyspecde.hardware_model.spectrum_channel import spectrum_channel_factory
 from pyspecde.hardware_model.spectrum_device import SpectrumDevice
@@ -48,6 +55,12 @@ from third_party.specde.py_header.regs import (
     SPC_CLOCKMODE,
     SPC_SAMPLERATE,
     M2CMD_DATA_WAITDMA,
+    SPCM_X0_AVAILMODES,
+    SPC_PCIFEATURES,
+    SPC_PCIEXTFEATURES,
+    SPCM_X1_AVAILMODES,
+    SPCM_X2_AVAILMODES,
+    SPCM_X3_AVAILMODES,
 )
 
 
@@ -252,6 +265,27 @@ class SpectrumCard(SpectrumDevice):
 
     def set_clock_mode(self, mode: ClockMode) -> None:
         self.set_spectrum_api_param(SPC_CLOCKMODE, mode.value)
+
+    @property
+    def available_io_modes(self) -> AvailableIOModes:
+
+        available_modes_x0 = decode_available_io_modes(self.get_spectrum_api_param(SPCM_X0_AVAILMODES))
+        available_modes_x1 = decode_available_io_modes(self.get_spectrum_api_param(SPCM_X1_AVAILMODES))
+        available_modes_x2 = decode_available_io_modes(self.get_spectrum_api_param(SPCM_X2_AVAILMODES))
+        available_modes_x3 = decode_available_io_modes(self.get_spectrum_api_param(SPCM_X3_AVAILMODES))
+
+        return AvailableIOModes(
+            X0=create_available_modes_enum_meta(available_modes_x0),
+            X1=create_available_modes_enum_meta(available_modes_x1),
+            X2=create_available_modes_enum_meta(available_modes_x2),
+            X3=create_available_modes_enum_meta(available_modes_x3),
+        )
+
+    @property
+    def feature_list(self) -> Tuple[List[CardFeature], List[AdvancedCardFeature]]:
+        normal_features = decode_card_features(self.get_spectrum_api_param(SPC_PCIFEATURES))
+        advanced_features = decode_advanced_card_features(self.get_spectrum_api_param(SPC_PCIEXTFEATURES))
+        return normal_features, advanced_features
 
     @property
     def sample_rate_hz(self) -> int:

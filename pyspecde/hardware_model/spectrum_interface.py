@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Tuple
 
 from numpy import ndarray
 
@@ -14,6 +14,9 @@ from pyspecde.sdk_translation_layer import (
     ExternalTriggerMode,
     ClockMode,
     SpectrumChannelName,
+    CardFeature,
+    AdvancedCardFeature,
+    AvailableIOModes,
 )
 
 
@@ -204,6 +207,16 @@ class SpectrumDeviceInterface(ABC):
 
     @abstractmethod
     def set_sample_rate_hz(self, rate: int) -> None:
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def available_io_modes(self) -> AvailableIOModes:
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def feature_list(self) -> Tuple[List[CardFeature], List[AdvancedCardFeature]]:
         raise NotImplementedError()
 
     @abstractmethod

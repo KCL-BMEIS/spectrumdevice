@@ -1,6 +1,6 @@
 from ctypes import c_void_p, create_string_buffer, byref
 from dataclasses import dataclass
-from enum import Enum
+from enum import Enum, EnumMeta
 from functools import wraps
 from typing import Dict, List, NewType, Callable, Any
 
@@ -82,9 +82,43 @@ from third_party.specde.py_header.regs import (
     CHANNEL13,
     CHANNEL14,
     CHANNEL15,
-    SPC_REC_FIFO_SINGLE, SPCM_XMODE_DISABLE, SPCM_XMODE_ASYNCIN, SPCM_XMODE_ASYNCOUT, SPCM_XMODE_DIGIN,
-    SPCM_XMODE_TRIGIN, SPCM_XMODE_DIGOUT, SPCM_XMODE_TRIGOUT, SPCM_XMODE_RUNSTATE, SPCM_XMODE_ARMSTATE,
+    SPC_REC_FIFO_SINGLE,
+    SPCM_XMODE_DISABLE,
+    SPCM_XMODE_ASYNCIN,
+    SPCM_XMODE_ASYNCOUT,
+    SPCM_XMODE_DIGIN,
+    SPCM_XMODE_TRIGIN,
+    SPCM_XMODE_DIGOUT,
+    SPCM_XMODE_TRIGOUT,
+    SPCM_XMODE_RUNSTATE,
+    SPCM_XMODE_ARMSTATE,
     SPCM_XMODE_CONTOUTMARK,
+    SPCM_FEAT_MULTI,
+    SPCM_FEAT_GATE,
+    SPCM_FEAT_STARHUB6_EXTM,
+    SPCM_FEAT_TIMESTAMP,
+    SPCM_FEAT_DIGITAL,
+    SPCM_FEAT_STARHUB8_EXTM,
+    SPCM_FEAT_STARHUB4,
+    SPCM_FEAT_STARHUB5,
+    SPCM_FEAT_STARHUB16_EXTM,
+    SPCM_FEAT_STARHUB8,
+    SPCM_FEAT_STARHUB16,
+    SPCM_FEAT_ABA,
+    SPCM_FEAT_BASEXIO,
+    SPCM_FEAT_AMPLIFIER_10V,
+    SPCM_FEAT_STARHUBSYSMASTER,
+    SPCM_FEAT_DIFFMODE,
+    SPCM_FEAT_SEQUENCE,
+    SPCM_FEAT_AMPMODULE_10V,
+    SPCM_FEAT_STARHUBSYSSLAVE,
+    SPCM_FEAT_NETBOX,
+    SPCM_FEAT_REMOTESERVER,
+    SPCM_FEAT_SCAPP,
+    SPCM_FEAT_CUSTOMMOD_MASK,
+    SPCM_FEAT_EXTFW_SEGSTAT,
+    SPCM_FEAT_EXTFW_SEGAVERAGE,
+    SPCM_FEAT_EXTFW_BOXCAR,
 )
 from third_party.specde.py_header.spcerr import (
     ERR_INVALIDHANDLE,
@@ -212,14 +246,8 @@ STAR_HUB_STATUS_TYPE = NewType("STAR_HUB_STATUS_TYPE", List[CARD_STATUS_TYPE])
 
 
 def decode_status(code: int) -> CARD_STATUS_TYPE:
-    try:
-        return CARD_STATUS_TYPE([StatusCode(code)])
-    except ValueError:
-        possible_status_codes = sorted([s.value for s in StatusCode])
-        active_status_codes = list(
-            filter(lambda x: x > 0, [possible_status & code for possible_status in possible_status_codes])
-        )
-        return CARD_STATUS_TYPE([StatusCode(active_status) for active_status in active_status_codes])
+    possible_codes = [code.value for code in StatusCode]
+    return CARD_STATUS_TYPE([StatusCode(found_code) for found_code in _decode_bitmap_using_enum(code, possible_codes)])
 
 
 class AcquisitionMode(Enum):
@@ -328,6 +356,61 @@ class IOLineMode(Enum):
     SPCM_XMODE_CONTOUTMARK = SPCM_XMODE_CONTOUTMARK
 
 
+def decode_available_io_modes(value: int) -> List[IOLineMode]:
+    possible_values = [mode.value for mode in IOLineMode]
+    return [IOLineMode(found_value) for found_value in _decode_bitmap_using_enum(value, possible_values)]
+
+
+class CardFeature(Enum):
+    SPCM_FEAT_MULTI = SPCM_FEAT_MULTI
+    SPCM_FEAT_GATE = SPCM_FEAT_GATE
+    SPCM_FEAT_DIGITAL = SPCM_FEAT_DIGITAL
+    SPCM_FEAT_TIMESTAMP = SPCM_FEAT_TIMESTAMP
+    SPCM_FEAT_STARHUB6_EXTM = SPCM_FEAT_STARHUB6_EXTM
+    SPCM_FEAT_STARHUB8_EXTM = SPCM_FEAT_STARHUB8_EXTM
+    SPCM_FEAT_STARHUB4 = SPCM_FEAT_STARHUB4
+    SPCM_FEAT_STARHUB5 = SPCM_FEAT_STARHUB5
+    SPCM_FEAT_STARHUB16_EXTM = SPCM_FEAT_STARHUB16_EXTM
+    SPCM_FEAT_STARHUB8 = SPCM_FEAT_STARHUB8
+    SPCM_FEAT_STARHUB16 = SPCM_FEAT_STARHUB16
+    SPCM_FEAT_ABA = SPCM_FEAT_ABA
+    SPCM_FEAT_BASEXIO = SPCM_FEAT_BASEXIO
+    SPCM_FEAT_AMPLIFIER_10V = SPCM_FEAT_AMPLIFIER_10V
+    SPCM_FEAT_STARHUBSYSMASTER = SPCM_FEAT_STARHUBSYSMASTER
+    SPCM_FEAT_DIFFMODE = SPCM_FEAT_DIFFMODE
+    SPCM_FEAT_SEQUENCE = SPCM_FEAT_SEQUENCE
+    SPCM_FEAT_AMPMODULE_10V = SPCM_FEAT_AMPMODULE_10V
+    SPCM_FEAT_STARHUBSYSSLAVE = SPCM_FEAT_STARHUBSYSSLAVE
+    SPCM_FEAT_NETBOX = SPCM_FEAT_NETBOX
+    SPCM_FEAT_REMOTESERVER = SPCM_FEAT_REMOTESERVER
+    SPCM_FEAT_SCAPP = SPCM_FEAT_SCAPP
+    SPCM_FEAT_CUSTOMMOD_MASK = SPCM_FEAT_CUSTOMMOD_MASK
+
+
+def decode_card_features(value: int) -> List[CardFeature]:
+    possibe_values = [feature.value for feature in CardFeature]
+    return [CardFeature(found_value) for found_value in _decode_bitmap_using_enum(value, possibe_values)]
+
+
+class AdvancedCardFeature(Enum):
+    SPCM_FEAT_EXTFW_SEGSTAT = SPCM_FEAT_EXTFW_SEGSTAT
+    SPCM_FEAT_EXTFW_SEGAVERAGE = SPCM_FEAT_EXTFW_SEGAVERAGE
+    SPCM_FEAT_EXTFW_BOXCAR = SPCM_FEAT_EXTFW_BOXCAR
+
+
+def decode_advanced_card_features(value: int) -> List[AdvancedCardFeature]:
+    possible_values = [feature.value for feature in AdvancedCardFeature]
+    return [AdvancedCardFeature(found_value) for found_value in _decode_bitmap_using_enum(value, possible_values)]
+
+
+def _decode_bitmap_using_enum(bitmap_value: int, test_values: List[int]) -> List[int]:
+    possible_values = sorted(test_values)
+    values_in_bitmap = list(
+        filter(lambda x: x > 0, [possible_value & bitmap_value for possible_value in possible_values])
+    )
+    return values_in_bitmap
+
+
 def error_handler(func: Callable) -> Callable:
 
     unreported_unraised_error_codes = {ERR_OK: "Execution OK, no error"}
@@ -400,9 +483,10 @@ def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffe
 
 def spectrum_handle_factory(visa_string: str) -> DEVICE_HANDLE_TYPE:
     try:
-        return DEVICE_HANDLE_TYPE(spcm_hOpen(create_string_buffer(bytes(visa_string, encoding="utf8"))))
+        handle = DEVICE_HANDLE_TYPE(spcm_hOpen(create_string_buffer(bytes(visa_string, encoding="utf8"))))
     except RuntimeError as er:
         SpectrumIOError(f"Could not connect to Spectrum card: {er}")
+    return handle
 
 
 def destroy_handle(handle: DEVICE_HANDLE_TYPE) -> None:
@@ -410,3 +494,15 @@ def destroy_handle(handle: DEVICE_HANDLE_TYPE) -> None:
         spcm_vClose(handle)
     except RuntimeError as er:
         SpectrumIOError(f"Could not disconnect from Spectrum card: {er}")
+
+
+@dataclass
+class AvailableIOModes:
+    X0: EnumMeta
+    X1: EnumMeta
+    X2: EnumMeta
+    X3: EnumMeta
+
+
+def create_available_modes_enum_meta(available_modes: List[IOLineMode]) -> EnumMeta:
+    return Enum("AvailableModes", {mode.name: mode.value for mode in available_modes})  # type: ignore

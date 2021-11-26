@@ -1,7 +1,7 @@
 from copy import deepcopy
 from functools import reduce
 from operator import or_
-from typing import List, Optional, Sequence
+from typing import List, Optional, Sequence, Tuple
 
 from numpy import arange
 from numpy.core.records import ndarray
@@ -25,8 +25,11 @@ from pyspecde.sdk_translation_layer import (
     ClockMode,
     spectrum_handle_factory,
     destroy_handle,
+    CardFeature,
+    AdvancedCardFeature,
+    AvailableIOModes,
 )
-from third_party.specde.py_header.regs import SPC_SYNC_ENABLEMASK
+from third_party.specde.py_header.regs import SPC_SYNC_ENABLEMASK, SPC_PCIFEATURES
 
 
 class SpectrumStarHub(SpectrumDevice):
@@ -219,6 +222,18 @@ class SpectrumStarHub(SpectrumDevice):
         for d in self._child_cards:
             timeouts.append(d.timeout_ms)
         return check_settings_constant_across_devices(timeouts, __name__)
+
+    @property
+    def feature_list(self) -> Tuple[List[CardFeature], List[AdvancedCardFeature]]:
+        feature_list_codes = []
+        for card in self._child_cards:
+            feature_list_codes.append(card.get_spectrum_api_param(SPC_PCIFEATURES))
+        check_settings_constant_across_devices(feature_list_codes, __name__)
+        return self._child_cards[0].feature_list
+
+    @property
+    def available_io_modes(self) -> AvailableIOModes:
+        return self._master_card.available_io_modes
 
     def set_timeout_ms(self, timeout_ms: int) -> None:
         for d in self._child_cards:
