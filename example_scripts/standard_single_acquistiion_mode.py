@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
-from matplotlib import figure
 from matplotlib.pyplot import plot, show
-from numpy import arange, savetxt
+from numpy import arange, mean, savetxt, stack
 
 from pyspecde.hardware_model.spectrum_star_hub import spectrum_star_hub_factory
 from pyspecde.sdk_translation_layer import (
@@ -12,15 +11,18 @@ from pyspecde.sdk_translation_layer import (
 # Choose configuration
 device_ip = "169.254.142.75"
 window_length_seconds = 10e-6
+num_averages = 5
+plot_crop_seconds = 0e-6
 sample_rate_hz = 40e6
 acquisition_timeout_ms = 1000
 trigger_level_mv = 1000
 vertical_range_mv = 200
 save_output = True
-save_dir = "C:\\3d_unt_pa_beacon\\"
-enabled_channels = [8, 16]  #, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+save_dir = "C:\\3d_unt_pa_beacon\\unt_lab_siggen_debug_261121\\"
+enabled_channels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 
 window_length_samples = int(sample_rate_hz * window_length_seconds)
+
 
 # Apply configuration
 netbox = spectrum_star_hub_factory(device_ip, 2, 1)
@@ -36,25 +38,37 @@ netbox.set_acquisition_length_samples(window_length_samples)
 netbox.set_post_trigger_length_samples(window_length_samples)
 netbox.set_timeout_ms(acquisition_timeout_ms)
 
-# Execute acquisition
-netbox.start_acquisition()
-netbox.wait_for_acquisition_to_complete()
+all_waveforms = []
 
-# Get waveform data and disconnect
-netbox.set_transfer_buffer()
-netbox.start_transfer()
-netbox.wait_for_transfer_to_complete()
-acquired_waveforms = netbox.get_waveforms()
+for repeat_index in range(num_averages):
+    # Execute acquisition
+    netbox.start_acquisition()
+    netbox.wait_for_acquisition_to_complete()
+
+    # Get waveform data
+    netbox.set_transfer_buffer()
+    netbox.start_transfer()
+    netbox.wait_for_transfer_to_complete()
+    waveforms = netbox.get_waveforms()
+
+    if save_output:
+        for wfm, channel_num in zip(waveforms, netbox.enabled_channels):
+            savetxt(save_dir + f'Channel_{channel_num:02d}_repeat_{repeat_index:03d}.txt', wfm)  # noqa
+
+    all_waveforms.append(waveforms)
+
+mean_waveforms = mean([stack(wfms) for wfms in all_waveforms], axis=0)
+
+# disconnect
 netbox.reset()
 netbox.disconnect()
 
 # Plot waveforms
-for wfm, channel_num in zip(acquired_waveforms, netbox.enabled_channels):
-    t = 1e6 * arange(len(wfm)) * (1 / sample_rate_hz)
-    plt.figure()
-    plot(t[100:], wfm[100:], label=str(channel_num))
+for wfm, channel_num in zip(mean_waveforms, netbox.enabled_channels):
+    dt = 1 / sample_rate_hz
+    plot_crop_samples = int(plot_crop_seconds / dt)
+    t = 1e6 * arange(len(wfm)) * dt
+    plot(t[plot_crop_samples:], wfm[plot_crop_samples:], label=str(channel_num))
     plt.xlabel('Time (us)')
-    if save_output:
-        savetxt(save_dir + str(channel_num) + ".txt", wfm)  # noqa
 plt.legend()
 show()
