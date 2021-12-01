@@ -61,6 +61,9 @@ from third_party.specde.py_header.regs import (
     SPCM_X1_AVAILMODES,
     SPCM_X2_AVAILMODES,
     SPCM_X3_AVAILMODES,
+    SPC_DATA_AVAIL_USER_LEN,
+    SPC_DATA_AVAIL_CARD_LEN,
+    SPC_SEGMENTSIZE,
 )
 
 
@@ -104,8 +107,16 @@ class SpectrumCard(SpectrumDevice):
         set_transfer_buffer(self.handle, self._transfer_buffer)
 
     def get_waveforms(self) -> List[ndarray]:
-        waveforms_in_columns = self.transfer_buffer.data_buffer.reshape((self.acquisition_length_samples,
-                                                                        len(self.enabled_channels)))
+        num_avilable_bytes = 0
+        if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
+            self.wait_for_transfer_to_complete()
+            num_avilable_bytes = self.get_spectrum_api_param(SPC_DATA_AVAIL_USER_LEN)
+        waveforms_in_columns = self.transfer_buffer.data_buffer.reshape(
+            (self.acquisition_length_samples, len(self.enabled_channels))
+        )
+        if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
+            self.set_spectrum_api_param(SPC_DATA_AVAIL_CARD_LEN, num_avilable_bytes)
+
         return [waveform for waveform in waveforms_in_columns.T]
 
     def wait_for_acquisition_to_complete(self) -> None:
@@ -233,6 +244,7 @@ class SpectrumCard(SpectrumDevice):
         return self.get_spectrum_api_param(SPC_MEMSIZE)
 
     def set_acquisition_length_samples(self, length_in_samples: int) -> None:
+        self.set_spectrum_api_param(SPC_SEGMENTSIZE, length_in_samples)
         self.set_spectrum_api_param(SPC_MEMSIZE, length_in_samples)
 
     @property

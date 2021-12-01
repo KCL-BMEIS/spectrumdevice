@@ -5,13 +5,21 @@ from numpy import arange, mean, savetxt, stack
 from pyspecde.hardware_model.spectrum_star_hub import spectrum_star_hub_factory
 from pyspecde.sdk_translation_layer import (
     AcquisitionMode,
-    ExternalTriggerMode, TriggerSource,
+    ExternalTriggerMode,
+    TriggerSource,
 )
 
 # Choose configuration
-from third_party.specde.py_header.regs import SPC_50OHM0, SPC_50OHM1, SPC_50OHM2, SPC_50OHM3, SPC_50OHM4, SPC_50OHM5, \
-    SPC_50OHM6, \
-    SPC_50OHM7
+from third_party.specde.py_header.regs import (
+    SPC_50OHM0,
+    SPC_50OHM1,
+    SPC_50OHM2,
+    SPC_50OHM3,
+    SPC_50OHM4,
+    SPC_50OHM5,
+    SPC_50OHM6,
+    SPC_50OHM7,
+)
 
 device_ip = "169.254.142.75"
 window_length_seconds = 40e-6
@@ -75,7 +83,7 @@ for repeat_index in range(num_averages):
 
     if save_output:
         for wfm, channel_num in zip(waveforms, netbox.enabled_channels):
-            savetxt(save_dir + f'Channel_{channel_num:02d}_repeat_{repeat_index:03d}.txt', wfm)  # noqa
+            savetxt(save_dir + f"Channel_{channel_num:02d}_repeat_{repeat_index:03d}.txt", wfm)  # noqa
 
     all_waveforms.append(waveforms)
 
@@ -92,6 +100,6 @@ for wfm, channel_num in zip(mean_waveforms, netbox.enabled_channels):
     t = 1e6 * arange(len(wfm)) * dt
     plt.figure()
     plot(t[plot_crop_samples:], wfm[plot_crop_samples:], label=str(channel_num))
-    plt.xlabel('Time (us)')
+    plt.xlabel("Time (us)")
 # plt.legend()
 show()
