@@ -30,7 +30,7 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         self.set_spectrum_api_param(SPC_M2CMD, M2CMD_CARD_START | M2CMD_CARD_ENABLETRIGGER)
 
     def stop_acquisition(self) -> None:
-        self.set_spectrum_api_param(SPC_M2CMD, M2CMD_CARD_STOP | M2CMD_CARD_DISABLETRIGGER)
+        self.set_spectrum_api_param(SPC_M2CMD, M2CMD_CARD_STOP)  # | M2CMD_CARD_DISABLETRIGGER)
 
     def set_spectrum_api_param(
         self,

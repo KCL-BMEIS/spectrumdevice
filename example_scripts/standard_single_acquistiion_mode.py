@@ -22,8 +22,8 @@ from third_party.specde.py_header.regs import (
 )
 
 device_ip = "169.254.142.75"
-window_length_seconds = 40e-6
-num_averages = 1024
+window_length_seconds = 10e-6
+num_averages = 10
 plot_crop_seconds = 1e-6
 sample_rate_hz = 40e6
 acquisition_timeout_ms = 1000
