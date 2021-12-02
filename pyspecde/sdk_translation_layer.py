@@ -1,6 +1,6 @@
 from ctypes import c_void_p, create_string_buffer, byref
 from dataclasses import dataclass
-from enum import Enum, EnumMeta
+from enum import Enum
 from functools import wraps
 from typing import Dict, List, NewType, Callable, Any
 
@@ -498,11 +498,7 @@ def destroy_handle(handle: DEVICE_HANDLE_TYPE) -> None:
 
 @dataclass
 class AvailableIOModes:
-    X0: EnumMeta
-    X1: EnumMeta
-    X2: EnumMeta
-    X3: EnumMeta
-
-
-def create_available_modes_enum_meta(available_modes: List[IOLineMode]) -> EnumMeta:
-    return Enum("AvailableModes", {mode.name: mode.value for mode in available_modes})  # type: ignore
+    X0: List[IOLineMode]
+    X1: List[IOLineMode]
+    X2: List[IOLineMode]
+    X3: List[IOLineMode]

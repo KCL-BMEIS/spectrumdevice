@@ -26,7 +26,6 @@ from pyspecde.sdk_translation_layer import (
     decode_advanced_card_features,
     AdvancedCardFeature,
     AvailableIOModes,
-    create_available_modes_enum_meta,
 )
 from pyspecde.hardware_model.spectrum_channel import spectrum_channel_factory
 from pyspecde.hardware_model.spectrum_device import SpectrumDevice
@@ -276,16 +275,11 @@ class SpectrumCard(SpectrumDevice):
     @property
     def available_io_modes(self) -> AvailableIOModes:
 
-        available_modes_x0 = decode_available_io_modes(self.get_spectrum_api_param(SPCM_X0_AVAILMODES))
-        available_modes_x1 = decode_available_io_modes(self.get_spectrum_api_param(SPCM_X1_AVAILMODES))
-        available_modes_x2 = decode_available_io_modes(self.get_spectrum_api_param(SPCM_X2_AVAILMODES))
-        available_modes_x3 = decode_available_io_modes(self.get_spectrum_api_param(SPCM_X3_AVAILMODES))
-
         return AvailableIOModes(
-            X0=create_available_modes_enum_meta(available_modes_x0),
-            X1=create_available_modes_enum_meta(available_modes_x1),
-            X2=create_available_modes_enum_meta(available_modes_x2),
-            X3=create_available_modes_enum_meta(available_modes_x3),
+            X0=decode_available_io_modes(self.get_spectrum_api_param(SPCM_X0_AVAILMODES)),
+            X1=decode_available_io_modes(self.get_spectrum_api_param(SPCM_X1_AVAILMODES)),
+            X2=decode_available_io_modes(self.get_spectrum_api_param(SPCM_X2_AVAILMODES)),
+            X3=decode_available_io_modes(self.get_spectrum_api_param(SPCM_X3_AVAILMODES)),
         )
 
     @property

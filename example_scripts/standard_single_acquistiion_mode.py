@@ -83,7 +83,7 @@ for repeat_index in range(num_averages):
 
     if save_output:
         for wfm, channel_num in zip(waveforms, netbox.enabled_channels):
-            savetxt(save_dir + f"Channel_{channel_num:02d}_repeat_{repeat_index:03d}.txt", wfm)  # noqa
+            savetxt(save_dir + f"Channel_{channel_num:02d}_repeat_{repeat_index:03d}.txt", wfm)  # type: ignore
 
     all_waveforms.append(waveforms)
 
