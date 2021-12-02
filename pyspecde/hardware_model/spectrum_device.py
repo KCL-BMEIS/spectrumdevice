@@ -7,7 +7,6 @@ from third_party.specde.py_header.regs import (
     SPC_M2CMD,
     M2CMD_CARD_ENABLETRIGGER,
     M2CMD_CARD_STOP,
-    M2CMD_CARD_DISABLETRIGGER,
 )
 
 from pyspecde.hardware_model.spectrum_interface import (

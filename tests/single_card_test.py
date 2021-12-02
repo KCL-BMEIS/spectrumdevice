@@ -72,11 +72,13 @@ class SingleCardTest(TestCase):
 
     def test_acquisition_length(self) -> None:
         acquisition_length = 4096
+        self._device.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
         self._device.set_acquisition_length_samples(acquisition_length)
         self.assertEqual(acquisition_length, self._device.acquisition_length_samples)
 
     def test_post_trigger_length(self) -> None:
         post_trigger_length = 2048
+        self._device.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
         self._device.set_post_trigger_length_samples(post_trigger_length)
         self.assertEqual(post_trigger_length, self._device.post_trigger_length_samples)
 

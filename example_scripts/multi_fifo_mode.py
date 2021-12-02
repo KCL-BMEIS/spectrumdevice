@@ -1,7 +1,5 @@
-from time import perf_counter
-
 from matplotlib.pyplot import figure, plot, show
-from numpy import mod, random
+from numpy import mod
 
 from pyspecde.hardware_model.spectrum_star_hub import spectrum_star_hub_factory
 from pyspecde.sdk_translation_layer import (

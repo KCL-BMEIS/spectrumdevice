@@ -3,7 +3,7 @@ from functools import reduce
 from operator import or_
 from typing import List, Optional, Tuple
 
-from numpy import ndarray
+from numpy import ndarray, mod
 
 from pyspecde.sdk_translation_layer import (
     CARD_STATUS_TYPE,
@@ -241,6 +241,8 @@ class SpectrumCard(SpectrumDevice):
         return self.get_spectrum_api_param(SPC_MEMSIZE)
 
     def set_acquisition_length_samples(self, length_in_samples: int) -> None:
+        """In FIFO mode, this is quantised to nearest 8 samples."""
+        length_in_samples = self._coerce_to_nearest_8_samples_if_fifo(length_in_samples)
         self.set_spectrum_api_param(SPC_SEGMENTSIZE, length_in_samples)
         self.set_spectrum_api_param(SPC_MEMSIZE, length_in_samples)
 
@@ -249,7 +251,28 @@ class SpectrumCard(SpectrumDevice):
         return self.get_spectrum_api_param(SPC_POSTTRIGGER)
 
     def set_post_trigger_length_samples(self, length_in_samples: int) -> None:
+        """In FIFO mode, this is quantised to nearest 8 samples with a maximum value 8 samples less than the
+        acquisition length."""
+        length_in_samples = self._coerce_to_nearest_8_samples_if_fifo(length_in_samples)
+        if (self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI) or (
+            self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_SINGLE
+        ):
+            if (self.acquisition_length_samples - length_in_samples) < 8:
+                print(
+                    "FIFO mode: coercing post trigger length to maximum allowed value (8 samples less than "
+                    "the acquisition length)."
+                )
+                length_in_samples = self.acquisition_length_samples - 8
         self.set_spectrum_api_param(SPC_POSTTRIGGER, length_in_samples)
+
+    def _coerce_to_nearest_8_samples_if_fifo(self, value: int) -> int:
+        if (self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI) or (
+            self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_SINGLE
+        ):
+            if value != mod(value, 8):
+                print("FIFO mode: coercing length to nearest 8 samples")
+                value = int(value - mod(value, 8))
+        return value
 
     @property
     def acquisition_mode(self) -> AcquisitionMode:
