@@ -148,13 +148,7 @@ class SpectrumStarHub(SpectrumDevice):
             ]
 
     @property
-    def transfer_buffer(self) -> TransferBuffer:
-        raise NotImplementedError(
-            "StarHubs create one transfer buffer per card. Access them using the " ".transfer_buffers property."
-        )
-
-    @property
-    def transfer_buffers(self) -> List[TransferBuffer]:
+    def transfer_buffer(self) -> List[TransferBuffer]:
         return [card.transfer_buffer for card in self._child_cards]
 
     def set_transfer_buffer(self, buffer: Optional[TransferBuffer] = None) -> None:

@@ -103,7 +103,7 @@ class SpectrumDeviceInterface(ABC):
 
     @property
     @abstractmethod
-    def transfer_buffer(self) -> TransferBuffer:
+    def transfer_buffer(self) -> Union[TransferBuffer, List[TransferBuffer]]:
         raise NotImplementedError()
 
     @abstractmethod
