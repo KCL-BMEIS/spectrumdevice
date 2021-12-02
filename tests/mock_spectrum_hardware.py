@@ -8,9 +8,19 @@ from pyspecde.hardware_model.spectrum_interface import SpectrumIntLengths
 from pyspecde.sdk_translation_layer import DEVICE_HANDLE_TYPE, TransferBuffer, transfer_buffer_factory
 from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub
 from tests.test_configuration import TEST_SPECTRUM_STAR_HUB_CONFIG, TEST_SPECTRUM_CARD_CONFIG
-from third_party.specde.py_header.regs import SPC_MIINST_MODULES, SPC_MIINST_CHPERMODULE, SPC_PCIFEATURES, \
-    SPCM_X0_AVAILMODES, SPCM_X1_AVAILMODES, SPCM_X2_AVAILMODES, SPCM_X3_AVAILMODES, SPCM_XMODE_DISABLE, SPCM_FEAT_MULTI, \
-    SPC_PCIEXTFEATURES, SPCM_FEAT_EXTFW_SEGSTAT
+from third_party.specde.py_header.regs import (
+    SPC_MIINST_MODULES,
+    SPC_MIINST_CHPERMODULE,
+    SPC_PCIFEATURES,
+    SPCM_X0_AVAILMODES,
+    SPCM_X1_AVAILMODES,
+    SPCM_X2_AVAILMODES,
+    SPCM_X3_AVAILMODES,
+    SPCM_XMODE_DISABLE,
+    SPCM_FEAT_MULTI,
+    SPC_PCIEXTFEATURES,
+    SPCM_FEAT_EXTFW_SEGSTAT,
+)
 from tests.mock_pyspcm import drv_handle
 
 
@@ -24,7 +34,7 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
             SPCM_X0_AVAILMODES: SPCM_XMODE_DISABLE,
             SPCM_X1_AVAILMODES: SPCM_XMODE_DISABLE,
             SPCM_X2_AVAILMODES: SPCM_XMODE_DISABLE,
-            SPCM_X3_AVAILMODES: SPCM_XMODE_DISABLE
+            SPCM_X3_AVAILMODES: SPCM_XMODE_DISABLE,
         }
 
     def start_acquisition(self) -> None:

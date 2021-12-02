@@ -135,13 +135,13 @@ class SingleCardTest(TestCase):
         try:
             _, _ = self._device.feature_list
         except Exception as e:
-            self.assertTrue(False, f'raised an exception {e}')
+            self.assertTrue(False, f"raised an exception {e}")
 
     def test_available_io_modes(self) -> None:
         try:
             _ = self._device.available_io_modes
         except Exception as e:
-            self.assertTrue(False, f'raised an exception {e}')
+            self.assertTrue(False, f"raised an exception {e}")
 
     def test_transfer_buffer(self) -> None:
         buffer = TransferBuffer(BufferType.SPCM_BUF_DATA, BufferDirection.SPCM_DIR_CARDTOPC, 0, zeros(4096))

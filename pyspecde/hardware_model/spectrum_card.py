@@ -1,3 +1,4 @@
+from copy import copy
 from functools import reduce
 from operator import or_
 from typing import List, Optional, Tuple
@@ -25,7 +26,6 @@ from pyspecde.sdk_translation_layer import (
     decode_advanced_card_features,
     AdvancedCardFeature,
     AvailableIOModes,
-    create_available_modes_enum_meta,
 )
 from pyspecde.hardware_model.spectrum_channel import spectrum_channel_factory
 from pyspecde.hardware_model.spectrum_device import SpectrumDevice
@@ -61,6 +61,9 @@ from third_party.specde.py_header.regs import (
     SPCM_X1_AVAILMODES,
     SPCM_X2_AVAILMODES,
     SPCM_X3_AVAILMODES,
+    SPC_DATA_AVAIL_USER_LEN,
+    SPC_DATA_AVAIL_CARD_LEN,
+    SPC_SEGMENTSIZE,
 )
 
 
@@ -104,8 +107,13 @@ class SpectrumCard(SpectrumDevice):
         set_transfer_buffer(self.handle, self._transfer_buffer)
 
     def get_waveforms(self) -> List[ndarray]:
-        waveforms_in_columns = self.transfer_buffer.data_buffer.reshape((self.acquisition_length_samples,
-                                                                        len(self.enabled_channels)))
+        if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
+            self.wait_for_transfer_to_complete()
+            num_available_bytes = self.get_spectrum_api_param(SPC_DATA_AVAIL_USER_LEN)
+            self.set_spectrum_api_param(SPC_DATA_AVAIL_CARD_LEN, num_available_bytes)
+        waveforms_in_columns = copy(self.transfer_buffer.data_buffer).reshape(
+            (self.acquisition_length_samples, len(self.enabled_channels))
+        )
         return [waveform for waveform in waveforms_in_columns.T]
 
     def wait_for_acquisition_to_complete(self) -> None:
@@ -233,6 +241,7 @@ class SpectrumCard(SpectrumDevice):
         return self.get_spectrum_api_param(SPC_MEMSIZE)
 
     def set_acquisition_length_samples(self, length_in_samples: int) -> None:
+        self.set_spectrum_api_param(SPC_SEGMENTSIZE, length_in_samples)
         self.set_spectrum_api_param(SPC_MEMSIZE, length_in_samples)
 
     @property
@@ -266,16 +275,11 @@ class SpectrumCard(SpectrumDevice):
     @property
     def available_io_modes(self) -> AvailableIOModes:
 
-        available_modes_x0 = decode_available_io_modes(self.get_spectrum_api_param(SPCM_X0_AVAILMODES))
-        available_modes_x1 = decode_available_io_modes(self.get_spectrum_api_param(SPCM_X1_AVAILMODES))
-        available_modes_x2 = decode_available_io_modes(self.get_spectrum_api_param(SPCM_X2_AVAILMODES))
-        available_modes_x3 = decode_available_io_modes(self.get_spectrum_api_param(SPCM_X3_AVAILMODES))
-
         return AvailableIOModes(
-            X0=create_available_modes_enum_meta(available_modes_x0),
-            X1=create_available_modes_enum_meta(available_modes_x1),
-            X2=create_available_modes_enum_meta(available_modes_x2),
-            X3=create_available_modes_enum_meta(available_modes_x3),
+            X0=decode_available_io_modes(self.get_spectrum_api_param(SPCM_X0_AVAILMODES)),
+            X1=decode_available_io_modes(self.get_spectrum_api_param(SPCM_X1_AVAILMODES)),
+            X2=decode_available_io_modes(self.get_spectrum_api_param(SPCM_X2_AVAILMODES)),
+            X3=decode_available_io_modes(self.get_spectrum_api_param(SPCM_X3_AVAILMODES)),
         )
 
     @property
