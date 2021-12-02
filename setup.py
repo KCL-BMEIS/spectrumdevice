@@ -6,6 +6,7 @@ dev_deps = ["flake8==4.0.", "flake8-bugbear==21.9.2", "black==21.10b0", "mypy==0
 
 setup(
     name="pyspecde",
+    package_data={"pyspecde": ["py.typed"]},
     packages=find_packages(exclude=['third_party', 'tests']),
     version=0.1,
     include_package_data=True,
