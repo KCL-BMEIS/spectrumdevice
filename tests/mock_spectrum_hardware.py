@@ -21,7 +21,7 @@ from third_party.specde.py_header.regs import (
     SPC_PCIEXTFEATURES,
     SPCM_FEAT_EXTFW_SEGSTAT,
 )
-from tests.mock_pyspcm import drv_handle
+from pyspecde.mock_pyspcm import drv_handle
 
 
 class MockSpectrumDevice(SpectrumDevice, ABC):

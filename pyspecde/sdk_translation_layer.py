@@ -151,7 +151,7 @@ try:
 
     SPECTRUM_DRIVERS_FOUND = True
 except OSError:
-    from tests.mock_pyspcm import (
+    from pyspecde.mock_pyspcm import (
         SPCM_BUF_DATA,
         SPCM_BUF_ABA,
         SPCM_BUF_TIMESTAMP,
