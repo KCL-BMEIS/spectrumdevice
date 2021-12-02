@@ -33,6 +33,7 @@ from third_party.specde.py_header.regs import SPC_SYNC_ENABLEMASK, SPC_PCIFEATUR
 
 
 class SpectrumStarHub(SpectrumDevice):
+    """ Composite of SpectrumDevices"""
     def __init__(
         self,
         hub_handle: DEVICE_HANDLE_TYPE,
