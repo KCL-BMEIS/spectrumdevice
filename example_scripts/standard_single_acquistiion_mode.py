@@ -76,7 +76,7 @@ for repeat_index in range(num_averages):
     netbox.wait_for_acquisition_to_complete()
 
     # Get waveform data
-    netbox.set_transfer_buffer()
+    netbox.define_transfer_buffer()
     netbox.start_transfer()
     netbox.wait_for_transfer_to_complete()
     waveforms = netbox.get_waveforms()

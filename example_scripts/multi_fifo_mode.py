@@ -36,7 +36,7 @@ netbox.set_acquisition_length_samples(window_length_samples)
 netbox.set_post_trigger_length_samples(window_length_samples - 8)
 netbox.set_timeout_ms(acquisition_timeout_ms)
 
-netbox.set_transfer_buffer()
+netbox.define_transfer_buffer()
 
 
 # Execute acquisition

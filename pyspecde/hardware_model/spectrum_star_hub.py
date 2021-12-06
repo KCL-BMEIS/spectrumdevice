@@ -33,7 +33,8 @@ from third_party.specde.py_header.regs import SPC_SYNC_ENABLEMASK, SPC_PCIFEATUR
 
 
 class SpectrumStarHub(SpectrumDevice):
-    """ Composite of SpectrumDevices"""
+    """Composite of SpectrumDevices"""
+
     def __init__(
         self,
         hub_handle: DEVICE_HANDLE_TYPE,
@@ -149,17 +150,17 @@ class SpectrumStarHub(SpectrumDevice):
             ]
 
     @property
-    def transfer_buffer(self) -> List[TransferBuffer]:
-        return [card.transfer_buffer for card in self._child_cards]
+    def transfer_buffers(self) -> List[TransferBuffer]:
+        return [card.transfer_buffers[0] for card in self._child_cards]
 
-    def set_transfer_buffer(self, buffer: Optional[TransferBuffer] = None) -> None:
+    def define_transfer_buffer(self, buffer: Optional[TransferBuffer] = None) -> None:
         if buffer:
             buffers = [deepcopy(buffer) for _ in range(len(self._child_cards))]
             for card, buffer in zip(self._child_cards, buffers):
-                card.set_transfer_buffer(buffer)
+                card.define_transfer_buffer(buffer)
         else:
             for card in self._child_cards:
-                card.set_transfer_buffer()
+                card.define_transfer_buffer()
 
     def wait_for_acquisition_to_complete(self) -> None:
         for card in self._child_cards:

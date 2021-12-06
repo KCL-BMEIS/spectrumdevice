@@ -71,9 +71,7 @@ class StarHubTest(SingleCardTest):
 
     def test_transfer_buffer(self) -> None:
         buffer = TransferBuffer(BufferType.SPCM_BUF_DATA, BufferDirection.SPCM_DIR_CARDTOPC, 0, zeros(4096))
-        self._device.set_transfer_buffer(buffer)
-        with self.assertRaises(NotImplementedError):
-            _ = self._device.transfer_buffer
+        self._device.define_transfer_buffer(buffer)
         self.assertTrue((array(self._device.transfer_buffers) == buffer).all())
 
     def test_acquisition(self) -> None:

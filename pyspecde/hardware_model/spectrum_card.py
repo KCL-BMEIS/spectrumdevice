@@ -91,13 +91,13 @@ class SpectrumCard(SpectrumDevice):
         self.set_spectrum_api_param(SPC_M2CMD, M2CMD_DATA_WAITDMA)
 
     @property
-    def transfer_buffer(self) -> TransferBuffer:
+    def transfer_buffers(self) -> List[TransferBuffer]:
         if self._transfer_buffer is not None:
-            return self._transfer_buffer
+            return [self._transfer_buffer]
         else:
             raise SpectrumNoTransferBufferDefined("Cannot find TransferBuffer.")
 
-    def set_transfer_buffer(self, buffer: Optional[TransferBuffer] = None) -> None:
+    def define_transfer_buffer(self, buffer: Optional[TransferBuffer] = None) -> None:
         if buffer:
             self._transfer_buffer = buffer
         else:
@@ -111,7 +111,7 @@ class SpectrumCard(SpectrumDevice):
             self.wait_for_transfer_to_complete()
             num_available_bytes = self.get_spectrum_api_param(SPC_DATA_AVAIL_USER_LEN)
             self.set_spectrum_api_param(SPC_DATA_AVAIL_CARD_LEN, num_available_bytes)
-        waveforms_in_columns = copy(self.transfer_buffer.data_buffer).reshape(
+        waveforms_in_columns = copy(self.transfer_buffers[0].data_buffer).reshape(
             (self.acquisition_length_samples, len(self.enabled_channels))
         )
         return [waveform for waveform in waveforms_in_columns.T]

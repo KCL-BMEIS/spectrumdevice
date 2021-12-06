@@ -147,8 +147,8 @@ class SingleCardTest(TestCase):
 
     def test_transfer_buffer(self) -> None:
         buffer = TransferBuffer(BufferType.SPCM_BUF_DATA, BufferDirection.SPCM_DIR_CARDTOPC, 0, zeros(4096))
-        self._device.set_transfer_buffer(buffer)
-        self.assertEqual(buffer, self._device.transfer_buffer)
+        self._device.define_transfer_buffer(buffer)
+        self.assertEqual(buffer, self._device.transfer_buffers[0])
 
     def test_disconnect(self) -> None:
         if self._MOCK_MODE:
@@ -171,7 +171,7 @@ class SingleCardTest(TestCase):
             acquisition_timeout_ms = 1000
             self._device.set_enabled_channels([0])
             self._simple_acquisition(window_length_samples, acquisition_timeout_ms)
-            acquired_waveform = self._device.transfer_buffer.data_buffer
+            acquired_waveform = self._device.transfer_buffers[0].data_buffer
             self.assertEqual(len(acquired_waveform), window_length_samples)
             self.assertTrue(acquired_waveform.sum() != 0.0)
 
@@ -184,6 +184,6 @@ class SingleCardTest(TestCase):
         self._device.start_acquisition()
         self._device.wait_for_acquisition_to_complete()
         transfer_buffer = transfer_buffer_factory(window_length_samples * len(self._device.enabled_channels))
-        self._device.set_transfer_buffer(transfer_buffer)
+        self._device.define_transfer_buffer(transfer_buffer)
         self._device.start_transfer()
         self._device.wait_for_transfer_to_complete()

@@ -69,7 +69,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
     def disconnect(self) -> None:
         raise SpectrumDeviceNotConnected("Cannot disconnect mock card")
 
-    def set_transfer_buffer(self, buffer: Optional[TransferBuffer] = None) -> None:
+    def define_transfer_buffer(self, buffer: Optional[TransferBuffer] = None) -> None:
         if buffer:
             self._transfer_buffer = buffer
         else:
@@ -91,12 +91,6 @@ class MockSpectrumStarHub(SpectrumStarHub, MockSpectrumDevice):
 
     def stop_transfer(self) -> None:
         raise SpectrumDeviceNotConnected("Cannot stop dma on mock device")
-
-    @property
-    def transfer_buffer(self) -> TransferBuffer:
-        raise NotImplementedError(
-            "StarHubs create one transfer buffer per device. Access them using the " ".transfer_buffers property."
-        )
 
 
 def mock_spectrum_card_factory() -> MockSpectrumCard:
