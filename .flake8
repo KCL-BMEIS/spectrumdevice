@@ -1,5 +1,5 @@
 [flake8]
-exclude = .bzr,.hg,.git,__pycache__,.tox,setup.py,.eggs,pyspecde/spectrum_api_wrapper/spectrum_gmbh
+exclude = .bzr,.hg,.git,__pycache__,.tox,setup.py,.eggs,spectrum_gmbh
 max-line-length = 120
 application_import_names = pyspecde, tests
 import-order-style = pycharm

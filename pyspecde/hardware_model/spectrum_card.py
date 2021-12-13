@@ -37,7 +37,7 @@ from pyspecde.exceptions import (
     SpectrumTriggerOperationNotImplemented,
 )
 from pyspecde.hardware_model.spectrum_interface import SpectrumChannelInterface, SpectrumIntLengths
-from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import (
+from spectrum_gmbh.regs import (
     M2CMD_CARD_WAITREADY,
     SPC_M2CMD,
     M2CMD_DATA_STARTDMA,

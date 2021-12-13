@@ -8,7 +8,7 @@ from pyspecde.exceptions import SpectrumDeviceNotConnected, SpectrumInvalidNumbe
 from pyspecde.hardware_model.mock_spectrum_hardware import mock_spectrum_star_hub_factory
 from tests.single_card_test import SingleCardTest
 from tests.test_configuration import TEST_SPECTRUM_STAR_HUB_CONFIG, STAR_HUB_TEST_MODE, SpectrumTestMode
-from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import SPC_CHENABLE, SPC_SYNC_ENABLEMASK
+from spectrum_gmbh.regs import SPC_CHENABLE, SPC_SYNC_ENABLEMASK
 
 
 class StarHubTest(SingleCardTest):

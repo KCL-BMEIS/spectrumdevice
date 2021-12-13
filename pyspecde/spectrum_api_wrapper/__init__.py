@@ -4,7 +4,7 @@ from typing import List, NewType
 
 from pyspecde.exceptions import SpectrumIOError
 from pyspecde.spectrum_api_wrapper.error_handler import error_handler
-from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import (
+from spectrum_gmbh.regs import (
     SPC_REC_STD_SINGLE,
     SPC_REC_FIFO_MULTI,
     SPC_CM_INTPLL,
@@ -12,7 +12,7 @@ from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import (
 )
 
 try:
-    from pyspecde.spectrum_api_wrapper.spectrum_gmbh.pyspcm import (
+    from spectrum_gmbh.pyspcm import (
         spcm_dwSetParam_i32,
         spcm_dwSetParam_i64,
         spcm_hOpen,
@@ -80,12 +80,12 @@ def set_spectrum_i64_api_param(device_handle: DEVICE_HANDLE_TYPE, spectrum_comma
     error_handler(spcm_dwSetParam_i64)(device_handle, spectrum_command, value)
 
 
-def spectrum_handle_factory(visa_string: str) -> DEVICE_HANDLE_TYPE:
+def spectrum_handle_factory(visa_string: str) -> DEVICE_HANDLE_TYPE:  # type: ignore
     try:
         handle = DEVICE_HANDLE_TYPE(spcm_hOpen(create_string_buffer(bytes(visa_string, encoding="utf8"))))
+        return handle
     except RuntimeError as er:
         SpectrumIOError(f"Could not connect to Spectrum card: {er}")
-    return handle
 
 
 def destroy_handle(handle: DEVICE_HANDLE_TYPE) -> None:

@@ -2,7 +2,7 @@ from enum import Enum
 from typing import List
 
 from pyspecde.spectrum_api_wrapper import _decode_bitmap_using_enum
-from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import (
+from spectrum_gmbh.regs import (
     SPCM_FEAT_MULTI,
     SPCM_FEAT_GATE,
     SPCM_FEAT_DIGITAL,

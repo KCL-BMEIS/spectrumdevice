@@ -27,7 +27,7 @@ from pyspecde.spectrum_api_wrapper.io_lines import AvailableIOModes
 from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
 from pyspecde.spectrum_api_wrapper.card_features import CardFeature, AdvancedCardFeature
 from pyspecde.spectrum_api_wrapper.transfer_buffer import TransferBuffer
-from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK, SPC_PCIFEATURES
+from spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK, SPC_PCIFEATURES
 
 
 class SpectrumStarHub(SpectrumDevice):

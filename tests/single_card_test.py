@@ -24,7 +24,7 @@ from pyspecde.exceptions import (
 )
 from pyspecde.hardware_model.mock_spectrum_hardware import mock_spectrum_card_factory
 from tests.test_configuration import SINGLE_CARD_TEST_MODE, SpectrumTestMode, TEST_SPECTRUM_CARD_CONFIG
-from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import SPC_CHENABLE
+from spectrum_gmbh.regs import SPC_CHENABLE
 
 
 class SingleCardTest(TestCase):

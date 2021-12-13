@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import (
+from spectrum_gmbh.regs import (
     SPC_TMASK_SOFTWARE,
     SPC_TMASK_EXT0,
     SPC_TMASK_EXT1,

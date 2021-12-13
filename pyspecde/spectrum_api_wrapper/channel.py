@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import (
+from spectrum_gmbh.regs import (
     SPC_AMP0,
     SPC_AMP1,
     SPC_AMP2,

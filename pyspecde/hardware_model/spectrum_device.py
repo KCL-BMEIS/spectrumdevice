@@ -1,7 +1,7 @@
 from abc import ABC
 
 from pyspecde.exceptions import SpectrumDeviceNotConnected
-from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import (
+from spectrum_gmbh.regs import (
     M2CMD_CARD_RESET,
     M2CMD_CARD_START,
     SPC_M2CMD,

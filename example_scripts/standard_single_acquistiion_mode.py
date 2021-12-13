@@ -9,7 +9,7 @@ from pyspecde.spectrum_api_wrapper import (
 from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
 
 # Choose configuration
-from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import (
+from spectrum_gmbh.regs import (
     SPC_50OHM0,
     SPC_50OHM1,
     SPC_50OHM2,

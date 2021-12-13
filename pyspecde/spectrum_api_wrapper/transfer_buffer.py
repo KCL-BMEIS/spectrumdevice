@@ -8,7 +8,7 @@ from pyspecde.spectrum_api_wrapper import DEVICE_HANDLE_TYPE
 from pyspecde.spectrum_api_wrapper.error_handler import error_handler
 
 try:
-    from pyspecde.spectrum_api_wrapper.spectrum_gmbh.pyspcm import (
+    from spectrum_gmbh.pyspcm import (
         SPCM_BUF_DATA,
         SPCM_BUF_ABA,
         SPCM_BUF_TIMESTAMP,
