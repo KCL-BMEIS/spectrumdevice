@@ -3,7 +3,7 @@ from unittest import TestCase
 from pyspecde.hardware_model.spectrum_card import spectrum_card_factory, SpectrumCard
 from pyspecde.hardware_model.spectrum_channel import spectrum_channel_factory
 from pyspecde.hardware_model.spectrum_star_hub import create_visa_string_from_ip
-from tests.mock_spectrum_hardware import mock_spectrum_card_factory
+from pyspecde.hardware_model.mock_spectrum_hardware import mock_spectrum_card_factory
 from tests.test_configuration import TEST_SPECTRUM_CARD_CONFIG, SINGLE_CARD_TEST_MODE, SpectrumTestMode
 
 

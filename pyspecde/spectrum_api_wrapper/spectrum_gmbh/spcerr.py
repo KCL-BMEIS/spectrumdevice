@@ -1,6 +1,18 @@
-SPCM_ERROR_ORIGIN_MASK = (-2147483648)
+#
+# **************************************************************************
+#
+# spcerr.py                                      (c) Spectrum GmbH
+#
+# **************************************************************************
+#
+# Feel free to use this source for own projects and modify it in any kind.
+#
+# **************************************************************************
+
+
+SPCM_ERROR_ORIGIN_MASK = 0x80000000
 SPCM_ERROR_ORIGIN_LOCAL = 0x00000000
-SPCM_ERROR_ORIGIN_REMOTE = (-2147483648)
+SPCM_ERROR_ORIGIN_REMOTE = 0x80000000
 ERR_OK = 0x0000
 ERR_INIT = 0x0001
 ERR_NR = 0x0002
@@ -15,6 +27,8 @@ ERR_BOARDNOTFOUND = 0x000A
 ERR_BOARDINUSE = 0x000B
 ERR_EXPHW64BITADR = 0x000C
 ERR_FWVERSION = 0x000D
+ERR_SYNCPROTOCOL = 0x000E
+ERR_KERNEL = 0x000F
 ERR_LASTERR = 0x0010
 ERR_ABORT = 0x0020
 ERR_BOARDLOCKED = 0x0030
@@ -26,6 +40,7 @@ ERR_NETWORKTIMEOUT = 0x0043
 ERR_BUFFERSIZE = 0x0044
 ERR_RESTRICTEDACCESS = 0x0045
 ERR_INVALIDPARAM = 0x0046
+ERR_TEMPERATURE = 0x0047
 ERR_REG = 0x0100
 ERR_VALUE = 0x0101
 ERR_FEATURE = 0x0102
@@ -59,6 +74,7 @@ ERR_EDGEPERMOD = 0x0149
 ERR_DOLEVELMINDIFF = 0x014A
 ERR_STARHUBENABLE = 0x014B
 ERR_PATPWSMALLEDGE = 0x014C
+ERR_XMODESETUP = 0x014D
 ERR_NOPCI = 0x0200
 ERR_PCIVERSION = 0x0201
 ERR_PCINOBOARDS = 0x0202

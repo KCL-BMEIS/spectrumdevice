@@ -1,7 +1,7 @@
 from abc import ABC
 
-from pyspecde.spectrum_exceptions import SpectrumDeviceNotConnected
-from third_party.specde.py_header.regs import (
+from pyspecde.exceptions import SpectrumDeviceNotConnected
+from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import (
     M2CMD_CARD_RESET,
     M2CMD_CARD_START,
     SPC_M2CMD,
@@ -13,7 +13,7 @@ from pyspecde.hardware_model.spectrum_interface import (
     SpectrumDeviceInterface,
     SpectrumIntLengths,
 )
-from pyspecde.sdk_translation_layer import (
+from pyspecde.spectrum_api_wrapper import (
     get_spectrum_i32_api_param,
     get_spectrum_i64_api_param,
     set_spectrum_i32_api_param,

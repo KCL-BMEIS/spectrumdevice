@@ -1,4 +1,4 @@
-from pyspecde.sdk_translation_layer import SpectrumChannelName, VERTICAL_RANGE_COMMANDS, VERTICAL_OFFSET_COMMANDS
+from pyspecde.spectrum_api_wrapper.channel import VERTICAL_RANGE_COMMANDS, VERTICAL_OFFSET_COMMANDS, SpectrumChannelName
 from pyspecde.hardware_model.spectrum_interface import SpectrumChannelInterface, SpectrumDeviceInterface
 
 

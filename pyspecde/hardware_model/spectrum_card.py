@@ -5,31 +5,31 @@ from typing import List, Optional, Tuple
 
 from numpy import ndarray, mod
 
-from pyspecde.sdk_translation_layer import (
-    CARD_STATUS_TYPE,
+from pyspecde.spectrum_api_wrapper import (
     DEVICE_HANDLE_TYPE,
-    TriggerSource,
-    TransferBuffer,
-    decode_status,
-    set_transfer_buffer,
     destroy_handle,
-    ExternalTriggerMode,
-    EXTERNAL_TRIGGER_MODE_COMMANDS,
-    EXTERNAL_TRIGGER_LEVEL_COMMANDS,
     AcquisitionMode,
     ClockMode,
     spectrum_handle_factory,
-    transfer_buffer_factory,
-    decode_available_io_modes,
+)
+from pyspecde.spectrum_api_wrapper.status import CARD_STATUS_TYPE, decode_status
+from pyspecde.spectrum_api_wrapper.io_lines import decode_available_io_modes, AvailableIOModes
+from pyspecde.spectrum_api_wrapper.triggering import (
+    TriggerSource,
+    ExternalTriggerMode,
+    EXTERNAL_TRIGGER_MODE_COMMANDS,
+    EXTERNAL_TRIGGER_LEVEL_COMMANDS,
+)
+from pyspecde.spectrum_api_wrapper.card_features import (
     CardFeature,
     decode_card_features,
-    decode_advanced_card_features,
     AdvancedCardFeature,
-    AvailableIOModes,
+    decode_advanced_card_features,
 )
+from pyspecde.spectrum_api_wrapper.transfer_buffer import TransferBuffer, transfer_buffer_factory, set_transfer_buffer
 from pyspecde.hardware_model.spectrum_channel import spectrum_channel_factory
 from pyspecde.hardware_model.spectrum_device import SpectrumDevice
-from pyspecde.spectrum_exceptions import (
+from pyspecde.exceptions import (
     SpectrumInvalidNumberOfEnabledChannels,
     SpectrumNoTransferBufferDefined,
     SpectrumIOError,
@@ -37,7 +37,7 @@ from pyspecde.spectrum_exceptions import (
     SpectrumTriggerOperationNotImplemented,
 )
 from pyspecde.hardware_model.spectrum_interface import SpectrumChannelInterface, SpectrumIntLengths
-from third_party.specde.py_header.regs import (
+from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import (
     M2CMD_CARD_WAITREADY,
     SPC_M2CMD,
     M2CMD_DATA_STARTDMA,

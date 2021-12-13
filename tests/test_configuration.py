@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Sequence
 
-from pyspecde.sdk_translation_layer import SPECTRUM_DRIVERS_FOUND
-from pyspecde.spectrum_exceptions import SpectrumIOError
+from pyspecde.spectrum_api_wrapper import SPECTRUM_DRIVERS_FOUND
+from pyspecde.exceptions import SpectrumIOError
 
 
 class SpectrumTestMode(Enum):

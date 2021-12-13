@@ -4,20 +4,17 @@ from typing import List, Optional, Union, Tuple
 
 from numpy import ndarray
 
-from pyspecde.sdk_translation_layer import (
-    CARD_STATUS_TYPE,
+from pyspecde.spectrum_api_wrapper import (
     DEVICE_HANDLE_TYPE,
-    STAR_HUB_STATUS_TYPE,
-    TransferBuffer,
     AcquisitionMode,
-    TriggerSource,
-    ExternalTriggerMode,
     ClockMode,
-    SpectrumChannelName,
-    CardFeature,
-    AdvancedCardFeature,
-    AvailableIOModes,
 )
+from pyspecde.spectrum_api_wrapper.status import CARD_STATUS_TYPE, STAR_HUB_STATUS_TYPE
+from pyspecde.spectrum_api_wrapper.channel import SpectrumChannelName
+from pyspecde.spectrum_api_wrapper.io_lines import AvailableIOModes
+from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
+from pyspecde.spectrum_api_wrapper.card_features import CardFeature, AdvancedCardFeature
+from pyspecde.spectrum_api_wrapper.transfer_buffer import TransferBuffer
 
 
 class SpectrumChannelInterface(ABC):

@@ -1,13 +1,14 @@
 from numpy import zeros, array
 
 from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
-from pyspecde.sdk_translation_layer import SpectrumChannelName, TransferBuffer, BufferType, BufferDirection
+from pyspecde.spectrum_api_wrapper.channel import SpectrumChannelName
+from pyspecde.spectrum_api_wrapper.transfer_buffer import BufferType, BufferDirection, TransferBuffer
 from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub, spectrum_star_hub_factory
-from pyspecde.spectrum_exceptions import SpectrumDeviceNotConnected, SpectrumInvalidNumberOfEnabledChannels
-from tests.mock_spectrum_hardware import mock_spectrum_star_hub_factory
+from pyspecde.exceptions import SpectrumDeviceNotConnected, SpectrumInvalidNumberOfEnabledChannels
+from pyspecde.hardware_model.mock_spectrum_hardware import mock_spectrum_star_hub_factory
 from tests.single_card_test import SingleCardTest
 from tests.test_configuration import TEST_SPECTRUM_STAR_HUB_CONFIG, STAR_HUB_TEST_MODE, SpectrumTestMode
-from third_party.specde.py_header.regs import SPC_CHENABLE, SPC_SYNC_ENABLEMASK
+from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import SPC_CHENABLE, SPC_SYNC_ENABLEMASK
 
 
 class StarHubTest(SingleCardTest):

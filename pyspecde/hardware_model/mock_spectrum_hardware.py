@@ -3,12 +3,13 @@ from typing import Optional, cast, Sequence
 
 from pyspecde.hardware_model.spectrum_card import SpectrumCard
 from pyspecde.hardware_model.spectrum_device import SpectrumDevice
-from pyspecde.spectrum_exceptions import SpectrumDeviceNotConnected
+from pyspecde.exceptions import SpectrumDeviceNotConnected
 from pyspecde.hardware_model.spectrum_interface import SpectrumIntLengths
-from pyspecde.sdk_translation_layer import DEVICE_HANDLE_TYPE, TransferBuffer, transfer_buffer_factory
+from pyspecde.spectrum_api_wrapper import DEVICE_HANDLE_TYPE
+from pyspecde.spectrum_api_wrapper.transfer_buffer import TransferBuffer, transfer_buffer_factory
 from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub
 from tests.test_configuration import TEST_SPECTRUM_STAR_HUB_CONFIG, TEST_SPECTRUM_CARD_CONFIG
-from third_party.specde.py_header.regs import (
+from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import (
     SPC_MIINST_MODULES,
     SPC_MIINST_CHPERMODULE,
     SPC_PCIFEATURES,
@@ -21,7 +22,7 @@ from third_party.specde.py_header.regs import (
     SPC_PCIEXTFEATURES,
     SPCM_FEAT_EXTFW_SEGSTAT,
 )
-from pyspecde.mock_pyspcm import drv_handle
+from pyspecde.spectrum_api_wrapper.mock_pyspcm import drv_handle
 
 
 class MockSpectrumDevice(SpectrumDevice, ABC):

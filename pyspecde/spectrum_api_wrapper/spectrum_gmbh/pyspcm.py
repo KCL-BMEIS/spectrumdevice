@@ -1,13 +1,22 @@
+#
+# **************************************************************************
+#
+# pyspcm.py                                      (c) Spectrum GmbH
+#
+# **************************************************************************
+#
+# Feel free to use this source for own projects and modify it in any kind.
+#
+# **************************************************************************
+
 import os
 import platform
 import sys
 from ctypes import *
 
 # load registers for easier access
-from third_party.specde.py_header.regs import *
 
 # load registers for easier access
-from third_party.specde.py_header.spcerr import *
 
 SPCM_DIR_PCTOCARD = 0
 SPCM_DIR_CARDTOPC = 1
@@ -16,9 +25,10 @@ SPCM_BUF_DATA = 1000  # main data buffer for acquired or generated samples
 SPCM_BUF_ABA = 2000  # buffer for ABA data, holds the A-DATA (slow samples)
 SPCM_BUF_TIMESTAMP = 3000  # buffer for timestamps
 
+
 # determine bit width of os
 oPlatform = platform.architecture()
-if oPlatform[0] == '64bit':
+if oPlatform[0] == "64bit":
     bIs64Bit = 1
 else:
     bIs64Bit = 0
@@ -44,9 +54,10 @@ uptr16 = POINTER(uint16)
 uptr32 = POINTER(uint32)
 uptr64 = POINTER(uint64)
 
+
 # Windows
-if os.name == 'nt':
-    # sys.stdout.write("Python Version: {0} on Windows\n\n".format(platform.python_version()))
+if os.name == "nt":
+    sys.stdout.write("Python Version: {0} on Windows\n\n".format(platform.python_version()))
 
     # define card handle type
     if bIs64Bit:
@@ -112,11 +123,18 @@ if os.name == 'nt':
 
     # load spcm_dwSetParam_i64
     if bIs64Bit:
-        spcm_dwSetParam_i64 = getattr(spcmDll, "spcm_dwSetParam_i64")
+        spcm_dwSetParam_i64_ = getattr(spcmDll, "spcm_dwSetParam_i64")
     else:
-        spcm_dwSetParam_i64 = getattr(spcmDll, "_spcm_dwSetParam_i64@16")
-    spcm_dwSetParam_i64.argtype = [drv_handle, int32, int64]
-    spcm_dwSetParam_i64.restype = uint32
+        spcm_dwSetParam_i64_ = getattr(spcmDll, "_spcm_dwSetParam_i64@16")
+    spcm_dwSetParam_i64_.argtype = [drv_handle, int32, int64]
+    spcm_dwSetParam_i64_.restype = uint32
+
+    def spcm_dwSetParam_i64(hDrv, lReg, Val):
+        try:
+            llVal = int64(Val.value)
+        except AttributeError:
+            llVal = int64(Val)
+        return spcm_dwSetParam_i64_(hDrv, lReg, llVal)
 
     # load spcm_dwSetParam_i64m
     if bIs64Bit:
@@ -151,8 +169,8 @@ if os.name == 'nt':
     spcm_dwGetContBuf_i64.restype = uint32
 
 
-elif os.name == 'posix':
-    # sys.stdout.write("Python Version: {0} on Linux\n\n".format(platform.python_version()))
+elif os.name == "posix":
+    sys.stdout.write("Python Version: {0} on Linux\n\n".format(platform.python_version()))
 
     # define card handle type
     if bIs64Bit:
@@ -161,7 +179,7 @@ elif os.name == 'posix':
         drv_handle = c_void_p
 
     # Load DLL into memory.
-    # use cdll because all driver access functions use cdecl calling convention under linux 
+    # use cdll because all driver access functions use cdecl calling convention under linux
     spcmDll = cdll.LoadLibrary("libspcm_linux.so")
 
     # load spcm_hOpen
@@ -220,4 +238,4 @@ elif os.name == 'posix':
     spcm_dwGetContBuf_i64.restype = uint32
 
 else:
-    raise Exception('Operating system not supported by pySpcm')
+    raise Exception("Operating system not supported by pySpcm")

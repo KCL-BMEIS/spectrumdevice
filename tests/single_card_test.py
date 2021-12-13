@@ -8,25 +8,23 @@ from pyspecde.hardware_model.spectrum_interface import (
     SpectrumDeviceInterface,
 )
 from pyspecde.hardware_model.spectrum_star_hub import create_visa_string_from_ip
-from pyspecde.sdk_translation_layer import (
-    AcquisitionMode,
-    BufferDirection,
+from pyspecde.spectrum_api_wrapper import AcquisitionMode, ClockMode
+from pyspecde.spectrum_api_wrapper.channel import SpectrumChannelName
+from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
+from pyspecde.spectrum_api_wrapper.transfer_buffer import (
     BufferType,
-    ClockMode,
-    ExternalTriggerMode,
-    SpectrumChannelName,
+    BufferDirection,
     TransferBuffer,
-    TriggerSource,
     transfer_buffer_factory,
 )
-from pyspecde.spectrum_exceptions import (
+from pyspecde.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumExternalTriggerNotEnabled,
     SpectrumTriggerOperationNotImplemented,
 )
-from tests.mock_spectrum_hardware import mock_spectrum_card_factory
+from pyspecde.hardware_model.mock_spectrum_hardware import mock_spectrum_card_factory
 from tests.test_configuration import SINGLE_CARD_TEST_MODE, SpectrumTestMode, TEST_SPECTRUM_CARD_CONFIG
-from third_party.specde.py_header.regs import SPC_CHENABLE
+from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import SPC_CHENABLE
 
 
 class SingleCardTest(TestCase):

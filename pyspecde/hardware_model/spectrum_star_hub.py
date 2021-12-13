@@ -10,26 +10,24 @@ from pyspecde.hardware_model.spectrum_device import (
     SpectrumDevice,
 )
 from pyspecde.hardware_model.spectrum_card import SpectrumCard, spectrum_card_factory
-from pyspecde.spectrum_exceptions import SpectrumSettingsMismatchError
+from pyspecde.exceptions import SpectrumSettingsMismatchError
 from pyspecde.hardware_model.spectrum_interface import (
     SpectrumChannelInterface,
     SpectrumIntLengths,
 )
-from pyspecde.sdk_translation_layer import (
-    STAR_HUB_STATUS_TYPE,
+from pyspecde.spectrum_api_wrapper import (
     DEVICE_HANDLE_TYPE,
-    TransferBuffer,
     AcquisitionMode,
-    TriggerSource,
-    ExternalTriggerMode,
     ClockMode,
     spectrum_handle_factory,
     destroy_handle,
-    CardFeature,
-    AdvancedCardFeature,
-    AvailableIOModes,
 )
-from third_party.specde.py_header.regs import SPC_SYNC_ENABLEMASK, SPC_PCIFEATURES
+from pyspecde.spectrum_api_wrapper.status import STAR_HUB_STATUS_TYPE
+from pyspecde.spectrum_api_wrapper.io_lines import AvailableIOModes
+from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
+from pyspecde.spectrum_api_wrapper.card_features import CardFeature, AdvancedCardFeature
+from pyspecde.spectrum_api_wrapper.transfer_buffer import TransferBuffer
+from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK, SPC_PCIFEATURES
 
 
 class SpectrumStarHub(SpectrumDevice):

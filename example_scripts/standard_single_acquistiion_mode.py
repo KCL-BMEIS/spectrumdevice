@@ -3,14 +3,13 @@ from matplotlib.pyplot import plot, show
 from numpy import arange, mean, savetxt, stack
 
 from pyspecde.hardware_model.spectrum_star_hub import spectrum_star_hub_factory
-from pyspecde.sdk_translation_layer import (
+from pyspecde.spectrum_api_wrapper import (
     AcquisitionMode,
-    ExternalTriggerMode,
-    TriggerSource,
 )
+from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
 
 # Choose configuration
-from third_party.specde.py_header.regs import (
+from pyspecde.spectrum_api_wrapper.spectrum_gmbh.regs import (
     SPC_50OHM0,
     SPC_50OHM1,
     SPC_50OHM2,
