@@ -50,8 +50,9 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
         self._buffer_lock = Lock()
         self._acquisition_stop_event = Event()
         self._acquisition_thread: Optional[Thread] = None
-        self._on_device_buffer: ndarray = zeros(0)
+        self._on_device_buffer: ndarray = zeros(1)
         self._enabled_channels = [0]
+        self._previous_data = self._on_device_buffer.copy()
 
     def start_acquisition(self) -> None:
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI or \
@@ -65,6 +66,7 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
         self._acquisition_thread.start()
 
     def stop_acquisition(self) -> None:
+        print('Stopping acquisition')
         self._acquisition_stop_event.set()
 
     def set_spectrum_api_param(
@@ -114,7 +116,9 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         self._transfer_buffer.data_buffer = zeros(self._transfer_buffer.data_buffer.shape)
 
     def wait_for_transfer_to_complete(self) -> None:
-        pass
+        while (self._previous_data == self._transfer_buffer.data_buffer).all():
+            sleep(0.01)
+        self._previous_data = self._transfer_buffer.data_buffer.copy()
 
     def wait_for_acquisition_to_complete(self) -> None:
         self._acquisition_thread.join(timeout=1e-3 * self.timeout_ms)
@@ -144,7 +148,7 @@ def mock_fifo_mode_source(stop_flag: Event, on_device_buffer: ndarray, buffer_lo
     while not stop_flag.is_set():
         with buffer_lock:
             on_device_buffer[:] = randn(len(on_device_buffer))
-            sleep(0.1)
+            sleep(0.5)
 
 
 def mock_spectrum_card_factory() -> MockSpectrumCard:
