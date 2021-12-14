@@ -76,20 +76,16 @@ class StarHubTest(SingleCardTest):
         self.assertTrue((array(self._device.transfer_buffers) == buffer).all())
 
     def test_acquisition(self) -> None:
-        if self._MOCK_MODE:
-            with self.assertRaises(SpectrumDeviceNotConnected):
-                self._device.start_acquisition()
-        else:
-            first_channel_each_card = [0] + [
-                len(self._device._child_cards[n + 1].channels) for n in range(len(self._device._child_cards) - 1)
-            ]
-            window_length_samples = 16384
-            acquisition_timeout_ms = 1000
-            self._device.set_enabled_channels(first_channel_each_card)
-            self._simple_acquisition(window_length_samples, acquisition_timeout_ms)
-            acquired_waveforms = self._device.get_waveforms()
-            self.assertEqual(len(acquired_waveforms), len(first_channel_each_card))
-            waveform_lengths = array([len(wfm) for wfm in acquired_waveforms])
-            self.assertTrue((waveform_lengths == window_length_samples).all())
-            waveform_sums = array([wfm.sum() for wfm in acquired_waveforms])
-            self.assertTrue((waveform_sums != 0.0).all())
+        first_channel_each_card = [0] + [
+            len(self._device._child_cards[n + 1].channels) for n in range(len(self._device._child_cards) - 1)
+        ]
+        window_length_samples = 16384
+        acquisition_timeout_ms = 1000
+        self._device.set_enabled_channels(first_channel_each_card)
+        self._simple_acquisition(window_length_samples, acquisition_timeout_ms)
+        acquired_waveforms = self._device.get_waveforms()
+        self.assertEqual(len(acquired_waveforms), len(first_channel_each_card))
+        waveform_lengths = array([len(wfm) for wfm in acquired_waveforms])
+        self.assertTrue((waveform_lengths == window_length_samples).all())
+        waveform_sums = array([wfm.sum() for wfm in acquired_waveforms])
+        self.assertTrue((waveform_sums != 0.0).all())

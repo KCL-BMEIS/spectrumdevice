@@ -219,7 +219,7 @@ class SpectrumDeviceInterface(ABC):
     @abstractmethod
     def set_spectrum_api_param(
         self,
-        spectrum_command: int,
+        spectrum_register: int,
         value: int,
         length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,
     ) -> None:
@@ -228,7 +228,7 @@ class SpectrumDeviceInterface(ABC):
     @abstractmethod
     def get_spectrum_api_param(
         self,
-        spectrum_command: int,
+        spectrum_register: int,
         length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,
     ) -> int:
         raise NotImplementedError()

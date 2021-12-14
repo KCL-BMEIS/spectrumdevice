@@ -33,15 +33,15 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
 
     def set_spectrum_api_param(
         self,
-        spectrum_command: int,
+        spectrum_register: int,
         value: int,
         length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,
     ) -> None:
         if self.connected:
             if length == SpectrumIntLengths.THIRTY_TWO:
-                set_spectrum_i32_api_param(self.handle, spectrum_command, value)
+                set_spectrum_i32_api_param(self.handle, spectrum_register, value)
             elif length == SpectrumIntLengths.SIXTY_FOUR:
-                set_spectrum_i64_api_param(self.handle, spectrum_command, value)
+                set_spectrum_i64_api_param(self.handle, spectrum_register, value)
             else:
                 raise ValueError("Spectrum integer length not recognised.")
         else:
@@ -49,14 +49,14 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
 
     def get_spectrum_api_param(
         self,
-        spectrum_command: int,
+        spectrum_register: int,
         length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,
     ) -> int:
         if self.connected:
             if length == SpectrumIntLengths.THIRTY_TWO:
-                return get_spectrum_i32_api_param(self.handle, spectrum_command)
+                return get_spectrum_i32_api_param(self.handle, spectrum_register)
             elif length == SpectrumIntLengths.SIXTY_FOUR:
-                return get_spectrum_i64_api_param(self.handle, spectrum_command)
+                return get_spectrum_i64_api_param(self.handle, spectrum_register)
             else:
                 raise ValueError("Spectrum integer length not recognised.")
         else:

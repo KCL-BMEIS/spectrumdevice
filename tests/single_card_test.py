@@ -149,29 +149,21 @@ class SingleCardTest(TestCase):
         self.assertEqual(buffer, self._device.transfer_buffers[0])
 
     def test_disconnect(self) -> None:
-        if self._MOCK_MODE:
-            with self.assertRaises(SpectrumDeviceNotConnected):
-                self._device.disconnect()
-        else:
+        self._device.set_acquisition_length_samples(4096)
+        self.assertTrue(self._device.acquisition_length_samples == 4096)
+        self._device.disconnect()
+        with self.assertRaises(SpectrumDeviceNotConnected):
             self._device.set_acquisition_length_samples(4096)
-            self.assertTrue(self._device.acquisition_length_samples == 4096)
-            self._device.disconnect()
-            with self.assertRaises(SpectrumDeviceNotConnected):
-                self._device.set_acquisition_length_samples(4096)
-            self.setUp()
+        self.setUp()
 
     def test_acquisition(self) -> None:
-        if self._MOCK_MODE:
-            with self.assertRaises(SpectrumDeviceNotConnected):
-                self._device.start_acquisition()
-        else:
-            window_length_samples = 16384
-            acquisition_timeout_ms = 1000
-            self._device.set_enabled_channels([0])
-            self._simple_acquisition(window_length_samples, acquisition_timeout_ms)
-            acquired_waveform = self._device.transfer_buffers[0].data_buffer
-            self.assertEqual(len(acquired_waveform), window_length_samples)
-            self.assertTrue(acquired_waveform.sum() != 0.0)
+        window_length_samples = 16384
+        acquisition_timeout_ms = 1000
+        self._device.set_enabled_channels([0])
+        self._simple_acquisition(window_length_samples, acquisition_timeout_ms)
+        acquired_waveform = self._device.transfer_buffers[0].data_buffer
+        self.assertEqual(len(acquired_waveform), window_length_samples)
+        self.assertTrue(acquired_waveform.sum() != 0.0)
 
     def _simple_acquisition(self, window_length_samples: int, acquisition_timeout_ms: int) -> None:
         self._device.set_trigger_sources([TriggerSource.SPC_TMASK_SOFTWARE])
@@ -181,7 +173,6 @@ class SingleCardTest(TestCase):
         self._device.set_timeout_ms(acquisition_timeout_ms)
         self._device.start_acquisition()
         self._device.wait_for_acquisition_to_complete()
-        transfer_buffer = transfer_buffer_factory(window_length_samples * len(self._device.enabled_channels))
-        self._device.define_transfer_buffer(transfer_buffer)
+        self._device.define_transfer_buffer()
         self._device.start_transfer()
         self._device.wait_for_transfer_to_complete()

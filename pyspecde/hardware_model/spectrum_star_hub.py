@@ -11,10 +11,7 @@ from pyspecde.hardware_model.spectrum_device import (
 )
 from pyspecde.hardware_model.spectrum_card import SpectrumCard, spectrum_card_factory
 from pyspecde.exceptions import SpectrumSettingsMismatchError
-from pyspecde.hardware_model.spectrum_interface import (
-    SpectrumChannelInterface,
-    SpectrumIntLengths,
-)
+from pyspecde.hardware_model.spectrum_interface import SpectrumChannelInterface
 from pyspecde.spectrum_api_wrapper import (
     DEVICE_HANDLE_TYPE,
     AcquisitionMode,
@@ -232,16 +229,6 @@ class SpectrumStarHub(SpectrumDevice):
     def set_timeout_ms(self, timeout_ms: int) -> None:
         for d in self._child_cards:
             d.set_timeout_ms(timeout_ms)
-
-    def get_spectrum_api_param_all_cards(
-        self,
-        spectrum_command: int,
-        length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,
-    ) -> List[int]:
-        param_values_each_device = []
-        for card in self._child_cards:
-            param_values_each_device.append(card.get_spectrum_api_param(spectrum_command, length))
-        return param_values_each_device
 
 
 def spectrum_star_hub_factory(ip_address: str, num_cards: int, master_card_index: int) -> SpectrumStarHub:
