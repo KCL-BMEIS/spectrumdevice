@@ -4,10 +4,15 @@ from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
 from pyspecde.spectrum_api_wrapper.channel import SpectrumChannelName
 from pyspecde.spectrum_api_wrapper.transfer_buffer import BufferType, BufferDirection, TransferBuffer
 from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub, spectrum_star_hub_factory
-from pyspecde.exceptions import SpectrumDeviceNotConnected, SpectrumInvalidNumberOfEnabledChannels
+from pyspecde.exceptions import SpectrumInvalidNumberOfEnabledChannels
 from pyspecde.hardware_model.mock_spectrum_hardware import mock_spectrum_star_hub_factory
 from tests.single_card_test import SingleCardTest
-from tests.test_configuration import TEST_SPECTRUM_STAR_HUB_CONFIG, STAR_HUB_TEST_MODE, SpectrumTestMode
+from tests.test_configuration import (
+    TEST_SPECTRUM_STAR_HUB_CONFIG,
+    STAR_HUB_TEST_MODE,
+    SpectrumTestMode,
+    TEST_FRAME_RATE_HZ,
+)
 from spectrum_gmbh.regs import SPC_CHENABLE, SPC_SYNC_ENABLEMASK
 
 
@@ -15,13 +20,11 @@ class StarHubTest(SingleCardTest):
     def setUp(self) -> None:
         self._MOCK_MODE = STAR_HUB_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
         if self._MOCK_MODE:
-            self._device: SpectrumStarHub = mock_spectrum_star_hub_factory()
-        else:
-            self._device = spectrum_star_hub_factory(
-                TEST_SPECTRUM_STAR_HUB_CONFIG.ip_address,
-                TEST_SPECTRUM_STAR_HUB_CONFIG.num_cards,
-                TEST_SPECTRUM_STAR_HUB_CONFIG.master_card_index,
+            self._device: SpectrumStarHub = mock_spectrum_star_hub_factory(
+                TEST_SPECTRUM_STAR_HUB_CONFIG, frame_rate_hz=TEST_FRAME_RATE_HZ
             )
+        else:
+            self._device = spectrum_star_hub_factory(TEST_SPECTRUM_STAR_HUB_CONFIG)
 
         self._expected_num_channels = array(
             [card.num_channels for card in TEST_SPECTRUM_STAR_HUB_CONFIG.card_configs]
@@ -35,7 +38,7 @@ class StarHubTest(SingleCardTest):
             self._device.disconnect()
 
     def test_init(self) -> None:
-        hub = mock_spectrum_star_hub_factory()
+        hub = mock_spectrum_star_hub_factory(TEST_SPECTRUM_STAR_HUB_CONFIG, frame_rate_hz=TEST_FRAME_RATE_HZ)
         self.assertEqual(3, hub.get_spectrum_api_param(SPC_SYNC_ENABLEMASK))
 
     def test_count_channels(self) -> None:

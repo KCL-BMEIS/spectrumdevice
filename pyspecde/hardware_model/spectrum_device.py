@@ -61,3 +61,7 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
                 raise ValueError("Spectrum integer length not recognised.")
         else:
             raise SpectrumDeviceNotConnected("The device has been disconnected.")
+
+
+def create_visa_string_from_ip(ip_address: str, instrument_number: int) -> str:
+    return f"TCPIP[0]::{ip_address}::inst{instrument_number}::INSTR"

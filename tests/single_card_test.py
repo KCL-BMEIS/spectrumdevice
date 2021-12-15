@@ -7,7 +7,6 @@ from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
 from pyspecde.hardware_model.spectrum_interface import (
     SpectrumDeviceInterface,
 )
-from pyspecde.hardware_model.spectrum_star_hub import create_visa_string_from_ip
 from pyspecde.spectrum_api_wrapper import AcquisitionMode, ClockMode
 from pyspecde.spectrum_api_wrapper.channel import SpectrumChannelName
 from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
@@ -15,7 +14,6 @@ from pyspecde.spectrum_api_wrapper.transfer_buffer import (
     BufferType,
     BufferDirection,
     TransferBuffer,
-    transfer_buffer_factory,
 )
 from pyspecde.exceptions import (
     SpectrumDeviceNotConnected,
@@ -23,7 +21,12 @@ from pyspecde.exceptions import (
     SpectrumTriggerOperationNotImplemented,
 )
 from pyspecde.hardware_model.mock_spectrum_hardware import mock_spectrum_card_factory
-from tests.test_configuration import SINGLE_CARD_TEST_MODE, SpectrumTestMode, TEST_SPECTRUM_CARD_CONFIG
+from tests.test_configuration import (
+    SINGLE_CARD_TEST_MODE,
+    SpectrumTestMode,
+    TEST_SPECTRUM_CARD_CONFIG,
+    TEST_FRAME_RATE_HZ,
+)
 from spectrum_gmbh.regs import SPC_CHENABLE
 
 
@@ -31,13 +34,11 @@ class SingleCardTest(TestCase):
     def setUp(self) -> None:
         self._MOCK_MODE = SINGLE_CARD_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
         if self._MOCK_MODE:
-            self._device: SpectrumDeviceInterface = mock_spectrum_card_factory()
-        else:
-            self._device = spectrum_card_factory(
-                create_visa_string_from_ip(
-                    TEST_SPECTRUM_CARD_CONFIG.ip_address, TEST_SPECTRUM_CARD_CONFIG.visa_device_num
-                )
+            self._device: SpectrumDeviceInterface = mock_spectrum_card_factory(
+                TEST_SPECTRUM_CARD_CONFIG, frame_rate_hz=TEST_FRAME_RATE_HZ
             )
+        else:
+            self._device = spectrum_card_factory(TEST_SPECTRUM_CARD_CONFIG)
 
         self._all_spectrum_channel_identifiers = [c.value for c in SpectrumChannelName]
         self._all_spectrum_channel_identifiers.sort()  # Enums are unordered so ensure channels are in ascending order

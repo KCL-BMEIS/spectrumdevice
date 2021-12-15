@@ -1,15 +1,13 @@
 from copy import deepcopy
+from dataclasses import dataclass
 from functools import reduce
 from operator import or_
 from typing import List, Optional, Sequence, Tuple
 
-from numpy import arange
-from numpy.core.records import ndarray
+from numpy import arange, ndarray
 
-from pyspecde.hardware_model.spectrum_device import (
-    SpectrumDevice,
-)
-from pyspecde.hardware_model.spectrum_card import SpectrumCard, spectrum_card_factory
+from pyspecde.hardware_model.spectrum_device import SpectrumDevice
+from pyspecde.hardware_model.spectrum_card import SpectrumCard, spectrum_card_factory, SpectrumCardConfig
 from pyspecde.exceptions import SpectrumSettingsMismatchError
 from pyspecde.hardware_model.spectrum_interface import SpectrumChannelInterface
 from pyspecde.spectrum_api_wrapper import (
@@ -231,11 +229,21 @@ class SpectrumStarHub(SpectrumDevice):
             d.set_timeout_ms(timeout_ms)
 
 
-def spectrum_star_hub_factory(ip_address: str, num_cards: int, master_card_index: int) -> SpectrumStarHub:
-    card_visa_strings = [create_visa_string_from_ip(ip_address, card_num) for card_num in range(num_cards)]
-    cards = [spectrum_card_factory(visa_string) for visa_string in card_visa_strings]
+@dataclass
+class SpectrumStarHubConfig:
+    ip_address: str
+    card_configs: Sequence[SpectrumCardConfig]
+    master_card_index: int
+
+    @property
+    def num_cards(self) -> int:
+        return len(self.card_configs)
+
+
+def spectrum_star_hub_factory(config: SpectrumStarHubConfig) -> SpectrumStarHub:
+    cards = [spectrum_card_factory(child_card_config) for child_card_config in config.card_configs]
     hub_handle = spectrum_handle_factory("sync0")
-    return SpectrumStarHub(hub_handle, cards, master_card_index)
+    return SpectrumStarHub(hub_handle, cards, config.master_card_index)
 
 
 def are_all_values_equal(values: List[int]) -> bool:
@@ -247,7 +255,3 @@ def check_settings_constant_across_devices(values: List[int], setting_name: str)
         return values[0]
     else:
         raise SpectrumSettingsMismatchError(f"Devices have different {setting_name} settings")
-
-
-def create_visa_string_from_ip(ip_address: str, instrument_number: int) -> str:
-    return f"TCPIP[0]::{ip_address}::inst{instrument_number}::INSTR"

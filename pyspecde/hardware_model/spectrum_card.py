@@ -1,4 +1,5 @@
 from copy import copy
+from dataclasses import dataclass
 from functools import reduce
 from operator import or_
 from typing import List, Optional, Tuple
@@ -28,7 +29,7 @@ from pyspecde.spectrum_api_wrapper.card_features import (
 )
 from pyspecde.spectrum_api_wrapper.transfer_buffer import TransferBuffer, transfer_buffer_factory, set_transfer_buffer
 from pyspecde.hardware_model.spectrum_channel import spectrum_channel_factory
-from pyspecde.hardware_model.spectrum_device import SpectrumDevice
+from pyspecde.hardware_model.spectrum_device import SpectrumDevice, create_visa_string_from_ip
 from pyspecde.exceptions import (
     SpectrumInvalidNumberOfEnabledChannels,
     SpectrumNoTransferBufferDefined,
@@ -319,5 +320,18 @@ class SpectrumCard(SpectrumDevice):
         self.set_spectrum_api_param(SPC_SAMPLERATE, rate, SpectrumIntLengths.SIXTY_FOUR)
 
 
-def spectrum_card_factory(visa_string: str) -> SpectrumCard:
+@dataclass
+class SpectrumCardConfig:
+    ip_address: str
+    visa_device_num: int = 1
+    num_modules: int = 2
+    num_channels_per_module: int = 4
+
+    @property
+    def num_channels(self) -> int:
+        return self.num_modules * self.num_channels_per_module
+
+
+def spectrum_card_factory(config: SpectrumCardConfig) -> SpectrumCard:
+    visa_string = create_visa_string_from_ip(config.ip_address, config.visa_device_num)
     return SpectrumCard(spectrum_handle_factory(visa_string))

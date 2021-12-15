@@ -6,14 +6,17 @@ from typing import Optional, cast, Sequence, List
 from numpy import ndarray, zeros
 from numpy.random import randn
 
-from pyspecde.hardware_model.spectrum_card import SpectrumCard
+from pyspecde.hardware_model.spectrum_card import SpectrumCard, SpectrumCardConfig
 from pyspecde.hardware_model.spectrum_device import SpectrumDevice
-from pyspecde.exceptions import SpectrumDeviceNotConnected, SpectrumNoTransferBufferDefined
+from pyspecde.exceptions import (
+    SpectrumDeviceNotConnected,
+    SpectrumNoTransferBufferDefined,
+    SpectrumSettingsMismatchError,
+)
 from pyspecde.hardware_model.spectrum_interface import SpectrumIntLengths
 from pyspecde.spectrum_api_wrapper import DEVICE_HANDLE_TYPE, AcquisitionMode
 from pyspecde.spectrum_api_wrapper.transfer_buffer import TransferBuffer, transfer_buffer_factory
-from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub
-from tests.test_configuration import TEST_SPECTRUM_STAR_HUB_CONFIG, TEST_SPECTRUM_CARD_CONFIG
+from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub, SpectrumStarHubConfig
 from spectrum_gmbh.regs import (
     SPC_MIINST_MODULES,
     SPC_MIINST_CHPERMODULE,
@@ -28,7 +31,8 @@ from spectrum_gmbh.regs import (
     SPCM_FEAT_EXTFW_SEGSTAT,
     SPC_TIMEOUT,
     SPC_SEGMENTSIZE,
-    SPC_MEMSIZE, SPC_CARDMODE,
+    SPC_MEMSIZE,
+    SPC_CARDMODE,
 )
 from pyspecde.spectrum_api_wrapper.mock_pyspcm import drv_handle
 
@@ -46,8 +50,6 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
         """
         self._source_frame_rate_hz = source_frame_rate_hz
         self._param_dict = {
-            SPC_MIINST_MODULES: TEST_SPECTRUM_CARD_CONFIG.num_modules,
-            SPC_MIINST_CHPERMODULE: TEST_SPECTRUM_CARD_CONFIG.num_channels_per_module,
             SPC_PCIFEATURES: SPCM_FEAT_MULTI,
             SPC_PCIEXTFEATURES: SPCM_FEAT_EXTFW_SEGSTAT,
             SPCM_X0_AVAILMODES: SPCM_XMODE_DISABLE,
@@ -57,7 +59,7 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
             SPC_TIMEOUT: 1000,
             SPC_SEGMENTSIZE: 1000,
             SPC_MEMSIZE: 1000,
-            SPC_CARDMODE: AcquisitionMode.SPC_REC_STD_SINGLE
+            SPC_CARDMODE: AcquisitionMode.SPC_REC_STD_SINGLE.value,
         }
 
         self._buffer_lock = Lock()
@@ -113,7 +115,7 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
         if self.connected:
             self._param_dict[spectrum_register] = value
         else:
-            raise SpectrumDeviceNotConnected('Mock device has been disconnected.')
+            raise SpectrumDeviceNotConnected("Mock device has been disconnected.")
 
     def get_spectrum_api_param(
         self, spectrum_register: int, length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO
@@ -144,11 +146,11 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
                 self._param_dict[spectrum_register] = -1
                 return -1
         else:
-            raise SpectrumDeviceNotConnected('Mock device has been disconnected.')
+            raise SpectrumDeviceNotConnected("Mock device has been disconnected.")
 
 
 class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
-    def __init__(self, source_frame_rate_hz: float = 10.0):
+    def __init__(self, config: SpectrumCardConfig, source_frame_rate_hz: float = 10.0):
         """MockSpectrumDevice
 
         Overrides methods of SpectrumCard that communicate with hardware with mocked implementations, allowing
@@ -162,6 +164,8 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         """
         mock_handle = cast(DEVICE_HANDLE_TYPE, drv_handle)
         MockSpectrumDevice.__init__(self, source_frame_rate_hz)
+        self._param_dict[SPC_MIINST_MODULES] = config.num_modules
+        self._param_dict[SPC_MIINST_CHPERMODULE] = config.num_channels_per_module
         SpectrumCard.__init__(self, mock_handle)
 
     def set_acquisition_length_samples(self, length_in_samples: int) -> None:
@@ -182,9 +186,12 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
             channels_nums (List[int]): List of mock channel indices to enable, e.g. [0, 1, 2].
 
         """
-        self._on_device_buffer = zeros(self.acquisition_length_samples * len(channels_nums))
-        self._previous_data = zeros(self.acquisition_length_samples * len(channels_nums))
-        super().set_enabled_channels(channels_nums)
+        if len(list(filter(lambda x: 0 <= x < len(self.channels), channels_nums))) == len(channels_nums):
+            self._on_device_buffer = zeros(self.acquisition_length_samples * len(channels_nums))
+            self._previous_data = zeros(self.acquisition_length_samples * len(channels_nums))
+            super().set_enabled_channels(channels_nums)
+        else:
+            raise SpectrumSettingsMismatchError("Not enough channels in mock device configuration.")
 
     def define_transfer_buffer(self, buffer: Optional[TransferBuffer] = None) -> None:
         """define_transfer_buffer
@@ -240,7 +247,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
             self._previous_data = self._transfer_buffer.data_buffer.copy()
         else:
             raise SpectrumNoTransferBufferDefined("No transfer in progress.")
-        print(f'Transferred {len(self._transfer_buffer.data_buffer)} samples')
+        print(f"Transferred {len(self._transfer_buffer.data_buffer)} samples")
 
     def wait_for_acquisition_to_complete(self) -> None:
         """wait_for_acquisition_to_complete
@@ -275,7 +282,7 @@ class MockSpectrumStarHub(SpectrumStarHub, MockSpectrumDevice):
         SpectrumStarHub.__init__(self, hub_handle, child_cards, master_card_index)
 
     def start_acquisition(self) -> None:
-        """ start_acquisition
+        """start_acquisition
 
         This method overrides SpectrumDevice.start_acquisition. In reality, StarHub's only need to be sent a single
         instruction to start acquisition, which they automatically relay to their child cards - hence why
@@ -287,7 +294,7 @@ class MockSpectrumStarHub(SpectrumStarHub, MockSpectrumDevice):
             card.start_acquisition()
 
     def stop_acquisition(self) -> None:
-        """ stop_acquisition
+        """stop_acquisition
 
         This method overrides SpectrumDevice.stop_acquisition. In reality, StarHub's only need to be sent a single
         instruction to stop acquisition, which they automatically relay to their child cards - hence why
@@ -300,8 +307,9 @@ class MockSpectrumStarHub(SpectrumStarHub, MockSpectrumDevice):
 
 
 class MockWaveformSource(ABC):
-    """ Interface for a mock noise waveform source. Implementations are intended to be called in their own thread.
+    """Interface for a mock noise waveform source. Implementations are intended to be called in their own thread.
     When called, MockWaveformSource implementations will fill a provided buffer with noise samples."""
+
     @abstractmethod
     def __call__(self, stop_flag: Event, frame_rate: float, on_device_buffer: ndarray, buffer_lock: Lock) -> None:
         raise NotImplementedError()
@@ -309,7 +317,7 @@ class MockWaveformSource(ABC):
 
 class SingleModeMockWaveformSource(MockWaveformSource):
     def __call__(self, stop_flag: Event, frame_rate: float, on_device_buffer: ndarray, buffer_lock: Lock) -> None:
-        """ SingleModeMockWaveformSource
+        """SingleModeMockWaveformSource
 
         When called, this MockWaveformSource simulates SPC_REC_STD_SINGLE Mode, placing a single frames worth of samples
         into a provided mock on_device_buffer.
@@ -332,7 +340,7 @@ class SingleModeMockWaveformSource(MockWaveformSource):
 
 class MultiFIFOModeMockWaveformSource(MockWaveformSource):
     def __call__(self, stop_flag: Event, frame_rate: float, on_device_buffer: ndarray, buffer_lock: Lock) -> None:
-        """ MultiFIFOModeMockWaveformSource
+        """MultiFIFOModeMockWaveformSource
 
         When called, this MockWaveformSource simulates SPC_REC_FIFO_MULTI Mode, continuously replacing the contents
         of on_device_buffer with new frames of noise samples.
@@ -360,11 +368,11 @@ def mock_waveform_source_factory(acquisition_mode: AcquisitionMode) -> MockWavef
         raise NotImplementedError("Mock waveform source not yet implemented for {acquisition_mode} acquisition mode.")
 
 
-def mock_spectrum_card_factory() -> MockSpectrumCard:
-    return MockSpectrumCard()
+def mock_spectrum_card_factory(config: SpectrumCardConfig, frame_rate_hz: float) -> MockSpectrumCard:
+    return MockSpectrumCard(config, frame_rate_hz)
 
 
-def mock_spectrum_star_hub_factory() -> MockSpectrumStarHub:
-    cards = [mock_spectrum_card_factory() for _ in range(TEST_SPECTRUM_STAR_HUB_CONFIG.num_cards)]
+def mock_spectrum_star_hub_factory(config: SpectrumStarHubConfig, frame_rate_hz: float) -> MockSpectrumStarHub:
+    cards = [mock_spectrum_card_factory(child_config, frame_rate_hz) for child_config in config.card_configs]
     mock_hub_handle = cast(DEVICE_HANDLE_TYPE, drv_handle)
     return MockSpectrumStarHub(mock_hub_handle, cards, 0)

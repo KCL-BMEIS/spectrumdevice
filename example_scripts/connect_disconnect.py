@@ -1,5 +1,5 @@
 from pyspecde.hardware_model.spectrum_card import spectrum_card_factory
-from pyspecde.hardware_model.spectrum_star_hub import create_visa_string_from_ip
+from pyspecde.hardware_model.spectrum_device import create_visa_string_from_ip
 
 device_ip = "169.254.142.75"
 visa_string = create_visa_string_from_ip(ip_address=device_ip, instrument_number=1)
