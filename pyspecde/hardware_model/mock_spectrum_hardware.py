@@ -247,7 +247,6 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
             self._previous_data = self._transfer_buffer.data_buffer.copy()
         else:
             raise SpectrumNoTransferBufferDefined("No transfer in progress.")
-        print(f"Transferred {len(self._transfer_buffer.data_buffer)} samples")
 
     def wait_for_acquisition_to_complete(self) -> None:
         """wait_for_acquisition_to_complete

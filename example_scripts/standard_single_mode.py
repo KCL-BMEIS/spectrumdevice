@@ -1,4 +1,4 @@
-from matplotlib.pyplot import plot, show, figure, title
+from matplotlib.pyplot import plot, show
 
 from pyspecde.hardware_model.mock_spectrum_hardware import mock_spectrum_card_factory
 from pyspecde.hardware_model.spectrum_card import SpectrumCardConfig, spectrum_card_factory
@@ -6,7 +6,6 @@ from pyspecde.spectrum_api_wrapper import AcquisitionMode
 from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
 
 MOCK_MODE = True
-NUM_ACQUISITIONS = 2
 
 # User settings
 config = SpectrumCardConfig(ip_address="169.254.142.75", visa_device_num=0, num_modules=2, num_channels_per_module=8)
@@ -27,7 +26,7 @@ else:
 
 # Configure spectrum device
 window_length_samples = int(sample_rate_hz * window_length_seconds)
-card.set_acquisition_mode(AcquisitionMode.SPC_REC_FIFO_MULTI)
+card.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
 card.set_sample_rate_hz(int(sample_rate_hz))
 card.set_acquisition_length_samples(window_length_samples)
 card.set_post_trigger_length_samples(window_length_samples)
@@ -39,25 +38,21 @@ card.set_timeout_ms(acquisition_timeout_ms)
 for ch in card.channels:
     ch.set_vertical_range_mv(vertical_range_mv)
 
-# Start acquisitions
-card.define_transfer_buffer()
+# Execute acquisition
 card.start_acquisition()
-card.start_transfer()
+card.wait_for_acquisition_to_complete()
 
-# Wait for each acquisition's data to arrive
-acquisitions = []
-for _ in range(NUM_ACQUISITIONS):
-    acquisitions.append(card.get_waveforms())
-card.stop_acquisition()
+# Get waveform data
+card.define_transfer_buffer()
+card.start_transfer()
+card.wait_for_transfer_to_complete()
+waveforms = card.get_waveforms()
 
 # Plot waveforms
-for n, acquisition in enumerate(acquisitions):
-    figure()
-    title(f'Acquisition {n}')
-    for waveform in acquisition:
-        plot(waveform)
+for waveform in waveforms:
+    plot(waveform)
 
-print(f'Completed {len(acquisitions)} acquisitions each containing {len(acquisitions[0])} waveforms.')
-print(f'Waveforms had the following shape: {acquisitions[0][0].shape}')
+print(f'Acquired {len(waveforms)} waveforms with the following shapes:')
+print([wfm.shape for wfm in waveforms])
 
 show()
