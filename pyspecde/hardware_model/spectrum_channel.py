@@ -3,25 +3,17 @@ from pyspecde.hardware_model.spectrum_interface import SpectrumChannelInterface,
 
 
 class SpectrumChannel(SpectrumChannelInterface):
-    def __init__(self, name: SpectrumChannelName, parent_device: SpectrumDeviceInterface):
-        self._name: SpectrumChannelName = name
+    """Class for controlling a channel of a spectrum digitizer. Channels are constructed automatically when
+    a SpectrumDevice is instantiated."""
+
+    def __init__(self, channel_number: int, parent_device: SpectrumDeviceInterface):
+        self._name = SpectrumChannelName[f"CHANNEL{channel_number}"]
         self._parent_device = parent_device
         self._enabled = True
 
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, SpectrumChannel):
-            return (self.name == other.name) and (self._parent_device == other._parent_device)
-        else:
-            raise NotImplementedError()
-
-    def __str__(self) -> str:
-        return f"{self._name.name} of device {self._parent_device}"
-
-    def __repr__(self) -> str:
-        return str(self)
-
     @property
     def name(self) -> SpectrumChannelName:
+        """The identifier assigned by the spectrum drive, formatted as an Enum by the spectrum_api_wrapper package."""
         return self._name
 
     @property
@@ -30,18 +22,31 @@ class SpectrumChannel(SpectrumChannelInterface):
 
     @property
     def vertical_range_mv(self) -> int:
-        return self._parent_device.get_spectrum_api_param(VERTICAL_RANGE_COMMANDS[self._number])
+        """The currently set input range of the channel in mV."""
+        return self._parent_device.read_spectrum_device_register(VERTICAL_RANGE_COMMANDS[self._number])
 
     def set_vertical_range_mv(self, vertical_range: int) -> None:
-        self._parent_device.set_spectrum_api_param(VERTICAL_RANGE_COMMANDS[self._number], vertical_range)
+        """Set the input range of the channel in mV. See Spectrum documentation for valid values."""
+        self._parent_device.write_to_spectrum_device_register(VERTICAL_RANGE_COMMANDS[self._number], vertical_range)
 
     @property
     def vertical_offset_percent(self) -> int:
-        return self._parent_device.get_spectrum_api_param(VERTICAL_OFFSET_COMMANDS[self._number])
+        """The currently set input offset of the channel in percent of the vertical range."""
+        return self._parent_device.read_spectrum_device_register(VERTICAL_OFFSET_COMMANDS[self._number])
 
     def set_vertical_offset_percent(self, offset: int) -> None:
-        self._parent_device.set_spectrum_api_param(VERTICAL_OFFSET_COMMANDS[self._number], offset)
+        """Set the input offset of the channel in percent of the vertical range. See spectrum documentation for valid
+        values."""
+        self._parent_device.write_to_spectrum_device_register(VERTICAL_OFFSET_COMMANDS[self._number], offset)
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, SpectrumChannel):
+            return (self.name == other.name) and (self._parent_device == other._parent_device)
+        else:
+            raise NotImplementedError()
 
-def spectrum_channel_factory(channel_number: int, parent_device: SpectrumDeviceInterface) -> SpectrumChannel:
-    return SpectrumChannel(SpectrumChannelName[f"CHANNEL{channel_number}"], parent_device)
+    def __str__(self) -> str:
+        return f"{self._name.name} of {self._parent_device}"
+
+    def __repr__(self) -> str:
+        return str(self)

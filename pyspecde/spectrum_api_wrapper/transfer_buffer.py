@@ -69,13 +69,14 @@ class TransferBuffer:
             raise NotImplementedError()
 
 
-def transfer_buffer_factory(
-    size_in_samples: int,
-    type: BufferType = BufferType.SPCM_BUF_DATA,
-    direction: BufferDirection = BufferDirection.SPCM_DIR_CARDTOPC,
-) -> TransferBuffer:
-    data_buffer = zeros(size_in_samples, int16)
-    return TransferBuffer(type=type, direction=direction, board_memory_offset_bytes=0, data_buffer=data_buffer)
+class CardToPCDataTransferBuffer(TransferBuffer):
+    """A TransferBuffer configured for card-to-pc transfer of samples (rather than timestamps or ABA data)"""
+
+    def __init__(self, size_in_samples: int, board_memory_offset_bytes: int = 0) -> None:
+        self.type = BufferType.SPCM_BUF_DATA
+        self.direction = BufferDirection.SPCM_DIR_CARDTOPC
+        self.board_memory_offset_bytes = board_memory_offset_bytes
+        self.data_buffer = zeros(size_in_samples, int16)
 
 
 def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffer) -> None:

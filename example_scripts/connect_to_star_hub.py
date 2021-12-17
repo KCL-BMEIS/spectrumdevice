@@ -18,17 +18,22 @@ if __name__ == "__main__":
         hub = SpectrumStarHub(device_number=0, child_cards=child_cards, master_card_index=STAR_HUB_MASTER_CARD_INDEX)
     else:
         mock_child_cards = []
-        for _ in range(NUM_CARDS_IN_STAR_HUB):
+        for n in range(NUM_CARDS_IN_STAR_HUB):
             # Create a mock device for each card in the hub
             mock_child_cards.append(
                 MockSpectrumCard(
+                    device_number=n,
                     mock_source_frame_rate_hz=10.0,  # Mock devices need to be provided with a mock source frame rate
                     num_modules=2,  # (For real devices, this and num_channels_per_module are read from the hardware).
                     num_channels_per_module=4,
                 )
             )
         # Create a mock hub containing the above devices
-        hub = MockSpectrumStarHub(child_cards=mock_child_cards, master_card_index=STAR_HUB_MASTER_CARD_INDEX)
+        hub = MockSpectrumStarHub(
+            device_number=0, child_cards=mock_child_cards, master_card_index=STAR_HUB_MASTER_CARD_INDEX
+        )
 
-    print(f"The hub contains {len(hub.channels)} channels in total.")
+    print(f"{hub} contains {len(hub.channels)} channels in total:")
+    for channel in hub.channels:
+        print(channel)
     hub.disconnect()

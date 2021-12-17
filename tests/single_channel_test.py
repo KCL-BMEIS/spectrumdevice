@@ -1,13 +1,13 @@
 from unittest import TestCase
 
-from pyspecde.hardware_model.spectrum_channel import spectrum_channel_factory
+from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
 from tests.test_device_factories import create_spectrum_card_for_testing
 
 
 class SingleChannelTest(TestCase):
     def setUp(self) -> None:
         self._device = create_spectrum_card_for_testing()
-        self._channel = spectrum_channel_factory(0, self._device)
+        self._channel = SpectrumChannel(0, self._device)
 
     def tearDown(self) -> None:
         self._channel._parent_device.disconnect()

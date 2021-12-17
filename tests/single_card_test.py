@@ -1,17 +1,11 @@
 from unittest import TestCase
 
-from numpy import zeros
-
 from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
 from pyspecde.hardware_model.spectrum_device import SpectrumDevice
 from pyspecde.spectrum_api_wrapper import AcquisitionMode, ClockMode
 from pyspecde.spectrum_api_wrapper.channel import SpectrumChannelName
 from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
-from pyspecde.spectrum_api_wrapper.transfer_buffer import (
-    BufferType,
-    BufferDirection,
-    TransferBuffer,
-)
+from pyspecde.spectrum_api_wrapper.transfer_buffer import CardToPCDataTransferBuffer
 from pyspecde.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumExternalTriggerNotEnabled,
@@ -20,6 +14,7 @@ from pyspecde.exceptions import (
 from tests.configuration import (
     NUM_CHANNELS_PER_MODULE,
     NUM_MODULES_PER_CARD,
+    ACQUISITION_LENGTH,
 )
 from spectrum_gmbh.regs import SPC_CHENABLE
 from tests.test_device_factories import create_spectrum_card_for_testing
@@ -42,29 +37,28 @@ class SingleCardTest(TestCase):
     def test_get_channels(self) -> None:
         channels = self._device.channels
 
-        expected_channels = [
-            SpectrumChannel(SpectrumChannelName(self._all_spectrum_channel_identifiers[i]), self._device)
-            for i in range(self._expected_num_channels)
-        ]
+        expected_channels = [SpectrumChannel(i, self._device) for i in range(self._expected_num_channels)]
         self.assertEqual(expected_channels, channels)
 
     def test_enable_one_channel(self) -> None:
         self._device.set_enabled_channels([0])
-        self.assertEqual(self._all_spectrum_channel_identifiers[0], self._device.get_spectrum_api_param(SPC_CHENABLE))
+        self.assertEqual(
+            self._all_spectrum_channel_identifiers[0], self._device.read_spectrum_device_register(SPC_CHENABLE)
+        )
 
     def test_enable_two_channels(self) -> None:
         self._device.set_enabled_channels([0, 1])
         expected_command = self._all_spectrum_channel_identifiers[0] | self._all_spectrum_channel_identifiers[1]
-        self.assertEqual(expected_command, self._device.get_spectrum_api_param(SPC_CHENABLE))
+        self.assertEqual(expected_command, self._device.read_spectrum_device_register(SPC_CHENABLE))
 
     def test_acquisition_length(self) -> None:
-        acquisition_length = 4096
+        acquisition_length = ACQUISITION_LENGTH
         self._device.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
         self._device.set_acquisition_length_samples(acquisition_length)
         self.assertEqual(acquisition_length, self._device.acquisition_length_samples)
 
     def test_post_trigger_length(self) -> None:
-        post_trigger_length = 2048
+        post_trigger_length = ACQUISITION_LENGTH
         self._device.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
         self._device.set_post_trigger_length_samples(post_trigger_length)
         self.assertEqual(post_trigger_length, self._device.post_trigger_length_samples)
@@ -133,20 +127,20 @@ class SingleCardTest(TestCase):
             self.assertTrue(False, f"raised an exception {e}")
 
     def test_transfer_buffer(self) -> None:
-        buffer = TransferBuffer(BufferType.SPCM_BUF_DATA, BufferDirection.SPCM_DIR_CARDTOPC, 0, zeros(4096))
+        buffer = CardToPCDataTransferBuffer(ACQUISITION_LENGTH)
         self._device.define_transfer_buffer(buffer)
         self.assertEqual(buffer, self._device.transfer_buffers[0])
 
     def test_disconnect(self) -> None:
-        self._device.set_acquisition_length_samples(4096)
-        self.assertTrue(self._device.acquisition_length_samples == 4096)
+        self._device.set_acquisition_length_samples(ACQUISITION_LENGTH)
+        self.assertTrue(self._device.acquisition_length_samples == ACQUISITION_LENGTH)
         self._device.disconnect()
         with self.assertRaises(SpectrumDeviceNotConnected):
-            self._device.set_acquisition_length_samples(4096)
+            self._device.set_acquisition_length_samples(ACQUISITION_LENGTH)
         self._device.reconnect()
 
     def test_acquisition(self) -> None:
-        window_length_samples = 16384
+        window_length_samples = ACQUISITION_LENGTH
         acquisition_timeout_ms = 1000
         self._device.set_enabled_channels([0])
         self._simple_acquisition(window_length_samples, acquisition_timeout_ms)

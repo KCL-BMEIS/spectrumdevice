@@ -5,7 +5,6 @@ from typing import List, Optional, Union, Tuple
 from numpy import ndarray
 
 from pyspecde.spectrum_api_wrapper import (
-    DEVICE_HANDLE_TYPE,
     AcquisitionMode,
     ClockMode,
 )
@@ -14,10 +13,13 @@ from pyspecde.spectrum_api_wrapper.channel import SpectrumChannelName
 from pyspecde.spectrum_api_wrapper.io_lines import AvailableIOModes
 from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
 from pyspecde.spectrum_api_wrapper.card_features import CardFeature, AdvancedCardFeature
-from pyspecde.spectrum_api_wrapper.transfer_buffer import TransferBuffer
+from pyspecde.spectrum_api_wrapper.transfer_buffer import TransferBuffer, CardToPCDataTransferBuffer
 
 
 class SpectrumChannelInterface(ABC):
+    """Defines the public interface for control of the channels of Spectrum Digitizer device. All properties are read-
+    only and must be set with their respective setter methods."""
+
     @property
     @abstractmethod
     def name(self) -> SpectrumChannelName:
@@ -48,6 +50,10 @@ class SpectrumIntLengths(Enum):
 
 
 class SpectrumDeviceInterface(ABC):
+    """Defines the public interface for control of all Spectrum digitizer devices, be they StarHub composite devices
+    (e.g. the NetBox) or individual digitizer cards. All properties are read-only and must be set with their respective
+    setter methods."""
+
     @property
     @abstractmethod
     def connected(self) -> bool:
@@ -63,11 +69,6 @@ class SpectrumDeviceInterface(ABC):
 
     @property
     def status(self) -> Union[CARD_STATUS_TYPE, STAR_HUB_STATUS_TYPE]:
-        raise NotImplementedError()
-
-    @property
-    @abstractmethod
-    def handle(self) -> DEVICE_HANDLE_TYPE:
         raise NotImplementedError()
 
     @abstractmethod
@@ -98,17 +99,13 @@ class SpectrumDeviceInterface(ABC):
     def disconnect(self) -> None:
         raise NotImplementedError()
 
-    @abstractmethod
-    def apply_channel_enabling(self) -> None:
-        raise NotImplementedError()
-
     @property
     @abstractmethod
     def transfer_buffers(self) -> List[TransferBuffer]:
         raise NotImplementedError()
 
     @abstractmethod
-    def define_transfer_buffer(self, buffer: Optional[TransferBuffer] = None) -> None:
+    def define_transfer_buffer(self, buffer: Optional[CardToPCDataTransferBuffer] = None) -> None:
         raise NotImplementedError()
 
     @abstractmethod
@@ -221,7 +218,7 @@ class SpectrumDeviceInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def set_spectrum_api_param(
+    def write_to_spectrum_device_register(
         self,
         spectrum_register: int,
         value: int,
@@ -230,7 +227,7 @@ class SpectrumDeviceInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_spectrum_api_param(
+    def read_spectrum_device_register(
         self,
         spectrum_register: int,
         length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,

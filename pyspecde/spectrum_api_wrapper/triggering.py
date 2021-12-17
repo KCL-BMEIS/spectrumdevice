@@ -1,5 +1,7 @@
 from enum import Enum
+from typing import List
 
+from pyspecde.spectrum_api_wrapper import _decode_bitmap_using_enum
 from spectrum_gmbh.regs import (
     SPC_TMASK_SOFTWARE,
     SPC_TMASK_EXT0,
@@ -29,6 +31,11 @@ class TriggerSource(Enum):
 
 class ExternalTriggerMode(Enum):
     SPC_TM_POS = SPC_TM_POS
+
+
+def decode_trigger_sources(value: int) -> List[TriggerSource]:
+    possible_values = [source.value for source in TriggerSource]
+    return [TriggerSource(found_value) for found_value in _decode_bitmap_using_enum(value, possible_values)]
 
 
 EXTERNAL_TRIGGER_MODE_COMMANDS = {

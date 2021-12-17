@@ -15,7 +15,7 @@ if not MOCK_MODE:
     card = SpectrumCard(device_number=0, ip_address=DEVICE_IP_ADDRESS)
 else:
     # Set up a mock device
-    card = MockSpectrumCard(mock_source_frame_rate_hz=10.0, num_modules=2, num_channels_per_module=4)
+    card = MockSpectrumCard(device_number=0, mock_source_frame_rate_hz=10.0, num_modules=2, num_channels_per_module=4)
 
 # User settings
 window_length_seconds = 10e-6

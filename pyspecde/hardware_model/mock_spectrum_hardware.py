@@ -15,7 +15,7 @@ from pyspecde.exceptions import (
 )
 from pyspecde.hardware_model.spectrum_interface import SpectrumIntLengths
 from pyspecde.spectrum_api_wrapper import AcquisitionMode
-from pyspecde.spectrum_api_wrapper.transfer_buffer import TransferBuffer, transfer_buffer_factory
+from pyspecde.spectrum_api_wrapper.transfer_buffer import CardToPCDataTransferBuffer
 from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub
 from spectrum_gmbh.regs import (
     SPC_MIINST_MODULES,
@@ -92,7 +92,7 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
         """
         self._acquisition_stop_event.set()
 
-    def set_spectrum_api_param(
+    def write_to_spectrum_device_register(
         self, spectrum_register: int, value: int, length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO
     ) -> None:
         """set_spectrum_api_param
@@ -116,7 +116,7 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
         else:
             raise SpectrumDeviceNotConnected("Mock device has been disconnected.")
 
-    def get_spectrum_api_param(
+    def read_spectrum_device_register(
         self, spectrum_register: int, length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO
     ) -> int:
         """get_spectrum_api_param
@@ -149,7 +149,13 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
 
 
 class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
-    def __init__(self, mock_source_frame_rate_hz: float, num_modules: int = 2, num_channels_per_module: int = 4):
+    def __init__(
+        self,
+        device_number: int,
+        mock_source_frame_rate_hz: float,
+        num_modules: int = 2,
+        num_channels_per_module: int = 4,
+    ):
         """MockSpectrumDevice
 
         Overrides methods of SpectrumCard that communicate with hardware with mocked implementations, allowing
@@ -166,7 +172,9 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         MockSpectrumDevice.__init__(self, mock_source_frame_rate_hz)
         self._param_dict[SPC_MIINST_MODULES] = num_modules
         self._param_dict[SPC_MIINST_CHPERMODULE] = num_channels_per_module
-        SpectrumCard.__init__(self, device_number=0)
+        SpectrumCard.__init__(self, device_number=device_number)
+        self._visa_string = f"MockCard{device_number}"
+        self._connect(self._visa_string)
 
     def set_acquisition_length_samples(self, length_in_samples: int) -> None:
         """set_acquisition_length_samples
@@ -193,7 +201,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         else:
             raise SpectrumSettingsMismatchError("Not enough channels in mock device configuration.")
 
-    def define_transfer_buffer(self, buffer: Optional[TransferBuffer] = None) -> None:
+    def define_transfer_buffer(self, buffer: Optional[CardToPCDataTransferBuffer] = None) -> None:
         """define_transfer_buffer
 
         Creates a TransferBuffer object into which samples from the mock 'on device buffer' will be transferred.
@@ -206,7 +214,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         if buffer:
             self._transfer_buffer = buffer
         else:
-            self._transfer_buffer = transfer_buffer_factory(
+            self._transfer_buffer = CardToPCDataTransferBuffer(
                 self.acquisition_length_samples * len(self.enabled_channels)
             )
 
@@ -266,6 +274,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
 class MockSpectrumStarHub(SpectrumStarHub, MockSpectrumDevice):
     def __init__(
         self,
+        device_number: int,
         child_cards: Sequence[MockSpectrumCard],
         master_card_index: int,
     ):
@@ -282,7 +291,9 @@ class MockSpectrumStarHub(SpectrumStarHub, MockSpectrumDevice):
                 clock) is located.
         """
         MockSpectrumDevice.__init__(self)
-        SpectrumStarHub.__init__(self, 0, child_cards, master_card_index)
+        SpectrumStarHub.__init__(self, device_number, child_cards, master_card_index)
+        self._visa_string = f"MockHub{device_number}"
+        self._connect(self._visa_string)
 
     def start_acquisition(self) -> None:
         """start_acquisition

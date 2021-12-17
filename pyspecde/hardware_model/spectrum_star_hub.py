@@ -10,7 +10,6 @@ from pyspecde.hardware_model.spectrum_card import SpectrumCard
 from pyspecde.exceptions import SpectrumSettingsMismatchError
 from pyspecde.hardware_model.spectrum_interface import SpectrumChannelInterface
 from pyspecde.spectrum_api_wrapper import (
-    DEVICE_HANDLE_TYPE,
     AcquisitionMode,
     ClockMode,
     destroy_handle,
@@ -19,7 +18,7 @@ from pyspecde.spectrum_api_wrapper.status import STAR_HUB_STATUS_TYPE
 from pyspecde.spectrum_api_wrapper.io_lines import AvailableIOModes
 from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
 from pyspecde.spectrum_api_wrapper.card_features import CardFeature, AdvancedCardFeature
-from pyspecde.spectrum_api_wrapper.transfer_buffer import TransferBuffer
+from pyspecde.spectrum_api_wrapper.transfer_buffer import TransferBuffer, CardToPCDataTransferBuffer
 from spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK, SPC_PCIFEATURES
 
 
@@ -52,7 +51,7 @@ class SpectrumStarHub(SpectrumDevice):
         self._visa_string = f"sync{device_number}"
         self._connect(self._visa_string)
         all_cards_binary_mask = reduce(or_, child_card_logical_indices)
-        self.set_spectrum_api_param(SPC_SYNC_ENABLEMASK, all_cards_binary_mask)
+        self.write_to_spectrum_device_register(SPC_SYNC_ENABLEMASK, all_cards_binary_mask)
 
     def disconnect(self) -> None:
         if self._connected:
@@ -79,10 +78,6 @@ class SpectrumStarHub(SpectrumDevice):
     def wait_for_transfer_to_complete(self) -> None:
         for card in self._child_cards:
             card.wait_for_transfer_to_complete()
-
-    @property
-    def handle(self) -> DEVICE_HANDLE_TYPE:
-        return self._handle
 
     @property
     def connected(self) -> bool:
@@ -132,7 +127,7 @@ class SpectrumStarHub(SpectrumDevice):
 
     def apply_channel_enabling(self) -> None:
         for d in self._child_cards:
-            d.apply_channel_enabling()
+            d._apply_channel_enabling()
 
     @property
     def enabled_channels(self) -> List[int]:
@@ -160,7 +155,7 @@ class SpectrumStarHub(SpectrumDevice):
     def transfer_buffers(self) -> List[TransferBuffer]:
         return [card.transfer_buffers[0] for card in self._child_cards]
 
-    def define_transfer_buffer(self, buffer: Optional[TransferBuffer] = None) -> None:
+    def define_transfer_buffer(self, buffer: Optional[CardToPCDataTransferBuffer] = None) -> None:
         if buffer:
             buffers = [deepcopy(buffer) for _ in range(len(self._child_cards))]
             for card, buffer in zip(self._child_cards, buffers):
@@ -230,7 +225,7 @@ class SpectrumStarHub(SpectrumDevice):
     def feature_list(self) -> Tuple[List[CardFeature], List[AdvancedCardFeature]]:
         feature_list_codes = []
         for card in self._child_cards:
-            feature_list_codes.append(card.get_spectrum_api_param(SPC_PCIFEATURES))
+            feature_list_codes.append(card.read_spectrum_device_register(SPC_PCIFEATURES))
         check_settings_constant_across_devices(feature_list_codes, __name__)
         return self._child_cards[0].feature_list
 
@@ -241,6 +236,9 @@ class SpectrumStarHub(SpectrumDevice):
     def set_timeout_ms(self, timeout_ms: int) -> None:
         for d in self._child_cards:
             d.set_timeout_ms(timeout_ms)
+
+    def __str__(self) -> str:
+        return f"StarHub {self._visa_string}"
 
 
 def are_all_values_equal(values: List[int]) -> bool:
