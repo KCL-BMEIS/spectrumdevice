@@ -105,7 +105,7 @@ class SpectrumDeviceInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def define_transfer_buffer(self, buffer: Optional[CardToPCDataTransferBuffer] = None) -> None:
+    def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
         raise NotImplementedError()
 
     @abstractmethod
@@ -187,6 +187,10 @@ class SpectrumDeviceInterface(ABC):
 
     @abstractmethod
     def set_external_trigger_level_mv(self, level: int) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def apply_channel_enabling(self) -> None:
         raise NotImplementedError()
 
     @property

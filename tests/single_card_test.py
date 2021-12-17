@@ -128,7 +128,7 @@ class SingleCardTest(TestCase):
 
     def test_transfer_buffer(self) -> None:
         buffer = CardToPCDataTransferBuffer(ACQUISITION_LENGTH)
-        self._device.define_transfer_buffer(buffer)
+        self._device.define_transfer_buffer([buffer])
         self.assertEqual(buffer, self._device.transfer_buffers[0])
 
     def test_disconnect(self) -> None:

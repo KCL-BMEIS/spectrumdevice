@@ -87,7 +87,7 @@ class SpectrumCard(SpectrumDevice):
         self._channels = self._init_channels()
         self._enabled_channels: List[int] = [0]
         self._transfer_buffer: Optional[TransferBuffer] = None
-        self._apply_channel_enabling()
+        self.apply_channel_enabling()
 
     def reconnect(self) -> None:
         """Reconnect to the card after disconnect() has been called."""
@@ -175,17 +175,18 @@ class SpectrumCard(SpectrumDevice):
         else:
             raise SpectrumNoTransferBufferDefined("Cannot find TransferBuffer.")
 
-    def define_transfer_buffer(self, buffer: Optional[CardToPCDataTransferBuffer] = None) -> None:
+    def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
         """Create or provide a CardToPCDataTransferBuffer object for receiving acquired samples from the device.
 
         Args:
-            buffer (Optional[CardToPCDataTransferBuffer]): A pre-constructed CardToPCDataTransferBuffer  The size of the
-            buffer should be chosen according to the current number of active channels and the acquisition length.
+            buffer (Optional[List[CardToPCDataTransferBuffer]]): A length-1 list containing a pre-constructed
+            CardToPCDataTransferBuffer  The size of the buffer should be chosen according to the current number of
+            active channels and the acquisition length.
 
         If no buffer is provided, one will be created with the correct size and a board_memory_offset_bytes of 0.
         """
         if buffer:
-            self._transfer_buffer = buffer
+            self._transfer_buffer = buffer[0]
         else:
             self._transfer_buffer = CardToPCDataTransferBuffer(
                 self.acquisition_length_samples * len(self.enabled_channels)
@@ -259,7 +260,7 @@ class SpectrumCard(SpectrumDevice):
         """
         if len(channels_nums) in [1, 2, 4, 8]:
             self._enabled_channels = channels_nums
-            self._apply_channel_enabling()
+            self.apply_channel_enabling()
         else:
             raise SpectrumInvalidNumberOfEnabledChannels(f"{len(channels_nums)} cannot be enabled at once.")
 
@@ -346,7 +347,9 @@ class SpectrumCard(SpectrumDevice):
                 except KeyError:
                     raise SpectrumTriggerOperationNotImplemented(f"Cannot set trigger level of {trigger_source.name}.")
 
-    def _apply_channel_enabling(self) -> None:
+    def apply_channel_enabling(self) -> None:
+        """Apply the enabled channels chosen using set_enable_channels(). This happens automatically and does not
+        usually need to be called."""
         enabled_channel_spectrum_values = [self.channels[i].name.value for i in self._enabled_channels]
         if len(enabled_channel_spectrum_values) in [1, 2, 4, 8]:
             bitwise_or_of_enabled_channels = reduce(or_, enabled_channel_spectrum_values)

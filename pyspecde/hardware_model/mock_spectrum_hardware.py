@@ -201,18 +201,18 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         else:
             raise SpectrumSettingsMismatchError("Not enough channels in mock device configuration.")
 
-    def define_transfer_buffer(self, buffer: Optional[CardToPCDataTransferBuffer] = None) -> None:
+    def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
         """define_transfer_buffer
 
         Creates a TransferBuffer object into which samples from the mock 'on device buffer' will be transferred.
 
         Args:
-            buffer (Optional[TransferBuffer]): TransferBuffer object. If None is provided, a buffer will be
-                instantiated using the currently set acquisition length and the number of enabled channels.
-
+            buffer (Optional[TransferBuffer]): A length-1 list containing a CardToPCDataTransferBuffer object. If None
+                is provided, a buffer will be instantiated using the currently set acquisition length and the number of
+                enabled channels.
         """
         if buffer:
-            self._transfer_buffer = buffer
+            self._transfer_buffer = buffer[0]
         else:
             self._transfer_buffer = CardToPCDataTransferBuffer(
                 self.acquisition_length_samples * len(self.enabled_channels)
