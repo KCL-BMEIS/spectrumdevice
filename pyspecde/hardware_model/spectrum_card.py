@@ -1,5 +1,4 @@
 from copy import copy
-from dataclasses import dataclass
 from functools import reduce
 from operator import or_
 from typing import List, Optional, Tuple
@@ -11,7 +10,6 @@ from pyspecde.spectrum_api_wrapper import (
     destroy_handle,
     AcquisitionMode,
     ClockMode,
-    spectrum_handle_factory,
 )
 from pyspecde.spectrum_api_wrapper.status import CARD_STATUS_TYPE, decode_status
 from pyspecde.spectrum_api_wrapper.io_lines import decode_available_io_modes, AvailableIOModes
@@ -69,14 +67,20 @@ from spectrum_gmbh.regs import (
 
 
 class SpectrumCard(SpectrumDevice):
-    def __init__(self, handle: DEVICE_HANDLE_TYPE):
-        self._handle = handle
-        self._connected = True
+    def __init__(self, device_number: int = 0, ip_address: Optional[str] = None):
+        if ip_address is not None:
+            self._visa_string = create_visa_string_from_ip(ip_address, device_number)
+        else:
+            self._visa_string = f"/dev/spcm{device_number}"
+        self._connect(self._visa_string)
         self._trigger_sources: List[TriggerSource] = []
         self._channels = self._init_channels()
         self._enabled_channels: List[int] = [0]
         self._transfer_buffer: Optional[TransferBuffer] = None
         self.apply_channel_enabling()
+
+    def reconnect(self) -> None:
+        self._connect(self._visa_string)
 
     @property
     def status(self) -> CARD_STATUS_TYPE:
@@ -318,20 +322,3 @@ class SpectrumCard(SpectrumDevice):
 
     def set_sample_rate_hz(self, rate: int) -> None:
         self.set_spectrum_api_param(SPC_SAMPLERATE, rate, SpectrumIntLengths.SIXTY_FOUR)
-
-
-@dataclass
-class SpectrumCardConfig:
-    ip_address: str
-    visa_device_num: int = 1
-    num_modules: int = 2
-    num_channels_per_module: int = 4
-
-    @property
-    def num_channels(self) -> int:
-        return self.num_modules * self.num_channels_per_module
-
-
-def spectrum_card_factory(config: SpectrumCardConfig) -> SpectrumCard:
-    visa_string = create_visa_string_from_ip(config.ip_address, config.visa_device_num)
-    return SpectrumCard(spectrum_handle_factory(visa_string))

@@ -2,11 +2,8 @@ from unittest import TestCase
 
 from numpy import zeros
 
-from pyspecde.hardware_model.spectrum_card import spectrum_card_factory
 from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
-from pyspecde.hardware_model.spectrum_interface import (
-    SpectrumDeviceInterface,
-)
+from pyspecde.hardware_model.spectrum_device import SpectrumDevice
 from pyspecde.spectrum_api_wrapper import AcquisitionMode, ClockMode
 from pyspecde.spectrum_api_wrapper.channel import SpectrumChannelName
 from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
@@ -20,43 +17,34 @@ from pyspecde.exceptions import (
     SpectrumExternalTriggerNotEnabled,
     SpectrumTriggerOperationNotImplemented,
 )
-from pyspecde.hardware_model.mock_spectrum_hardware import mock_spectrum_card_factory
-from tests.test_configuration import (
-    SINGLE_CARD_TEST_MODE,
-    SpectrumTestMode,
-    TEST_SPECTRUM_CARD_CONFIG,
-    TEST_FRAME_RATE_HZ,
+from tests.configuration import (
+    NUM_CHANNELS_PER_MODULE,
+    NUM_MODULES_PER_CARD,
 )
 from spectrum_gmbh.regs import SPC_CHENABLE
+from tests.test_device_factories import create_spectrum_card_for_testing
 
 
 class SingleCardTest(TestCase):
     def setUp(self) -> None:
-        self._MOCK_MODE = SINGLE_CARD_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
-        if self._MOCK_MODE:
-            self._device: SpectrumDeviceInterface = mock_spectrum_card_factory(
-                TEST_SPECTRUM_CARD_CONFIG, frame_rate_hz=TEST_FRAME_RATE_HZ
-            )
-        else:
-            self._device = spectrum_card_factory(TEST_SPECTRUM_CARD_CONFIG)
-
+        self._device: SpectrumDevice = create_spectrum_card_for_testing()
         self._all_spectrum_channel_identifiers = [c.value for c in SpectrumChannelName]
         self._all_spectrum_channel_identifiers.sort()  # Enums are unordered so ensure channels are in ascending order
+        self._expected_num_channels = NUM_CHANNELS_PER_MODULE * NUM_MODULES_PER_CARD
 
     def tearDown(self) -> None:
-        if not self._MOCK_MODE:
-            self._device.disconnect()
+        self._device.disconnect()
 
     def test_count_channels(self) -> None:
         channels = self._device.channels
-        self.assertEqual(len(channels), TEST_SPECTRUM_CARD_CONFIG.num_channels)
+        self.assertEqual(len(channels), self._expected_num_channels)
 
     def test_get_channels(self) -> None:
         channels = self._device.channels
 
         expected_channels = [
             SpectrumChannel(SpectrumChannelName(self._all_spectrum_channel_identifiers[i]), self._device)
-            for i in range(TEST_SPECTRUM_CARD_CONFIG.num_channels)
+            for i in range(self._expected_num_channels)
         ]
         self.assertEqual(expected_channels, channels)
 
@@ -155,7 +143,7 @@ class SingleCardTest(TestCase):
         self._device.disconnect()
         with self.assertRaises(SpectrumDeviceNotConnected):
             self._device.set_acquisition_length_samples(4096)
-        self.setUp()
+        self._device.reconnect()
 
     def test_acquisition(self) -> None:
         window_length_samples = 16384

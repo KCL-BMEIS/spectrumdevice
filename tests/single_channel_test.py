@@ -1,27 +1,16 @@
 from unittest import TestCase
 
-from pyspecde.hardware_model.spectrum_card import spectrum_card_factory, SpectrumCard
 from pyspecde.hardware_model.spectrum_channel import spectrum_channel_factory
-from pyspecde.hardware_model.mock_spectrum_hardware import mock_spectrum_card_factory
-from tests.test_configuration import (
-    TEST_SPECTRUM_CARD_CONFIG,
-    SINGLE_CARD_TEST_MODE,
-    SpectrumTestMode,
-    TEST_FRAME_RATE_HZ,
-)
+from tests.test_device_factories import create_spectrum_card_for_testing
 
 
 class SingleChannelTest(TestCase):
     def setUp(self) -> None:
-        if SINGLE_CARD_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE:
-            self._device: SpectrumCard = mock_spectrum_card_factory(TEST_SPECTRUM_CARD_CONFIG, TEST_FRAME_RATE_HZ)
-        else:
-            self._device = spectrum_card_factory(TEST_SPECTRUM_CARD_CONFIG)
+        self._device = create_spectrum_card_for_testing()
         self._channel = spectrum_channel_factory(0, self._device)
 
     def tearDown(self) -> None:
-        if SINGLE_CARD_TEST_MODE == SpectrumTestMode.REAL_HARDWARE:
-            self._channel._parent_device.disconnect()
+        self._channel._parent_device.disconnect()
 
     def test_vertical_range(self) -> None:
         v_range = 5000

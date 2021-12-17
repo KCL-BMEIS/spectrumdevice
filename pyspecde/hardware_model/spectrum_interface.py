@@ -54,6 +54,10 @@ class SpectrumDeviceInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    def reconnect(self) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
     def reset(self) -> None:
         raise NotImplementedError()
 

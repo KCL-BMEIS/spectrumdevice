@@ -1,5 +1,4 @@
 from copy import deepcopy
-from dataclasses import dataclass
 from functools import reduce
 from operator import or_
 from typing import List, Optional, Sequence, Tuple
@@ -7,14 +6,13 @@ from typing import List, Optional, Sequence, Tuple
 from numpy import arange, ndarray
 
 from pyspecde.hardware_model.spectrum_device import SpectrumDevice
-from pyspecde.hardware_model.spectrum_card import SpectrumCard, spectrum_card_factory, SpectrumCardConfig
+from pyspecde.hardware_model.spectrum_card import SpectrumCard
 from pyspecde.exceptions import SpectrumSettingsMismatchError
 from pyspecde.hardware_model.spectrum_interface import SpectrumChannelInterface
 from pyspecde.spectrum_api_wrapper import (
     DEVICE_HANDLE_TYPE,
     AcquisitionMode,
     ClockMode,
-    spectrum_handle_factory,
     destroy_handle,
 )
 from pyspecde.spectrum_api_wrapper.status import STAR_HUB_STATUS_TYPE
@@ -30,25 +28,41 @@ class SpectrumStarHub(SpectrumDevice):
 
     def __init__(
         self,
-        hub_handle: DEVICE_HANDLE_TYPE,
+        device_number: int,
         child_cards: Sequence[SpectrumCard],
         master_card_index: int,
     ):
-        self._connected = True
+        """SpectrumStarHub
+
+        Class for controlling a StarHub device, for example the Spectrum NetBox. StarHub devices are composites of more
+        than one Spectrum card. Acquisition from the child cards of a StarHub is synchronised, aggregating the channels
+        of all child cards. This class enables the control of a StarHub device as if it was a single Spectrum card.
+
+        Args:
+            device_number (int): The index of the StarHub to connect to. If only one StarHub is present, set to 0.
+            child_cards (Sequence[SpectrumCard]): A list of SpectrumCard objects defining the child cards located
+                within the StarHub, including their IP addresses and/or device numbers.
+            master_card_index (int): The position within child_cards where the master card (the card which controls the
+                clock) is located.
+        """
         self._child_cards = child_cards
         self._master_card = child_cards[master_card_index]
         self._triggering_card = child_cards[master_card_index]
         child_card_logical_indices = (2 ** n for n in range(len(self._child_cards)))
-        self._hub_handle = hub_handle
+        self._visa_string = f"sync{device_number}"
+        self._connect(self._visa_string)
         all_cards_binary_mask = reduce(or_, child_card_logical_indices)
         self.set_spectrum_api_param(SPC_SYNC_ENABLEMASK, all_cards_binary_mask)
 
     def disconnect(self) -> None:
         if self._connected:
-            destroy_handle(self._hub_handle)
+            destroy_handle(self._handle)
         for card in self._child_cards:
             card.disconnect()
         self._connected = False
+
+    def reconnect(self) -> None:
+        self._connect(self._visa_string)
 
     @property
     def status(self) -> STAR_HUB_STATUS_TYPE:
@@ -68,7 +82,7 @@ class SpectrumStarHub(SpectrumDevice):
 
     @property
     def handle(self) -> DEVICE_HANDLE_TYPE:
-        return self._hub_handle
+        return self._handle
 
     @property
     def connected(self) -> bool:
@@ -227,23 +241,6 @@ class SpectrumStarHub(SpectrumDevice):
     def set_timeout_ms(self, timeout_ms: int) -> None:
         for d in self._child_cards:
             d.set_timeout_ms(timeout_ms)
-
-
-@dataclass
-class SpectrumStarHubConfig:
-    ip_address: str
-    card_configs: Sequence[SpectrumCardConfig]
-    master_card_index: int
-
-    @property
-    def num_cards(self) -> int:
-        return len(self.card_configs)
-
-
-def spectrum_star_hub_factory(config: SpectrumStarHubConfig) -> SpectrumStarHub:
-    cards = [spectrum_card_factory(child_card_config) for child_card_config in config.card_configs]
-    hub_handle = spectrum_handle_factory("sync0")
-    return SpectrumStarHub(hub_handle, cards, config.master_card_index)
 
 
 def are_all_values_equal(values: List[int]) -> bool:

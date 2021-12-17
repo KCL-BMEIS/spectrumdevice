@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.pyplot import plot, show
 from numpy import arange, mean, savetxt, stack
 
-from pyspecde.hardware_model.spectrum_star_hub import spectrum_star_hub_factory
+from pyspecde.hardware_model.factories import spectrum_star_hub_factory
 from pyspecde.spectrum_api_wrapper import (
     AcquisitionMode,
 )

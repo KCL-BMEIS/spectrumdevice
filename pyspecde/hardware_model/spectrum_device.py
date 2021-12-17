@@ -18,10 +18,15 @@ from pyspecde.spectrum_api_wrapper import (
     get_spectrum_i64_api_param,
     set_spectrum_i32_api_param,
     set_spectrum_i64_api_param,
+    spectrum_handle_factory,
 )
 
 
 class SpectrumDevice(SpectrumDeviceInterface, ABC):
+    def _connect(self, visa_string: str) -> None:
+        self._handle = spectrum_handle_factory(visa_string)
+        self._connected = True
+
     def reset(self) -> None:
         self.set_spectrum_api_param(SPC_M2CMD, M2CMD_CARD_RESET)
 
