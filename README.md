@@ -44,7 +44,7 @@ Connect to networked cards (you can find a card's IP using the
 from pyspecde.hardware_model.spectrum_card import SpectrumCard
 
 card_0 = SpectrumCard(device_number=0, ip_address="192.168.0.2")
-card_1 = SpectrumCard(device_number=1, ip_address="192.168.0.2")
+card_1 = SpectrumCard(device_number=1, ip_address="192.168.0.3")
 ```
 
 Connect to a networked StarHub (e.g. a NetBox).
@@ -65,6 +65,8 @@ for n in range(NUM_CARDS_IN_STAR_HUB):
 hub = SpectrumStarHub(device_number=0, child_cards=child_cards,
                       master_card_index=STAR_HUB_MASTER_CARD_INDEX)
 ```
+Once connected, `SpectrumStarHub` object can be configured and used in exactly the same way as a `SpectrumCard` 
+object - commands will be sent to the child cards automatically.
 
 ### Configuring acquisitions
 Spectrum Instrument's own low-level Python API requires that users configure a device by writing values to on-device 
@@ -100,7 +102,7 @@ card.channels[2].set_vertical_range_mv(1000)
 ### Acquiring waveforms (standard single mode)
 To acquire data in standard single mode, after calling
 ```python
-card.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)`
+card.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
 ```
 and configuring your other acquisition and channel settings (length, trigger setup, enabled channels, timeout, 
 channel ranges etc.), you need to start the acquisition and wait for it to 
