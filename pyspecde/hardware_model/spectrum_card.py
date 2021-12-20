@@ -12,13 +12,8 @@ from pyspecde.spectrum_api_wrapper import (
 )
 from pyspecde.spectrum_api_wrapper.status import CARD_STATUS_TYPE, decode_status
 from pyspecde.spectrum_api_wrapper.io_lines import decode_available_io_modes, AvailableIOModes
-from pyspecde.spectrum_api_wrapper.triggering import (
-    TriggerSource,
-    ExternalTriggerMode,
-    EXTERNAL_TRIGGER_MODE_COMMANDS,
-    EXTERNAL_TRIGGER_LEVEL_COMMANDS,
-    decode_trigger_sources,
-)
+from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode, EXTERNAL_TRIGGER_MODE_COMMANDS, \
+    EXTERNAL_TRIGGER_LEVEL_COMMANDS, decode_trigger_sources
 from pyspecde.spectrum_api_wrapper.card_features import (
     CardFeature,
     decode_card_features,

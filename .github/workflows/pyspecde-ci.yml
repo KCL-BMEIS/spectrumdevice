@@ -44,6 +44,6 @@ jobs:
         pytest
     - name: Fix formatting with Black
       run: |
-        black --line-length 120 pyspecde
-        black --line-length 120 tests
-        black --line-length 120 example_scripts
+        black --line-length 120 --diff --color pyspecde
+        black --line-length 120 --diff --color tests
+        black --line-length 120 --diff --color example_scripts
