@@ -1,4 +1,4 @@
-from pyspecde.hardware_model.spectrum_card import SpectrumCardfrom pyspecde.hardware_model.spectrum_card import SpectrumCard# pyspecde
+# pyspecde
 A high-level, object-oriented Python API for controlling Spectrum Instruments digitisers.
 
 Spectrum digitisers can be connected individually or grouped together using a
