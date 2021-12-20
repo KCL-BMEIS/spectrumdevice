@@ -128,7 +128,7 @@ class SpectrumStarHub(SpectrumDevice):
         self._triggering_card.set_trigger_sources(sources)
         for card in self._child_cards:
             if card is not self._triggering_card:
-                card.set_trigger_sources([])
+                card.set_trigger_sources([TriggerSource.SPC_TMASK_NONE])
 
     @property
     def external_trigger_mode(self) -> ExternalTriggerMode:
