@@ -1,9 +1,6 @@
 from matplotlib.pyplot import plot, show, figure, title
 
-from pyspecde.hardware_model.mock_spectrum_hardware import MockSpectrumCard
-from pyspecde.hardware_model.spectrum_card import SpectrumCard
-from pyspecde.spectrum_api_wrapper import AcquisitionMode
-from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
+from pyspecde import MockSpectrumCard, SpectrumCard, AcquisitionMode, TriggerSource, ExternalTriggerMode
 
 # Set to false to connect to real hardware
 MOCK_MODE = True

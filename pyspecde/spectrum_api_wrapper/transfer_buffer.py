@@ -28,18 +28,28 @@ except OSError:
 
 
 class BufferType(Enum):
+    """An Enum representing the three different types of transfer buffer. See the Spectrum documentation for more
+    information."""
+
     SPCM_BUF_DATA = SPCM_BUF_DATA
     SPCM_BUF_ABA = SPCM_BUF_ABA
     SPCM_BUF_TIMESTAMP = SPCM_BUF_TIMESTAMP
 
 
 class BufferDirection(Enum):
+    """An Enum representing the two different directions of transfer undertaken by a transfer buffer. See the Spectrum
+    documentation for more information."""
+
     SPCM_DIR_PCTOCARD = SPCM_DIR_PCTOCARD
     SPCM_DIR_CARDTOPC = SPCM_DIR_CARDTOPC
 
 
 @dataclass
 class TransferBuffer:
+    """A buffer for transferring samples between pyspecde software and a hardware device. See the 'Definition of the
+    transfer buffer' section of the Spectrum documentation for more information. This implementation of the buffer
+    sets the notify size equal to the acquisition length."""
+
     type: BufferType
     direction: BufferDirection
     board_memory_offset_bytes: int
@@ -70,7 +80,7 @@ class TransferBuffer:
 
 
 class CardToPCDataTransferBuffer(TransferBuffer):
-    """A TransferBuffer configured for card-to-pc transfer of samples (rather than timestamps or ABA data)"""
+    """A TransferBuffer configured for card-to-pc transfer of samples (rather than timestamps or ABA data)."""
 
     def __init__(self, size_in_samples: int, board_memory_offset_bytes: int = 0) -> None:
         self.type = BufferType.SPCM_BUF_DATA

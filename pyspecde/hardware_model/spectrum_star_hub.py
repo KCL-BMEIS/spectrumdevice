@@ -128,7 +128,7 @@ class SpectrumStarHub(SpectrumDevice):
         self._triggering_card.set_trigger_sources(sources)
         for card in self._child_cards:
             if card is not self._triggering_card:
-                card.set_trigger_sources([TriggerSource.SPC_TM_NONE])
+                card.set_trigger_sources([])
 
     @property
     def external_trigger_mode(self) -> ExternalTriggerMode:
@@ -147,6 +147,16 @@ class SpectrumStarHub(SpectrumDevice):
     def set_external_trigger_level_mv(self, level: int) -> None:
         """Change the external trigger level configured on the triggering card, which by default is the master card."""
         self._triggering_card.set_external_trigger_level_mv(level)
+
+    @property
+    def external_trigger_pulse_width_in_samples(self) -> int:
+        """The trigger pulse width (samples) configured on the triggering card, which by default is the master card."""
+        return self._triggering_card.external_trigger_pulse_width_in_samples
+
+    def set_external_trigger_pulse_width_in_samples(self, width: int) -> None:
+        """Change the trigger pulse width (samples) configured on the triggering card, which by default is the master
+        card."""
+        self._triggering_card.set_external_trigger_pulse_width_in_samples(width)
 
     def apply_channel_enabling(self) -> None:
         """Apply the enabled channels chosen using set_enable_channels(). This happens automatically and does not

@@ -1,6 +1,4 @@
-from pyspecde.hardware_model.mock_spectrum_hardware import MockSpectrumStarHub, MockSpectrumCard
-from pyspecde.hardware_model.spectrum_card import SpectrumCard
-from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub
+from pyspecde import MockSpectrumStarHub, MockSpectrumCard, SpectrumCard, SpectrumStarHub
 
 if __name__ == "__main__":
 

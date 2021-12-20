@@ -18,6 +18,7 @@ from pyspecde.spectrum_api_wrapper.triggering import (
     EXTERNAL_TRIGGER_MODE_COMMANDS,
     EXTERNAL_TRIGGER_LEVEL_COMMANDS,
     decode_trigger_sources,
+    EXTERNAL_TRIGGER_PULSE_WIDTH_COMMANDS,
 )
 from pyspecde.spectrum_api_wrapper.card_features import (
     CardFeature,
@@ -347,6 +348,37 @@ class SpectrumCard(SpectrumDevice):
                 except KeyError:
                     raise SpectrumTriggerOperationNotImplemented(f"Cannot set trigger level of {trigger_source.name}.")
 
+    @property
+    def external_trigger_pulse_width_in_samples(self) -> int:
+        """The pulse width (samples) needed to trigger an acquisition using an external trigger source if
+        SPC_TM_PW_SMALLER or SPC_TM_PW_GREATER ExternalTriggerMode is selected. An external trigger source must be
+        enabled."""
+        if len(self._active_external_triggers) == 0:
+            raise SpectrumExternalTriggerNotEnabled("Cannot get external trigger pulse width.")
+        else:
+            first_trig_source = self._active_external_triggers[0]
+            try:
+                return self.read_spectrum_device_register(
+                    EXTERNAL_TRIGGER_PULSE_WIDTH_COMMANDS[first_trig_source.value]
+                )
+            except KeyError:
+                raise SpectrumTriggerOperationNotImplemented(f"Cannot get pulse width of {first_trig_source.name}.")
+
+    def set_external_trigger_pulse_width_in_samples(self, width: int) -> None:
+        """Change the pulse width (samples) needed to trigger an acquisition using an external trigger source if
+        SPC_TM_PW_SMALLER or SPC_TM_PW_GREATER ExternalTriggerMode is selected. An external trigger source must be
+        enabled."""
+        if len(self._active_external_triggers) == 0:
+            raise SpectrumExternalTriggerNotEnabled("Cannot set external trigger pulse width.")
+        else:
+            for trigger_source in self._active_external_triggers:
+                try:
+                    self.write_to_spectrum_device_register(
+                        EXTERNAL_TRIGGER_PULSE_WIDTH_COMMANDS[trigger_source.value], width
+                    )
+                except KeyError:
+                    raise SpectrumTriggerOperationNotImplemented(f"Cannot set pulse width of {trigger_source.name}.")
+
     def apply_channel_enabling(self) -> None:
         """Apply the enabled channels chosen using set_enable_channels(). This happens automatically and does not
         usually need to be called."""
@@ -386,9 +418,7 @@ class SpectrumCard(SpectrumDevice):
         In FIFO mode, this will be quantised to nearest 8 samples with a maximum value 8 samples less than the acquisition
         length."""
         length_in_samples = self._coerce_to_nearest_8_samples_if_fifo(length_in_samples)
-        if (self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI) or (
-            self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_SINGLE
-        ):
+        if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
             if (self.acquisition_length_samples - length_in_samples) < 8:
                 print(
                     "FIFO mode: coercing post trigger length to maximum allowed value (8 samples less than "
@@ -398,9 +428,7 @@ class SpectrumCard(SpectrumDevice):
         self.write_to_spectrum_device_register(SPC_POSTTRIGGER, length_in_samples)
 
     def _coerce_to_nearest_8_samples_if_fifo(self, value: int) -> int:
-        if (self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI) or (
-            self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_SINGLE
-        ):
+        if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
             if value != mod(value, 8):
                 print("FIFO mode: coercing length to nearest 8 samples")
                 value = int(value - mod(value, 8))

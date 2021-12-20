@@ -150,3 +150,9 @@ To stop the acquisitions and therefor the transfer of data into the transfer buf
 ```python
 card.stop_acquisition()
 ```
+
+## Limitations
+- no or trigger modes
+- only standard single an multi fifo
+- fixed notify size
+- 

@@ -177,7 +177,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         self._connect(self._visa_string)
 
     def set_acquisition_length_samples(self, length_in_samples: int) -> None:
-        """set_acquisition_length_samples
+        """Set length of mock recording (per channel). In FIFO mode, this will be quantised to the nearest 8 samples.
 
         Args:
             length_in_samples (int): Number of samples in each generated mock waveform
@@ -188,7 +188,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         super().set_acquisition_length_samples(length_in_samples)
 
     def set_enabled_channels(self, channels_nums: List[int]) -> None:
-        """set_enabled_channels
+        """Set the channels to enable for the mock acquisition
 
         Args:
             channels_nums (List[int]): List of mock channel indices to enable, e.g. [0, 1, 2].
@@ -202,9 +202,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
             raise SpectrumSettingsMismatchError("Not enough channels in mock device configuration.")
 
     def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
-        """define_transfer_buffer
-
-        Creates a TransferBuffer object into which samples from the mock 'on device buffer' will be transferred.
+        """Creates a TransferBuffer object into which samples from the mock 'on device buffer' will be transferred.
 
         Args:
             buffer (Optional[TransferBuffer]): A length-1 list containing a CardToPCDataTransferBuffer object. If None
@@ -219,11 +217,8 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
             )
 
     def start_transfer(self) -> None:
-        """start_transfer
-
-        Simulates the continuous transfer of samples from the mock 'on device buffer' to the transfer buffer by pointing
-            the transfer buffer's databuffer attribute to the on device buffer.
-
+        """Simulates the continuous transfer of samples from the mock 'on device buffer' to the transfer buffer by
+        pointing the transfer buffer's data buffer attribute to the on device buffer.
         """
         if self._transfer_buffer:
             self._transfer_buffer.data_buffer = self._on_device_buffer
@@ -231,10 +226,8 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
             raise SpectrumNoTransferBufferDefined("Call define_transfer_buffer method.")
 
     def stop_transfer(self) -> None:
-        """stop_transfer
-
-        Simulates the end of the continuous transfer of samples from the mock 'on device buffer' to the transfer buffer
-        by assigning the transfer bugger to an array of zeros.
+        """Simulates the end of the continuous transfer of samples from the mock 'on device buffer' to the transfer
+        buffer by assigning the transfer bugger to an array of zeros.
 
         """
         if self._transfer_buffer:
@@ -243,10 +236,8 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
             raise SpectrumNoTransferBufferDefined("Call define_transfer_buffer method.")
 
     def wait_for_transfer_to_complete(self) -> None:
-        """wait_for_transfer_to_complete
-
-        Blocks until a new mock transfer has been completed (i.e. the contents of the transfer buffer has changed since
-            __init__() or since the last call to wait_for_transfer_to_complete).
+        """Blocks until a new mock transfer has been completed (i.e. the contents of the transfer buffer has changed
+        since __init__() or since the last call to wait_for_transfer_to_complete).
 
         """
         if self._transfer_buffer:
@@ -257,10 +248,8 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
             raise SpectrumNoTransferBufferDefined("No transfer in progress.")
 
     def wait_for_acquisition_to_complete(self) -> None:
-        """wait_for_acquisition_to_complete
-
-        Blocks until a mock acquisition has been completed (i.e. the acquisition thread has shut down) or the request
-            has timed out according to the self.timeout_ms attribute.
+        """Blocks until a mock acquisition has been completed (i.e. the acquisition thread has shut down) or the request
+        has timed out according to the self.timeout_ms attribute.
 
         """
         if self._acquisition_thread is not None:
@@ -296,7 +285,7 @@ class MockSpectrumStarHub(SpectrumStarHub, MockSpectrumDevice):
         self._connect(self._visa_string)
 
     def start_acquisition(self) -> None:
-        """start_acquisition
+        """Start a mock acquisition
 
         This method overrides SpectrumDevice.start_acquisition. In reality, StarHub's only need to be sent a single
         instruction to start acquisition, which they automatically relay to their child cards - hence why
@@ -308,7 +297,7 @@ class MockSpectrumStarHub(SpectrumStarHub, MockSpectrumDevice):
             card.start_acquisition()
 
     def stop_acquisition(self) -> None:
-        """stop_acquisition
+        """Stop a mock acquisition
 
         This method overrides SpectrumDevice.stop_acquisition. In reality, StarHub's only need to be sent a single
         instruction to stop acquisition, which they automatically relay to their child cards - hence why
@@ -331,10 +320,8 @@ class MockWaveformSource(ABC):
 
 class SingleModeMockWaveformSource(MockWaveformSource):
     def __call__(self, stop_flag: Event, frame_rate: float, on_device_buffer: ndarray, buffer_lock: Lock) -> None:
-        """SingleModeMockWaveformSource
-
-        When called, this MockWaveformSource simulates SPC_REC_STD_SINGLE Mode, placing a single frames worth of samples
-        into a provided mock on_device_buffer.
+        """When called, this MockWaveformSource simulates SPC_REC_STD_SINGLE Mode, placing a single frames worth of
+        samples into a provided mock on_device_buffer.
 
         Args:
             stop_flag (Event): A threading event that will be used in the calling thread to stop the acquisition.
@@ -354,9 +341,7 @@ class SingleModeMockWaveformSource(MockWaveformSource):
 
 class MultiFIFOModeMockWaveformSource(MockWaveformSource):
     def __call__(self, stop_flag: Event, frame_rate: float, on_device_buffer: ndarray, buffer_lock: Lock) -> None:
-        """MultiFIFOModeMockWaveformSource
-
-        When called, this MockWaveformSource simulates SPC_REC_FIFO_MULTI Mode, continuously replacing the contents
+        """When called, this MockWaveformSource simulates SPC_REC_FIFO_MULTI Mode, continuously replacing the contents
         of on_device_buffer with new frames of noise samples.
 
         Args:
@@ -376,7 +361,7 @@ class MultiFIFOModeMockWaveformSource(MockWaveformSource):
 def mock_waveform_source_factory(acquisition_mode: AcquisitionMode) -> MockWaveformSource:
     if acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
         return MultiFIFOModeMockWaveformSource()
-    elif AcquisitionMode.SPC_REC_FIFO_SINGLE:
+    elif AcquisitionMode.SPC_REC_STD_SINGLE:
         return SingleModeMockWaveformSource()
     else:
         raise NotImplementedError("Mock waveform source not yet implemented for {acquisition_mode} acquisition mode.")

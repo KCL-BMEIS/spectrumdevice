@@ -189,6 +189,15 @@ class SpectrumDeviceInterface(ABC):
     def set_external_trigger_level_mv(self, level: int) -> None:
         raise NotImplementedError()
 
+    @property
+    @abstractmethod
+    def external_trigger_pulse_width_in_samples(self) -> int:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_external_trigger_pulse_width_in_samples(self, width: int) -> None:
+        raise NotImplementedError()
+
     @abstractmethod
     def apply_channel_enabling(self) -> None:
         raise NotImplementedError()

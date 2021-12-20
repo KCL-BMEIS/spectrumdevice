@@ -33,6 +33,9 @@ from spectrum_gmbh.regs import (
 
 
 class CardFeature(Enum):
+    """Enum representing the possible features of all Spectrum devices. A list of features can be read from a device
+    using the feature_list property. See the Spectrum documentation for descriptions of each of the features."""
+
     SPCM_FEAT_MULTI = SPCM_FEAT_MULTI
     SPCM_FEAT_GATE = SPCM_FEAT_GATE
     SPCM_FEAT_DIGITAL = SPCM_FEAT_DIGITAL
@@ -64,6 +67,10 @@ def decode_card_features(value: int) -> List[CardFeature]:
 
 
 class AdvancedCardFeature(Enum):
+    """Enum representing the possible advanced features of all Spectrum devices. A list of features can be read from a
+    device using the feature_list property. See the Spectrum documentation for descriptions of each of the features.
+    """
+
     SPCM_FEAT_EXTFW_SEGSTAT = SPCM_FEAT_EXTFW_SEGSTAT
     SPCM_FEAT_EXTFW_SEGAVERAGE = SPCM_FEAT_EXTFW_SEGAVERAGE
     SPCM_FEAT_EXTFW_BOXCAR = SPCM_FEAT_EXTFW_BOXCAR
