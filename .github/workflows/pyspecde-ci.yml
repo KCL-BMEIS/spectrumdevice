@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9"]
+        python-version: ["3.8", "3.9", "3.10"]
 
     steps:
     - uses: actions/checkout@v2
@@ -44,6 +44,6 @@ jobs:
         pytest
     - name: Fix formatting with Black
       run: |
-        black --line-length 120 --diff --color pyspecde
-        black --line-length 120 --diff --color tests
-        black --line-length 120 --diff --color example_scripts
+        black --line-length 120 --diff --color --check pyspecde
+        black --line-length 120 --diff --color --check tests
+        black --line-length 120 --diff --color --check example_scripts
