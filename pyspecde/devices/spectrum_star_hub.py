@@ -46,6 +46,7 @@ class SpectrumStarHub(SpectrumDevice):
         self._connect(self._visa_string)
         all_cards_binary_mask = reduce(or_, child_card_logical_indices)
         self.write_to_spectrum_device_register(SPC_SYNC_ENABLEMASK, all_cards_binary_mask)
+        self._acquisition_mode = self.acquisition_mode
 
     def disconnect(self) -> None:
         """Disconnects from each child card and terminates connection to the hub itself."""
@@ -118,21 +119,21 @@ class SpectrumStarHub(SpectrumDevice):
         self._master_card.set_clock_mode(mode)
 
     @property
-    def sample_rate_hz(self) -> int:
+    def sample_rate_in_hz(self) -> int:
         """The sample rate configured on the master card.
 
         Returns:
             rate (int): The current sample rate of the master card in Hz.
         """
-        return self._master_card.sample_rate_hz
+        return self._master_card.sample_rate_in_hz
 
-    def set_sample_rate_hz(self, rate: int) -> None:
+    def set_sample_rate_in_hz(self, rate: int) -> None:
         """Change the sample rate of the child cards (including the master card).
         Args:
             rate (int): The desired sample rate of the child cards in Hz.
         """
         for card in self._child_cards:
-            card.set_sample_rate_hz(rate)
+            card.set_sample_rate_in_hz(rate)
 
     @property
     def trigger_sources(self) -> List[TriggerSource]:
@@ -173,23 +174,23 @@ class SpectrumStarHub(SpectrumDevice):
         self._triggering_card.set_external_trigger_mode(mode)
 
     @property
-    def external_trigger_level_mv(self) -> int:
+    def external_trigger_level_in_mv(self) -> int:
         """The external trigger level configured on the triggering card, which by default is the master card. See
         SpectrumCard.external_trigger_level_mv() for more information.
 
         Returns:
             level (int): The external trigger level in mV.
         """
-        return self._triggering_card.external_trigger_level_mv
+        return self._triggering_card.external_trigger_level_in_mv
 
-    def set_external_trigger_level_mv(self, level: int) -> None:
+    def set_external_trigger_level_in_mv(self, level: int) -> None:
         """Change the external trigger level configured on the triggering card, which by default is the master card.
         See SpectrumCard.set_external_trigger_level_mv() for more information.
 
         Args:
             level (int): The desired external trigger level in mV.
         """
-        self._triggering_card.set_external_trigger_level_mv(level)
+        self._triggering_card.set_external_trigger_level_in_mv(level)
 
     @property
     def external_trigger_pulse_width_in_samples(self) -> int:
@@ -376,7 +377,7 @@ class SpectrumStarHub(SpectrumDevice):
             d.set_acquisition_mode(mode)
 
     @property
-    def timeout_ms(self) -> int:
+    def timeout_in_ms(self) -> int:
         """The time for which the card will wait for a trigger to tbe received after an acquisition has started
         before returning an error. This should be the same for all child cards. If it's not, an exception is raised.
 
@@ -385,16 +386,16 @@ class SpectrumStarHub(SpectrumDevice):
         """
         timeouts = []
         for d in self._child_cards:
-            timeouts.append(d.timeout_ms)
+            timeouts.append(d.timeout_in_ms)
         return _check_settings_constant_across_devices(timeouts, __name__)
 
-    def set_timeout_ms(self, timeout_ms: int) -> None:
+    def set_timeout_in_ms(self, timeout_ms: int) -> None:
         """Change the acquisition timeout value for all child cards.
 
         Args:
             timeout_ms (int): The desired acquisition timeout setting in seconds."""
         for d in self._child_cards:
-            d.set_timeout_ms(timeout_ms)
+            d.set_timeout_in_ms(timeout_ms)
 
     @property
     def feature_list(self) -> Tuple[List[CardFeature], List[AdvancedCardFeature]]:

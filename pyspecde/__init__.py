@@ -8,8 +8,6 @@ from .devices.spectrum_star_hub import SpectrumStarHub
 from .devices.mock_devices import MockSpectrumCard
 from .devices.mock_devices import MockSpectrumStarHub
 
-__docformat__ = "restructuredtext"
-
 __all__ = [
     "SpectrumDevice",
     "SpectrumCard",

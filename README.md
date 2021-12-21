@@ -90,16 +90,18 @@ card = SpectrumCard(device_number=0)
 card.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
 ```
 and to print the currently set sample rate:
+
 ```python
-print(card.sample_rate_hz)
+print(card.sample_rate_in_hz)
 ```
 
 ### Configuring channels
 The channels available to a spectrum device (card or StarHub) can be accessed via the `channels` property. This 
 property contains a list of `SpectrumChannel` objects which provide methods to the configuration of each channel 
 independently. For example, to change the vertical range of channel 2 of a card to 1V:
+
 ```python
-card.channels[2].set_vertical_range_mv(1000)
+card.channels[2].set_vertical_range_in_mv(1000)
 ```
 
 ### Acquiring waveforms (standard single mode)

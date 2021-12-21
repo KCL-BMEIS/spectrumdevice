@@ -70,8 +70,8 @@ class SingleCardTest(TestCase):
 
     def test_timeout(self) -> None:
         timeout = 1000
-        self._device.set_timeout_ms(1000)
-        self.assertEqual(timeout, self._device.timeout_ms)
+        self._device.set_timeout_in_ms(1000)
+        self.assertEqual(timeout, self._device.timeout_in_ms)
 
     def test_trigger_sources(self) -> None:
         sources = [TriggerSource.SPC_TMASK_EXT0]
@@ -91,18 +91,18 @@ class SingleCardTest(TestCase):
 
     def test_external_trigger_level(self) -> None:
         with self.assertRaises(SpectrumExternalTriggerNotEnabled):
-            _ = self._device.external_trigger_level_mv
+            _ = self._device.external_trigger_level_in_mv
         level = 10
         with self.assertRaises(SpectrumExternalTriggerNotEnabled):
-            self._device.set_external_trigger_level_mv(level)
+            self._device.set_external_trigger_level_in_mv(level)
         with self.assertRaises(SpectrumTriggerOperationNotImplemented):
             sources = [TriggerSource.SPC_TMASK_EXT3]
             self._device.set_trigger_sources(sources)
-            self._device.set_external_trigger_level_mv(level)
+            self._device.set_external_trigger_level_in_mv(level)
         sources = [TriggerSource.SPC_TMASK_EXT0]
         self._device.set_trigger_sources(sources)
-        self._device.set_external_trigger_level_mv(level)
-        self.assertEqual(level, self._device.external_trigger_level_mv)
+        self._device.set_external_trigger_level_in_mv(level)
+        self.assertEqual(level, self._device.external_trigger_level_in_mv)
 
     def test_clock_mode(self) -> None:
         mode = ClockMode.SPC_CM_INTPLL
@@ -111,8 +111,8 @@ class SingleCardTest(TestCase):
 
     def test_sample_rate(self) -> None:
         rate = 20000000
-        self._device.set_sample_rate_hz(rate)
-        self.assertEqual(rate, self._device.sample_rate_hz)
+        self._device.set_sample_rate_in_hz(rate)
+        self.assertEqual(rate, self._device.sample_rate_in_hz)
 
     def test_features(self) -> None:
         try:
@@ -153,7 +153,7 @@ class SingleCardTest(TestCase):
         self._device.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
         self._device.set_acquisition_length_in_samples(window_length_samples)
         self._device.set_post_trigger_length_in_samples(window_length_samples)
-        self._device.set_timeout_ms(acquisition_timeout_ms)
+        self._device.set_timeout_in_ms(acquisition_timeout_ms)
         self._device.start_acquisition()
         self._device.wait_for_acquisition_to_complete()
         self._device.define_transfer_buffer()

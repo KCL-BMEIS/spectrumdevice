@@ -86,6 +86,7 @@ class SpectrumCard(SpectrumDevice):
         self._enabled_channels: List[int] = [0]
         self._transfer_buffer: Optional[TransferBuffer] = None
         self.apply_channel_enabling()
+        self._acquisition_mode = self.acquisition_mode
 
     def reconnect(self) -> None:
         """Reconnect to the card after disconnect() has been called."""
@@ -335,7 +336,7 @@ class SpectrumCard(SpectrumDevice):
         ]
 
     @property
-    def external_trigger_level_mv(self) -> int:
+    def external_trigger_level_in_mv(self) -> int:
         """The signal level (mV) needed to trigger an acquisition using an external trigger source. An external
         trigger source must be enabled.
 
@@ -351,7 +352,7 @@ class SpectrumCard(SpectrumDevice):
             except KeyError:
                 raise SpectrumTriggerOperationNotImplemented(f"Cannot get trigger level of {first_trig_source.name}.")
 
-    def set_external_trigger_level_mv(self, level: int) -> None:
+    def set_external_trigger_level_in_mv(self, level: int) -> None:
         """Change the signal level (mV) needed to trigger an acquisition using an external trigger source. An external
         trigger source must be enabled.
 
@@ -491,7 +492,7 @@ class SpectrumCard(SpectrumDevice):
         self.write_to_spectrum_device_register(SPC_CARDMODE, mode.value)
 
     @property
-    def timeout_ms(self) -> int:
+    def timeout_in_ms(self) -> int:
         """The time for which the card will wait for a trigger to tbe received after an acquisition has started
         before returning an error.
 
@@ -500,7 +501,7 @@ class SpectrumCard(SpectrumDevice):
         """
         return self.read_spectrum_device_register(SPC_TIMEOUT)
 
-    def set_timeout_ms(self, timeout_in_ms: int) -> None:
+    def set_timeout_in_ms(self, timeout_in_ms: int) -> None:
         """Change the time for which the card will wait for a trigger to tbe received after an acquisition has started
         before returning an error.
 
@@ -553,7 +554,7 @@ class SpectrumCard(SpectrumDevice):
         return normal_features, advanced_features
 
     @property
-    def sample_rate_hz(self) -> int:
+    def sample_rate_in_hz(self) -> int:
         """The rate at which samples will be acquired during an acquisition, in Hz.
 
         Returns:
@@ -561,7 +562,7 @@ class SpectrumCard(SpectrumDevice):
         """
         return self.read_spectrum_device_register(SPC_SAMPLERATE, SpectrumRegisterLength.SIXTY_FOUR)
 
-    def set_sample_rate_hz(self, rate: int) -> None:
+    def set_sample_rate_in_hz(self, rate: int) -> None:
         """Change the rate at which samples will be acquired during an acquisition, in Hz.
         Args:
             rate (int): The desired sample rate in Hz.

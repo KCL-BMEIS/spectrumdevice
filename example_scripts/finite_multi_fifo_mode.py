@@ -1,10 +1,11 @@
-from matplotlib.pyplot import plot, show
+from matplotlib.pyplot import plot, show, figure, title
 
 from pyspecde import MockSpectrumCard, SpectrumCard
 from pyspecde.settings import AcquisitionMode, TriggerSource, ExternalTriggerMode, TriggerSettings, AcquisitionSettings
 
 # Set to false to connect to real hardware
 MOCK_MODE = True
+NUM_MEASUREMENTS = 2
 
 if not MOCK_MODE:
     # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
@@ -23,7 +24,7 @@ trigger_settings = TriggerSettings(
 
 # Acquisition settings
 acquisition_settings = AcquisitionSettings(
-    acquisition_mode=AcquisitionMode.SPC_REC_STD_SINGLE,
+    acquisition_mode=AcquisitionMode.SPC_REC_FIFO_MULTI,
     sample_rate_in_hz=40000000,
     acquisition_length_in_samples=400,
     pre_trigger_length_in_samples=0,
@@ -38,13 +39,16 @@ card.configure_trigger(trigger_settings)
 card.configure_acquisition(acquisition_settings)
 
 # Execute acquisition
-waveforms = card.execute_standard_single_acquisition()
+measurements = card.execute_finite_multi_fifo_acquisition(NUM_MEASUREMENTS)
 
 # Plot waveforms
-for waveform in waveforms:
-    plot(waveform)
+for n, measurement in enumerate(measurements):
+    figure()
+    title(f"Measurement {n}")
+    for waveform in measurement:
+        plot(waveform)
 
-print(f"Acquired {len(waveforms)} waveforms with the following shapes:")
-print([wfm.shape for wfm in waveforms])
+print(f"Completed {len(measurements)} measurements each containing {len(measurements[0])} waveforms.")
+print(f"Waveforms had the following shape: {measurements[0][0].shape}")
 
 show()

@@ -1,6 +1,9 @@
 from abc import ABC
+from typing import List
 
-from pyspecde.spectrum_wrapper.exceptions import SpectrumDeviceNotConnected
+from numpy import ndarray
+
+from pyspecde.spectrum_wrapper.exceptions import SpectrumDeviceNotConnected, SpectrumWrongAcquisitionMode
 from spectrum_gmbh.regs import (
     M2CMD_CARD_RESET,
     M2CMD_CARD_START,
@@ -12,7 +15,7 @@ from spectrum_gmbh.regs import (
 from pyspecde.devices.spectrum_interface import (
     SpectrumDeviceInterface,
 )
-from pyspecde.settings import SpectrumRegisterLength
+from pyspecde.settings import SpectrumRegisterLength, AcquisitionMode, TriggerSettings, AcquisitionSettings
 from pyspecde.spectrum_wrapper import (
     get_spectrum_i32_api_param,
     get_spectrum_i64_api_param,
@@ -59,6 +62,108 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         (SPC_REC_FIFO_MULTI). Does not need to be called in Standard Single mode (SPC_REC_STD_SINGLE).
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_STOP)
+
+    def configure_acquisition(self, settings: AcquisitionSettings) -> None:
+        """Apply all the settings contained in an AcquisitionSettings dataclass to the device.
+
+        Args:
+            settings (AcquisitionSettings): An AcquisitionSettings dataclass containing the setting values to apply.
+        """
+        self._acquisition_mode = settings.acquisition_mode
+        self.set_acquisition_mode(settings.acquisition_mode)
+        self.set_sample_rate_in_hz(settings.sample_rate_in_hz)
+        self.set_acquisition_length_in_samples(settings.acquisition_length_in_samples)
+        self.set_post_trigger_length_in_samples(
+            settings.acquisition_length_in_samples - settings.pre_trigger_length_in_samples
+        )
+        self.set_timeout_in_ms(settings.timeout_in_ms)
+        self.set_enabled_channels(settings.enabled_channels)
+        for channel, v_range, v_offset in zip(
+            self.channels, settings.vertical_ranges_in_mv, settings.vertical_offsets_in_percent
+        ):
+            channel.set_vertical_range_in_mv(v_range)
+            channel.set_vertical_offset_in_percent(v_offset)
+
+    def configure_trigger(self, settings: TriggerSettings) -> None:
+        """Apply all the trigger settings contained in a TriggerSettings dataclass to the device.
+
+        Args:
+            settings (TriggerSettings): A TriggerSettings dataclass containing the setting values to apply."""
+        self.set_trigger_sources(settings.trigger_sources)
+        if settings.external_trigger_mode is not None:
+            self.set_external_trigger_mode(settings.external_trigger_mode)
+        if settings.external_trigger_level_in_mv is not None:
+            self.set_external_trigger_level_in_mv(settings.external_trigger_level_in_mv)
+        if settings.external_trigger_pulse_width_in_samples is not None:
+            self.set_external_trigger_pulse_width_in_samples(settings.external_trigger_pulse_width_in_samples)
+
+    def execute_standard_single_acquisition(self) -> List[ndarray]:
+        """Carry out an single measurement in standard single mode and return the acquired waveforms.
+
+        This method automatically carries out a standard single mode acquisition, including handling the creation
+        of a transfer buffer and the retrieval of the acquired waveforms. After being called, it will wait until a
+        trigger event is received before carrying out the acquisition, and transferring and returning the acquired
+        waveforms. The device must be configured in SPC_REC_STD_SINGLE acquisition mode.
+
+        Returns:
+            waveforms (List[ndarray]): A list of 1D NumPy arrays, each containing the waveform data received on one
+                channel, in channel order."""
+        if self._acquisition_mode != AcquisitionMode.SPC_REC_STD_SINGLE:
+            raise SpectrumWrongAcquisitionMode(
+                "Set the acquisition mode to SPC_REC_STD_SINGLE using "
+                "configure_acquisition() or set_acquisition_mode() before executing "
+                "a standard single mode acquisition."
+            )
+        self.start_acquisition()
+        self.wait_for_acquisition_to_complete()
+        self.define_transfer_buffer()
+        self.start_transfer()
+        self.wait_for_transfer_to_complete()
+        return self.get_waveforms()
+
+    def execute_finite_multi_fifo_acquisition(self, num_measurements: int) -> List[List[ndarray]]:
+        """Carry out a finite number of Multi FIFO mode measurements and then stop the acquisitions.
+
+        This method automatically carries out a defined number of measurement in Multi FIFO mode, including handling the
+        creation of a transfer buffer, streaming the acquired waveforms to the PC, terminating the acquisition and
+        returning the acquired waveforms. After being called, it will wait for the requested number of triggers to be
+        received, generating the correct number of measurements. It retrieves each measurement's waveforms from the
+        transfer buffer as they arrive. Once the requested number of measurements have been received, the acquisition
+        is terminated and the waveforms are returned. The device must be configured in SPC_REC_FIFO_MULTI acquisition
+        mode.
+
+        Args:
+            num_measurements (int): The number of measurements to carry out, each triggered by subsequent trigger
+                events.
+        Returns:
+            measurements (List[List[ndarray]]): A list of lists of 1D NumPy arrays containing the waveform data. Each
+                list of arrays contains the waveforms acquired from each enable channel after a single trigger event.
+        """
+        self.execute_continuous_multi_fifo_acquisition()
+        measurements = []
+        for _ in range(num_measurements):
+            measurements.append(self.get_waveforms())
+        self.stop_acquisition()
+        return measurements
+
+    def execute_continuous_multi_fifo_acquisition(self) -> None:
+        """Start a continuous Multi FIFO mode acquisition.
+
+        This method automatically starts acquiring and streaming samples in Multi FIFO mode, including handling the
+        creation of a transfer buffer and streaming the acquired waveforms to the PC. It will return almost
+        instantaneously. The acquired waveforms must then be read out of the transfer buffer in a loop using the
+        SpectrumDevice.get_waveforms() method. Waveforms must be read at least as fast as they are being acquired.
+        The FIFO acquisition and streaming will continue until SpectrumDevice.stop_acquisition() is called. The device
+        must be configured in SPC_REC_FIFO_MULTI acquisition mode."""
+        if self._acquisition_mode != AcquisitionMode.SPC_REC_FIFO_MULTI:
+            raise SpectrumWrongAcquisitionMode(
+                "Set the acquisition mode to SPC_REC_FIFO_MULTI using "
+                "configure_acquisition() or set_acquisition_mode() before executing "
+                "a multi fifo mode acquisition."
+            )
+        self.define_transfer_buffer()
+        self.start_acquisition()
+        self.start_transfer()
 
     def write_to_spectrum_device_register(
         self,

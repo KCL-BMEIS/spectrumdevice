@@ -24,7 +24,7 @@ class SpectrumChannel(SpectrumChannelInterface):
         return int(self.name.name.split("CHANNEL")[-1])
 
     @property
-    def vertical_range_mv(self) -> int:
+    def vertical_range_in_mv(self) -> int:
         """The currently set input range of the channel in mV.
 
         Returns:
@@ -32,7 +32,7 @@ class SpectrumChannel(SpectrumChannelInterface):
         """
         return self._parent_device.read_spectrum_device_register(VERTICAL_RANGE_COMMANDS[self._number])
 
-    def set_vertical_range_mv(self, vertical_range: int) -> None:
+    def set_vertical_range_in_mv(self, vertical_range: int) -> None:
         """Set the input range of the channel in mV. See Spectrum documentation for valid values.
 
         Args:
@@ -41,7 +41,7 @@ class SpectrumChannel(SpectrumChannelInterface):
         self._parent_device.write_to_spectrum_device_register(VERTICAL_RANGE_COMMANDS[self._number], vertical_range)
 
     @property
-    def vertical_offset_percent(self) -> int:
+    def vertical_offset_in_percent(self) -> int:
         """The currently set input offset of the channel in percent of the vertical range.
 
         Returns:
@@ -49,7 +49,7 @@ class SpectrumChannel(SpectrumChannelInterface):
         """
         return self._parent_device.read_spectrum_device_register(VERTICAL_OFFSET_COMMANDS[self._number])
 
-    def set_vertical_offset_percent(self, offset: int) -> None:
+    def set_vertical_offset_in_percent(self, offset: int) -> None:
         """Set the input offset of the channel in percent of the vertical range. See spectrum documentation for valid
         values.
 

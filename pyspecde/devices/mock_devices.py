@@ -172,6 +172,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         SpectrumCard.__init__(self, device_number=device_number)
         self._visa_string = f"MockCard{device_number}"
         self._connect(self._visa_string)
+        self._acquisition_mode = self.acquisition_mode
 
     def set_acquisition_length_in_samples(self, length_in_samples: int) -> None:
         """Set length of mock recording (per channel). In FIFO mode, this will be quantised to the nearest 8 samples.
@@ -250,7 +251,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         has been completed (i.e. the acquisition thread has shut down) or the request has timed out according to the
         self.timeout_ms attribute."""
         if self._acquisition_thread is not None:
-            self._acquisition_thread.join(timeout=1e-3 * self.timeout_ms)
+            self._acquisition_thread.join(timeout=1e-3 * self.timeout_in_ms)
             if self._acquisition_thread.is_alive():
                 print("A timeout occurred while waiting for mock acquisition to complete.")
         else:
@@ -280,6 +281,7 @@ class MockSpectrumStarHub(SpectrumStarHub, MockSpectrumDevice):
         SpectrumStarHub.__init__(self, device_number, child_cards, master_card_index)
         self._visa_string = f"MockHub{device_number}"
         self._connect(self._visa_string)
+        self._acquisition_mode = self.acquisition_mode
 
     def start_acquisition(self) -> None:
         """Start a mock acquisition

@@ -45,3 +45,8 @@ class SpectrumApiCallFailed(IOError):
     @classmethod
     def error_code_string(cls, error_code: int) -> str:
         return f"Spectrum API error code: 0x{error_code:08x}"
+
+
+class SpectrumWrongAcquisitionMode(IOError):
+    def __init__(self, msg: str) -> None:
+        super().__init__(f"Incorrect acquisition mode: {msg}")

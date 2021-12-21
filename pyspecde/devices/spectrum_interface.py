@@ -3,7 +3,7 @@ from typing import List, Optional, Union, Tuple, Sequence
 
 from numpy import ndarray
 
-from pyspecde.settings import SpectrumRegisterLength
+from pyspecde.settings import SpectrumRegisterLength, TriggerSettings, AcquisitionSettings
 from pyspecde.settings.device_modes import AcquisitionMode, ClockMode
 from pyspecde.settings.status import CARD_STATUS_TYPE, STAR_HUB_STATUS_TYPE
 from pyspecde.settings.channel import SpectrumChannelName
@@ -24,20 +24,20 @@ class SpectrumChannelInterface(ABC):
 
     @property
     @abstractmethod
-    def vertical_range_mv(self) -> int:
+    def vertical_range_in_mv(self) -> int:
         raise NotImplementedError()
 
     @abstractmethod
-    def set_vertical_range_mv(self, vertical_range: int) -> None:
+    def set_vertical_range_in_mv(self, vertical_range: int) -> None:
         raise NotImplementedError()
 
     @property
     @abstractmethod
-    def vertical_offset_percent(self) -> int:
+    def vertical_offset_in_percent(self) -> int:
         raise NotImplementedError()
 
     @abstractmethod
-    def set_vertical_offset_percent(self, offset: int) -> None:
+    def set_vertical_offset_in_percent(self, offset: int) -> None:
         raise NotImplementedError()
 
 
@@ -85,6 +85,22 @@ class SpectrumDeviceInterface(ABC):
 
     @abstractmethod
     def wait_for_transfer_to_complete(self) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def configure_acquisition(self, settings: AcquisitionSettings) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def execute_standard_single_acquisition(self) -> List[ndarray]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def execute_finite_multi_fifo_acquisition(self, num_iterations: int) -> List[List[ndarray]]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def execute_continuous_multi_fifo_acquisition(self) -> None:
         raise NotImplementedError()
 
     @abstractmethod
@@ -147,11 +163,11 @@ class SpectrumDeviceInterface(ABC):
 
     @property
     @abstractmethod
-    def timeout_ms(self) -> int:
+    def timeout_in_ms(self) -> int:
         raise NotImplementedError()
 
     @abstractmethod
-    def set_timeout_ms(self, timeout_in_ms: int) -> None:
+    def set_timeout_in_ms(self, timeout_in_ms: int) -> None:
         raise NotImplementedError()
 
     @property
@@ -174,11 +190,11 @@ class SpectrumDeviceInterface(ABC):
 
     @property
     @abstractmethod
-    def external_trigger_level_mv(self) -> int:
+    def external_trigger_level_in_mv(self) -> int:
         raise NotImplementedError()
 
     @abstractmethod
-    def set_external_trigger_level_mv(self, level: int) -> None:
+    def set_external_trigger_level_in_mv(self, level: int) -> None:
         raise NotImplementedError()
 
     @property
@@ -188,6 +204,10 @@ class SpectrumDeviceInterface(ABC):
 
     @abstractmethod
     def set_external_trigger_pulse_width_in_samples(self, width: int) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def configure_trigger(self, settings: TriggerSettings) -> None:
         raise NotImplementedError()
 
     @abstractmethod
@@ -205,11 +225,11 @@ class SpectrumDeviceInterface(ABC):
 
     @property
     @abstractmethod
-    def sample_rate_hz(self) -> int:
+    def sample_rate_in_hz(self) -> int:
         raise NotImplementedError()
 
     @abstractmethod
-    def set_sample_rate_hz(self, rate: int) -> None:
+    def set_sample_rate_in_hz(self, rate: int) -> None:
         raise NotImplementedError()
 
     @property
