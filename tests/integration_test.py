@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-import pytest
+import pytest  # type: ignore
 
 from example_scripts.connect_to_star_hub import star_hub_example  # type: ignore
 from example_scripts.continuous_multi_fifo_mode import continuous_multi_fifo_example  # type: ignore
