@@ -532,7 +532,7 @@ class SpectrumCard(SpectrumDevice):
         Documentation for all possible available modes and their meanings.
 
         Returns:
-            modes (AvailableIOModes): A AvailableIOModes dataclass containing the modes available for each IO line."""
+            modes (AvailableIOModes): An AvailableIOModes dataclass containing the modes available for each IO line."""
         return AvailableIOModes(
             X0=decode_available_io_modes(self.read_spectrum_device_register(SPCM_X0_AVAILMODES)),
             X1=decode_available_io_modes(self.read_spectrum_device_register(SPCM_X1_AVAILMODES)),
