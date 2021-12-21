@@ -4,6 +4,8 @@ test_deps = ["pytest==6.2.5"]
 
 dev_deps = ["flake8==4.0.", "flake8-bugbear==21.9.2", "black==21.10b0", "mypy==0.910"]
 
+doc_deps = ["pdoc==8.0.1"]
+
 setup(
     name="pyspecde",
     package_data={"pyspecde": ["py.typed"]},
@@ -16,6 +18,7 @@ setup(
     ],
     extras_require={
         "dev": dev_deps,
-        "test": test_deps
+        "test": test_deps,
+        "doc": doc_deps
     }
 )
