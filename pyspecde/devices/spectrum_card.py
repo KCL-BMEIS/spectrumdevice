@@ -5,14 +5,11 @@ from typing import List, Optional, Tuple
 
 from numpy import ndarray, mod
 
-from pyspecde.spectrum_api_wrapper import (
-    destroy_handle,
-    AcquisitionMode,
-    ClockMode,
-)
-from pyspecde.spectrum_api_wrapper.status import CARD_STATUS_TYPE, decode_status
-from pyspecde.spectrum_api_wrapper.io_lines import decode_available_io_modes, AvailableIOModes
-from pyspecde.spectrum_api_wrapper.triggering import (
+from pyspecde.settings.device_modes import AcquisitionMode, ClockMode
+from pyspecde.spectrum_wrapper import destroy_handle
+from pyspecde.settings.status import CARD_STATUS_TYPE, decode_status
+from pyspecde.settings.io_lines import decode_available_io_modes, AvailableIOModes
+from pyspecde.settings.triggering import (
     TriggerSource,
     ExternalTriggerMode,
     EXTERNAL_TRIGGER_MODE_COMMANDS,
@@ -20,26 +17,26 @@ from pyspecde.spectrum_api_wrapper.triggering import (
     decode_trigger_sources,
     EXTERNAL_TRIGGER_PULSE_WIDTH_COMMANDS,
 )
-from pyspecde.spectrum_api_wrapper.card_features import (
+from pyspecde.settings.card_features import (
     CardFeature,
     decode_card_features,
     AdvancedCardFeature,
     decode_advanced_card_features,
 )
-from pyspecde.spectrum_api_wrapper.transfer_buffer import (
+from pyspecde.settings.transfer_buffer import (
     TransferBuffer,
     set_transfer_buffer,
     CardToPCDataTransferBuffer,
 )
-from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
-from pyspecde.hardware_model.spectrum_device import SpectrumDevice
-from pyspecde.exceptions import (
+from pyspecde.devices.spectrum_channel import SpectrumChannel
+from pyspecde.devices.spectrum_device import SpectrumDevice
+from pyspecde.spectrum_wrapper.exceptions import (
     SpectrumInvalidNumberOfEnabledChannels,
     SpectrumNoTransferBufferDefined,
     SpectrumExternalTriggerNotEnabled,
     SpectrumTriggerOperationNotImplemented,
 )
-from pyspecde.hardware_model.spectrum_interface import SpectrumChannelInterface, SpectrumIntLengths
+from pyspecde.devices.spectrum_interface import SpectrumChannelInterface, SpectrumIntLengths
 from spectrum_gmbh.regs import (
     M2CMD_CARD_WAITREADY,
     SPC_M2CMD,
@@ -99,7 +96,7 @@ class SpectrumCard(SpectrumDevice):
         """Read the current acquisition status of the card.
         Returns:
             Statuses (CARD_STATUS_TYPE): A list of StatusCode Enums describing the current acquisition status of the
-            card. See spectrum_api_wrapper/status.py (and the Spectrum documentation) for the list off possible
+            card. See settings/status.py (and the Spectrum documentation) for the list off possible
             acquisition statuses.
         """
         return decode_status(self.read_spectrum_device_register(SPC_M2STATUS))

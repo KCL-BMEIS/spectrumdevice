@@ -2,11 +2,9 @@ import matplotlib.pyplot as plt
 from matplotlib.pyplot import plot, show
 from numpy import arange, mean, savetxt, stack
 
-from pyspecde.hardware_model.factories import spectrum_star_hub_factory
-from pyspecde.spectrum_api_wrapper import (
-    AcquisitionMode,
-)
-from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
+from pyspecde.devices.factories import spectrum_star_hub_factory
+from pyspecde import AcquisitionMode
+from pyspecde.settings.triggering import TriggerSource, ExternalTriggerMode
 
 # Choose configuration
 from spectrum_gmbh.regs import (

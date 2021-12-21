@@ -32,25 +32,27 @@ throughout `pyspecde`.
 ## Usage
 ### Connect to devices
 Connect to local (PCIe) cards:
+
 ```python
-from pyspecde.hardware_model.spectrum_card import SpectrumCard
+from pyspecde.devices.spectrum_card import SpectrumCard
 
 card_0 = SpectrumCard(device_number=0)
 card_1 = SpectrumCard(device_number=1)
 ```
 Connect to networked cards (you can find a card's IP using the
 [Spectrum Control Centre](https://spectrum-instrumentation.com/en/spectrum-control-center) software):
+
 ```python
-from pyspecde.hardware_model.spectrum_card import SpectrumCard
+from pyspecde.devices.spectrum_card import SpectrumCard
 
 card_0 = SpectrumCard(device_number=0, ip_address="192.168.0.2")
 card_1 = SpectrumCard(device_number=1, ip_address="192.168.0.3")
 ```
 
 Connect to a networked StarHub (e.g. a NetBox).
+
 ```python
-from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub
- 
+from pyspecde.devices.spectrum_star_hub import SpectrumStarHub
 
 NUM_CARDS_IN_STAR_HUB = 2
 STAR_HUB_MASTER_CARD_INDEX = 1  # The card controlling the clock
@@ -79,9 +81,10 @@ reading and writing to the registers on a device. The valid values from `regs.py
 names of the items of the Enums match the names given in `regs.py` and the Spectrum Instrumentation documentation.
 
 For example, to put a card in 'Standard Single' acquisition mode and set the sample rate to 10 MHz:
+
 ```python
-from pyspecde.hardware_model.spectrum_card import SpectrumCard
-from pyspecde.spectrum_api_wrapper import AcquisitionMode
+from pyspecde.devices.spectrum_card import SpectrumCard
+from pyspecde import AcquisitionMode
 
 card = SpectrumCard(device_number=0)
 card.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)

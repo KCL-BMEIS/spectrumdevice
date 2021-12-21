@@ -1,6 +1,6 @@
-from pyspecde.hardware_model.mock_spectrum_hardware import MockSpectrumCard, MockSpectrumStarHub
-from pyspecde.hardware_model.spectrum_card import SpectrumCard
-from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub
+from pyspecde.devices.mock_devices import MockSpectrumCard, MockSpectrumStarHub
+from pyspecde.devices.spectrum_card import SpectrumCard
+from pyspecde.devices.spectrum_star_hub import SpectrumStarHub
 from tests.configuration import (
     TEST_DEVICE_IP,
     mock_device_test_frame_rate_hz,

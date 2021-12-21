@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
+from pyspecde.devices.spectrum_channel import SpectrumChannel
 from tests.test_device_factories import create_spectrum_card_for_testing
 
 

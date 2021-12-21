@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import NewType, List
 
-from pyspecde.spectrum_api_wrapper import _decode_bitmap_using_enum
+from pyspecde.spectrum_wrapper import _decode_bitmap_using_enum
 from spectrum_gmbh.regs import (
     M2STAT_NONE,
     M2STAT_CARD_PRETRIGGER,

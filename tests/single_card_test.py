@@ -1,12 +1,12 @@
 from unittest import TestCase
 
-from pyspecde.hardware_model.spectrum_channel import SpectrumChannel
-from pyspecde.hardware_model.spectrum_device import SpectrumDevice
-from pyspecde.spectrum_api_wrapper import AcquisitionMode, ClockMode
-from pyspecde.spectrum_api_wrapper.channel import SpectrumChannelName
-from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
-from pyspecde.spectrum_api_wrapper.transfer_buffer import CardToPCDataTransferBuffer
-from pyspecde.exceptions import (
+from pyspecde.devices.spectrum_channel import SpectrumChannel
+from pyspecde.devices.spectrum_device import SpectrumDevice
+from pyspecde.settings.device_modes import AcquisitionMode, ClockMode
+from pyspecde.settings.channel import SpectrumChannelName
+from pyspecde.settings.triggering import TriggerSource, ExternalTriggerMode
+from pyspecde.settings.transfer_buffer import CardToPCDataTransferBuffer
+from pyspecde.spectrum_wrapper.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumExternalTriggerNotEnabled,
     SpectrumTriggerOperationNotImplemented,

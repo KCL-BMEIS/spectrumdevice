@@ -6,17 +6,17 @@ from typing import Optional, Sequence, List
 from numpy import ndarray, zeros
 from numpy.random import randn
 
-from pyspecde.hardware_model.spectrum_card import SpectrumCard
-from pyspecde.hardware_model.spectrum_device import SpectrumDevice
-from pyspecde.exceptions import (
+from pyspecde.devices.spectrum_card import SpectrumCard
+from pyspecde.devices.spectrum_device import SpectrumDevice
+from pyspecde.spectrum_wrapper.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumNoTransferBufferDefined,
     SpectrumSettingsMismatchError,
 )
-from pyspecde.hardware_model.spectrum_interface import SpectrumIntLengths
-from pyspecde.spectrum_api_wrapper import AcquisitionMode
-from pyspecde.spectrum_api_wrapper.transfer_buffer import CardToPCDataTransferBuffer
-from pyspecde.hardware_model.spectrum_star_hub import SpectrumStarHub
+from pyspecde.devices.spectrum_interface import SpectrumIntLengths
+from pyspecde.settings.device_modes import AcquisitionMode
+from pyspecde.settings.transfer_buffer import CardToPCDataTransferBuffer
+from pyspecde.devices.spectrum_star_hub import SpectrumStarHub
 from spectrum_gmbh.regs import (
     SPC_MIINST_MODULES,
     SPC_MIINST_CHPERMODULE,
@@ -105,7 +105,7 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
                 part of the spectrum_gmbh package written by Spectrum.
             value (int): Value to set the register to. Should be imported from regs.py, which is
                 part of the spectrum_gmbh package written by Spectrum, or taken from one of the Enums provided by
-                the spectrum_api_wrapper package.
+                the settings package.
             length (SpectrumIntLengths): Length in bits of the register being set. Either
                 SpectrumIntLengths.THIRTY_TWO or SpectrumIntLengths.SIXTY_FOUR. Check the Spectrum documentation for
                 the register being set to determine the length to use. Default is 32 bit which is correct for the
@@ -128,7 +128,7 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
         Args:
             spectrum_register (int): Mck spectrum device register to read. Should be imported from regs.py, which is
                 part pf the spectrum_gmbh package written by Spectrum, or taken from one of the Enums provided by
-                the spectrum_api_wrapper package.
+                the settings package.
             length (SpectrumIntLengths): Length in bits of the register being read. Either
                 SpectrumIntLengths.THIRTY_TWO or SpectrumIntLengths.SIXTY_FOUR. Check the Spectrum documentation for
                 the register to determine the length to use. Default is 32 bit which is correct for the majority of

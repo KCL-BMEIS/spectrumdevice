@@ -1,11 +1,9 @@
 from matplotlib.pyplot import figure, plot, show
 from numpy import mod
 
-from pyspecde.hardware_model.factories import spectrum_star_hub_factory
-from pyspecde.spectrum_api_wrapper import (
-    AcquisitionMode,
-)
-from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
+from pyspecde.devices.factories import spectrum_star_hub_factory
+from pyspecde import AcquisitionMode
+from pyspecde.settings.triggering import TriggerSource, ExternalTriggerMode
 
 device_ip = "169.254.142.75"
 window_length_seconds = 10e-6

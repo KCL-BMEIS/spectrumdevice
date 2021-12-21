@@ -1,16 +1,9 @@
-from ctypes import c_void_p, create_string_buffer, byref
-from enum import Enum
-from typing import List, NewType
+from ctypes import c_void_p, byref, create_string_buffer
+from typing import NewType, List
 
-from pyspecde.exceptions import SpectrumIOError
-from pyspecde.spectrum_api_wrapper.error_handler import error_handler
-from spectrum_gmbh.regs import (
-    SPC_REC_STD_SINGLE,
-    SPC_REC_FIFO_MULTI,
-    SPC_CM_INTPLL,
-    SPC_CM_EXTERNAL,
-    SPC_CM_EXTREFCLOCK,
-)
+from pyspecde.spectrum_wrapper.error_handler import error_handler
+from pyspecde.spectrum_wrapper.exceptions import SpectrumIOError
+
 
 try:
     from spectrum_gmbh.pyspcm import (
@@ -26,7 +19,7 @@ try:
 
     SPECTRUM_DRIVERS_FOUND = True
 except OSError:
-    from pyspecde.spectrum_api_wrapper.mock_pyspcm import (
+    from pyspecde.spectrum_wrapper.mock_pyspcm import (
         spcm_dwSetParam_i32,
         spcm_dwSetParam_i64,
         spcm_hOpen,
@@ -41,32 +34,6 @@ except OSError:
     SPECTRUM_DRIVERS_FOUND = False
 
 DEVICE_HANDLE_TYPE = NewType("DEVICE_HANDLE_TYPE", c_void_p)
-
-
-class AcquisitionMode(Enum):
-    """Enum representing the acquisition modes currently support by pyspecde. See Spectrum documentation for more
-    information about each mode.
-
-    SPC_REC_STD_SINGLE: Data acquisition to on-board memory for one single trigger event.
-    SPC_REC_FIFO_MULTI: Continuous data acquisition for multiple trigger events.
-    """
-
-    SPC_REC_STD_SINGLE = SPC_REC_STD_SINGLE
-    SPC_REC_FIFO_MULTI = SPC_REC_FIFO_MULTI
-
-
-class ClockMode(Enum):
-    """Enum representing the clock modes currently supported by pyspecde. See Spectrum documentation for more
-    information about each mode.
-
-    SPC_CM_INTPLL: Enables internal PLL with 20 MHz internal reference for sample clock generation.
-    SPC_CM_EXTERNAL: Enables external clock input for direct sample clock generation.
-    SPC_CM_EXTREFCLOCK: Enables internal PLL with external reference for sample clock generation.
-    """
-
-    SPC_CM_INTPLL = SPC_CM_INTPLL
-    SPC_CM_EXTERNAL = SPC_CM_EXTERNAL
-    SPC_CM_EXTREFCLOCK = SPC_CM_EXTREFCLOCK
 
 
 def _decode_bitmap_using_enum(bitmap_value: int, test_values: List[int]) -> List[int]:

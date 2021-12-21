@@ -1,7 +1,7 @@
 from enum import Enum
 
-from pyspecde.spectrum_api_wrapper import SPECTRUM_DRIVERS_FOUND
-from pyspecde.exceptions import SpectrumIOError
+from pyspecde.spectrum_wrapper import SPECTRUM_DRIVERS_FOUND
+from pyspecde.spectrum_wrapper.exceptions import SpectrumIOError
 
 
 class SpectrumTestMode(Enum):

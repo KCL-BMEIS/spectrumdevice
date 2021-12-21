@@ -1,6 +1,6 @@
 from abc import ABC
 
-from pyspecde.exceptions import SpectrumDeviceNotConnected
+from pyspecde.spectrum_wrapper.exceptions import SpectrumDeviceNotConnected
 from spectrum_gmbh.regs import (
     M2CMD_CARD_RESET,
     M2CMD_CARD_START,
@@ -9,11 +9,11 @@ from spectrum_gmbh.regs import (
     M2CMD_CARD_STOP,
 )
 
-from pyspecde.hardware_model.spectrum_interface import (
+from pyspecde.devices.spectrum_interface import (
     SpectrumDeviceInterface,
     SpectrumIntLengths,
 )
-from pyspecde.spectrum_api_wrapper import (
+from pyspecde.spectrum_wrapper import (
     get_spectrum_i32_api_param,
     get_spectrum_i64_api_param,
     set_spectrum_i32_api_param,
@@ -104,7 +104,7 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
 
         Returns:
             value (int): Value of the register. This can be matched to a global constant imported from
-            spectrum_gmbh.regs, usually using one of the Enums defined in the spectrum_api_wrapper module.
+            spectrum_gmbh.regs, usually using one of the Enums defined in the settings module.
         """
         if self.connected:
             if length == SpectrumIntLengths.THIRTY_TWO:

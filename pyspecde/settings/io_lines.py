@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import List
 
-from pyspecde.spectrum_api_wrapper import _decode_bitmap_using_enum
+from pyspecde.spectrum_wrapper import _decode_bitmap_using_enum
 from spectrum_gmbh.regs import (
     SPCM_XMODE_DISABLE,
     SPCM_XMODE_ASYNCIN,

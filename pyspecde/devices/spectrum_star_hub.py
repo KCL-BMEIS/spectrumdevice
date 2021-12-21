@@ -4,20 +4,17 @@ from typing import List, Optional, Sequence, Tuple
 
 from numpy import arange, ndarray
 
-from pyspecde.hardware_model.spectrum_device import SpectrumDevice
-from pyspecde.hardware_model.spectrum_card import SpectrumCard
-from pyspecde.exceptions import SpectrumSettingsMismatchError
-from pyspecde.hardware_model.spectrum_interface import SpectrumChannelInterface
-from pyspecde.spectrum_api_wrapper import (
-    AcquisitionMode,
-    ClockMode,
-    destroy_handle,
-)
-from pyspecde.spectrum_api_wrapper.status import STAR_HUB_STATUS_TYPE
-from pyspecde.spectrum_api_wrapper.io_lines import AvailableIOModes
-from pyspecde.spectrum_api_wrapper.triggering import TriggerSource, ExternalTriggerMode
-from pyspecde.spectrum_api_wrapper.card_features import CardFeature, AdvancedCardFeature
-from pyspecde.spectrum_api_wrapper.transfer_buffer import TransferBuffer, CardToPCDataTransferBuffer
+from pyspecde.devices.spectrum_device import SpectrumDevice
+from pyspecde.devices.spectrum_card import SpectrumCard
+from pyspecde.spectrum_wrapper.exceptions import SpectrumSettingsMismatchError
+from pyspecde.devices.spectrum_interface import SpectrumChannelInterface
+from pyspecde.settings.device_modes import AcquisitionMode, ClockMode
+from pyspecde.spectrum_wrapper import destroy_handle
+from pyspecde.settings.status import STAR_HUB_STATUS_TYPE
+from pyspecde.settings.io_lines import AvailableIOModes
+from pyspecde.settings.triggering import TriggerSource, ExternalTriggerMode
+from pyspecde.settings.card_features import CardFeature, AdvancedCardFeature
+from pyspecde.settings.transfer_buffer import TransferBuffer, CardToPCDataTransferBuffer
 from spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK, SPC_PCIFEATURES
 
 

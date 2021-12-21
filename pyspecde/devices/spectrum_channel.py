@@ -1,5 +1,5 @@
-from pyspecde.spectrum_api_wrapper.channel import VERTICAL_RANGE_COMMANDS, VERTICAL_OFFSET_COMMANDS, SpectrumChannelName
-from pyspecde.hardware_model.spectrum_interface import SpectrumChannelInterface, SpectrumDeviceInterface
+from pyspecde.settings.channel import VERTICAL_RANGE_COMMANDS, VERTICAL_OFFSET_COMMANDS, SpectrumChannelName
+from pyspecde.devices.spectrum_interface import SpectrumChannelInterface, SpectrumDeviceInterface
 
 
 class SpectrumChannel(SpectrumChannelInterface):
@@ -13,7 +13,7 @@ class SpectrumChannel(SpectrumChannelInterface):
 
     @property
     def name(self) -> SpectrumChannelName:
-        """The identifier assigned by the spectrum drive, formatted as an Enum by the spectrum_api_wrapper package."""
+        """The identifier assigned by the spectrum drive, formatted as an Enum by the settings package."""
         return self._name
 
     @property

@@ -4,8 +4,8 @@ from enum import Enum
 
 from numpy import ndarray, zeros, int16
 
-from pyspecde.spectrum_api_wrapper import DEVICE_HANDLE_TYPE
-from pyspecde.spectrum_api_wrapper.error_handler import error_handler
+from pyspecde.spectrum_wrapper import DEVICE_HANDLE_TYPE
+from pyspecde.spectrum_wrapper.error_handler import error_handler
 
 try:
     from spectrum_gmbh.pyspcm import (
@@ -17,7 +17,7 @@ try:
         spcm_dwDefTransfer_i64,
     )
 except OSError:
-    from pyspecde.spectrum_api_wrapper.mock_pyspcm import (
+    from pyspecde.spectrum_wrapper.mock_pyspcm import (
         SPCM_BUF_DATA,
         SPCM_BUF_ABA,
         SPCM_BUF_TIMESTAMP,
