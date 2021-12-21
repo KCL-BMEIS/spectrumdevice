@@ -215,7 +215,7 @@ class SpectrumCard(SpectrumDevice):
             self.wait_for_transfer_to_complete()
             num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
             self.write_to_spectrum_device_register(SPC_DATA_AVAIL_CARD_LEN, num_available_bytes)
-        waveforms_in_columns = copy(self.transfer_buffers[0].data_buffer).reshape(
+        waveforms_in_columns = copy(self.transfer_buffers[0].data_array).reshape(
             (self.acquisition_length_in_samples, len(self.enabled_channels))
         )
         return [waveform for waveform in waveforms_in_columns.T]

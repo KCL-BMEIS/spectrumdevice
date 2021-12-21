@@ -45,6 +45,10 @@ class AvailableIOModes:
     device. Returned by the available_io_modes() method of a device."""
 
     X0: List[IOLineMode]
+    """IO modes available to the XO IO line."""
     X1: List[IOLineMode]
+    """IO modes available to the X1 IO line."""
     X2: List[IOLineMode]
+    """IO modes available to the X2 IO line."""
     X3: List[IOLineMode]
+    """IO modes available to the X3 IO line."""

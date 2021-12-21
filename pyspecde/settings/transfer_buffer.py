@@ -51,21 +51,30 @@ class TransferBuffer:
     sets the notify size equal to the acquisition length."""
 
     type: BufferType
+    """Specifies whether the buffer is to be used to transfer samples, timestamps or A/B data."""
     direction: BufferDirection
+    """Specifies whether the buffer is to be used to transfer data from the card to the PC, or the PC to the card."""
     board_memory_offset_bytes: int
-    data_buffer: ndarray
+    """Sets the offset for transfer in board memory. Typically 0. See Spectrum documentation for more information."""
+    data_array: ndarray
+    """1D numpy array into which samples will be written during transfer."""
 
     @property
-    def data_buffer_pointer(self) -> c_void_p:
-        return self.data_buffer.ctypes.data_as(c_void_p)
+    def data_array_pointer(self) -> c_void_p:
+        """A pointer to the data array."""
+        return self.data_array.ctypes.data_as(c_void_p)
 
     @property
-    def data_buffer_length_bytes(self) -> int:
-        return self.data_buffer.size * self.data_buffer.itemsize
+    def data_array_length_in_bytes(self) -> int:
+        """The length of the array into which sample will be written, in bytes."""
+        return self.data_array.size * self.data_array.itemsize
 
     @property
-    def notify_size_bytes(self) -> int:
-        return self.data_buffer.size * self.data_buffer.itemsize
+    def notify_size_in_bytes(self) -> int:
+        """The number of transferred bytes after which a notification of transfer is sent from the device. This is
+        currently always set to the length of the data array, meaning that a notification will be received once the
+        transfer is complete. See the Spectrum documentation for more information."""
+        return self.data_array_length_in_bytes
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, TransferBuffer):
@@ -73,7 +82,7 @@ class TransferBuffer:
                 (self.type == other.type)
                 and (self.direction == other.direction)
                 and (self.board_memory_offset_bytes == other.board_memory_offset_bytes)
-                and (self.data_buffer == other.data_buffer).all()
+                and (self.data_array == other.data_array).all()
             )
         else:
             raise NotImplementedError()
@@ -83,10 +92,16 @@ class CardToPCDataTransferBuffer(TransferBuffer):
     """A TransferBuffer configured for card-to-pc transfer of samples (rather than timestamps or ABA data)."""
 
     def __init__(self, size_in_samples: int, board_memory_offset_bytes: int = 0) -> None:
+        """
+        Args:
+            size_in_samples (int): The size of the array into which samples will be written, in samples.
+            board_memory_offset_bytes (int): Sets the offset for transfer in board memory. Default 0. See Spectrum
+                documentation for more information.
+        """
         self.type = BufferType.SPCM_BUF_DATA
         self.direction = BufferDirection.SPCM_DIR_CARDTOPC
         self.board_memory_offset_bytes = board_memory_offset_bytes
-        self.data_buffer = zeros(size_in_samples, int16)
+        self.data_array = zeros(size_in_samples, int16)
 
 
 def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffer) -> None:
@@ -94,8 +109,8 @@ def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffe
         device_handle,
         buffer.type.value,
         buffer.direction.value,
-        buffer.notify_size_bytes,
-        buffer.data_buffer_pointer,
+        buffer.notify_size_in_bytes,
+        buffer.data_array_pointer,
         buffer.board_memory_offset_bytes,
-        buffer.data_buffer_length_bytes,
+        buffer.data_array_length_in_bytes,
     )

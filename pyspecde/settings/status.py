@@ -16,6 +16,8 @@ from spectrum_gmbh.regs import (
 
 
 class StatusCode(Enum):
+    """ An Enum representing the possible status codes that can be returned by a SpectrumCard. See the Spectrum
+    documentation for a description of each status."""
     M2STAT_NONE = M2STAT_NONE
     M2STAT_CARD_PRETRIGGER = M2STAT_CARD_PRETRIGGER
     M2STAT_CARD_TRIGGER = M2STAT_CARD_TRIGGER
@@ -32,7 +34,10 @@ class StatusCode(Enum):
 
 
 CARD_STATUS_TYPE = List[StatusCode]
+"""A list of StatusCodes that is returned when the status of an individual card is queried."""
+
 STAR_HUB_STATUS_TYPE = List[CARD_STATUS_TYPE]
+"""A list of CARD_STATUS_TYPE that is returned when the status of a StarHub is queried."""
 
 
 def decode_status(code: int) -> CARD_STATUS_TYPE:

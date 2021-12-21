@@ -221,7 +221,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         the mock 'on device buffer' to the transfer buffer by pointing the transfer buffer's data buffer attribute to
         the mock on-device buffer."""
         if self._transfer_buffer:
-            self._transfer_buffer.data_buffer = self._on_device_buffer
+            self._transfer_buffer.data_array = self._on_device_buffer
         else:
             raise SpectrumNoTransferBufferDefined("Call define_transfer_buffer method.")
 
@@ -230,7 +230,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         samples from the mock 'on device buffer' to the transfer buffer by assigning the transfer bugger to an array of
         zeros."""
         if self._transfer_buffer:
-            self._transfer_buffer.data_buffer = zeros(self._transfer_buffer.data_buffer.shape)
+            self._transfer_buffer.data_array = zeros(self._transfer_buffer.data_array.shape)
         else:
             raise SpectrumNoTransferBufferDefined("Call define_transfer_buffer method.")
 
@@ -239,9 +239,9 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         has been completed (i.e. the contents of the transfer buffer has changed since __init__() or since the last call
         to wait_for_transfer_to_complete)."""
         if self._transfer_buffer:
-            while (self._previous_data == self._transfer_buffer.data_buffer).all():
+            while (self._previous_data == self._transfer_buffer.data_array).all():
                 sleep(0.01)
-            self._previous_data = self._transfer_buffer.data_buffer.copy()
+            self._previous_data = self._transfer_buffer.data_array.copy()
         else:
             raise SpectrumNoTransferBufferDefined("No transfer in progress.")
 

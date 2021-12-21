@@ -144,7 +144,7 @@ class SingleCardTest(TestCase):
         acquisition_timeout_ms = 1000
         self._device.set_enabled_channels([0])
         self._simple_acquisition(window_length_samples, acquisition_timeout_ms)
-        acquired_waveform = self._device.transfer_buffers[0].data_buffer
+        acquired_waveform = self._device.transfer_buffers[0].data_array
         self.assertEqual(len(acquired_waveform), window_length_samples)
         self.assertTrue(acquired_waveform.sum() != 0.0)
 
