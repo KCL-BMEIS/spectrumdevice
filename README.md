@@ -70,7 +70,7 @@ hub = SpectrumStarHub(device_number=0, child_cards=child_cards,
 Once connected, `SpectrumStarHub` object can be configured and used in exactly the same way as a `SpectrumCard` 
 object - commands will be sent to the child cards automatically.
 
-### Configuring acquisitions
+### Configuring device settings
 Spectrum Instrument's own low-level Python API requires that users configure a device by writing values to on-device 
 registers. The integer addresses of the registers can be imported from `regs.py` (part of Spectrum 
 Instrumentation's own `spcm_examples` directory and included in `pyspecde`) along with the values to write for each
@@ -95,7 +95,7 @@ and to print the currently set sample rate:
 print(card.sample_rate_in_hz)
 ```
 
-### Configuring channels
+### Configuring channel settings
 The channels available to a spectrum device (card or StarHub) can be accessed via the `channels` property. This 
 property contains a list of `SpectrumChannel` objects which provide methods to the configuration of each channel 
 independently. For example, to change the vertical range of channel 2 of a card to 1V:
@@ -104,54 +104,64 @@ independently. For example, to change the vertical range of channel 2 of a card 
 card.channels[2].set_vertical_range_in_mv(1000)
 ```
 
+### Configuring everything at once
+You can set multiple settings at once using the `TriggerSettings` and `AcquisitionSettings` dataclasses and the 
+`configure_trigger()` and `configure_acquisition()` methods:
+```python
+from pyspecde.settings import TriggerSettings, AcquisitionSettings, TriggerSource, ExternalTriggerMode, AcquisitionMode
+trigger_settings = TriggerSettings(
+    trigger_sources=[TriggerSource.SPC_TMASK_EXT0],
+    external_trigger_mode=ExternalTriggerMode.SPC_TM_POS,
+    external_trigger_level_in_mv=1000,
+)
+
+acquisition_settings = AcquisitionSettings(
+    acquisition_mode=AcquisitionMode.SPC_REC_FIFO_MULTI,
+    sample_rate_in_hz=40000000,
+    acquisition_length_in_samples=400,
+    pre_trigger_length_in_samples=0,
+    timeout_in_ms=1000,
+    enabled_channels=[0, 1, 2, 3],
+    vertical_ranges_in_mv=[200, 200, 200, 200],
+    vertical_offsets_in_percent=[0, 0, 0, 0],
+)
+
+card.configure_trigger(trigger_settings)
+card.configure_acquisition(acquisition_settings)
+```
+
 ### Acquiring waveforms (standard single mode)
-To acquire data in standard single mode, after calling
+To acquire data in standard single mode, place the device into the correct mode using `configure_acquisition()` or `
+card.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)` and then execute the acquisition:
 ```python
-card.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
+waveforms = card.execute_standard_single_acquisition()
 ```
-and configuring your other acquisition and channel settings (length, trigger setup, enabled channels, timeout, 
-channel ranges etc.), you need to start the acquisition and wait for it to 
-complete:
-```python
-card.start_acquisition()
-card.wait_for_acquisition_to_complete()
-```
-To retrieve the acquired waveforms, you need to create a transfer buffer into which your acquired samples will be 
-written:
-```python
-card.define_transfer_buffer()
-```
-and then start the transfer of samples from the on-device buffer to the transfer buffer, and wait for it to complete:
-```python
-card.start_transfer()
-card.wait_for_transfer_to_complete()
-```
-Once the transfer is complete, you can obtain your waveforms as a list of 1D NumPy arrays:
-```python
-waveforms = card.get_waveforms()
-```
+`waveforms` (a list of 1D NumPy arrays) will contain the waveforms received by each enabled channel.
 
 ### Acquiring waveforms (multi FIFO mode)
-Put your device in Multi-FIFO mode using:
-```python
-card.set_acquisition_mode(AcquisitionMode.SPC_REC_FIFO_MULTI)
-```
-In multi FIFO mode, samples are streamed from the on-device buffer to the software buffer during the acquisition. 
-This means the transfer buffer must be defined before the acquisition begins, and the transfer started immediately:
-```python
-card.define_transfer_buffer()
-card.start_acquisition()
-card.start_transfer()
-```
-You then need to pull the data out of the transfer buffer at least as fast as the data is being acquired:
-```python
-acquisitions = []
-while acquiring:
-    acquisitions.append(card.get_waveforms())
-```
-Each call to `get_waveforms()` will wait until the next set of waveform data is available.
+To acquire data in standard single mode, place the device into the correct mode using `configure_acquisition()` or `
+card.set_acquisition_mode(AcquisitionMode.SPC_REC_FIFO_MULTI)`.
 
-To stop the acquisitions and therefore the transfer of data into the transfer buffer:
+You can then carry out a predefined number of Multi FIFO measurements like this:
+```python
+NUM_MEASUREMENTS = 2
+measurements = card.execute_finite_multi_fifo_acquisition(NUM_MEASUREMENTS)
+```
+`measurements` (a list of lists of 1D NumPy arrays) will contain `NUM_MEASUREMENTS` lists of waveforms, where each 
+list of waveforms contains the waveforms received by each enabled channel during a measurement.
+
+Alternatively, you can set a Multi FIFO acquisition running continuously like this:
+```python
+card.execute_continuous_multi_fifo_acquisition()
+```
+But you'll then need to pull the data out of the transfer buffer at least as fast as the data is being acquired:
+```python
+measurements = []
+while acquiring:
+    measurements.append(card.get_waveforms())
+```
+Each call to `get_waveforms()` will wait until the next set of waveform data is available. When ready, you'll need 
+to stop the acquisition:
 ```python
 card.stop_acquisition()
 ```
@@ -162,3 +172,7 @@ card.stop_acquisition()
 * When defining a transfer buffer - the software buffer into which samples are transferred from a hardware device - 
   the notify size is automatically set equal to the buffer length. This works fine for most situations. See the 
   Spectrum documentation for more information.
+
+## API Documentation
+
+See below or [here](docs_url) for documentation for the complete API.
