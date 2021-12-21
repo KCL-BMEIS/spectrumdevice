@@ -1,22 +1,19 @@
 from pyspecde import MockSpectrumStarHub, MockSpectrumCard, SpectrumCard, SpectrumStarHub
 
-if __name__ == "__main__":
 
-    MOCK_MODE = True  # Set to false to connect to real hardware
-    NUM_CARDS_IN_STAR_HUB = 2
-    STAR_HUB_MASTER_CARD_INDEX = 1  # Index (0+) of the card controlling the clock. This is usually hard-wired.
+def star_hub_example(mock_mode: bool, num_cards: int, master_card_index: int) -> SpectrumStarHub:
 
-    if not MOCK_MODE:
+    if not mock_mode:
         DEVICE_IP_ADDRESS = "169.254.142.75"
         child_cards = []
-        for n in range(NUM_CARDS_IN_STAR_HUB):
+        for n in range(num_cards):
             # Connect to each card in the hub.
             child_cards.append(SpectrumCard(device_number=n, ip_address=DEVICE_IP_ADDRESS))
         # Connect to the hub itself
-        hub = SpectrumStarHub(device_number=0, child_cards=child_cards, master_card_index=STAR_HUB_MASTER_CARD_INDEX)
+        return SpectrumStarHub(device_number=0, child_cards=child_cards, master_card_index=master_card_index)
     else:
         mock_child_cards = []
-        for n in range(NUM_CARDS_IN_STAR_HUB):
+        for n in range(num_cards):
             # Create a mock device for each card in the hub
             mock_child_cards.append(
                 MockSpectrumCard(
@@ -27,10 +24,11 @@ if __name__ == "__main__":
                 )
             )
         # Create a mock hub containing the above devices
-        hub = MockSpectrumStarHub(
-            device_number=0, child_cards=mock_child_cards, master_card_index=STAR_HUB_MASTER_CARD_INDEX
-        )
+        return MockSpectrumStarHub(device_number=0, child_cards=mock_child_cards, master_card_index=master_card_index)
 
+
+if __name__ == "__main__":
+    hub = star_hub_example(mock_mode=True, num_cards=2, master_card_index=1)
     print(f"{hub} contains {len(hub.channels)} channels in total:")
     for channel in hub.channels:
         print(channel)
