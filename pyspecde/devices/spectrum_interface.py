@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
-from enum import Enum
-from typing import List, Optional, Union, Tuple
+from typing import List, Optional, Union, Tuple, Sequence
 
 from numpy import ndarray
 
+from pyspecde.settings import SpectrumRegisterLength
 from pyspecde.settings.device_modes import AcquisitionMode, ClockMode
 from pyspecde.settings.status import CARD_STATUS_TYPE, STAR_HUB_STATUS_TYPE
 from pyspecde.settings.channel import SpectrumChannelName
@@ -39,11 +39,6 @@ class SpectrumChannelInterface(ABC):
     @abstractmethod
     def set_vertical_offset_percent(self, offset: int) -> None:
         raise NotImplementedError()
-
-
-class SpectrumIntLengths(Enum):
-    THIRTY_TWO = 0
-    SIXTY_FOUR = 1
 
 
 class SpectrumDeviceInterface(ABC):
@@ -111,7 +106,7 @@ class SpectrumDeviceInterface(ABC):
 
     @property
     @abstractmethod
-    def channels(self) -> List[SpectrumChannelInterface]:
+    def channels(self) -> Sequence[SpectrumChannelInterface]:
         raise NotImplementedError()
 
     @property
@@ -232,7 +227,7 @@ class SpectrumDeviceInterface(ABC):
         self,
         spectrum_register: int,
         value: int,
-        length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,
+        length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> None:
         raise NotImplementedError()
 
@@ -240,6 +235,6 @@ class SpectrumDeviceInterface(ABC):
     def read_spectrum_device_register(
         self,
         spectrum_register: int,
-        length: SpectrumIntLengths = SpectrumIntLengths.THIRTY_TWO,
+        length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> int:
         raise NotImplementedError()

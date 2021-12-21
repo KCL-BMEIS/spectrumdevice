@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import NewType, List
+from typing import List
 
 from pyspecde.spectrum_wrapper import _decode_bitmap_using_enum
 from spectrum_gmbh.regs import (
@@ -31,8 +31,8 @@ class StatusCode(Enum):
     M2STAT_EXTRA_ERROR = M2STAT_DATA_ERROR
 
 
-CARD_STATUS_TYPE = NewType("CARD_STATUS_TYPE", List[StatusCode])
-STAR_HUB_STATUS_TYPE = NewType("STAR_HUB_STATUS_TYPE", List[CARD_STATUS_TYPE])
+CARD_STATUS_TYPE = List[StatusCode]
+STAR_HUB_STATUS_TYPE = List[CARD_STATUS_TYPE]
 
 
 def decode_status(code: int) -> CARD_STATUS_TYPE:

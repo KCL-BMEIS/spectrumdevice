@@ -4,10 +4,10 @@ from typing import List, Optional, Sequence, Tuple
 
 from numpy import arange, ndarray
 
+from pyspecde.devices.spectrum_channel import SpectrumChannel
 from pyspecde.devices.spectrum_device import SpectrumDevice
 from pyspecde.devices.spectrum_card import SpectrumCard
 from pyspecde.spectrum_wrapper.exceptions import SpectrumSettingsMismatchError
-from pyspecde.devices.spectrum_interface import SpectrumChannelInterface
 from pyspecde.settings.device_modes import AcquisitionMode, ClockMode
 from pyspecde.spectrum_wrapper import destroy_handle
 from pyspecde.settings.status import STAR_HUB_STATUS_TYPE
@@ -19,7 +19,10 @@ from spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK, SPC_PCIFEATURES
 
 
 class SpectrumStarHub(SpectrumDevice):
-    """Composite of SpectrumDevices"""
+    """Composite class of SpectrumCards for controlling a StarHub device, for example the Spectrum NetBox. StarHub
+    devices are composites of more than one Spectrum card. Acquisition from the child cards of a StarHub is
+    synchronised, aggregating the channels of all child cards. This class enables the control of a StarHub device as if
+    it were a single Spectrum card."""
 
     def __init__(
         self,
@@ -27,12 +30,7 @@ class SpectrumStarHub(SpectrumDevice):
         child_cards: Sequence[SpectrumCard],
         master_card_index: int,
     ):
-        """SpectrumStarHub
-
-        Class for controlling a StarHub device, for example the Spectrum NetBox. StarHub devices are composites of more
-        than one Spectrum card. Acquisition from the child cards of a StarHub is synchronised, aggregating the channels
-        of all child cards. This class enables the control of a StarHub device as if it was a single Spectrum card.
-
+        """
         Args:
             device_number (int): The index of the StarHub to connect to. If only one StarHub is present, set to 0.
             child_cards (Sequence[SpectrumCard]): A list of SpectrumCard objects defining the child cards located
@@ -225,12 +223,12 @@ class SpectrumStarHub(SpectrumDevice):
         return waveforms
 
     @property
-    def channels(self) -> List[SpectrumChannelInterface]:
-        """A list of all the channels of the child cards of the hub."""
-        channels = []
+    def channels(self) -> Sequence[SpectrumChannel]:
+        """A tuple containing of all the channels of the child cards of the hub."""
+        channels: List[SpectrumChannel] = []
         for device in self._child_cards:
             channels += device.channels
-        return channels
+        return tuple(channels)
 
     @property
     def acquisition_length_samples(self) -> int:

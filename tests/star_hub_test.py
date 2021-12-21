@@ -57,6 +57,7 @@ class StarHubTest(SingleCardTest):
             expected_channels += [
                 SpectrumChannel(i, self._device._child_cards[n]) for i in range(self._expected_num_channels_each_card)
             ]
+        expected_channels = tuple(expected_channels)
         self.assertEqual(expected_channels, channels)
 
     def test_transfer_buffer(self) -> None:

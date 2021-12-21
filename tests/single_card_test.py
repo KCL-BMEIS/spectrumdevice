@@ -37,7 +37,7 @@ class SingleCardTest(TestCase):
     def test_get_channels(self) -> None:
         channels = self._device.channels
 
-        expected_channels = [SpectrumChannel(i, self._device) for i in range(self._expected_num_channels)]
+        expected_channels = tuple([SpectrumChannel(i, self._device) for i in range(self._expected_num_channels)])
         self.assertEqual(expected_channels, channels)
 
     def test_enable_one_channel(self) -> None:
