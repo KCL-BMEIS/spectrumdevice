@@ -231,32 +231,32 @@ class SpectrumStarHub(SpectrumDevice):
         return tuple(channels)
 
     @property
-    def acquisition_length_samples(self) -> int:
+    def acquisition_length_in_samples(self) -> int:
         """The currently set recording length, which should be the same for all child cards. If different recording
         lengths are set, an exception is raised."""
         lengths = []
         for d in self._child_cards:
-            lengths.append(d.acquisition_length_samples)
+            lengths.append(d.acquisition_length_in_samples)
         return _check_settings_constant_across_devices(lengths, __name__)
 
-    def set_acquisition_length_samples(self, length_in_samples: int) -> None:
+    def set_acquisition_length_in_samples(self, length_in_samples: int) -> None:
         """Set a new recording length for all child cards."""
         for d in self._child_cards:
-            d.set_acquisition_length_samples(length_in_samples)
+            d.set_acquisition_length_in_samples(length_in_samples)
 
     @property
-    def post_trigger_length_samples(self) -> int:
+    def post_trigger_length_in_samples(self) -> int:
         """The number of samples recorded after a trigger is receive. This should be consistent across all child
         cards. If different values are found across the child cards, an exception is raised."""
         lengths = []
         for d in self._child_cards:
-            lengths.append(d.post_trigger_length_samples)
+            lengths.append(d.post_trigger_length_in_samples)
         return _check_settings_constant_across_devices(lengths, __name__)
 
-    def set_post_trigger_length_samples(self, length_in_samples: int) -> None:
+    def set_post_trigger_length_in_samples(self, length_in_samples: int) -> None:
         """Set a new post trigger length for all child cards."""
         for d in self._child_cards:
-            d.set_post_trigger_length_samples(length_in_samples)
+            d.set_post_trigger_length_in_samples(length_in_samples)
 
     @property
     def acquisition_mode(self) -> AcquisitionMode:

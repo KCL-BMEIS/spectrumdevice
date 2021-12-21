@@ -176,7 +176,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         self._visa_string = f"MockCard{device_number}"
         self._connect(self._visa_string)
 
-    def set_acquisition_length_samples(self, length_in_samples: int) -> None:
+    def set_acquisition_length_in_samples(self, length_in_samples: int) -> None:
         """Set length of mock recording (per channel). In FIFO mode, this will be quantised to the nearest 8 samples.
 
         Args:
@@ -185,7 +185,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         """
         self._on_device_buffer = zeros(length_in_samples * len(self.enabled_channels))
         self._previous_data = zeros(length_in_samples * len(self.enabled_channels))
-        super().set_acquisition_length_samples(length_in_samples)
+        super().set_acquisition_length_in_samples(length_in_samples)
 
     def set_enabled_channels(self, channels_nums: List[int]) -> None:
         """Set the channels to enable for the mock acquisition
@@ -195,8 +195,8 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
 
         """
         if len(list(filter(lambda x: 0 <= x < len(self.channels), channels_nums))) == len(channels_nums):
-            self._on_device_buffer = zeros(self.acquisition_length_samples * len(channels_nums))
-            self._previous_data = zeros(self.acquisition_length_samples * len(channels_nums))
+            self._on_device_buffer = zeros(self.acquisition_length_in_samples * len(channels_nums))
+            self._previous_data = zeros(self.acquisition_length_in_samples * len(channels_nums))
             super().set_enabled_channels(channels_nums)
         else:
             raise SpectrumSettingsMismatchError("Not enough channels in mock device configuration.")
@@ -213,7 +213,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
             self._transfer_buffer = buffer[0]
         else:
             self._transfer_buffer = CardToPCDataTransferBuffer(
-                self.acquisition_length_samples * len(self.enabled_channels)
+                self.acquisition_length_in_samples * len(self.enabled_channels)
             )
 
     def start_transfer(self) -> None:

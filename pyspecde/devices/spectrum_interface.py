@@ -120,20 +120,20 @@ class SpectrumDeviceInterface(ABC):
 
     @property
     @abstractmethod
-    def acquisition_length_samples(self) -> int:
+    def acquisition_length_in_samples(self) -> int:
         raise NotImplementedError()
 
     @abstractmethod
-    def set_acquisition_length_samples(self, length_in_samples: int) -> None:
+    def set_acquisition_length_in_samples(self, length_in_samples: int) -> None:
         raise NotImplementedError()
 
     @property
     @abstractmethod
-    def post_trigger_length_samples(self) -> int:
+    def post_trigger_length_in_samples(self) -> int:
         raise NotImplementedError()
 
     @abstractmethod
-    def set_post_trigger_length_samples(self, length_in_samples: int) -> None:
+    def set_post_trigger_length_in_samples(self, length_in_samples: int) -> None:
         raise NotImplementedError()
 
     @property

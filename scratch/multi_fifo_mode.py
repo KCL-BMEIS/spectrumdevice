@@ -29,8 +29,8 @@ netbox.set_external_trigger_level_mv(trigger_level_mv)
 
 netbox.set_acquisition_mode(AcquisitionMode.SPC_REC_FIFO_MULTI)
 
-netbox.set_acquisition_length_samples(window_length_samples)
-netbox.set_post_trigger_length_samples(window_length_samples - 8)
+netbox.set_acquisition_length_in_samples(window_length_samples)
+netbox.set_post_trigger_length_in_samples(window_length_samples - 8)
 netbox.set_timeout_ms(acquisition_timeout_ms)
 
 netbox.define_transfer_buffer()

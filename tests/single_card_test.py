@@ -54,14 +54,14 @@ class SingleCardTest(TestCase):
     def test_acquisition_length(self) -> None:
         acquisition_length = ACQUISITION_LENGTH
         self._device.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
-        self._device.set_acquisition_length_samples(acquisition_length)
-        self.assertEqual(acquisition_length, self._device.acquisition_length_samples)
+        self._device.set_acquisition_length_in_samples(acquisition_length)
+        self.assertEqual(acquisition_length, self._device.acquisition_length_in_samples)
 
     def test_post_trigger_length(self) -> None:
         post_trigger_length = ACQUISITION_LENGTH
         self._device.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
-        self._device.set_post_trigger_length_samples(post_trigger_length)
-        self.assertEqual(post_trigger_length, self._device.post_trigger_length_samples)
+        self._device.set_post_trigger_length_in_samples(post_trigger_length)
+        self.assertEqual(post_trigger_length, self._device.post_trigger_length_in_samples)
 
     def test_acquisition_mode(self) -> None:
         acquisition_mode = AcquisitionMode.SPC_REC_STD_SINGLE
@@ -132,11 +132,11 @@ class SingleCardTest(TestCase):
         self.assertEqual(buffer, self._device.transfer_buffers[0])
 
     def test_disconnect(self) -> None:
-        self._device.set_acquisition_length_samples(ACQUISITION_LENGTH)
-        self.assertTrue(self._device.acquisition_length_samples == ACQUISITION_LENGTH)
+        self._device.set_acquisition_length_in_samples(ACQUISITION_LENGTH)
+        self.assertTrue(self._device.acquisition_length_in_samples == ACQUISITION_LENGTH)
         self._device.disconnect()
         with self.assertRaises(SpectrumDeviceNotConnected):
-            self._device.set_acquisition_length_samples(ACQUISITION_LENGTH)
+            self._device.set_acquisition_length_in_samples(ACQUISITION_LENGTH)
         self._device.reconnect()
 
     def test_acquisition(self) -> None:
@@ -151,8 +151,8 @@ class SingleCardTest(TestCase):
     def _simple_acquisition(self, window_length_samples: int, acquisition_timeout_ms: int) -> None:
         self._device.set_trigger_sources([TriggerSource.SPC_TMASK_SOFTWARE])
         self._device.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
-        self._device.set_acquisition_length_samples(window_length_samples)
-        self._device.set_post_trigger_length_samples(window_length_samples)
+        self._device.set_acquisition_length_in_samples(window_length_samples)
+        self._device.set_post_trigger_length_in_samples(window_length_samples)
         self._device.set_timeout_ms(acquisition_timeout_ms)
         self._device.start_acquisition()
         self._device.wait_for_acquisition_to_complete()

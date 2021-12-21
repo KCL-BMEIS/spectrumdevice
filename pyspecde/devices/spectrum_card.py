@@ -188,7 +188,7 @@ class SpectrumCard(SpectrumDevice):
             self._transfer_buffer = buffer[0]
         else:
             self._transfer_buffer = CardToPCDataTransferBuffer(
-                self.acquisition_length_samples * len(self.enabled_channels)
+                self.acquisition_length_in_samples * len(self.enabled_channels)
             )
         set_transfer_buffer(self._handle, self._transfer_buffer)
 
@@ -216,7 +216,7 @@ class SpectrumCard(SpectrumDevice):
             num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
             self.write_to_spectrum_device_register(SPC_DATA_AVAIL_CARD_LEN, num_available_bytes)
         waveforms_in_columns = copy(self.transfer_buffers[0].data_buffer).reshape(
-            (self.acquisition_length_samples, len(self.enabled_channels))
+            (self.acquisition_length_in_samples, len(self.enabled_channels))
         )
         return [waveform for waveform in waveforms_in_columns.T]
 
@@ -424,33 +424,47 @@ class SpectrumCard(SpectrumDevice):
         return tuple([SpectrumChannel(n, self) for n in range(total_channels)])
 
     @property
-    def acquisition_length_samples(self) -> int:
-        """The current recording length (per channel) in samples."""
+    def acquisition_length_in_samples(self) -> int:
+        """The current recording length (per channel) in samples.
+
+        Returns:
+            length_in_samples (int): The current recording length ('acquisition length') in samples."""
         return self.read_spectrum_device_register(SPC_MEMSIZE)
 
-    def set_acquisition_length_samples(self, length_in_samples: int) -> None:
-        """Change the recording length (per channel). In FIFO mode, it will be quantised to nearest 8 samples."""
+    def set_acquisition_length_in_samples(self, length_in_samples: int) -> None:
+        """Change the recording length (per channel). In FIFO mode, it will be quantised to nearest 8 samples.
+
+        Args:
+            length_in_samples (int): The desired recording length ('acquisition length'), in samples.
+        """
         length_in_samples = self._coerce_to_nearest_8_samples_if_fifo(length_in_samples)
         self.write_to_spectrum_device_register(SPC_SEGMENTSIZE, length_in_samples)
         self.write_to_spectrum_device_register(SPC_MEMSIZE, length_in_samples)
 
     @property
-    def post_trigger_length_samples(self) -> int:
-        """The number of samples of the recording that will contain data received after the trigger event."""
+    def post_trigger_length_in_samples(self) -> int:
+        """The number of samples of the recording that will contain data received after the trigger event.
+
+        Returns:
+            length_in_samples (int): The currently set post trigger length in samples.
+        """
         return self.read_spectrum_device_register(SPC_POSTTRIGGER)
 
-    def set_post_trigger_length_samples(self, length_in_samples: int) -> None:
+    def set_post_trigger_length_in_samples(self, length_in_samples: int) -> None:
         """Change the number of samples of the recording that will contain data received after the trigger event.
         In FIFO mode, this will be quantised to nearest 8 samples with a maximum value 8 samples less than the acquisition
-        length."""
+        length.
+
+        Args:
+            length_in_samples (int): The desired post trigger length in samples."""
         length_in_samples = self._coerce_to_nearest_8_samples_if_fifo(length_in_samples)
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
-            if (self.acquisition_length_samples - length_in_samples) < 8:
+            if (self.acquisition_length_in_samples - length_in_samples) < 8:
                 print(
                     "FIFO mode: coercing post trigger length to maximum allowed value (8 samples less than "
                     "the acquisition length)."
                 )
-                length_in_samples = self.acquisition_length_samples - 8
+                length_in_samples = self.acquisition_length_in_samples - 8
         self.write_to_spectrum_device_register(SPC_POSTTRIGGER, length_in_samples)
 
     def _coerce_to_nearest_8_samples_if_fifo(self, value: int) -> int:
@@ -462,38 +476,63 @@ class SpectrumCard(SpectrumDevice):
 
     @property
     def acquisition_mode(self) -> AcquisitionMode:
-        """The currently enabled card mode."""
+        """The currently enabled card mode. Will raise an exception if the current mode is not supported by pyspecde.
+
+        Returns:
+            mode (AcquisitionMode): The currently enabled card acquisition mode."""
         return AcquisitionMode(self.read_spectrum_device_register(SPC_CARDMODE))
 
     def set_acquisition_mode(self, mode: AcquisitionMode) -> None:
         """Change the currently enabled card mode. See AcquisitionMode and the Spectrum documentation
-        for the available modes."""
+        for the available modes.
+
+        Args:
+            mode (AcquisitionMode): The desired acquisition mode."""
         self.write_to_spectrum_device_register(SPC_CARDMODE, mode.value)
 
     @property
     def timeout_ms(self) -> int:
         """The time for which the card will wait for a trigger to tbe received after an acquisition has started
-        before returning an error."""
+        before returning an error.
+
+        Returns:
+            timeout_in_ms (in)t: The currently set acquisition timeout in ms.
+        """
         return self.read_spectrum_device_register(SPC_TIMEOUT)
 
     def set_timeout_ms(self, timeout_in_ms: int) -> None:
         """Change the time for which the card will wait for a trigger to tbe received after an acquisition has started
-        before returning an error."""
+        before returning an error.
+
+        Args:
+            timeout_in_ms (int): The desired acquisition timeout in ms.
+        """
         self.write_to_spectrum_device_register(SPC_TIMEOUT, timeout_in_ms)
 
     @property
     def clock_mode(self) -> ClockMode:
-        """The currently enabled clock mode."""
+        """The currently enabled clock mode.
+
+        Returns:
+            mode (ClockMode): The currently set clock mode.
+        """
         return ClockMode(self.read_spectrum_device_register(SPC_CLOCKMODE))
 
     def set_clock_mode(self, mode: ClockMode) -> None:
-        """Change the clock mode. See ClockMode and the Spectrum documentation for available modes."""
+        """Change the clock mode. See ClockMode and the Spectrum documentation for available modes.
+
+        Args:
+            mode (ClockMode): The desired clock mode.
+        """
         self.write_to_spectrum_device_register(SPC_CLOCKMODE, mode.value)
 
     @property
     def available_io_modes(self) -> AvailableIOModes:
         """For each multipurpose IO line on the card, read the available modes. See IOLineMode and the Spectrum
-        Documentation for all possible available modes and their meanings."""
+        Documentation for all possible available modes and their meanings.
+
+        Returns:
+            modes (AvailableIOModes): A AvailableIOModes dataclass containing the modes available for each IO line."""
         return AvailableIOModes(
             X0=decode_available_io_modes(self.read_spectrum_device_register(SPCM_X0_AVAILMODES)),
             X1=decode_available_io_modes(self.read_spectrum_device_register(SPCM_X1_AVAILMODES)),
@@ -504,18 +543,29 @@ class SpectrumCard(SpectrumDevice):
     @property
     def feature_list(self) -> Tuple[List[CardFeature], List[AdvancedCardFeature]]:
         """Get a list of the features of the card. See CardFeature, AdvancedCardFeature and the Spectrum
-        documentation for more information."""
+        documentation for more information.
+
+        Returns:
+            features (Tuple[List[CardFeature], List[AdvancedCardFeature]]): A list of features and advanced features.
+        """
         normal_features = decode_card_features(self.read_spectrum_device_register(SPC_PCIFEATURES))
         advanced_features = decode_advanced_card_features(self.read_spectrum_device_register(SPC_PCIEXTFEATURES))
         return normal_features, advanced_features
 
     @property
     def sample_rate_hz(self) -> int:
-        """The rate at which samples will be acquired during an acquisition, in Hz."""
+        """The rate at which samples will be acquired during an acquisition, in Hz.
+
+        Returns:
+            rate (int): The currently set sample rate in Hz.
+        """
         return self.read_spectrum_device_register(SPC_SAMPLERATE, SpectrumRegisterLength.SIXTY_FOUR)
 
     def set_sample_rate_hz(self, rate: int) -> None:
-        """Change the rate at which samples will be acquired during an acquisition, in Hz."""
+        """Change the rate at which samples will be acquired during an acquisition, in Hz.
+        Args:
+            rate (int): The desired sample rate in Hz.
+        """
         self.write_to_spectrum_device_register(SPC_SAMPLERATE, rate, SpectrumRegisterLength.SIXTY_FOUR)
 
     def __str__(self) -> str:
