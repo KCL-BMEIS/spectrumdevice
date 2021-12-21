@@ -30,7 +30,7 @@ except OSError:
         int64,
     )
 
-    print("Spectrum drivers not found. Hardware cannot be communicated with. Tests can be run in MOCK_HARDWARE mode.")
+    print("Spectrum drivers not found. Hardware cannot be communicated with. Only Mock devices can be used.")
     SPECTRUM_DRIVERS_FOUND = False
 
 DEVICE_HANDLE_TYPE = NewType("DEVICE_HANDLE_TYPE", c_void_p)

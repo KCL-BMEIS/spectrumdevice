@@ -3,7 +3,11 @@ from typing import List
 
 from numpy import ndarray
 
-from pyspecde.spectrum_wrapper.exceptions import SpectrumDeviceNotConnected, SpectrumWrongAcquisitionMode
+from pyspecde.spectrum_wrapper.exceptions import (
+    SpectrumDeviceNotConnected,
+    SpectrumWrongAcquisitionMode,
+    SpectrumDriversNotFound,
+)
 from spectrum_gmbh.regs import (
     M2CMD_CARD_RESET,
     M2CMD_CARD_START,
@@ -22,6 +26,7 @@ from pyspecde.spectrum_wrapper import (
     set_spectrum_i32_api_param,
     set_spectrum_i64_api_param,
     spectrum_handle_factory,
+    SPECTRUM_DRIVERS_FOUND,
 )
 
 
@@ -184,6 +189,11 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
             length (SpectrumRegisterLength): An SpectrumRegisterLength object specifying the length of the register
                 to set, in bits.
         """
+        if not SPECTRUM_DRIVERS_FOUND:
+            raise SpectrumDriversNotFound(
+                "Cannot communicate with hardware. For testing on a system without drivers or connected hardware, use"
+                " MockSpectrumCard instead."
+            )
         if self.connected:
             if length == SpectrumRegisterLength.THIRTY_TWO:
                 set_spectrum_i32_api_param(self._handle, spectrum_register, value)
@@ -215,6 +225,11 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
             value (int): Value of the register. This can be matched to a global constant imported from
                 spectrum_gmbh.regs, usually using one of the Enums defined in the settings module.
         """
+        if not SPECTRUM_DRIVERS_FOUND:
+            raise SpectrumDriversNotFound(
+                "Cannot communicate with hardware. For testing on a system without drivers or connected hardware, use"
+                " a MockSpectrumDevice instead (i.e. MockSpectrumCard or MockSpectrumStarHub)."
+            )
         if self.connected:
             if length == SpectrumRegisterLength.THIRTY_TWO:
                 return get_spectrum_i32_api_param(self._handle, spectrum_register)

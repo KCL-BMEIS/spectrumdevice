@@ -70,6 +70,18 @@ hub = SpectrumStarHub(device_number=0, child_cards=child_cards,
 Once connected, `SpectrumStarHub` object can be configured and used in exactly the same way as a `SpectrumCard` 
 object - commands will be sent to the child cards automatically.
 
+### Using Mock Devices
+You can test your software without hardware connected or drivers installed using mock devices. After construction, Mock 
+devices have the same interface as real devices, and will provide random waveforms using an internal mock waveform 
+source. Mock devices require a few more input arguments to be constructed that real hardware devices:
+```python
+from pyspecde import MockSpectrumCard, MockSpectrumStarHub
+mock_card = MockSpectrumCard(device_number=0, mock_source_frame_rate_hz=10.0, num_modules=2, num_channels_per_module=4)
+mock_hub = MockSpectrumStarHub(device_number=0, child_cards=[mock_card], master_card_index=0)
+```
+After construction, `MockSpectrumCard` and `MockSpectrumStarHub` classes can be used identically to `SpectrumCard` 
+and `SpectrumStarHub` objects.
+
 ### Configuring device settings
 Spectrum Instrument's own low-level Python API requires that users configure a device by writing values to on-device 
 registers. The integer addresses of the registers can be imported from `regs.py` (part of Spectrum 

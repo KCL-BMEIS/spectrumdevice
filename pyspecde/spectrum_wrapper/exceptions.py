@@ -50,3 +50,8 @@ class SpectrumApiCallFailed(IOError):
 class SpectrumWrongAcquisitionMode(IOError):
     def __init__(self, msg: str) -> None:
         super().__init__(f"Incorrect acquisition mode: {msg}")
+
+
+class SpectrumDriversNotFound(IOError):
+    def __init__(self, msg: str) -> None:
+        super().__init__(f"Spectrum drivers not found: {msg}")
