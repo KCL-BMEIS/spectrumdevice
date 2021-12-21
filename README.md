@@ -34,7 +34,7 @@ throughout `pyspecde`.
 Connect to local (PCIe) cards:
 
 ```python
-from pyspecde.devices.spectrum_card import SpectrumCard
+from pyspecde import SpectrumCard
 
 card_0 = SpectrumCard(device_number=0)
 card_1 = SpectrumCard(device_number=1)
@@ -43,7 +43,7 @@ Connect to networked cards (you can find a card's IP using the
 [Spectrum Control Centre](https://spectrum-instrumentation.com/en/spectrum-control-center) software):
 
 ```python
-from pyspecde.devices.spectrum_card import SpectrumCard
+from pyspecde import SpectrumCard
 
 card_0 = SpectrumCard(device_number=0, ip_address="192.168.0.2")
 card_1 = SpectrumCard(device_number=1, ip_address="192.168.0.3")
@@ -52,7 +52,7 @@ card_1 = SpectrumCard(device_number=1, ip_address="192.168.0.3")
 Connect to a networked StarHub (e.g. a NetBox).
 
 ```python
-from pyspecde.devices.spectrum_star_hub import SpectrumStarHub
+from pyspecde import SpectrumCard, SpectrumStarHub
 
 NUM_CARDS_IN_STAR_HUB = 2
 STAR_HUB_MASTER_CARD_INDEX = 1  # The card controlling the clock
@@ -83,8 +83,8 @@ names of the items of the Enums match the names given in `regs.py` and the Spect
 For example, to put a card in 'Standard Single' acquisition mode and set the sample rate to 10 MHz:
 
 ```python
-from pyspecde.devices.spectrum_card import SpectrumCard
-from pyspecde import AcquisitionMode
+from pyspecde import SpectrumCard
+from pyspecde.settings import AcquisitionMode
 
 card = SpectrumCard(device_number=0)
 card.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
@@ -132,7 +132,7 @@ waveforms = card.get_waveforms()
 ### Acquiring waveforms (multi FIFO mode)
 Put your device in Multi-FIFO mode using:
 ```python
-card.set_acquisition_mode(AcquisitionMode.SPC_REC_FIFO_MULTI)`
+card.set_acquisition_mode(AcquisitionMode.SPC_REC_FIFO_MULTI)
 ```
 In multi FIFO mode, samples are streamed from the on-device buffer to the software buffer during the acquisition. 
 This means the transfer buffer must be defined before the acquisition begins, and the transfer started immediately:
@@ -149,13 +149,14 @@ while acquiring:
 ```
 Each call to `get_waveforms()` will wait until the next set of waveform data is available.
 
-To stop the acquisitions and therefor the transfer of data into the transfer buffer:
+To stop the acquisitions and therefore the transfer of data into the transfer buffer:
 ```python
 card.stop_acquisition()
 ```
 
 ## Limitations
-- no or trigger modes
-- only standard single an multi fifo
-- fixed notify size
-- 
+* Currently, `pyspecde` only supports Standard Single and Multi FIFO acquisition modes. See the 
+  Spectrum documentation for more information.
+* When defining a transfer buffer - the software buffer into which samples are transferred from a hardware device - 
+  the notify size is automatically set equal to the buffer length. This works fine for most situations. See the 
+  Spectrum documentation for more information.

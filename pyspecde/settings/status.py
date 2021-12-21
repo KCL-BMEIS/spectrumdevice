@@ -16,8 +16,9 @@ from spectrum_gmbh.regs import (
 
 
 class StatusCode(Enum):
-    """ An Enum representing the possible status codes that can be returned by a SpectrumCard. See the Spectrum
+    """An Enum representing the possible status codes that can be returned by a SpectrumCard. See the Spectrum
     documentation for a description of each status."""
+
     M2STAT_NONE = M2STAT_NONE
     M2STAT_CARD_PRETRIGGER = M2STAT_CARD_PRETRIGGER
     M2STAT_CARD_TRIGGER = M2STAT_CARD_TRIGGER
