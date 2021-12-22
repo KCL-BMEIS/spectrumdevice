@@ -20,8 +20,7 @@ This should be located at `c:\windows\system32\spcm_win64.dll` (or `spcm_win32.d
 on Windows, or in `libspcm_linux.so`on Linux. If no driver is found,  `pyspecde` will run in mock mode.
 
 ## Installation and dependencies
-Clone the repository and from within the top level directory, `pip install .` Or install from PyPI or conda-forge with 
-`pip install pyspecde` or `conda install pyspecde` respectively.
+Clone the repository and from within the top level directory, `pip install .`
 
 `pysepcde` itself depends on NumPy, and its example scripts make use of `matplotlib`. `pyspecde` includes 
 a module called `spectrum_gmbh` containing a few files taken from the `spcm_examples` directory which is provided with 
@@ -177,6 +176,9 @@ to stop the acquisition:
 ```python
 card.stop_acquisition()
 ```
+
+## Examples
+See the `example_scripts` directory.
 
 ## Limitations
 * Currently, `pyspecde` only supports Standard Single and Multi FIFO acquisition modes. See the 
