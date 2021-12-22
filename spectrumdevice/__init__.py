@@ -1,4 +1,4 @@
-"""A high-level, object-oriented Python API for controlling Spectrum Instruments digitisers.
+"""
 .. include:: ../README.md
 """
 
