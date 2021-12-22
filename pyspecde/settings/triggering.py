@@ -1,7 +1,15 @@
+"""Provides Enums defining the settings used to configure a trigger, and Dict lookup-tables for obtaining the Spectrum
+API commands used to configure each external trigger input. Also provides a function for decoding the integer values
+received by a device when queried about its enabled trigger sources."""
+
+# Christian Baker, King's College London
+# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
+# Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
+
 from enum import Enum
 from typing import List
 
-from pyspecde.spectrum_wrapper import _decode_bitmap_using_enum
+from pyspecde.spectrum_wrapper import decode_bitmap_using_list_of_ints
 from spectrum_gmbh.regs import (
     SPC_TMASK_SOFTWARE,
     SPC_TMASK_EXT0,
@@ -81,8 +89,10 @@ class ExternalTriggerMode(Enum):
 
 
 def decode_trigger_sources(value: int) -> List[TriggerSource]:
+    """Converts the integer values provided by a device when queried about its enabled trigger source to a list of
+    TriggerSources."""
     possible_values = [source.value for source in TriggerSource]
-    return [TriggerSource(found_value) for found_value in _decode_bitmap_using_enum(value, possible_values)]
+    return [TriggerSource(found_value) for found_value in decode_bitmap_using_list_of_ints(value, possible_values)]
 
 
 EXTERNAL_TRIGGER_MODE_COMMANDS = {

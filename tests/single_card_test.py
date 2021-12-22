@@ -6,7 +6,7 @@ from pyspecde.settings.device_modes import AcquisitionMode, ClockMode
 from pyspecde.settings.channel import SpectrumChannelName
 from pyspecde.settings.triggering import TriggerSource, ExternalTriggerMode
 from pyspecde.settings.transfer_buffer import CardToPCDataTransferBuffer
-from pyspecde.spectrum_wrapper.exceptions import (
+from pyspecde.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumExternalTriggerNotEnabled,
     SpectrumTriggerOperationNotImplemented,

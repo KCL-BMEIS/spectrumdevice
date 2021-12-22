@@ -31,7 +31,7 @@ from pyspecde.settings.card_features import decode_card_features, decode_advance
 from pyspecde.settings.transfer_buffer import set_transfer_buffer
 from pyspecde.devices.spectrum_channel import SpectrumChannel
 from pyspecde.devices.spectrum_device import SpectrumDevice
-from pyspecde.spectrum_wrapper.exceptions import (
+from pyspecde.exceptions import (
     SpectrumInvalidNumberOfEnabledChannels,
     SpectrumNoTransferBufferDefined,
     SpectrumExternalTriggerNotEnabled,

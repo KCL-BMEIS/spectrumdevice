@@ -9,7 +9,7 @@ from numpy.random import randn
 
 from pyspecde.devices.spectrum_card import SpectrumCard
 from pyspecde.devices.spectrum_device import SpectrumDevice
-from pyspecde.spectrum_wrapper.exceptions import (
+from pyspecde.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumNoTransferBufferDefined,
     SpectrumSettingsMismatchError,

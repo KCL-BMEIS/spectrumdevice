@@ -1,3 +1,10 @@
+"""Defines exceptions raised by pyspecde device classes."""
+
+# Christian Baker, King's College London
+# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
+# Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
+
+
 class SpectrumIOError(IOError):
     def __init__(self, msg: str) -> None:
         super().__init__(f"Spectrum IO error: {msg}")

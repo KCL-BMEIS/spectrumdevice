@@ -3,7 +3,7 @@ from typing import List
 
 from numpy import ndarray
 
-from pyspecde.spectrum_wrapper.exceptions import (
+from pyspecde.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumWrongAcquisitionMode,
     SpectrumDriversNotFound,

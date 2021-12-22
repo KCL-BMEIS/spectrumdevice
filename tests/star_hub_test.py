@@ -4,7 +4,7 @@ from pyspecde.devices.spectrum_channel import SpectrumChannel
 from pyspecde.devices.spectrum_star_hub import SpectrumStarHub
 from pyspecde.settings.channel import SpectrumChannelName
 from pyspecde.settings.transfer_buffer import CardToPCDataTransferBuffer
-from pyspecde.spectrum_wrapper.exceptions import SpectrumInvalidNumberOfEnabledChannels
+from pyspecde.exceptions import SpectrumInvalidNumberOfEnabledChannels
 from tests.test_device_factories import create_spectrum_start_hub_for_testing
 from tests.single_card_test import SingleCardTest
 from tests.configuration import (

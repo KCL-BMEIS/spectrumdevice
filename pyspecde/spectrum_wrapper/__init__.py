@@ -1,9 +1,15 @@
+"""Provides Pythonic functions for communicating with Spectrum hardware. The functions wrap the C-style Spectrum API."""
+
+# Christian Baker, King's College London
+# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
+# Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
+
 import logging
 from ctypes import c_void_p, byref, create_string_buffer
 from typing import NewType, List
 
 from pyspecde.spectrum_wrapper.error_handler import error_handler
-from pyspecde.spectrum_wrapper.exceptions import SpectrumIOError
+from pyspecde.exceptions import SpectrumIOError
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +44,7 @@ except OSError:
 DEVICE_HANDLE_TYPE = NewType("DEVICE_HANDLE_TYPE", c_void_p)
 
 
-def _decode_bitmap_using_enum(bitmap_value: int, test_values: List[int]) -> List[int]:
+def decode_bitmap_using_list_of_ints(bitmap_value: int, test_values: List[int]) -> List[int]:
     possible_values = sorted(test_values)
     values_in_bitmap = list(
         filter(lambda x: x > 0, [possible_value & bitmap_value for possible_value in possible_values])

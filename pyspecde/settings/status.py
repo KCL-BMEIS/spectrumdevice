@@ -1,7 +1,15 @@
+"""Provides an Enum defining the possible acquisition statuses of a Spectrum device, and Type variables annotating
+the list of statuses returned by a card, and the list of lists of statuses returned by a StarHub. Also provides a
+function for decoding the integer value received by a card when queried about its status."""
+
+# Christian Baker, King's College London
+# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
+# Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
+
 from enum import Enum
 from typing import List
 
-from pyspecde.spectrum_wrapper import _decode_bitmap_using_enum
+from pyspecde.spectrum_wrapper import decode_bitmap_using_list_of_ints
 from spectrum_gmbh.regs import (
     M2STAT_NONE,
     M2STAT_CARD_PRETRIGGER,
@@ -42,5 +50,6 @@ STAR_HUB_STATUS_TYPE = List[CARD_STATUS_TYPE]
 
 
 def decode_status(code: int) -> CARD_STATUS_TYPE:
+    """Converts the integer value received by a card when quereied about its status to a list of StatusCodes."""
     possible_codes = [code.value for code in StatusCode]
-    return CARD_STATUS_TYPE([StatusCode(found_code) for found_code in _decode_bitmap_using_enum(code, possible_codes)])
+    return CARD_STATUS_TYPE([StatusCode(found_code) for found_code in decode_bitmap_using_list_of_ints(code, possible_codes)])

@@ -1,3 +1,11 @@
+"""Provides classes defining the configuration of transfer buffers used to transfer data between a Spectrum card and a
+PC. See the Spectrum documentation for more information. Also provides Enums defining the  settings used to configure
+a transfer buffer."""
+
+# Christian Baker, King's College London
+# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
+# Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
+
 from ctypes import c_void_p
 from dataclasses import dataclass
 from enum import Enum

@@ -1,8 +1,16 @@
+"""Provides an Enum defining the possible modes of the IO lines of a Spectrum device, and a dataclass used to store
+the modes supported by each channel of a device. Also provides a function for decoding the value received from a device
+when queried about its supported IO line modes."""
+
+# Christian Baker, King's College London
+# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
+# Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
+
 from dataclasses import dataclass
 from enum import Enum
 from typing import List
 
-from pyspecde.spectrum_wrapper import _decode_bitmap_using_enum
+from pyspecde.spectrum_wrapper import decode_bitmap_using_list_of_ints
 from spectrum_gmbh.regs import (
     SPCM_XMODE_DISABLE,
     SPCM_XMODE_ASYNCIN,
@@ -35,8 +43,10 @@ class IOLineMode(Enum):
 
 
 def decode_available_io_modes(value: int) -> List[IOLineMode]:
+    """Converts the integer value received from a Spectrum device when queried about its IO line modes into a list
+    of IOLineModes."""
     possible_values = [mode.value for mode in IOLineMode]
-    return [IOLineMode(found_value) for found_value in _decode_bitmap_using_enum(value, possible_values)]
+    return [IOLineMode(found_value) for found_value in decode_bitmap_using_list_of_ints(value, possible_values)]
 
 
 @dataclass

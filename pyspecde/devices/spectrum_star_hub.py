@@ -7,7 +7,7 @@ from numpy import arange, ndarray
 from pyspecde.devices.spectrum_channel import SpectrumChannel
 from pyspecde.devices.spectrum_device import SpectrumDevice
 from pyspecde.devices.spectrum_card import SpectrumCard
-from pyspecde.spectrum_wrapper.exceptions import SpectrumSettingsMismatchError
+from pyspecde.exceptions import SpectrumSettingsMismatchError
 from pyspecde.settings.device_modes import AcquisitionMode, ClockMode
 from pyspecde.spectrum_wrapper import destroy_handle
 from pyspecde.settings.status import STAR_HUB_STATUS_TYPE

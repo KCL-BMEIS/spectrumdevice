@@ -1,7 +1,14 @@
+"""Provides Enums defining the possible values a device will return when queried about its features, and functions for
+decoding the received values into lists of features."""
+
+# Christian Baker, King's College London
+# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
+# Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
+
 from enum import Enum
 from typing import List
 
-from pyspecde.spectrum_wrapper import _decode_bitmap_using_enum
+from pyspecde.spectrum_wrapper import decode_bitmap_using_list_of_ints
 from spectrum_gmbh.regs import (
     SPCM_FEAT_MULTI,
     SPCM_FEAT_GATE,
@@ -62,8 +69,10 @@ class CardFeature(Enum):
 
 
 def decode_card_features(value: int) -> List[CardFeature]:
+    """Converts the integer value received by a Spectrum device when queried about its features into a list of
+    CardFeatures."""
     possibe_values = [feature.value for feature in CardFeature]
-    return [CardFeature(found_value) for found_value in _decode_bitmap_using_enum(value, possibe_values)]
+    return [CardFeature(found_value) for found_value in decode_bitmap_using_list_of_ints(value, possibe_values)]
 
 
 class AdvancedCardFeature(Enum):
@@ -77,5 +86,7 @@ class AdvancedCardFeature(Enum):
 
 
 def decode_advanced_card_features(value: int) -> List[AdvancedCardFeature]:
+    """Converts the integer value received by a Spectrum device when queried about its advanced features into a list of
+    AdvancedCardFeatures."""
     possible_values = [feature.value for feature in AdvancedCardFeature]
-    return [AdvancedCardFeature(found_value) for found_value in _decode_bitmap_using_enum(value, possible_values)]
+    return [AdvancedCardFeature(found_value) for found_value in decode_bitmap_using_list_of_ints(value, possible_values)]

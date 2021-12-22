@@ -1,4 +1,4 @@
-"""mock_pyspcm.py
+"""Spectrum driver mocking.
 
 If spectrum drivers are not found, this file is imported instead of spectrum_gmhb/pyspcm.py. It mocks the essential
 components of pyspcm.py, preventing pyspecde from failing while importing pyspcm.py. Mock devices can then be used to

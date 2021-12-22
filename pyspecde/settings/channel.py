@@ -1,3 +1,10 @@
+"""Provides an Enum defining the possible channel names assigned by the Spectrum API, and List lookup-tables for
+accessing the commands used to set vertical range and offset of each channel of a device."""
+
+# Christian Baker, King's College London
+# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
+# Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
+
 from enum import Enum
 
 from spectrum_gmbh.regs import (
