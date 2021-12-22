@@ -20,7 +20,7 @@ more information.
 To work with hardware, `spectrumdevice` requires that you have installed the
 [Spectrum driver](https://spectrum-instrumentation.com/en/drivers-and-examples-overview) for your platform.
 This should be located at `c:\windows\system32\spcm_win64.dll` (or `spcm_win32.dll` on a 32-bit system) on
-on Windows, or in `libspcm_linux.so`on Linux. If no driver is found,  `spectrumdevice` will run in mock mode.
+on Windows, or in `libspcm_linux.so`on Linux. If no driver is present `spectrumdevice` can still run in mock mode.
 
 ## Installation and dependencies
 Clone the repository and from within the top level directory, `pip install .`
