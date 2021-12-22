@@ -22,7 +22,6 @@ jobs:
       run: |
         git config --local user.name "crnbaker"
         git config --local user.email "christian.baker@kcl.ac.uk"
-        git remote set-url origin ${{ secrets.ssh }}
         git fetch
         git checkout docs
         git rebase main
