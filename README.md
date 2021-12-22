@@ -14,7 +14,7 @@ more information.
 
 ## Requirements
 `spectrumdevice` works with hardware on Windows and Linux. Spectrum do not currently provide a driver for MacOS, but 
-`pyspede` provides mock classes for development and testing without hardware, which work on MacOS.
+`spectrumdevice` provides mock classes for development and testing without hardware, which work on MacOS.
 
 To work with hardware, `spectrumdevice` requires that you have installed the
 [Spectrum driver](https://spectrum-instrumentation.com/en/drivers-and-examples-overview) for your platform.
@@ -24,10 +24,10 @@ on Windows, or in `libspcm_linux.so`on Linux. If no driver is found,  `spectrumd
 ## Installation and dependencies
 Clone the repository and from within the top level directory, `pip install .`
 
-`pysepcde` itself depends on NumPy, and its example scripts make use of `matplotlib`. `spectrumdevice` includes 
+`spectrumdevice` itself depends on NumPy, and its example scripts make use of `matplotlib`. `spectrumdevice` includes 
 a module called `spectrum_gmbh` containing a few files taken from the `spcm_examples` directory which is provided with 
 Spectrum hardware. The files in this module were written by Spectrum GMBH and are included with their permission. 
-They provide `pysepcde` with a low-level Python interface to the DLL and define global constants which are used 
+They provide `spectrumdevice` with a low-level Python interface to the DLL and define global constants which are used 
 throughout `spectrumdevice`.
 
 ## Usage
