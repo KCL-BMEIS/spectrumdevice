@@ -12,9 +12,9 @@ from typing import List, Optional, Tuple, Sequence
 
 from numpy import ndarray, mod
 
-from pyspecde.settings.device_modes import AcquisitionMode, ClockMode
-from pyspecde.spectrum_wrapper import destroy_handle
-from pyspecde.settings import (
+from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
+from spectrumdevice.spectrum_wrapper import destroy_handle
+from spectrumdevice.settings import (
     CARD_STATUS_TYPE,
     AvailableIOModes,
     TriggerSource,
@@ -25,19 +25,19 @@ from pyspecde.settings import (
     CardToPCDataTransferBuffer,
     SpectrumRegisterLength,
 )
-from pyspecde.settings.status import decode_status
-from pyspecde.settings.io_lines import decode_available_io_modes
-from pyspecde.settings.triggering import (
+from spectrumdevice.settings.status import decode_status
+from spectrumdevice.settings.io_lines import decode_available_io_modes
+from spectrumdevice.settings.triggering import (
     EXTERNAL_TRIGGER_MODE_COMMANDS,
     EXTERNAL_TRIGGER_LEVEL_COMMANDS,
     decode_trigger_sources,
     EXTERNAL_TRIGGER_PULSE_WIDTH_COMMANDS,
 )
-from pyspecde.settings.card_features import decode_card_features, decode_advanced_card_features
-from pyspecde.settings.transfer_buffer import set_transfer_buffer
-from pyspecde.devices.spectrum_channel import SpectrumChannel
-from pyspecde.devices.spectrum_device import SpectrumDevice
-from pyspecde.exceptions import (
+from spectrumdevice.settings.card_features import decode_card_features, decode_advanced_card_features
+from spectrumdevice.settings.transfer_buffer import set_transfer_buffer
+from spectrumdevice.devices.spectrum_channel import SpectrumChannel
+from spectrumdevice.devices.spectrum_device import SpectrumDevice
+from spectrumdevice.exceptions import (
     SpectrumInvalidNumberOfEnabledChannels,
     SpectrumNoTransferBufferDefined,
     SpectrumExternalTriggerNotEnabled,
@@ -252,7 +252,7 @@ class SpectrumCard(SpectrumDevice):
         """A tuple containing the channels that belong to the digitizer card.
 
         Properties of the individual channels (e.g. vertical range) can be set by calling the methods of the
-            returned objects directly. See pyspecde.SpectrumChannel for more information.
+            returned objects directly. See spectrumdevice.SpectrumChannel for more information.
 
         Returns:
             channels (Sequence[SpectrumChannel]): A tuple of SpectrumChannel objects.
@@ -486,7 +486,7 @@ class SpectrumCard(SpectrumDevice):
 
     @property
     def acquisition_mode(self) -> AcquisitionMode:
-        """The currently enabled card mode. Will raise an exception if the current mode is not supported by pyspecde.
+        """The currently enabled card mode. Will raise an exception if the current mode is not supported by spectrumdevice.
 
         Returns:
             mode (AcquisitionMode): The currently enabled card acquisition mode."""

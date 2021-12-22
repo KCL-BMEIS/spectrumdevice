@@ -1,6 +1,6 @@
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 
-name: pyspecde-linters
+name: spectrumdevice-linters
 
 on:
   push:
@@ -35,11 +35,11 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Check typing with mypy
       run: |
-        mypy pyspecde
+        mypy spectrumdevice
         mypy tests
         mypy example_scripts
     - name: Fix formatting with Black
       run: |
-        black --line-length 120 --diff --color --check pyspecde
+        black --line-length 120 --diff --color --check spectrumdevice
         black --line-length 120 --diff --color --check tests
         black --line-length 120 --diff --color --check example_scripts

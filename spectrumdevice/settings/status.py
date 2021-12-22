@@ -9,7 +9,7 @@ function for decoding the integer value received by a card when queried about it
 from enum import Enum
 from typing import List
 
-from pyspecde.spectrum_wrapper import decode_bitmap_using_list_of_ints
+from spectrumdevice.spectrum_wrapper import decode_bitmap_using_list_of_ints
 from spectrum_gmbh.regs import (
     M2STAT_NONE,
     M2STAT_CARD_PRETRIGGER,

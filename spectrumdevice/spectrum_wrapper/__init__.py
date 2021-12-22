@@ -8,8 +8,8 @@ import logging
 from ctypes import c_void_p, byref, create_string_buffer
 from typing import NewType, List
 
-from pyspecde.spectrum_wrapper.error_handler import error_handler
-from pyspecde.exceptions import SpectrumIOError
+from spectrumdevice.spectrum_wrapper.error_handler import error_handler
+from spectrumdevice.exceptions import SpectrumIOError
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ try:
 
     SPECTRUM_DRIVERS_FOUND = True
 except OSError:
-    from pyspecde.spectrum_wrapper.mock_pyspcm import (
+    from spectrumdevice.spectrum_wrapper.mock_pyspcm import (
         spcm_dwSetParam_i32,
         spcm_dwSetParam_i64,
         spcm_hOpen,

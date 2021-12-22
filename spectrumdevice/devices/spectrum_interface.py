@@ -9,14 +9,14 @@ from typing import List, Optional, Union, Tuple, Sequence
 
 from numpy import ndarray
 
-from pyspecde.settings import SpectrumRegisterLength, TriggerSettings, AcquisitionSettings
-from pyspecde.settings.device_modes import AcquisitionMode, ClockMode
-from pyspecde.settings.status import CARD_STATUS_TYPE, STAR_HUB_STATUS_TYPE
-from pyspecde.settings.channel import SpectrumChannelName
-from pyspecde.settings.io_lines import AvailableIOModes
-from pyspecde.settings.triggering import TriggerSource, ExternalTriggerMode
-from pyspecde.settings.card_features import CardFeature, AdvancedCardFeature
-from pyspecde.settings.transfer_buffer import TransferBuffer, CardToPCDataTransferBuffer
+from spectrumdevice.settings import SpectrumRegisterLength, TriggerSettings, AcquisitionSettings
+from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
+from spectrumdevice.settings.status import CARD_STATUS_TYPE, STAR_HUB_STATUS_TYPE
+from spectrumdevice.settings.channel import SpectrumChannelName
+from spectrumdevice.settings.io_lines import AvailableIOModes
+from spectrumdevice.settings.triggering import TriggerSource, ExternalTriggerMode
+from spectrumdevice.settings.card_features import CardFeature, AdvancedCardFeature
+from spectrumdevice.settings.transfer_buffer import TransferBuffer, CardToPCDataTransferBuffer
 
 
 class SpectrumChannelInterface(ABC):

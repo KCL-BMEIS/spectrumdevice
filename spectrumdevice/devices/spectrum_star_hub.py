@@ -10,17 +10,17 @@ from typing import List, Optional, Sequence, Tuple
 
 from numpy import arange, ndarray
 
-from pyspecde.devices.spectrum_channel import SpectrumChannel
-from pyspecde.devices.spectrum_device import SpectrumDevice
-from pyspecde.devices.spectrum_card import SpectrumCard
-from pyspecde.exceptions import SpectrumSettingsMismatchError
-from pyspecde.settings.device_modes import AcquisitionMode, ClockMode
-from pyspecde.spectrum_wrapper import destroy_handle
-from pyspecde.settings.status import STAR_HUB_STATUS_TYPE
-from pyspecde.settings.io_lines import AvailableIOModes
-from pyspecde.settings.triggering import TriggerSource, ExternalTriggerMode
-from pyspecde.settings.card_features import CardFeature, AdvancedCardFeature
-from pyspecde.settings.transfer_buffer import TransferBuffer, CardToPCDataTransferBuffer
+from spectrumdevice.devices.spectrum_channel import SpectrumChannel
+from spectrumdevice.devices.spectrum_device import SpectrumDevice
+from spectrumdevice.devices.spectrum_card import SpectrumCard
+from spectrumdevice.exceptions import SpectrumSettingsMismatchError
+from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
+from spectrumdevice.spectrum_wrapper import destroy_handle
+from spectrumdevice.settings.status import STAR_HUB_STATUS_TYPE
+from spectrumdevice.settings.io_lines import AvailableIOModes
+from spectrumdevice.settings.triggering import TriggerSource, ExternalTriggerMode
+from spectrumdevice.settings.card_features import CardFeature, AdvancedCardFeature
+from spectrumdevice.settings.transfer_buffer import TransferBuffer, CardToPCDataTransferBuffer
 from spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK, SPC_PCIFEATURES
 
 

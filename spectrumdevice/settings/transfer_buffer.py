@@ -12,8 +12,8 @@ from enum import Enum
 
 from numpy import ndarray, zeros, int16
 
-from pyspecde.spectrum_wrapper import DEVICE_HANDLE_TYPE
-from pyspecde.spectrum_wrapper.error_handler import error_handler
+from spectrumdevice.spectrum_wrapper import DEVICE_HANDLE_TYPE
+from spectrumdevice.spectrum_wrapper.error_handler import error_handler
 
 try:
     from spectrum_gmbh.pyspcm import (
@@ -25,7 +25,7 @@ try:
         spcm_dwDefTransfer_i64,
     )
 except OSError:
-    from pyspecde.spectrum_wrapper.mock_pyspcm import (
+    from spectrumdevice.spectrum_wrapper.mock_pyspcm import (
         SPCM_BUF_DATA,
         SPCM_BUF_ABA,
         SPCM_BUF_TIMESTAMP,
@@ -54,7 +54,7 @@ class BufferDirection(Enum):
 
 @dataclass
 class TransferBuffer:
-    """A buffer for transferring samples between pyspecde software and a hardware device. See the 'Definition of the
+    """A buffer for transferring samples between spectrumdevice software and a hardware device. See the 'Definition of the
     transfer buffer' section of the Spectrum documentation for more information. This implementation of the buffer
     sets the notify size equal to the acquisition length."""
 

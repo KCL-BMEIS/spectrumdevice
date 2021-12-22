@@ -1,4 +1,4 @@
-from pyspecde import MockSpectrumStarHub, MockSpectrumCard, SpectrumCard, SpectrumStarHub
+from spectrumdevice import MockSpectrumStarHub, MockSpectrumCard, SpectrumCard, SpectrumStarHub
 
 
 def star_hub_example(mock_mode: bool, num_cards: int, master_card_index: int) -> SpectrumStarHub:

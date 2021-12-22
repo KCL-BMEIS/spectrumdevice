@@ -1,4 +1,4 @@
-name: pyspecde-integration-tests
+name: spectrumdevice-integration-tests
 
 on:
   push:

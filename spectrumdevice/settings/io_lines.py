@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import List
 
-from pyspecde.spectrum_wrapper import decode_bitmap_using_list_of_ints
+from spectrumdevice.spectrum_wrapper import decode_bitmap_using_list_of_ints
 from spectrum_gmbh.regs import (
     SPCM_XMODE_DISABLE,
     SPCM_XMODE_ASYNCIN,

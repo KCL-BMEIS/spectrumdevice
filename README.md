@@ -1,9 +1,9 @@
-# pyspecde
+# spectrumdevice
 A high-level, object-oriented Python API for controlling Spectrum Instruments digitisers.
 
 Spectrum digitisers can be connected individually or grouped together using a
 [StarHub](https://spectrum-instrumentation.com/en/m4i-star-hub) (e.g. the
-[NetBox](https://spectrum-instrumentation.com/en/digitizernetbox)). `pyspecde` provides classes 
+[NetBox](https://spectrum-instrumentation.com/en/digitizernetbox)). `spectrumdevice` provides classes 
 `SpectrumCard` and `SpectrumDevice` for controlling and receiving data from individual digitisers and StarHubs 
 respectively.
 
@@ -11,29 +11,29 @@ respectively.
 more information.
 
 ## Requirements
-`pyspecde` works with hardware on Windows and Linux. Spectrum do not currently provide a driver for MacOS, but 
+`spectrumdevice` works with hardware on Windows and Linux. Spectrum do not currently provide a driver for MacOS, but 
 `pyspede` provides mock classes for development and testing without hardware, which work on MacOS.
 
-To work with hardware, `pyspecde` requires that you have installed the
+To work with hardware, `spectrumdevice` requires that you have installed the
 [Spectrum driver](https://spectrum-instrumentation.com/en/drivers-and-examples-overview) for your platform.
 This should be located at `c:\windows\system32\spcm_win64.dll` (or `spcm_win32.dll` on a 32-bit system) on
-on Windows, or in `libspcm_linux.so`on Linux. If no driver is found,  `pyspecde` will run in mock mode.
+on Windows, or in `libspcm_linux.so`on Linux. If no driver is found,  `spectrumdevice` will run in mock mode.
 
 ## Installation and dependencies
 Clone the repository and from within the top level directory, `pip install .`
 
-`pysepcde` itself depends on NumPy, and its example scripts make use of `matplotlib`. `pyspecde` includes 
+`pysepcde` itself depends on NumPy, and its example scripts make use of `matplotlib`. `spectrumdevice` includes 
 a module called `spectrum_gmbh` containing a few files taken from the `spcm_examples` directory which is provided with 
 Spectrum hardware. The files in this module were written by Spectrum GMBH and are included with their permission. 
 They provide `pysepcde` with a low-level Python interface to the DLL and define global constants which are used 
-throughout `pyspecde`.
+throughout `spectrumdevice`.
 
 ## Usage
 ### Connect to devices
 Connect to local (PCIe) cards:
 
 ```python
-from pyspecde import SpectrumCard
+from spectrumdevice import SpectrumCard
 
 card_0 = SpectrumCard(device_number=0)
 card_1 = SpectrumCard(device_number=1)
@@ -42,7 +42,7 @@ Connect to networked cards (you can find a card's IP using the
 [Spectrum Control Centre](https://spectrum-instrumentation.com/en/spectrum-control-center) software):
 
 ```python
-from pyspecde import SpectrumCard
+from spectrumdevice import SpectrumCard
 
 card_0 = SpectrumCard(device_number=0, ip_address="192.168.0.2")
 card_1 = SpectrumCard(device_number=1, ip_address="192.168.0.3")
@@ -51,7 +51,7 @@ card_1 = SpectrumCard(device_number=1, ip_address="192.168.0.3")
 Connect to a networked StarHub (e.g. a NetBox).
 
 ```python
-from pyspecde import SpectrumCard, SpectrumStarHub
+from spectrumdevice import SpectrumCard, SpectrumStarHub
 
 NUM_CARDS_IN_STAR_HUB = 2
 STAR_HUB_MASTER_CARD_INDEX = 1  # The card controlling the clock
@@ -60,7 +60,7 @@ HUB_IP_ADDRESS = "192.168.0.2"
 # Connect to each card in the hub.
 child_cards = []
 for n in range(NUM_CARDS_IN_STAR_HUB):
-    child_cards.append(SpectrumCard(device_number=n, ip_address=HUB_IP_ADDRESS))
+  child_cards.append(SpectrumCard(device_number=n, ip_address=HUB_IP_ADDRESS))
 
 # Connect to the hub itself
 hub = SpectrumStarHub(device_number=0, child_cards=child_cards,
@@ -73,8 +73,10 @@ object - commands will be sent to the child cards automatically.
 You can test your software without hardware connected or drivers installed using mock devices. After construction, Mock 
 devices have the same interface as real devices, and will provide random waveforms using an internal mock waveform 
 source. Mock devices require a few more input arguments to be constructed that real hardware devices:
+
 ```python
-from pyspecde import MockSpectrumCard, MockSpectrumStarHub
+from spectrumdevice import MockSpectrumCard, MockSpectrumStarHub
+
 mock_card = MockSpectrumCard(device_number=0, mock_source_frame_rate_hz=10.0, num_modules=2, num_channels_per_module=4)
 mock_hub = MockSpectrumStarHub(device_number=0, child_cards=[mock_card], master_card_index=0)
 ```
@@ -84,18 +86,18 @@ and `SpectrumStarHub` objects.
 ### Configuring device settings
 Spectrum Instrument's own low-level Python API requires that users configure a device by writing values to on-device 
 registers. The integer addresses of the registers can be imported from `regs.py` (part of Spectrum 
-Instrumentation's own `spcm_examples` directory and included in `pyspecde`) along with the values to write for each
+Instrumentation's own `spcm_examples` directory and included in `spectrumdevice`) along with the values to write for each
 valid setting. Values can also be read from the on-device registers.
 
-In `pyspecde`, the classes `SpectrumCard` and `SpectrumStarHub` provide methods with meaningful names for 
+In `spectrumdevice`, the classes `SpectrumCard` and `SpectrumStarHub` provide methods with meaningful names for 
 reading and writing to the registers on a device. The valid values from `regs.py` are wrapped in Python Enums. The 
 names of the items of the Enums match the names given in `regs.py` and the Spectrum Instrumentation documentation.
 
 For example, to put a card in 'Standard Single' acquisition mode and set the sample rate to 10 MHz:
 
 ```python
-from pyspecde import SpectrumCard
-from pyspecde.settings import AcquisitionMode
+from spectrumdevice import SpectrumCard
+from spectrumdevice.settings import AcquisitionMode
 
 card = SpectrumCard(device_number=0)
 card.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
@@ -118,23 +120,26 @@ card.channels[2].set_vertical_range_in_mv(1000)
 ### Configuring everything at once
 You can set multiple settings at once using the `TriggerSettings` and `AcquisitionSettings` dataclasses and the 
 `configure_trigger()` and `configure_acquisition()` methods:
+
 ```python
-from pyspecde.settings import TriggerSettings, AcquisitionSettings, TriggerSource, ExternalTriggerMode, AcquisitionMode
+from spectrumdevice.settings import TriggerSettings, AcquisitionSettings, TriggerSource, ExternalTriggerMode,
+  AcquisitionMode
+
 trigger_settings = TriggerSettings(
-    trigger_sources=[TriggerSource.SPC_TMASK_EXT0],
-    external_trigger_mode=ExternalTriggerMode.SPC_TM_POS,
-    external_trigger_level_in_mv=1000,
+  trigger_sources=[TriggerSource.SPC_TMASK_EXT0],
+  external_trigger_mode=ExternalTriggerMode.SPC_TM_POS,
+  external_trigger_level_in_mv=1000,
 )
 
 acquisition_settings = AcquisitionSettings(
-    acquisition_mode=AcquisitionMode.SPC_REC_FIFO_MULTI,
-    sample_rate_in_hz=40000000,
-    acquisition_length_in_samples=400,
-    pre_trigger_length_in_samples=0,
-    timeout_in_ms=1000,
-    enabled_channels=[0, 1, 2, 3],
-    vertical_ranges_in_mv=[200, 200, 200, 200],
-    vertical_offsets_in_percent=[0, 0, 0, 0],
+  acquisition_mode=AcquisitionMode.SPC_REC_FIFO_MULTI,
+  sample_rate_in_hz=40000000,
+  acquisition_length_in_samples=400,
+  pre_trigger_length_in_samples=0,
+  timeout_in_ms=1000,
+  enabled_channels=[0, 1, 2, 3],
+  vertical_ranges_in_mv=[200, 200, 200, 200],
+  vertical_offsets_in_percent=[0, 0, 0, 0],
 )
 
 card.configure_trigger(trigger_settings)
@@ -181,7 +186,7 @@ card.stop_acquisition()
 See the `example_scripts` directory.
 
 ## Limitations
-* Currently, `pyspecde` only supports Standard Single and Multi FIFO acquisition modes. See the 
+* Currently, `spectrumdevice` only supports Standard Single and Multi FIFO acquisition modes. See the 
   Spectrum documentation for more information.
 * When defining a transfer buffer - the software buffer into which samples are transferred from a hardware device - 
   the notify size is automatically set equal to the buffer length. This works fine for most situations. See the 

@@ -1,4 +1,4 @@
-"""Defines exceptions raised by pyspecde device classes."""
+"""Defines exceptions raised by spectrumdevice device classes."""
 
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London

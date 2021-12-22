@@ -4,8 +4,8 @@
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
-from pyspecde.settings.channel import VERTICAL_RANGE_COMMANDS, VERTICAL_OFFSET_COMMANDS, SpectrumChannelName
-from pyspecde.devices.spectrum_interface import SpectrumChannelInterface, SpectrumDeviceInterface
+from spectrumdevice.settings.channel import VERTICAL_RANGE_COMMANDS, VERTICAL_OFFSET_COMMANDS, SpectrumChannelName
+from spectrumdevice.devices.spectrum_interface import SpectrumChannelInterface, SpectrumDeviceInterface
 
 
 class SpectrumChannel(SpectrumChannelInterface):

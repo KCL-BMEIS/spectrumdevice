@@ -9,7 +9,7 @@ from typing import List
 
 from numpy import ndarray
 
-from pyspecde.exceptions import (
+from spectrumdevice.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumWrongAcquisitionMode,
     SpectrumDriversNotFound,
@@ -22,11 +22,11 @@ from spectrum_gmbh.regs import (
     M2CMD_CARD_STOP,
 )
 
-from pyspecde.devices.spectrum_interface import (
+from spectrumdevice.devices.spectrum_interface import (
     SpectrumDeviceInterface,
 )
-from pyspecde.settings import SpectrumRegisterLength, AcquisitionMode, TriggerSettings, AcquisitionSettings
-from pyspecde.spectrum_wrapper import (
+from spectrumdevice.settings import SpectrumRegisterLength, AcquisitionMode, TriggerSettings, AcquisitionSettings
+from spectrumdevice.spectrum_wrapper import (
     get_spectrum_i32_api_param,
     get_spectrum_i64_api_param,
     set_spectrum_i32_api_param,

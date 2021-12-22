@@ -8,7 +8,7 @@ import logging
 from functools import wraps
 from typing import Callable, Dict, Any
 
-from pyspecde.exceptions import SpectrumApiCallFailed
+from spectrumdevice.exceptions import SpectrumApiCallFailed
 from spectrum_gmbh.spcerr import (
     ERR_OK,
     ERR_LASTERR,

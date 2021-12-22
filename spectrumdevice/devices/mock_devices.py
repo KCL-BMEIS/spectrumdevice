@@ -13,17 +13,17 @@ from typing import Optional, Sequence, List
 from numpy import ndarray, zeros
 from numpy.random import randn
 
-from pyspecde.devices.spectrum_card import SpectrumCard
-from pyspecde.devices.spectrum_device import SpectrumDevice
-from pyspecde.exceptions import (
+from spectrumdevice.devices.spectrum_card import SpectrumCard
+from spectrumdevice.devices.spectrum_device import SpectrumDevice
+from spectrumdevice.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumNoTransferBufferDefined,
     SpectrumSettingsMismatchError,
 )
-from pyspecde.settings import SpectrumRegisterLength
-from pyspecde.settings.device_modes import AcquisitionMode
-from pyspecde.settings.transfer_buffer import CardToPCDataTransferBuffer
-from pyspecde.devices.spectrum_star_hub import SpectrumStarHub
+from spectrumdevice.settings import SpectrumRegisterLength
+from spectrumdevice.settings.device_modes import AcquisitionMode
+from spectrumdevice.settings.transfer_buffer import CardToPCDataTransferBuffer
+from spectrumdevice.devices.spectrum_star_hub import SpectrumStarHub
 from spectrum_gmbh.regs import (
     SPC_MIINST_MODULES,
     SPC_MIINST_CHPERMODULE,

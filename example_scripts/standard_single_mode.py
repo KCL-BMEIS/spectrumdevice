@@ -2,8 +2,14 @@ from typing import List
 
 from numpy import ndarray
 
-from pyspecde import MockSpectrumCard, SpectrumCard
-from pyspecde.settings import AcquisitionMode, TriggerSource, ExternalTriggerMode, TriggerSettings, AcquisitionSettings
+from spectrumdevice import MockSpectrumCard, SpectrumCard
+from spectrumdevice.settings import (
+    AcquisitionMode,
+    TriggerSource,
+    ExternalTriggerMode,
+    TriggerSettings,
+    AcquisitionSettings,
+)
 
 
 def standard_single_mode_example(mock_mode: bool) -> List[ndarray]:

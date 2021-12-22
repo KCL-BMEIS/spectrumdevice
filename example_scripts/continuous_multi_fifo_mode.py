@@ -3,8 +3,14 @@ from typing import List
 
 from numpy import ndarray
 
-from pyspecde import MockSpectrumCard, SpectrumCard
-from pyspecde.settings import AcquisitionMode, TriggerSource, ExternalTriggerMode, TriggerSettings, AcquisitionSettings
+from spectrumdevice import MockSpectrumCard, SpectrumCard
+from spectrumdevice.settings import (
+    AcquisitionMode,
+    TriggerSource,
+    ExternalTriggerMode,
+    TriggerSettings,
+    AcquisitionSettings,
+)
 
 
 def continuous_multi_fifo_example(mock_mode: bool, acquisition_duration_in_seconds: float) -> List[List[ndarray]]:

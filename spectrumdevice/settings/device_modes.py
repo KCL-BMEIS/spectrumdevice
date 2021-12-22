@@ -16,7 +16,7 @@ from spectrum_gmbh.regs import (
 
 
 class AcquisitionMode(Enum):
-    """Enum representing the acquisition modes currently support by pyspecde. See Spectrum documentation for more
+    """Enum representing the acquisition modes currently support by spectrumdevice. See Spectrum documentation for more
     information about each mode."""
 
     SPC_REC_STD_SINGLE = SPC_REC_STD_SINGLE
@@ -26,7 +26,7 @@ class AcquisitionMode(Enum):
 
 
 class ClockMode(Enum):
-    """Enum representing the clock modes currently supported by pyspecde. See Spectrum documentation for more
+    """Enum representing the clock modes currently supported by spectrumdevice. See Spectrum documentation for more
     information about each mode."""
 
     SPC_CM_INTPLL = SPC_CM_INTPLL
