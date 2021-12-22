@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from threading import Event, Lock, Thread
 from time import sleep, monotonic
@@ -34,6 +35,8 @@ from spectrum_gmbh.regs import (
     SPC_MEMSIZE,
     SPC_CARDMODE,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class MockSpectrumDevice(SpectrumDevice, ABC):
@@ -253,9 +256,9 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         if self._acquisition_thread is not None:
             self._acquisition_thread.join(timeout=1e-3 * self.timeout_in_ms)
             if self._acquisition_thread.is_alive():
-                print("A timeout occurred while waiting for mock acquisition to complete.")
+                logger.warning("A timeout occurred while waiting for mock acquisition to complete.")
         else:
-            print("No acquisition in progress.")
+            logger.warning("No acquisition in progress. Wait for acquisition to complete has no effect")
 
 
 class MockSpectrumStarHub(SpectrumStarHub, MockSpectrumDevice):

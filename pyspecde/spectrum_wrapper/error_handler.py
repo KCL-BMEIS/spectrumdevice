@@ -1,3 +1,4 @@
+import logging
 from functools import wraps
 from typing import Callable, Dict, Any
 
@@ -12,6 +13,8 @@ from spectrum_gmbh.spcerr import (
     ERR_SETUP,
     ERR_RUNNING,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def error_handler(func: Callable) -> Callable:
@@ -40,7 +43,7 @@ def error_handler(func: Callable) -> Callable:
         if error_code in unreported_unraised_error_codes:
             pass
         elif error_code in reported_unraised_error_codes:
-            print(
+            logger.warning(
                 f"Unraised spectrum error from {func.__name__}: {reported_unraised_error_codes[error_code]} "
                 f"({error_code})"
             )

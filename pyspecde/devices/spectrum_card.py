@@ -1,3 +1,4 @@
+import logging
 from copy import copy
 from functools import reduce
 from operator import or_
@@ -64,6 +65,8 @@ from spectrum_gmbh.regs import (
     SPC_DATA_AVAIL_CARD_LEN,
     SPC_SEGMENTSIZE,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class SpectrumCard(SpectrumDevice):
@@ -461,7 +464,7 @@ class SpectrumCard(SpectrumDevice):
         length_in_samples = self._coerce_to_nearest_8_samples_if_fifo(length_in_samples)
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
             if (self.acquisition_length_in_samples - length_in_samples) < 8:
-                print(
+                logger.warning(
                     "FIFO mode: coercing post trigger length to maximum allowed value (8 samples less than "
                     "the acquisition length)."
                 )
@@ -471,7 +474,7 @@ class SpectrumCard(SpectrumDevice):
     def _coerce_to_nearest_8_samples_if_fifo(self, value: int) -> int:
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
             if value != mod(value, 8):
-                print("FIFO mode: coercing length to nearest 8 samples")
+                logger.warning("FIFO mode: coercing length to nearest 8 samples")
                 value = int(value - mod(value, 8))
         return value
 

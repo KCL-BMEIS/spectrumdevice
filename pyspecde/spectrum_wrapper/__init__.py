@@ -1,9 +1,11 @@
+import logging
 from ctypes import c_void_p, byref, create_string_buffer
 from typing import NewType, List
 
 from pyspecde.spectrum_wrapper.error_handler import error_handler
 from pyspecde.spectrum_wrapper.exceptions import SpectrumIOError
 
+logger = logging.getLogger(__name__)
 
 try:
     from spectrum_gmbh.pyspcm import (
@@ -30,7 +32,7 @@ except OSError:
         int64,
     )
 
-    print("Spectrum drivers not found. Hardware cannot be communicated with. Only Mock devices can be used.")
+    logger.warning("Spectrum drivers not found. Hardware cannot be communicated with. Only Mock devices can be used.")
     SPECTRUM_DRIVERS_FOUND = False
 
 DEVICE_HANDLE_TYPE = NewType("DEVICE_HANDLE_TYPE", c_void_p)
