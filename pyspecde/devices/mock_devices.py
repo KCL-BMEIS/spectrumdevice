@@ -1,4 +1,4 @@
-"""Provides Mock spectrum device classses for testing software when no drivers or hardware are present."""
+"""Provides Mock spectrum device classes for testing software when no drivers or hardware are present."""
 
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London

@@ -52,6 +52,7 @@ class SpectrumRegisterLength(Enum):
 @dataclass
 class TriggerSettings:
     """A dataclass collecting all settings related to triggering. See Spectrum documentation."""
+
     trigger_sources: List[TriggerSource]
     """The trigger sources to enable"""
     external_trigger_mode: Optional[ExternalTriggerMode] = None
@@ -65,6 +66,7 @@ class TriggerSettings:
 @dataclass
 class AcquisitionSettings:
     """A dataclass collecting all settings required to configure an acquisition. See Spectrum documentation."""
+
     acquisition_mode: AcquisitionMode
     """Standard Single mode or Multi FIF mode."""
     sample_rate_in_hz: int
@@ -81,4 +83,3 @@ class AcquisitionSettings:
     """The voltage range to apply to each enabled channel in mW."""
     vertical_offsets_in_percent: List[int]
     """The DC offset to apply to each enabled channel as percentages of their vertical ranges."""
-

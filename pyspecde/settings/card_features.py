@@ -89,4 +89,6 @@ def decode_advanced_card_features(value: int) -> List[AdvancedCardFeature]:
     """Converts the integer value received by a Spectrum device when queried about its advanced features into a list of
     AdvancedCardFeatures."""
     possible_values = [feature.value for feature in AdvancedCardFeature]
-    return [AdvancedCardFeature(found_value) for found_value in decode_bitmap_using_list_of_ints(value, possible_values)]
+    return [
+        AdvancedCardFeature(found_value) for found_value in decode_bitmap_using_list_of_ints(value, possible_values)
+    ]
