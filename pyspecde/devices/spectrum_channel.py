@@ -1,3 +1,9 @@
+"""Provides a concrete class for configuring the individual channels of Spectrum digitizer devices."""
+
+# Christian Baker, King's College London
+# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
+# Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
+
 from pyspecde.settings.channel import VERTICAL_RANGE_COMMANDS, VERTICAL_OFFSET_COMMANDS, SpectrumChannelName
 from pyspecde.devices.spectrum_interface import SpectrumChannelInterface, SpectrumDeviceInterface
 
