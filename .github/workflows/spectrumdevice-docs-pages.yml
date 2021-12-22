@@ -26,7 +26,7 @@ jobs:
         git status
         git checkout docs
         git status
-        git rebase main
+        git rebase --onto main
         pdoc --docformat google -o ./docs spectrumdevice
         git add .
         git commit -m 'Automatic documentation update'
