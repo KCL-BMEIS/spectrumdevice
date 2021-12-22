@@ -8,6 +8,7 @@ from example_scripts.connect_to_star_hub import star_hub_example  # type: ignore
 from example_scripts.continuous_multi_fifo_mode import continuous_multi_fifo_example  # type: ignore
 from example_scripts.finite_multi_fifo_mode import finite_multi_fifo_example  # type: ignore
 from example_scripts.standard_single_mode import standard_single_mode_example  # type: ignore
+from pyspecde.exceptions import SpectrumDriversNotFound
 
 
 @pytest.mark.integration
@@ -37,3 +38,7 @@ class StandardSingleModeTest(TestCase):
         hub = star_hub_example(mock_mode=True, num_cards=2, master_card_index=1)
         self.assertEqual(len(hub.channels), 16)
         self.assertEqual(len(hub._child_cards), 2)
+
+    def test_fails_with_no_driver_or_mock_mode(self) -> None:
+        with self.assertRaises(SpectrumDriversNotFound):
+            standard_single_mode_example(mock_mode=False)
