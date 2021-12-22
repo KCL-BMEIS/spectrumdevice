@@ -1,7 +1,7 @@
 from typing import List
 from unittest import TestCase
 
-import pytest  # type: ignore
+import pytest
 from numpy import ndarray
 
 from example_scripts.connect_to_star_hub import star_hub_example  # type: ignore

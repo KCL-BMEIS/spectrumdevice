@@ -1,3 +1,14 @@
+"""mock_pyspcm.py
+
+If spectrum drivers are not found, this file is imported instead of spectrum_gmhb/pyspcm.py. It mocks the essential
+components of pyspcm.py, preventing pyspecde from failing while importing pyspcm.py. Mock devices can then be used to
+test pyspecde software. The functions and variables here aren't actually called by the mock devices, only imported.
+"""
+
+# Christian Baker, King's College London
+# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
+# Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
+
 import platform
 import ctypes
 from typing import Any
