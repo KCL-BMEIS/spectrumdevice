@@ -30,9 +30,9 @@ jobs:
         pdoc --docformat google -o ./docs spectrumdevice
         sed -i 's/index.html/contents.html/g' docs/spectrumdevice.html
         sed -i 's/index.html/contents.html/g' docs/spectrumdevice/settings.html
-        mv index.html contents.html
+        mv docs/index.html docs/contents.html
         sed -i 's/spectrumdevice.html/index.html/g' docs/contents.html
-        mv spectrumdevice.html index.html
+        mv docs/spectrumdevice.html docs/index.html
         git add .
         git commit -m 'Automatic documentation update'
     - name: Push changes
