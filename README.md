@@ -10,7 +10,8 @@ respectively.
 `spectrumdevice` currently supports 'Standard Single' and 'Multi FIFO' acquisition modes. See the Limitations section for 
 more information.
 
-#### [Read the documentation](https://kcl-bmeis.github.io/spectrumdevice/) 
+* [Documentation](https://kcl-bmeis.github.io/spectrumdevice/)
+* [Source on GitHub](https://github.com/KCL-BMEIS/spectrumdevice/)
 
 ## Requirements
 `spectrumdevice` works with hardware on Windows and Linux. Spectrum do not currently provide a driver for MacOS, but 
