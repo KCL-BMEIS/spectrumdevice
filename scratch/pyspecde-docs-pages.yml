@@ -1,4 +1,4 @@
-name: pyspecde-docs-pages
+name: spectrumdevice-docs-pages
 
 on:
   push:
@@ -20,4 +20,4 @@ jobs:
         python -m pip install .[doc]
     - name: Create doc pages
       run: |
-         pdoc --docformat google -o ./docs pyspecde
+         pdoc --docformat google -o ./docs spectrumdevice

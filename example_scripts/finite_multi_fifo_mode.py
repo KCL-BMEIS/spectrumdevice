@@ -2,8 +2,14 @@ from typing import List
 
 from numpy import ndarray
 
-from pyspecde import MockSpectrumCard, SpectrumCard
-from pyspecde.settings import AcquisitionMode, TriggerSource, ExternalTriggerMode, TriggerSettings, AcquisitionSettings
+from spectrumdevice import MockSpectrumCard, SpectrumCard
+from spectrumdevice.settings import (
+    AcquisitionMode,
+    TriggerSource,
+    ExternalTriggerMode,
+    TriggerSettings,
+    AcquisitionSettings,
+)
 
 
 def finite_multi_fifo_example(mock_mode: bool, num_measurements: int) -> List[List[ndarray]]:

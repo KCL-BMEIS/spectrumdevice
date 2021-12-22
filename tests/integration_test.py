@@ -8,7 +8,7 @@ from example_scripts.connect_to_star_hub import star_hub_example  # type: ignore
 from example_scripts.continuous_multi_fifo_mode import continuous_multi_fifo_example  # type: ignore
 from example_scripts.finite_multi_fifo_mode import finite_multi_fifo_example  # type: ignore
 from example_scripts.standard_single_mode import standard_single_mode_example  # type: ignore
-from pyspecde.exceptions import SpectrumDriversNotFound
+from spectrumdevice.exceptions import SpectrumDriversNotFound
 
 
 @pytest.mark.integration
