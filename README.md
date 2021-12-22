@@ -10,6 +10,8 @@ respectively.
 `pysepcde` currently supports 'Standard Single' and 'Multi FIFO' acquisition modes. See the Limitations section for 
 more information.
 
+#### [Read the documentation](https://kcl-bmeis.github.io/spectrumdevice/) 
+
 ## Requirements
 `spectrumdevice` works with hardware on Windows and Linux. Spectrum do not currently provide a driver for MacOS, but 
 `pyspede` provides mock classes for development and testing without hardware, which work on MacOS.
@@ -194,4 +196,4 @@ See the `example_scripts` directory.
 
 ## API Documentation
 
-See below or [here](docs_url) for documentation for the complete API.
+See [here](https://kcl-bmeis.github.io/spectrumdevice/) for documentation for the complete API.
