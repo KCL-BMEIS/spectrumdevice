@@ -20,6 +20,8 @@ jobs:
         python -m pip install .[doc]
     - name: Create doc pages and commit to docs branch
       run: |
+        git config --local user.name "crnbaker"
+        git config --local user.email "christian.baker@kcl.ac.uk"
         git remote set-url origin ${{ secrets.ssh }}
         git fetch
         git checkout docs
@@ -27,5 +29,9 @@ jobs:
         pdoc --docformat google -o ./docs spectrumdevice
         git add .
         git commit -m 'Automatic documentation update'
-        git push origin docs
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: docs
 
