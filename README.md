@@ -7,7 +7,7 @@ Spectrum digitisers can be connected individually or grouped together using a
 `SpectrumCard` and `SpectrumDevice` for controlling and receiving data from individual digitisers and StarHubs 
 respectively.
 
-`pysepcde` currently supports 'Standard Single' and 'Multi FIFO' acquisition modes. See the Limitations section for 
+`spectrumdevice` currently supports 'Standard Single' and 'Multi FIFO' acquisition modes. See the Limitations section for 
 more information.
 
 #### [Read the documentation](https://kcl-bmeis.github.io/spectrumdevice/) 
