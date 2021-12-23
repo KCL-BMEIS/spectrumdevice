@@ -10,11 +10,12 @@ Raise an issue in the GitHub repository using one of the provided templates.
 
 ### Overview
 In short, to submit a contribution you'll need to:
-- Clone the repository
+- Fork the GitHub project
+- Clone your fork of the repository
 - Install the development and testing dependencies to your Python environment with `pip install .[dev,test]`
 - Create a new branch. Its name shoud begin with the issue number you're addressing, e.g. 123-fix-connection-bug
-- Make your changes, keeping your branch rebased on top of the main branch.
-- Push the new branch to github and open a pull request
+- Make your changes, keeping your branch rebased on top of the main branch
+- Push the new branch to your fork on github and open a pull request to merge it into main branch of the original repository.
 
 ### Linters
 Before a pull request can be reviewed, it must succesfully pass Flake8 linting, Mypy type checking and Black formatting. You should run these checks on your local machine before pushing your branch. A shell script `linters_and_black.bat` (should work on Windows, Linux and MacOS) which runs the checks for you is included in the repository. This script will automatically reformat your code using Python Black.
