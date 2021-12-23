@@ -4,7 +4,7 @@ A high-level, object-oriented Python API for controlling Spectrum Instruments di
 Spectrum digitisers can be connected individually or grouped together using a
 [StarHub](https://spectrum-instrumentation.com/en/m4i-star-hub) (e.g. the
 [NetBox](https://spectrum-instrumentation.com/en/digitizernetbox)). `spectrumdevice` provides classes 
-`SpectrumCard` and `SpectrumDevice` for controlling and receiving data from individual digitisers and StarHubs 
+`SpectrumCard` and `SpectrumStarHub` for controlling and receiving data from individual digitisers and StarHubs 
 respectively.
 
 `spectrumdevice` currently supports 'Standard Single' and 'Multi FIFO' acquisition modes. See the Limitations section for 
