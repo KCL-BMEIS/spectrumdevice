@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from spectrumdevice.devices.spectrum_channel import SpectrumChannel
-from tests.test_device_factories import create_spectrum_card_for_testing
+from tests.device_factories import create_spectrum_card_for_testing
 
 
 class SingleChannelTest(TestCase):

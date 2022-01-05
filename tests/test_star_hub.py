@@ -5,8 +5,8 @@ from spectrumdevice.devices.spectrum_star_hub import SpectrumStarHub
 from spectrumdevice.settings.channel import SpectrumChannelName
 from spectrumdevice.settings.transfer_buffer import CardToPCDataTransferBuffer
 from spectrumdevice.exceptions import SpectrumInvalidNumberOfEnabledChannels
-from tests.test_device_factories import create_spectrum_start_hub_for_testing
-from tests.single_card_test import SingleCardTest
+from tests.device_factories import create_spectrum_start_hub_for_testing
+from tests.test_single_card import SingleCardTest
 from tests.configuration import (
     NUM_CHANNELS_PER_MODULE,
     NUM_MODULES_PER_CARD,
@@ -64,18 +64,3 @@ class StarHubTest(SingleCardTest):
         buffer = [CardToPCDataTransferBuffer(ACQUISITION_LENGTH) for _ in range(NUM_CARDS_IN_STAR_HUB)]
         self._device.define_transfer_buffer(buffer)
         self.assertTrue((array(self._device.transfer_buffers) == buffer).all())
-
-    def test_acquisition(self) -> None:
-        first_channel_each_card = [0] + [
-            len(self._device._child_cards[n + 1].channels) for n in range(len(self._device._child_cards) - 1)
-        ]
-        window_length_samples = ACQUISITION_LENGTH
-        acquisition_timeout_ms = 1000
-        self._device.set_enabled_channels(first_channel_each_card)
-        self._simple_acquisition(window_length_samples, acquisition_timeout_ms)
-        acquired_waveforms = self._device.get_waveforms()
-        self.assertEqual(len(acquired_waveforms), len(first_channel_each_card))
-        waveform_lengths = array([len(wfm) for wfm in acquired_waveforms])
-        self.assertTrue((waveform_lengths == window_length_samples).all())
-        waveform_sums = array([wfm.sum() for wfm in acquired_waveforms])
-        self.assertTrue((waveform_sums != 0.0).all())
