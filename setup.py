@@ -6,6 +6,8 @@ dev_deps = ["flake8==4.0.", "flake8-bugbear==21.9.2", "black==21.10b0", "mypy==0
 
 doc_deps = ["pdoc==8.0.1"]
 
+examples_deps = ["matplotlib==3.5.0"]
+
 setup(
     name="spectrumdevice",
     package_data={"spectrumdevice": ["py.typed"]},
@@ -14,11 +16,11 @@ setup(
     include_package_data=True,
     install_requires=[
         "numpy==1.21.4",
-        "matplotlib==3.5.0"
     ],
     extras_require={
         "dev": dev_deps,
         "test": test_deps,
-        "doc": doc_deps
+        "doc": doc_deps + examples_deps,
+        "examples": examples_deps
     }
 )
