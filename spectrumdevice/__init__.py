@@ -39,3 +39,6 @@ __all__ = [
     "MockSpectrumStarHub",
     "settings",
 ]
+
+from . import _version
+__version__ = _version.get_versions()['version']
