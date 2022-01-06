@@ -25,13 +25,14 @@ This should be located at `c:\windows\system32\spcm_win64.dll` (or `spcm_win32.d
 in `libspcm_linux.so` on Linux. If no driver is present `spectrumdevice` can still run in mock mode.
 
 ## Installation and dependencies
-Clone the repository and from within the top level directory, `pip install .`.
+To install:
+`pip install https://github.com/KCL-BMEIS/spectrumdevice/tarball/main`.
 
-`spectrumdevice` depends only on NumPy, although its example scripts also make use of `matplotlib`. `spectrumdevice` 
-includes a module called `spectrum_gmbh` which contains a few files taken from the `spcm_examples` directory 
-provided with Spectrum hardware. The files in this module were written by Spectrum GMBH and are included with their 
-permission. The files provide `spectrumdevice` with a low-level Python interface to the Spectrum driver and define 
-global constants which are used throughout `spectrumdevice`.
+`spectrumdevice` depends only on NumPy, although its example scripts also make use of `matplotlib`. You can include this when you install `spectrumdevice` using the `[examples]` option:
+
+`pip install https://github.com/KCL-BMEIS/spectrumdevice/tarball/main[examples]`.
+
+`spectrumdevice` includes a module called `spectrum_gmbh` containing a few files taken from the `spcm_examples` directory, provided with Spectrum hardware. The files in this module were written by Spectrum GMBH and are included with their permission. The files provide `spectrumdevice` with a low-level Python interface to the Spectrum driver and define global constants which are used throughout `spectrumdevice`.
 
 ## Usage
 ### Connect to devices
