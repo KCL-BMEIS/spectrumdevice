@@ -57,7 +57,8 @@ uptr64 = POINTER(uint64)
 
 # Windows
 if os.name == "nt":
-    sys.stdout.write("Python Version: {0} on Windows\n\n".format(platform.python_version()))
+    # Line commented out by King's College
+    # sys.stdout.write("Python Version: {0} on Windows\n\n".format(platform.python_version()))
 
     # define card handle type
     if bIs64Bit:
@@ -170,7 +171,8 @@ if os.name == "nt":
 
 
 elif os.name == "posix":
-    sys.stdout.write("Python Version: {0} on Linux\n\n".format(platform.python_version()))
+    # Line commented out by King's College
+    # sys.stdout.write("Python Version: {0} on Linux\n\n".format(platform.python_version()))
 
     # define card handle type
     if bIs64Bit:
