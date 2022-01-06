@@ -10,8 +10,10 @@ respectively.
 `spectrumdevice` currently supports 'Standard Single' and 'Multi FIFO' acquisition modes. See the Limitations section for 
 more information.
 
-* [Documentation](https://kcl-bmeis.github.io/spectrumdevice/)
-* [Source on GitHub](https://github.com/KCL-BMEIS/spectrumdevice/)
+`spectrumdevice` includes mock classes for testing software without drivers installed or hardware connected.
+
+* [Examples](https://github.com/KCL-BMEIS/spectrumdevice/tree/main/example_scripts)
+* [API reference documentation](https://kcl-bmeis.github.io/spectrumdevice/)
 
 ## Requirements
 `spectrumdevice` works with hardware on Windows and Linux. Spectrum do not currently provide a hardware driver for 

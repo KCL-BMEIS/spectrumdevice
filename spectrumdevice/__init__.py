@@ -1,15 +1,16 @@
 """
-`spectrumdevice` is a high-level, object-oriented Python API for controlling Spectrum Instruments digitisers.
+`spectrumdevice` is a high-level, object-oriented Python library for controlling Spectrum Instruments digitisers.
 
 It can connect to individual digitisers or
 [StarHubs](https://spectrum-instrumentation.com/en/m4i-star-hub) (e.g. the
 [NetBox](https://spectrum-instrumentation.com/en/digitizernetbox)). `spectrumdevice` provides two classes
 `SpectrumCard` and `SpectrumStarHub` for controlling and receiving data from individual digitisers and StarHubs
-respectively.
+respectively. Mock classes are also provided for testing software without drivers installed or hardware connected.
 
-For quickstart information, please see the [README](https://github.com/KCL-BMEIS/spectrumdevice/blob/main/README.md).
-
-Examples can be found in the `example_scripts` module of the repository.
+* [Source on GitHub](https://github.com/KCL-BMEIS/spectrumdevice)
+* [README including quickstart](https://github.com/KCL-BMEIS/spectrumdevice/blob/main/README.md)
+* [Examples](https://github.com/KCL-BMEIS/spectrumdevice/tree/main/example_scripts)
+* [API reference documentation](https://kcl-bmeis.github.io/spectrumdevice/)
 """
 
 # Christian Baker, King's College London
