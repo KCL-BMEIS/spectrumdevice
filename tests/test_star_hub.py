@@ -64,3 +64,11 @@ class StarHubTest(SingleCardTest):
         buffer = [CardToPCDataTransferBuffer(ACQUISITION_LENGTH) for _ in range(NUM_CARDS_IN_STAR_HUB)]
         self._device.define_transfer_buffer(buffer)
         self.assertTrue((array(self._device.transfer_buffers) == buffer).all())
+
+    def test_features(self) -> None:
+        try:
+            feature_list = self._device.feature_list
+        except Exception as e:
+            self.assertTrue(False, f"raised an exception {e}")
+            feature_list = []
+        self.assertEqual(len(feature_list), NUM_CARDS_IN_STAR_HUB)

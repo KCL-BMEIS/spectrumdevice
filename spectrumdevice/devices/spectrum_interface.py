@@ -245,7 +245,7 @@ class SpectrumDeviceInterface(ABC):
 
     @property
     @abstractmethod
-    def feature_list(self) -> Tuple[List[CardFeature], List[AdvancedCardFeature]]:
+    def feature_list(self) -> List[Tuple[List[CardFeature], List[AdvancedCardFeature]]]:
         raise NotImplementedError()
 
     @abstractmethod
