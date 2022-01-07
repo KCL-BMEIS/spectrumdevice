@@ -26,6 +26,7 @@ from spectrumdevice.devices.spectrum_interface import (
     SpectrumDeviceInterface,
 )
 from spectrumdevice.settings import SpectrumRegisterLength, AcquisitionMode, TriggerSettings, AcquisitionSettings
+from spectrumdevice.settings.triggering import EXTERNAL_TRIGGER_SOURCES
 from spectrumdevice.spectrum_wrapper import (
     get_spectrum_i32_api_param,
     get_spectrum_i64_api_param,
@@ -101,12 +102,13 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         Args:
             settings (TriggerSettings): A TriggerSettings dataclass containing the setting values to apply."""
         self.set_trigger_sources(settings.trigger_sources)
-        if settings.external_trigger_mode is not None:
-            self.set_external_trigger_mode(settings.external_trigger_mode)
-        if settings.external_trigger_level_in_mv is not None:
-            self.set_external_trigger_level_in_mv(settings.external_trigger_level_in_mv)
-        if settings.external_trigger_pulse_width_in_samples is not None:
-            self.set_external_trigger_pulse_width_in_samples(settings.external_trigger_pulse_width_in_samples)
+        if len(set(self.trigger_sources) & set(EXTERNAL_TRIGGER_SOURCES)) > 0:
+            if settings.external_trigger_mode is not None:
+                self.set_external_trigger_mode(settings.external_trigger_mode)
+            if settings.external_trigger_level_in_mv is not None:
+                self.set_external_trigger_level_in_mv(settings.external_trigger_level_in_mv)
+            if settings.external_trigger_pulse_width_in_samples is not None:
+                self.set_external_trigger_pulse_width_in_samples(settings.external_trigger_pulse_width_in_samples)
 
     def execute_standard_single_acquisition(self) -> List[ndarray]:
         """Carry out an single measurement in standard single mode and return the acquired waveforms.
