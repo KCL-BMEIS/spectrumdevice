@@ -16,18 +16,17 @@ from tests.configuration import INTEGRATION_TEST_TRIGGER_SOURCE, NUM_CARDS_IN_ST
 
 
 @pytest.mark.integration
-class IntegrationTests(TestCase):
+class SingleCardIntegrationTests(TestCase):
     def setUp(self) -> None:
         self._single_card_mock_mode = SINGLE_CARD_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
-        self._star_hub_mock_mode = STAR_HUB_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
 
     def test_standard_single_mode(self) -> None:
         waveforms = standard_single_mode_example(mock_mode=self._single_card_mock_mode,
                                                  trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
                                                  device_number=TEST_DEVICE_NUMBER,
                                                  ip_address=TEST_DEVICE_IP)
-        self.assertEqual(len(waveforms), 4)
-        self.assertEqual([wfm.shape for wfm in waveforms], [(400,), (400,), (400,), (400,)])
+        self.assertEqual(len(waveforms), 1)
+        self.assertEqual([wfm.shape for wfm in waveforms], [(400,)])
 
     def test_finite_multi_fifo_mode(self) -> None:
         measurements = finite_multi_fifo_example(mock_mode=self._single_card_mock_mode, num_measurements=2,
@@ -45,9 +44,16 @@ class IntegrationTests(TestCase):
         self._asserts_for_fifo_mode(measurements)
 
     def _asserts_for_fifo_mode(self, measurements: List[List[ndarray]]) -> None:
-        self.assertTrue((array([len(measurement) for measurement in measurements]) == 4).all())
+        self.assertTrue((array([len(measurement) for measurement in measurements]) == 1).all())
         self.assertTrue((array([[wfm.shape for wfm in waveforms]
                                 for waveforms in measurements]).flatten() == 400).all())
+
+
+@pytest.mark.integration
+@pytest.mark.star_hub
+class StarHubIntegrationTests(TestCase):
+    def setUp(self) -> None:
+        self._star_hub_mock_mode = STAR_HUB_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
 
     def test_star_hub(self) -> None:
         hub = star_hub_example(mock_mode=self._star_hub_mock_mode, num_cards=NUM_CARDS_IN_STAR_HUB,

@@ -41,9 +41,9 @@ def finite_multi_fifo_example(mock_mode: bool, num_measurements: int,
         acquisition_length_in_samples=400,
         pre_trigger_length_in_samples=0,
         timeout_in_ms=1000,
-        enabled_channels=[0, 1, 2, 3],
-        vertical_ranges_in_mv=[200, 200, 200, 200],
-        vertical_offsets_in_percent=[0, 0, 0, 0],
+        enabled_channels=[0],
+        vertical_ranges_in_mv=[200],
+        vertical_offsets_in_percent=[0],
     )
 
     # Apply settings
