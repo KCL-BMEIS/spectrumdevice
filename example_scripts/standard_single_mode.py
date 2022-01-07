@@ -1,3 +1,6 @@
+"""Standard Single Mode (SPC_REC_STD_SINGLE) example. The function defined here is used by the tests module as an
+integration test."""
+
 from typing import List
 
 from numpy import ndarray
@@ -12,7 +15,7 @@ from spectrumdevice.settings import (
 )
 
 
-def standard_single_mode_example(mock_mode: bool) -> List[ndarray]:
+def standard_single_mode_example(mock_mode: bool, trigger_source: TriggerSource) -> List[ndarray]:
 
     if not mock_mode:
         # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
@@ -26,7 +29,7 @@ def standard_single_mode_example(mock_mode: bool) -> List[ndarray]:
 
     # Trigger settings
     trigger_settings = TriggerSettings(
-        trigger_sources=[TriggerSource.SPC_TMASK_EXT0],
+        trigger_sources=[trigger_source],
         external_trigger_mode=ExternalTriggerMode.SPC_TM_POS,
         external_trigger_level_in_mv=1000,
     )
@@ -55,7 +58,7 @@ if __name__ == "__main__":
 
     from matplotlib.pyplot import plot, show
 
-    waveforms = standard_single_mode_example(mock_mode=True)
+    waveforms = standard_single_mode_example(mock_mode=True, trigger_source=TriggerSource.SPC_TMASK_EXT0)
     # Plot waveforms
     for waveform in waveforms:
         plot(waveform)

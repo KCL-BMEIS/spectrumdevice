@@ -1,3 +1,5 @@
+"""Finite Multi-FIFO mode (SPC_REC_FIFO_MULTI) example. The function defined here is used by the tests module as an
+integration test."""
 from typing import List
 
 from numpy import ndarray
@@ -12,7 +14,8 @@ from spectrumdevice.settings import (
 )
 
 
-def finite_multi_fifo_example(mock_mode: bool, num_measurements: int) -> List[List[ndarray]]:
+def finite_multi_fifo_example(mock_mode: bool, num_measurements: int,
+                              trigger_source: TriggerSource) -> List[List[ndarray]]:
 
     if not mock_mode:
         # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
@@ -26,7 +29,7 @@ def finite_multi_fifo_example(mock_mode: bool, num_measurements: int) -> List[Li
 
     # Trigger settings
     trigger_settings = TriggerSettings(
-        trigger_sources=[TriggerSource.SPC_TMASK_EXT0],
+        trigger_sources=[trigger_source],
         external_trigger_mode=ExternalTriggerMode.SPC_TM_POS,
         external_trigger_level_in_mv=1000,
     )
@@ -55,7 +58,8 @@ if __name__ == "__main__":
 
     from matplotlib.pyplot import plot, show, figure, title
 
-    measurements = finite_multi_fifo_example(mock_mode=True, num_measurements=2)
+    measurements = finite_multi_fifo_example(mock_mode=True, num_measurements=2,
+                                             trigger_source=TriggerSource.SPC_TMASK_EXT0)
 
     # Plot waveforms
     for n, measurement in enumerate(measurements):

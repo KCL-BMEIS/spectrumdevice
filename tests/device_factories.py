@@ -3,7 +3,7 @@ from spectrumdevice.devices.spectrum_card import SpectrumCard
 from spectrumdevice.devices.spectrum_star_hub import SpectrumStarHub
 from tests.configuration import (
     TEST_DEVICE_IP,
-    mock_device_test_frame_rate_hz,
+    MOCK_DEVICE_TEST_FRAME_RATE_HZ,
     NUM_MODULES_PER_CARD,
     NUM_CHANNELS_PER_MODULE,
     NUM_CARDS_IN_STAR_HUB,
@@ -22,13 +22,13 @@ def create_spectrum_card_for_testing() -> SpectrumCard:
     else:
         return MockSpectrumCard(
             device_number=0,
-            mock_source_frame_rate_hz=mock_device_test_frame_rate_hz,
+            mock_source_frame_rate_hz=MOCK_DEVICE_TEST_FRAME_RATE_HZ,
             num_modules=NUM_MODULES_PER_CARD,
             num_channels_per_module=NUM_CHANNELS_PER_MODULE,
         )
 
 
-def create_spectrum_start_hub_for_testing() -> SpectrumStarHub:
+def create_spectrum_star_hub_for_testing() -> SpectrumStarHub:
     """Configure a real or mock device for unit testing using the glabal constant values defined in
     tests/configuration.py"""
     if STAR_HUB_TEST_MODE == SpectrumTestMode.REAL_HARDWARE:
@@ -42,7 +42,7 @@ def create_spectrum_start_hub_for_testing() -> SpectrumStarHub:
             mock_child_cards.append(
                 MockSpectrumCard(
                     device_number=0,
-                    mock_source_frame_rate_hz=mock_device_test_frame_rate_hz,
+                    mock_source_frame_rate_hz=MOCK_DEVICE_TEST_FRAME_RATE_HZ,
                     num_modules=NUM_MODULES_PER_CARD,
                     num_channels_per_module=NUM_CHANNELS_PER_MODULE,
                 )

@@ -9,21 +9,25 @@ from example_scripts.continuous_multi_fifo_mode import continuous_multi_fifo_exa
 from example_scripts.finite_multi_fifo_mode import finite_multi_fifo_example  # type: ignore
 from example_scripts.standard_single_mode import standard_single_mode_example  # type: ignore
 from spectrumdevice.exceptions import SpectrumDriversNotFound
+from spectrumdevice.settings import TriggerSource
+from tests.configuration import INTEGRATION_TEST_TRIGGER_SOURCE
 
 
 @pytest.mark.integration
 class StandardSingleModeTest(TestCase):
     def test_standard_single_mode(self) -> None:
-        waveforms = standard_single_mode_example(mock_mode=True)
+        waveforms = standard_single_mode_example(mock_mode=True, trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE)
         self.assertEqual(len(waveforms), 4)
         self.assertEqual([wfm.shape for wfm in waveforms], [(400,), (400,), (400,), (400,)])
 
     def test_finite_multi_fifo_mode(self) -> None:
-        measurements = finite_multi_fifo_example(mock_mode=True, num_measurements=2)
+        measurements = finite_multi_fifo_example(mock_mode=True, num_measurements=2,
+                                                 trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE)
         self._asserts_for_fifo_mode(measurements)
 
     def test_continuous_multi_fifo_mode(self) -> None:
-        measurements = continuous_multi_fifo_example(mock_mode=True, acquisition_duration_in_seconds=1.0)
+        measurements = continuous_multi_fifo_example(mock_mode=True, acquisition_duration_in_seconds=1.0,
+                                                     trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE)
         self._asserts_for_fifo_mode(measurements)
 
     def _asserts_for_fifo_mode(self, measurements: List[List[ndarray]]) -> None:
