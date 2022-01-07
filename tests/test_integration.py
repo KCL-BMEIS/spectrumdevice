@@ -12,7 +12,7 @@ from spectrumdevice.exceptions import SpectrumDriversNotFound
 from tests.configuration import INTEGRATION_TEST_TRIGGER_SOURCE, NUM_CARDS_IN_STAR_HUB, NUM_CHANNELS_PER_MODULE, \
     NUM_MODULES_PER_CARD, SINGLE_CARD_TEST_MODE, \
     STAR_HUB_MASTER_CARD_INDEX, STAR_HUB_TEST_MODE, \
-    SpectrumTestMode, TEST_DEVICE_IP
+    SpectrumTestMode, TEST_DEVICE_IP, TEST_DEVICE_NUMBER
 
 
 @pytest.mark.integration
@@ -24,7 +24,7 @@ class IntegrationTests(TestCase):
     def test_standard_single_mode(self) -> None:
         waveforms = standard_single_mode_example(mock_mode=self._single_card_mock_mode,
                                                  trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
-                                                 device_number=STAR_HUB_MASTER_CARD_INDEX,
+                                                 device_number=TEST_DEVICE_NUMBER,
                                                  ip_address=TEST_DEVICE_IP)
         self.assertEqual(len(waveforms), 4)
         self.assertEqual([wfm.shape for wfm in waveforms], [(400,), (400,), (400,), (400,)])
@@ -32,7 +32,7 @@ class IntegrationTests(TestCase):
     def test_finite_multi_fifo_mode(self) -> None:
         measurements = finite_multi_fifo_example(mock_mode=self._single_card_mock_mode, num_measurements=2,
                                                  trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
-                                                 device_number=STAR_HUB_MASTER_CARD_INDEX,
+                                                 device_number=TEST_DEVICE_NUMBER,
                                                  ip_address=TEST_DEVICE_IP)
         self._asserts_for_fifo_mode(measurements)
 
@@ -40,7 +40,7 @@ class IntegrationTests(TestCase):
         measurements = continuous_multi_fifo_example(mock_mode=self._single_card_mock_mode,
                                                      acquisition_duration_in_seconds=1.0,
                                                      trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
-                                                     device_number=STAR_HUB_MASTER_CARD_INDEX,
+                                                     device_number=TEST_DEVICE_NUMBER,
                                                      ip_address=TEST_DEVICE_IP)
         self._asserts_for_fifo_mode(measurements)
 
@@ -61,4 +61,5 @@ class IntegrationTests(TestCase):
 class NoDriversTest(TestCase):
     def test_fails_with_no_driver_without_mock_mode(self) -> None:
         with self.assertRaises(SpectrumDriversNotFound):
-            standard_single_mode_example(mock_mode=False, trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE)
+            standard_single_mode_example(mock_mode=False, trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
+                                         device_number=TEST_DEVICE_NUMBER)
