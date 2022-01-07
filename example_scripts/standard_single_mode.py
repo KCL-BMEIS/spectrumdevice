@@ -15,16 +15,16 @@ from spectrumdevice.settings import (
 )
 
 
-def standard_single_mode_example(mock_mode: bool, trigger_source: TriggerSource, ip_address: Optional[str] = None)\
-        -> List[ndarray]:
+def standard_single_mode_example(mock_mode: bool, trigger_source: TriggerSource, device_number: int,
+                                 ip_address: Optional[str] = None) -> List[ndarray]:
 
     if not mock_mode:
         # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
-        card = SpectrumCard(device_number=0, ip_address=ip_address)
+        card = SpectrumCard(device_number=device_number, ip_address=ip_address)
     else:
         # Set up a mock device
         card = MockSpectrumCard(
-            device_number=0, mock_source_frame_rate_hz=10.0, num_modules=2, num_channels_per_module=4
+            device_number=device_number, mock_source_frame_rate_hz=10.0, num_modules=2, num_channels_per_module=4
         )
 
     # Trigger settings
@@ -51,14 +51,19 @@ def standard_single_mode_example(mock_mode: bool, trigger_source: TriggerSource,
     card.configure_acquisition(acquisition_settings)
 
     # Execute acquisition
-    return card.execute_standard_single_acquisition()
+    waveform_list = card.execute_standard_single_acquisition()
+    card.reset()
+    card.disconnect()
+    return waveform_list
 
 
 if __name__ == "__main__":
 
     from matplotlib.pyplot import plot, show
 
-    waveforms = standard_single_mode_example(mock_mode=True, trigger_source=TriggerSource.SPC_TMASK_EXT0)
+    waveforms = standard_single_mode_example(mock_mode=True, trigger_source=TriggerSource.SPC_TMASK_EXT0,
+                                             device_number=0)
+
     # Plot waveforms
     for waveform in waveforms:
         plot(waveform)

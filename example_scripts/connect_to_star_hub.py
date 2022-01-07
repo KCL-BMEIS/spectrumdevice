@@ -32,4 +32,5 @@ if __name__ == "__main__":
     print(f"{hub} contains {len(hub.channels)} channels in total:")
     for channel in hub.channels:
         print(channel)
+    hub.reset()
     hub.disconnect()

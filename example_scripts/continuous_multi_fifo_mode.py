@@ -16,16 +16,16 @@ from spectrumdevice.settings import (
 
 
 def continuous_multi_fifo_example(mock_mode: bool, acquisition_duration_in_seconds: float,
-                                  trigger_source: TriggerSource, ip_address: Optional[str] = None)\
+                                  trigger_source: TriggerSource, device_number: int, ip_address: Optional[str] = None)\
         -> List[List[ndarray]]:
 
     if not mock_mode:
         # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
-        card = SpectrumCard(device_number=0, ip_address=ip_address)
+        card = SpectrumCard(device_number=device_number, ip_address=ip_address)
     else:
         # Set up a mock device
         card = MockSpectrumCard(
-            device_number=0, mock_source_frame_rate_hz=1.0, num_modules=2, num_channels_per_module=4
+            device_number=device_number, mock_source_frame_rate_hz=1.0, num_modules=2, num_channels_per_module=4
         )
 
     # Trigger settings
@@ -56,14 +56,16 @@ def continuous_multi_fifo_example(mock_mode: bool, acquisition_duration_in_secon
     card.execute_continuous_multi_fifo_acquisition()
 
     # Retrieve streamed waveform data until desired time has elapsed
-    measurements = []
+    measurements_list = []
     while (monotonic() - start_time) < acquisition_duration_in_seconds:
-        measurements.append(card.get_waveforms())
+        measurements_list.append(card.get_waveforms())
 
     # Stop the acquisition (and streaming)
     card.stop_acquisition()
 
-    return measurements
+    card.reset()
+    card.disconnect()
+    return measurements_list
 
 
 if __name__ == "__main__":
@@ -71,7 +73,8 @@ if __name__ == "__main__":
     from matplotlib.pyplot import plot, show, figure, title
 
     measurements = continuous_multi_fifo_example(mock_mode=True, acquisition_duration_in_seconds=4.0,
-                                                 trigger_source=TriggerSource.SPC_TMASK_EXT0)
+                                                 trigger_source=TriggerSource.SPC_TMASK_EXT0,
+                                                 device_number=0)
 
     # Plot waveforms
     for n, measurement in enumerate(measurements):

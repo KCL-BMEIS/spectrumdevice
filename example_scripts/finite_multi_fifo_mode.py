@@ -15,15 +15,16 @@ from spectrumdevice.settings import (
 
 
 def finite_multi_fifo_example(mock_mode: bool, num_measurements: int,
-                              trigger_source: TriggerSource, ip_address: Optional[str] = None) -> List[List[ndarray]]:
+                              trigger_source: TriggerSource, device_number: int,
+                              ip_address: Optional[str] = None) -> List[List[ndarray]]:
 
     if not mock_mode:
         # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
-        card = SpectrumCard(device_number=0, ip_address=ip_address)
+        card = SpectrumCard(device_number=device_number, ip_address=ip_address)
     else:
         # Set up a mock device
         card = MockSpectrumCard(
-            device_number=0, mock_source_frame_rate_hz=10.0, num_modules=2, num_channels_per_module=4
+            device_number=device_number, mock_source_frame_rate_hz=10.0, num_modules=2, num_channels_per_module=4
         )
 
     # Trigger settings
@@ -50,7 +51,10 @@ def finite_multi_fifo_example(mock_mode: bool, num_measurements: int,
     card.configure_acquisition(acquisition_settings)
 
     # Execute acquisition
-    return card.execute_finite_multi_fifo_acquisition(num_measurements)
+    waveform_list = card.execute_finite_multi_fifo_acquisition(num_measurements)
+    card.reset()
+    card.disconnect()
+    return waveform_list
 
 
 if __name__ == "__main__":
@@ -58,7 +62,7 @@ if __name__ == "__main__":
     from matplotlib.pyplot import plot, show, figure, title
 
     measurements = finite_multi_fifo_example(mock_mode=True, num_measurements=2,
-                                             trigger_source=TriggerSource.SPC_TMASK_EXT0)
+                                             trigger_source=TriggerSource.SPC_TMASK_EXT0, device_number=0)
 
     # Plot waveforms
     for n, measurement in enumerate(measurements):
