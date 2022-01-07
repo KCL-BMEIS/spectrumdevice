@@ -9,24 +9,32 @@ from example_scripts.continuous_multi_fifo_mode import continuous_multi_fifo_exa
 from example_scripts.finite_multi_fifo_mode import finite_multi_fifo_example  # type: ignore
 from example_scripts.standard_single_mode import standard_single_mode_example  # type: ignore
 from spectrumdevice.exceptions import SpectrumDriversNotFound
-from spectrumdevice.settings import TriggerSource
-from tests.configuration import INTEGRATION_TEST_TRIGGER_SOURCE
+from tests.configuration import INTEGRATION_TEST_TRIGGER_SOURCE, NUM_CARDS_IN_STAR_HUB, NUM_CHANNELS_PER_MODULE, \
+    NUM_MODULES_PER_CARD, SINGLE_CARD_TEST_MODE, \
+    STAR_HUB_MASTER_CARD_INDEX, STAR_HUB_TEST_MODE, \
+    SpectrumTestMode
 
 
 @pytest.mark.integration
-class StandardSingleModeTest(TestCase):
+class IntegrationTests(TestCase):
+    def setUp(self) -> None:
+        self._single_card_mock_mode = SINGLE_CARD_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
+        self._star_hub_mock_mode = STAR_HUB_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
+
     def test_standard_single_mode(self) -> None:
-        waveforms = standard_single_mode_example(mock_mode=True, trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE)
+        waveforms = standard_single_mode_example(mock_mode=self._single_card_mock_mode,
+                                                 trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE)
         self.assertEqual(len(waveforms), 4)
         self.assertEqual([wfm.shape for wfm in waveforms], [(400,), (400,), (400,), (400,)])
 
     def test_finite_multi_fifo_mode(self) -> None:
-        measurements = finite_multi_fifo_example(mock_mode=True, num_measurements=2,
+        measurements = finite_multi_fifo_example(mock_mode=self._single_card_mock_mode, num_measurements=2,
                                                  trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE)
         self._asserts_for_fifo_mode(measurements)
 
     def test_continuous_multi_fifo_mode(self) -> None:
-        measurements = continuous_multi_fifo_example(mock_mode=True, acquisition_duration_in_seconds=1.0,
+        measurements = continuous_multi_fifo_example(mock_mode=self._single_card_mock_mode,
+                                                     acquisition_duration_in_seconds=1.0,
                                                      trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE)
         self._asserts_for_fifo_mode(measurements)
 
@@ -39,10 +47,15 @@ class StandardSingleModeTest(TestCase):
         )
 
     def test_star_hub(self) -> None:
-        hub = star_hub_example(mock_mode=True, num_cards=2, master_card_index=1)
-        self.assertEqual(len(hub.channels), 16)
-        self.assertEqual(len(hub._child_cards), 2)
+        hub = star_hub_example(mock_mode=self._star_hub_mock_mode, num_cards=NUM_CARDS_IN_STAR_HUB,
+                               master_card_index=STAR_HUB_MASTER_CARD_INDEX)
+        self.assertEqual(len(hub.channels), NUM_CHANNELS_PER_MODULE * NUM_MODULES_PER_CARD * NUM_CARDS_IN_STAR_HUB)
+        self.assertEqual(len(hub._child_cards), NUM_CARDS_IN_STAR_HUB)
 
-    def test_fails_with_no_driver_or_mock_mode(self) -> None:
+
+@pytest.mark.integration
+@pytest.mark.only_without_driver
+class NoDriversTest(TestCase):
+    def test_fails_with_no_driver_without_mock_mode(self) -> None:
         with self.assertRaises(SpectrumDriversNotFound):
-            standard_single_mode_example(mock_mode=False)
+            standard_single_mode_example(mock_mode=False, trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE)

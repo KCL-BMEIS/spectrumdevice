@@ -1,7 +1,7 @@
 """Standard Single Mode (SPC_REC_STD_SINGLE) example. The function defined here is used by the tests module as an
 integration test."""
 
-from typing import List
+from typing import List, Optional
 
 from numpy import ndarray
 
@@ -15,12 +15,12 @@ from spectrumdevice.settings import (
 )
 
 
-def standard_single_mode_example(mock_mode: bool, trigger_source: TriggerSource) -> List[ndarray]:
+def standard_single_mode_example(mock_mode: bool, trigger_source: TriggerSource, ip_address: Optional[str] = None)\
+        -> List[ndarray]:
 
     if not mock_mode:
         # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
-        DEVICE_IP_ADDRESS = "169.254.142.75"
-        card = SpectrumCard(device_number=0, ip_address=DEVICE_IP_ADDRESS)
+        card = SpectrumCard(device_number=0, ip_address=ip_address)
     else:
         # Set up a mock device
         card = MockSpectrumCard(
