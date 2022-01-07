@@ -406,11 +406,11 @@ class SpectrumStarHub(SpectrumDevice):
     @property
     def feature_list(self) -> List[Tuple[List[CardFeature], List[AdvancedCardFeature]]]:
         """Get a list of the features of the child cards. See CardFeature, AdvancedCardFeature and the Spectrum
-        documentation for more information. The features should be the same across all child cards. If not, an
-        exception is raised.
+        documentation for more information.
 
         Returns:
-            features (Tuple[List[CardFeature], List[AdvancedCardFeature]]): A list of features and advanced features.
+            features (List[Tuple[List[CardFeature], List[AdvancedCardFeature]]]): A list of tuples, one per child card.
+                Each tuple contains a list of features and a list of advanced features for that card.
         """
         return [card.feature_list[0] for card in self._child_cards]
 
