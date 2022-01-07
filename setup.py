@@ -1,10 +1,7 @@
 import setuptools
+from spectrumdevice._version import get_versions
+__version__ = get_versions()['version']
 
 
 if __name__ == "__main__":
-    try:
-        import versioneer
-        setuptools.setup(version=versioneer.get_version(), cmdclass=versioneer.get_cmdclass())
-    except ImportError:
-        setuptools.setup()
-
+    setuptools.setup(version=get_versions()['version'])
