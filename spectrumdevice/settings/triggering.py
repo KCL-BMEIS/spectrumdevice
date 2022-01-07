@@ -53,6 +53,14 @@ class TriggerSource(Enum):
     """No trigger source selected."""
 
 
+EXTERNAL_TRIGGER_SOURCES = [
+    TriggerSource.SPC_TMASK_EXT0,
+    TriggerSource.SPC_TMASK_EXT1,
+    TriggerSource.SPC_TMASK_EXT2,
+    TriggerSource.SPC_TMASK_EXT3,
+]
+
+
 class ExternalTriggerMode(Enum):
     """An Enum representing the supported trigger modes. See the Spectrum documentation more more Information.
 

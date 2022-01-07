@@ -551,16 +551,17 @@ class SpectrumCard(SpectrumDevice):
         )
 
     @property
-    def feature_list(self) -> Tuple[List[CardFeature], List[AdvancedCardFeature]]:
+    def feature_list(self) -> List[Tuple[List[CardFeature], List[AdvancedCardFeature]]]:
         """Get a list of the features of the card. See CardFeature, AdvancedCardFeature and the Spectrum
         documentation for more information.
 
         Returns:
-            features (Tuple[List[CardFeature], List[AdvancedCardFeature]]): A list of features and advanced features.
+            features (List[Tuple[List[CardFeature], List[AdvancedCardFeature]]]): A tuple of two lists - of features and
+                advanced features respectively - wrapped in a list.
         """
         normal_features = decode_card_features(self.read_spectrum_device_register(SPC_PCIFEATURES))
         advanced_features = decode_advanced_card_features(self.read_spectrum_device_register(SPC_PCIEXTFEATURES))
-        return normal_features, advanced_features
+        return [(normal_features, advanced_features)]
 
     @property
     def sample_rate_in_hz(self) -> int:

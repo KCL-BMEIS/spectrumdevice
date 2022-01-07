@@ -116,9 +116,11 @@ class SingleCardTest(TestCase):
 
     def test_features(self) -> None:
         try:
-            _, _ = self._device.feature_list
+            feature_list = self._device.feature_list
         except Exception as e:
             self.assertTrue(False, f"raised an exception {e}")
+            feature_list = []
+        self.assertEqual(len(feature_list), 1)
 
     def test_available_io_modes(self) -> None:
         try:

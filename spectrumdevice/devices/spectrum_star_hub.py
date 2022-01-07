@@ -21,7 +21,7 @@ from spectrumdevice.settings.io_lines import AvailableIOModes
 from spectrumdevice.settings.triggering import TriggerSource, ExternalTriggerMode
 from spectrumdevice.settings.card_features import CardFeature, AdvancedCardFeature
 from spectrumdevice.settings.transfer_buffer import TransferBuffer, CardToPCDataTransferBuffer
-from spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK, SPC_PCIFEATURES
+from spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK
 
 
 class SpectrumStarHub(SpectrumDevice):
@@ -404,19 +404,15 @@ class SpectrumStarHub(SpectrumDevice):
             d.set_timeout_in_ms(timeout_ms)
 
     @property
-    def feature_list(self) -> Tuple[List[CardFeature], List[AdvancedCardFeature]]:
+    def feature_list(self) -> List[Tuple[List[CardFeature], List[AdvancedCardFeature]]]:
         """Get a list of the features of the child cards. See CardFeature, AdvancedCardFeature and the Spectrum
-        documentation for more information. The features should be the same across all child cards. If not, an
-        exception is raised.
+        documentation for more information.
 
         Returns:
-            features (Tuple[List[CardFeature], List[AdvancedCardFeature]]): A list of features and advanced features.
+            features (List[Tuple[List[CardFeature], List[AdvancedCardFeature]]]): A list of tuples, one per child card.
+                Each tuple contains a list of features and a list of advanced features for that card.
         """
-        feature_list_codes = []
-        for card in self._child_cards:
-            feature_list_codes.append(card.read_spectrum_device_register(SPC_PCIFEATURES))
-        _check_settings_constant_across_devices(feature_list_codes, __name__)
-        return self._child_cards[0].feature_list
+        return [card.feature_list[0] for card in self._child_cards]
 
     @property
     def available_io_modes(self) -> AvailableIOModes:

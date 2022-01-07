@@ -1,3 +1,4 @@
+import pytest
 from numpy import array
 
 from spectrumdevice.devices.spectrum_channel import SpectrumChannel
@@ -5,7 +6,7 @@ from spectrumdevice.devices.spectrum_star_hub import SpectrumStarHub
 from spectrumdevice.settings.channel import SpectrumChannelName
 from spectrumdevice.settings.transfer_buffer import CardToPCDataTransferBuffer
 from spectrumdevice.exceptions import SpectrumInvalidNumberOfEnabledChannels
-from tests.device_factories import create_spectrum_start_hub_for_testing
+from tests.device_factories import create_spectrum_star_hub_for_testing
 from tests.test_single_card import SingleCardTest
 from tests.configuration import (
     NUM_CHANNELS_PER_MODULE,
@@ -16,9 +17,10 @@ from tests.configuration import (
 from spectrum_gmbh.regs import SPC_CHENABLE
 
 
+@pytest.mark.star_hub
 class StarHubTest(SingleCardTest):
     def setUp(self) -> None:
-        self._device: SpectrumStarHub = create_spectrum_start_hub_for_testing()
+        self._device: SpectrumStarHub = create_spectrum_star_hub_for_testing()
 
         self._expected_num_channels_each_card = NUM_CHANNELS_PER_MODULE * NUM_MODULES_PER_CARD
         self._expected_total_num_channels = self._expected_num_channels_each_card * NUM_CARDS_IN_STAR_HUB
@@ -64,3 +66,11 @@ class StarHubTest(SingleCardTest):
         buffer = [CardToPCDataTransferBuffer(ACQUISITION_LENGTH) for _ in range(NUM_CARDS_IN_STAR_HUB)]
         self._device.define_transfer_buffer(buffer)
         self.assertTrue((array(self._device.transfer_buffers) == buffer).all())
+
+    def test_features(self) -> None:
+        try:
+            feature_list = self._device.feature_list
+        except Exception as e:
+            self.assertTrue(False, f"raised an exception {e}")
+            feature_list = []
+        self.assertEqual(len(feature_list), NUM_CARDS_IN_STAR_HUB)
