@@ -15,9 +15,13 @@ from spectrumdevice.settings import (
 )
 
 
-def continuous_multi_fifo_example(mock_mode: bool, acquisition_duration_in_seconds: float,
-                                  trigger_source: TriggerSource, device_number: int, ip_address: Optional[str] = None)\
-        -> List[List[ndarray]]:
+def continuous_multi_fifo_example(
+    mock_mode: bool,
+    acquisition_duration_in_seconds: float,
+    trigger_source: TriggerSource,
+    device_number: int,
+    ip_address: Optional[str] = None,
+) -> List[List[ndarray]]:
 
     if not mock_mode:
         # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
@@ -72,9 +76,12 @@ if __name__ == "__main__":
 
     from matplotlib.pyplot import plot, show, figure, title
 
-    measurements = continuous_multi_fifo_example(mock_mode=True, acquisition_duration_in_seconds=4.0,
-                                                 trigger_source=TriggerSource.SPC_TMASK_EXT0,
-                                                 device_number=0)
+    measurements = continuous_multi_fifo_example(
+        mock_mode=True,
+        acquisition_duration_in_seconds=4.0,
+        trigger_source=TriggerSource.SPC_TMASK_EXT0,
+        device_number=0,
+    )
 
     # Plot waveforms
     for n, measurement in enumerate(measurements):

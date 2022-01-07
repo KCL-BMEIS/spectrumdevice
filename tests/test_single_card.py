@@ -1,7 +1,5 @@
 from unittest import TestCase
 
-import pytest
-
 from spectrumdevice.devices.spectrum_channel import SpectrumChannel
 from spectrumdevice.devices.spectrum_device import SpectrumDevice
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode

@@ -10,7 +10,8 @@ from tests.configuration import (
     STAR_HUB_MASTER_CARD_INDEX,
     SpectrumTestMode,
     SINGLE_CARD_TEST_MODE,
-    STAR_HUB_TEST_MODE, TEST_DEVICE_NUMBER,
+    STAR_HUB_TEST_MODE,
+    TEST_DEVICE_NUMBER,
 )
 
 

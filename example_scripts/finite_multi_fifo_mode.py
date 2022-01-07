@@ -14,9 +14,13 @@ from spectrumdevice.settings import (
 )
 
 
-def finite_multi_fifo_example(mock_mode: bool, num_measurements: int,
-                              trigger_source: TriggerSource, device_number: int,
-                              ip_address: Optional[str] = None) -> List[List[ndarray]]:
+def finite_multi_fifo_example(
+    mock_mode: bool,
+    num_measurements: int,
+    trigger_source: TriggerSource,
+    device_number: int,
+    ip_address: Optional[str] = None,
+) -> List[List[ndarray]]:
 
     if not mock_mode:
         # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
@@ -61,8 +65,9 @@ if __name__ == "__main__":
 
     from matplotlib.pyplot import plot, show, figure, title
 
-    measurements = finite_multi_fifo_example(mock_mode=True, num_measurements=2,
-                                             trigger_source=TriggerSource.SPC_TMASK_EXT0, device_number=0)
+    measurements = finite_multi_fifo_example(
+        mock_mode=True, num_measurements=2, trigger_source=TriggerSource.SPC_TMASK_EXT0, device_number=0
+    )
 
     # Plot waveforms
     for n, measurement in enumerate(measurements):

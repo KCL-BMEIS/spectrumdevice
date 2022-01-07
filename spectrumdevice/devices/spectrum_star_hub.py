@@ -21,7 +21,7 @@ from spectrumdevice.settings.io_lines import AvailableIOModes
 from spectrumdevice.settings.triggering import TriggerSource, ExternalTriggerMode
 from spectrumdevice.settings.card_features import CardFeature, AdvancedCardFeature
 from spectrumdevice.settings.transfer_buffer import TransferBuffer, CardToPCDataTransferBuffer
-from spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK, SPC_PCIFEATURES
+from spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK
 
 
 class SpectrumStarHub(SpectrumDevice):
