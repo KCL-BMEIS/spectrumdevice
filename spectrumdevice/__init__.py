@@ -40,6 +40,7 @@ __all__ = [
     "settings",
 ]
 
+
 from . import _version
 
 __version__ = _version.get_versions()["version"]  # type: ignore
