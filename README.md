@@ -14,6 +14,7 @@ more information.
 
 * [Examples](https://github.com/KCL-BMEIS/spectrumdevice/tree/main/example_scripts)
 * [API reference documentation](https://kcl-bmeis.github.io/spectrumdevice/)
+* [PyPi](https://pypi.org/project/spectrumdevice/)
 
 ## Requirements
 `spectrumdevice` works with hardware on Windows and Linux. Spectrum do not currently provide a hardware driver for 
@@ -34,6 +35,7 @@ Or to install the development version:
 `spectrumdevice` depends only on NumPy, although its example scripts also make use of `matplotlib`. You can include this when you install `spectrumdevice` using the `[examples]` option:
 
 `pip install spectrumdevice[examples]`
+
 `pip install https://github.com/KCL-BMEIS/spectrumdevice/tarball/main[examples]`.
 
 `spectrumdevice` includes a module called `spectrum_gmbh` containing a few files taken from the `spcm_examples` directory, provided with Spectrum hardware. The files in this module were written by Spectrum GMBH and are included with their permission. The files provide `spectrumdevice` with a low-level Python interface to the Spectrum driver and define global constants which are used throughout `spectrumdevice`.
