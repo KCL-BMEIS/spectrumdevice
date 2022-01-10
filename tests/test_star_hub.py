@@ -26,7 +26,7 @@ class StarHubTest(SingleCardTest):
         self._expected_total_num_channels = self._expected_num_channels_each_card * NUM_CARDS_IN_STAR_HUB
 
         self._all_spectrum_channel_identifiers = [c.value for c in SpectrumChannelName]
-        self._all_spectrum_channel_identifiers.sort()  # Enums are unordered so ensure channels are in ascending order
+        self._all_spectrum_channel_identifiers.sort()  # Enums are unordered to ensure channels are in ascending order
 
     def tearDown(self) -> None:
         self._device.disconnect()
