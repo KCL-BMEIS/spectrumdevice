@@ -2,7 +2,8 @@ name: spectrumdevice-docs-pages
 
 on:
   push:
-    branches: [ main ]
+    tags:
+    - '*'
 
 jobs:
   build:
@@ -10,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
     - name: Set up Python 3.10
       uses: actions/setup-python@v2
       with:
@@ -26,7 +29,7 @@ jobs:
         git status
         git checkout docs
         git status
-        git rebase --onto main
+        git rebase --onto ${{ github.ref_name }} main
         pdoc --docformat google -o ./docs spectrumdevice
         sed -i 's/index.html/contents.html/g' docs/spectrumdevice.html
         sed -i 's/index.html/contents.html/g' docs/spectrumdevice/settings.html

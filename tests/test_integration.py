@@ -4,10 +4,10 @@ from unittest import TestCase
 import pytest
 from numpy import array, ndarray
 
-from example_scripts.connect_to_star_hub import star_hub_example  # type: ignore
-from example_scripts.continuous_multi_fifo_mode import continuous_multi_fifo_example  # type: ignore
-from example_scripts.finite_multi_fifo_mode import finite_multi_fifo_example  # type: ignore
-from example_scripts.standard_single_mode import standard_single_mode_example  # type: ignore
+from example_scripts.connect_to_star_hub import star_hub_example
+from example_scripts.continuous_multi_fifo_mode import continuous_multi_fifo_example
+from example_scripts.finite_multi_fifo_mode import finite_multi_fifo_example
+from example_scripts.standard_single_mode import standard_single_mode_example
 from spectrumdevice.exceptions import SpectrumDriversNotFound
 from tests.configuration import (
     INTEGRATION_TEST_TRIGGER_SOURCE,

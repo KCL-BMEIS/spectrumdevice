@@ -1,5 +1,5 @@
 # spectrumdevice
-A high-level, object-oriented Python API for controlling Spectrum Instruments digitisers.
+A high-level, object-oriented Python API for controlling Spectrum Instrumentation digitisers.
 
 `spectrumdevice` can connect to individual digitisers or 
 [StarHubs](https://spectrum-instrumentation.com/en/m4i-star-hub) (e.g. the

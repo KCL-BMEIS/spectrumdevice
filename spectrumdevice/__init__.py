@@ -1,5 +1,5 @@
 """
-`spectrumdevice` is a high-level, object-oriented Python library for controlling Spectrum Instruments digitisers.
+`spectrumdevice` is a high-level, object-oriented Python library for controlling Spectrum Instrumentation digitisers.
 
 It can connect to individual digitisers or
 [StarHubs](https://spectrum-instrumentation.com/en/m4i-star-hub) (e.g. the
