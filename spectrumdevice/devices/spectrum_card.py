@@ -25,7 +25,7 @@ from spectrumdevice.settings import (
     AdvancedCardFeature,
     TransferBuffer,
     CardToPCDataTransferBuffer,
-    SpectrumRegisterLength,
+    SpectrumRegisterLength
 )
 from spectrumdevice.settings.status import decode_status
 from spectrumdevice.settings.io_lines import decode_available_io_modes
