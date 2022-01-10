@@ -8,6 +8,7 @@ from numpy import ndarray
 from spectrumdevice import MockSpectrumCard, SpectrumCard
 from spectrumdevice.settings import (
     AcquisitionMode,
+    CardType,
     TriggerSource,
     ExternalTriggerMode,
     TriggerSettings,
@@ -29,7 +30,11 @@ def continuous_multi_fifo_example(
     else:
         # Set up a mock device
         card = MockSpectrumCard(
-            device_number=device_number, mock_source_frame_rate_hz=1.0, num_modules=2, num_channels_per_module=4
+            device_number=device_number,
+            card_type=CardType.TYP_M2P5966_X4,
+            mock_source_frame_rate_hz=1.0,
+            num_modules=2,
+            num_channels_per_module=4,
         )
 
     # Trigger settings

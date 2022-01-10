@@ -9,7 +9,8 @@ from typing import List, Optional, Union, Tuple, Sequence
 
 from numpy import ndarray
 
-from spectrumdevice.settings import SpectrumRegisterLength, TriggerSettings, AcquisitionSettings
+from spectrumdevice.settings import TriggerSettings, AcquisitionSettings
+from spectrumdevice.settings import SpectrumRegisterLength
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
 from spectrumdevice.settings.status import CARD_STATUS_TYPE, STAR_HUB_STATUS_TYPE
 from spectrumdevice.settings.channel import SpectrumChannelName

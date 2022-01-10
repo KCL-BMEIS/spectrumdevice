@@ -40,6 +40,20 @@ Or to install the development version:
 
 `spectrumdevice` includes a module called `spectrum_gmbh` containing a few files taken from the `spcm_examples` directory, provided with Spectrum hardware. The files in this module were written by Spectrum GMBH and are included with their permission. The files provide `spectrumdevice` with a low-level Python interface to the Spectrum driver and define global constants which are used throughout `spectrumdevice`.
 
+## Limitations
+* Currently, `spectrumdevice` only supports Standard Single and Multi FIFO acquisition modes. See the 
+  Spectrum documentation for more information.
+* When defining a transfer buffer - the software buffer into which samples are transferred from a hardware device - 
+  the notify-size is automatically set equal to the buffer length. This works fine for most situations. See the 
+  Spectrum documentation for more information.
+* Only current digitisers from the [59xx](https://spectrum-instrumentation.com/de/59xx-16-bit-digitizer-125-mss),
+[44xx](https://spectrum-instrumentation.com/de/44xx-1416-bit-digitizers-500-mss) and 
+[22xx](https://spectrum-instrumentation.com/de/22xx-8-bit-digitizers-5-gss) families are currently supported, and 
+`spectrumdevice` has only been tested on 59xx devices. However, `spectrumdevice` may work fine on older devices. If 
+  you've 
+tried `spectrumdevice` on an older device, please let us know if it works and raise any issues you encounter in the 
+issue tracker. It's likely possible to add support with minimal effort.
+
 ## Usage
 ### Connect to devices
 Connect to local (PCIe) cards:
@@ -92,8 +106,10 @@ of the mock data source must also be set on construction.
 
 ```python
 from spectrumdevice import MockSpectrumCard, MockSpectrumStarHub
+from spectrumdevice.settings import CardType
 
-mock_card = MockSpectrumCard(device_number=0, mock_source_frame_rate_hz=10.0, num_modules=2, num_channels_per_module=4)
+mock_card = MockSpectrumCard(device_number=0, card_type=CardType.TYP_M2P5966_X4, mock_source_frame_rate_hz=10.0, 
+                             num_modules=2, num_channels_per_module=4)
 mock_hub = MockSpectrumStarHub(device_number=0, child_cards=[mock_card], master_card_index=0)
 ```
 After construction, `MockSpectrumCard` and `MockSpectrumStarHub` can be used identically to `SpectrumCard` 
@@ -198,13 +214,6 @@ card.stop_acquisition()
 and execute some logic to exit the `while` loop.
 ## Examples
 See the `example_scripts` directory.
-
-## Limitations
-* Currently, `spectrumdevice` only supports Standard Single and Multi FIFO acquisition modes. See the 
-  Spectrum documentation for more information.
-* When defining a transfer buffer - the software buffer into which samples are transferred from a hardware device - 
-  the notify-size is automatically set equal to the buffer length. This works fine for most situations. See the 
-  Spectrum documentation for more information.
 
 ## API Documentation
 

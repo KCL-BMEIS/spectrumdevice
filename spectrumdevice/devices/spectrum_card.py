@@ -12,10 +12,12 @@ from typing import List, Optional, Tuple, Sequence
 
 from numpy import ndarray, mod
 
+from spectrumdevice.settings.card_dependent_properties import get_memsize_step_size
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
 from spectrumdevice.spectrum_wrapper import destroy_handle
 from spectrumdevice.settings import (
     CARD_STATUS_TYPE,
+    CardType,
     AvailableIOModes,
     TriggerSource,
     ExternalTriggerMode,
@@ -70,6 +72,7 @@ from spectrum_gmbh.regs import (
     SPC_DATA_AVAIL_USER_LEN,
     SPC_DATA_AVAIL_CARD_LEN,
     SPC_SEGMENTSIZE,
+    SPC_PCITYP,
 )
 
 logger = logging.getLogger(__name__)
@@ -90,6 +93,7 @@ class SpectrumCard(SpectrumDevice):
         else:
             self._visa_string = f"/dev/spcm{device_number}"
         self._connect(self._visa_string)
+        self._card_type = CardType(self.read_spectrum_device_register(SPC_PCITYP))
         self._trigger_sources: List[TriggerSource] = []
         self._channels = self._init_channels()
         self._enabled_channels: List[int] = [0]
@@ -445,12 +449,13 @@ class SpectrumCard(SpectrumDevice):
         return self.read_spectrum_device_register(SPC_MEMSIZE)
 
     def set_acquisition_length_in_samples(self, length_in_samples: int) -> None:
-        """Change the recording length (per channel). In FIFO mode, it will be quantised to nearest 8 samples.
+        """Change the recording length (per channel). In FIFO mode, it will be quantised according to the step size
+          allowed by the connected card type.
 
         Args:
             length_in_samples (int): The desired recording length ('acquisition length'), in samples.
         """
-        length_in_samples = self._coerce_to_nearest_8_samples_if_fifo(length_in_samples)
+        length_in_samples = self._coerce_num_samples_if_fifo(length_in_samples)
         self.write_to_spectrum_device_register(SPC_SEGMENTSIZE, length_in_samples)
         self.write_to_spectrum_device_register(SPC_MEMSIZE, length_in_samples)
 
@@ -465,26 +470,27 @@ class SpectrumCard(SpectrumDevice):
 
     def set_post_trigger_length_in_samples(self, length_in_samples: int) -> None:
         """Change the number of samples of the recording that will contain data received after the trigger event.
-        In FIFO mode, this will be quantised to nearest 8 samples with a maximum value 8 samples less than the acquisition
-        length.
+        In FIFO mode, this will be quantised according to the minimum step size allowed by the connected card.
 
         Args:
             length_in_samples (int): The desired post trigger length in samples."""
-        length_in_samples = self._coerce_to_nearest_8_samples_if_fifo(length_in_samples)
+        length_in_samples = self._coerce_num_samples_if_fifo(length_in_samples)
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
-            if (self.acquisition_length_in_samples - length_in_samples) < 8:
+            if (self.acquisition_length_in_samples - length_in_samples) < get_memsize_step_size(self._card_type):
                 logger.warning(
-                    "FIFO mode: coercing post trigger length to maximum allowed value (8 samples less than "
+                    "FIFO mode: coercing post trigger length to maximum allowed value (step-size samples less than "
                     "the acquisition length)."
                 )
-                length_in_samples = self.acquisition_length_in_samples - 8
+                length_in_samples = self.acquisition_length_in_samples - get_memsize_step_size(self._card_type)
         self.write_to_spectrum_device_register(SPC_POSTTRIGGER, length_in_samples)
 
-    def _coerce_to_nearest_8_samples_if_fifo(self, value: int) -> int:
+    def _coerce_num_samples_if_fifo(self, value: int) -> int:
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
-            if value != mod(value, 8):
-                logger.warning("FIFO mode: coercing length to nearest 8 samples")
-                value = int(value - mod(value, 8))
+            if value != mod(value, get_memsize_step_size(self._card_type)):
+                logger.warning(
+                    f"FIFO mode: coercing length to nearest {get_memsize_step_size(self._card_type)}" f" samples"
+                )
+                value = int(value - mod(value, get_memsize_step_size(self._card_type)))
         return value
 
     @property
