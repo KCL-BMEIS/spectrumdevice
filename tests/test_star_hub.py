@@ -17,6 +17,7 @@ from tests.configuration import (
 from spectrum_gmbh.regs import SPC_CHENABLE
 
 
+@pytest.mark.star_hub
 class StarHubTest(SingleCardTest):
     def setUp(self) -> None:
         self._device: SpectrumStarHub = create_spectrum_star_hub_for_testing()
