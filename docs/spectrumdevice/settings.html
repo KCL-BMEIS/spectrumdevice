@@ -1,0 +1,2402 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="pdoc 8.0.1" />
+    <title>spectrumdevice.settings API documentation</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%2244.5%202.5%2015%2015%22%3E%3Cpath%20d%3D%22M49.351%2021.041c-.233-.721-.546-2.408-.772-4.076-.042-.09-.067-.187-.046-.288-.166-1.347-.277-2.625-.241-3.351-1.378-1.008-2.271-2.586-2.271-4.362%200-.976.272-1.935.788-2.774.057-.094.122-.18.184-.268-.033-.167-.052-.339-.052-.516%200-1.477%201.202-2.679%202.679-2.679.791%200%201.496.352%201.987.9a6.3%206.3%200%200%201%201.001.029c.492-.564%201.207-.929%202.012-.929%201.477%200%202.679%201.202%202.679%202.679a2.65%202.65%200%200%201-.269%201.148c.383.747.595%201.572.595%202.41%200%202.311-1.507%204.29-3.635%205.107.037.699.147%202.27.423%203.294l.137.461c.156%202.136-4.612%205.166-5.199%203.215zm.127-4.919a4.78%204.78%200%200%200%20.775-.584c-.172-.115-.505-.254-.88-.378zm.331%202.302l.828-.502c-.202-.143-.576-.328-.984-.49zm.45%202.157l.701-.403c-.214-.115-.536-.249-.891-.376l.19.779zM49.13%204.141c0%20.152.123.276.276.276s.275-.124.275-.276-.123-.276-.276-.276-.275.124-.275.276zm.735-.389a1.15%201.15%200%200%201%20.314.783%201.16%201.16%200%200%201-1.162%201.162c-.457%200-.842-.27-1.032-.653-.026.117-.042.238-.042.362a1.68%201.68%200%200%200%201.679%201.679%201.68%201.68%200%200%200%201.679-1.679c0-.843-.626-1.535-1.436-1.654zm3.076%201.654a1.68%201.68%200%200%200%201.679%201.679%201.68%201.68%200%200%200%201.679-1.679c0-.037-.009-.072-.011-.109-.21.3-.541.508-.935.508a1.16%201.16%200%200%201-1.162-1.162%201.14%201.14%200%200%201%20.474-.912c-.015%200-.03-.005-.045-.005-.926.001-1.679.754-1.679%201.68zm1.861-1.265c0%20.152.123.276.276.276s.275-.124.275-.276-.123-.276-.276-.276-.275.124-.275.276zm1.823%204.823c0-.52-.103-1.035-.288-1.52-.466.394-1.06.64-1.717.64-1.144%200-2.116-.725-2.499-1.738-.383%201.012-1.355%201.738-2.499%201.738-.867%200-1.631-.421-2.121-1.062-.307.605-.478%201.267-.478%201.942%200%202.486%202.153%204.51%204.801%204.51s4.801-2.023%204.801-4.51zm-3.032%209.156l-.146-.492c-.276-1.02-.395-2.457-.444-3.268a6.11%206.11%200%200%201-1.18.115%206.01%206.01%200%200%201-2.536-.562l.006.175c.802.215%201.848.612%202.021%201.25.079.295-.021.601-.274.837l-.598.501c.667.304%201.243.698%201.311%201.179.02.144.022.507-.393.787l-.564.365c1.285.521%201.361.96%201.381%201.126.018.142.011.496-.427.746l-.854.489c.064-1.19%201.985-2.585%202.697-3.248zM49.34%209.925c0-.667%201-.667%201%200%200%20.653.818%201.205%201.787%201.205s1.787-.552%201.787-1.205c0-.667%201-.667%201%200%200%201.216-1.25%202.205-2.787%202.205s-2.787-.989-2.787-2.205zm-.887-7.633c-.093.077-.205.114-.317.114a.5.5%200%200%201-.318-.886L49.183.397a.5.5%200%200%201%20.703.068.5.5%200%200%201-.069.703zm7.661-.065c-.086%200-.173-.022-.253-.068l-1.523-.893c-.575-.337-.069-1.2.506-.863l1.523.892a.5.5%200%200%201%20.179.685c-.094.158-.261.247-.432.247z%22%20fill%3D%22%233bb300%22/%3E%3C/svg%3E"/>
+
+
+<style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
+<style>/*! pygments syntax highlighting */pre{line-height:125%;}td.linenos pre{color:#000000; background-color:#f0f0f0; padding-left:5px; padding-right:5px;}span.linenos{color:#000000; background-color:#f0f0f0; padding-left:5px; padding-right:5px;}td.linenos pre.special{color:#000000; background-color:#ffffc0; padding-left:5px; padding-right:5px;}span.linenos.special{color:#000000; background-color:#ffffc0; padding-left:5px; padding-right:5px;}.pdoc .hll{background-color:#ffffcc}.pdoc{background:#f8f8f8;}.pdoc .c{color:#408080; font-style:italic}.pdoc .err{border:1px solid #FF0000}.pdoc .k{color:#008000; font-weight:bold}.pdoc .o{color:#666666}.pdoc .ch{color:#408080; font-style:italic}.pdoc .cm{color:#408080; font-style:italic}.pdoc .cp{color:#BC7A00}.pdoc .cpf{color:#408080; font-style:italic}.pdoc .c1{color:#408080; font-style:italic}.pdoc .cs{color:#408080; font-style:italic}.pdoc .gd{color:#A00000}.pdoc .ge{font-style:italic}.pdoc .gr{color:#FF0000}.pdoc .gh{color:#000080; font-weight:bold}.pdoc .gi{color:#00A000}.pdoc .go{color:#888888}.pdoc .gp{color:#000080; font-weight:bold}.pdoc .gs{font-weight:bold}.pdoc .gu{color:#800080; font-weight:bold}.pdoc .gt{color:#0044DD}.pdoc .kc{color:#008000; font-weight:bold}.pdoc .kd{color:#008000; font-weight:bold}.pdoc .kn{color:#008000; font-weight:bold}.pdoc .kp{color:#008000}.pdoc .kr{color:#008000; font-weight:bold}.pdoc .kt{color:#B00040}.pdoc .m{color:#666666}.pdoc .s{color:#BA2121}.pdoc .na{color:#7D9029}.pdoc .nb{color:#008000}.pdoc .nc{color:#0000FF; font-weight:bold}.pdoc .no{color:#880000}.pdoc .nd{color:#AA22FF}.pdoc .ni{color:#999999; font-weight:bold}.pdoc .ne{color:#D2413A; font-weight:bold}.pdoc .nf{color:#0000FF}.pdoc .nl{color:#A0A000}.pdoc .nn{color:#0000FF; font-weight:bold}.pdoc .nt{color:#008000; font-weight:bold}.pdoc .nv{color:#19177C}.pdoc .ow{color:#AA22FF; font-weight:bold}.pdoc .w{color:#bbbbbb}.pdoc .mb{color:#666666}.pdoc .mf{color:#666666}.pdoc .mh{color:#666666}.pdoc .mi{color:#666666}.pdoc .mo{color:#666666}.pdoc .sa{color:#BA2121}.pdoc .sb{color:#BA2121}.pdoc .sc{color:#BA2121}.pdoc .dl{color:#BA2121}.pdoc .sd{color:#BA2121; font-style:italic}.pdoc .s2{color:#BA2121}.pdoc .se{color:#BB6622; font-weight:bold}.pdoc .sh{color:#BA2121}.pdoc .si{color:#BB6688; font-weight:bold}.pdoc .sx{color:#008000}.pdoc .sr{color:#BB6688}.pdoc .s1{color:#BA2121}.pdoc .ss{color:#19177C}.pdoc .bp{color:#008000}.pdoc .fm{color:#0000FF}.pdoc .vc{color:#19177C}.pdoc .vg{color:#19177C}.pdoc .vi{color:#19177C}.pdoc .vm{color:#19177C}.pdoc .il{color:#666666}</style>
+<style>/*! pdoc */:root{--pdoc-background:#fff;}.pdoc{--text:#212529;--muted:#6c757d;--link:#3660a5;--link-hover:#1659c5;--code:#f7f7f7;--active:#fff598;--accent:#eee;--accent2:#c1c1c1;--nav-hover:rgba(255, 255, 255, 0.5);--name:#0066BB;--def:#008800;--annotation:#007020;}body{background-color:var(--pdoc-background);}html, body{width:100%;height:100%;}@media (max-width:769px){#navtoggle{cursor:pointer;position:absolute;width:50px;height:40px;top:1rem;right:1rem;border-color:var(--text);color:var(--text);display:flex;opacity:0.8;}#navtoggle:hover{opacity:1;}#togglestate + div{display:none;}#togglestate:checked + div{display:inherit;}main, header{padding:2rem 3vw;}.git-button{display:none !important;}nav input[type="search"]:valid ~ *{display:none !important;}}@media (min-width:770px){:root{--sidebar-width:clamp(12.5rem, 28vw, 22rem);}nav{position:fixed;overflow:auto;height:100vh;width:var(--sidebar-width);}main, header{padding:3rem 2rem 3rem calc(var(--sidebar-width) + 3rem);width:calc(54rem + var(--sidebar-width));max-width:100%;}#navtoggle{display:none;}}#togglestate{display:none;}nav.pdoc{--pad:1.75rem;--indent:1.5rem;background-color:var(--accent);border-right:1px solid var(--accent2);box-shadow:0 0 20px rgba(50, 50, 50, .2) inset;padding:0 0 0 var(--pad);overflow-wrap:anywhere;scrollbar-width:thin; scrollbar-color:var(--accent2) transparent }nav.pdoc::-webkit-scrollbar{width:.4rem; }nav.pdoc::-webkit-scrollbar-thumb{background-color:var(--accent2); }nav.pdoc > div{padding:var(--pad) 0;}nav.pdoc .module-list-button{display:inline-flex;align-items:center;color:var(--text);border-color:var(--muted);margin-bottom:1rem;}nav.pdoc .module-list-button:hover{border-color:var(--text);}nav.pdoc input[type=search]{display:block;outline-offset:0;width:calc(100% - var(--pad));}nav.pdoc .logo{max-width:calc(100% - var(--pad));max-height:35vh;display:block;margin:0 auto 1rem;transform:translate(calc(-.5 * var(--pad)), 0);}nav.pdoc ul{list-style:none;padding-left:0;}nav.pdoc li{display:block;margin:0;padding:.2rem 0 .2rem var(--indent);transition:all 100ms;}nav.pdoc > div > ul > li{padding-left:0;}nav.pdoc li:hover{background-color:var(--nav-hover);}nav.pdoc a, nav.pdoc a:hover{color:var(--text);}nav.pdoc a{display:block;}nav.pdoc > h2:first-of-type{margin-top:1.5rem;}nav.pdoc .class:before{content:"class ";color:var(--muted);}nav.pdoc .function:after{content:"()";color:var(--muted);}nav.pdoc footer:before{content:"";display:block;width:calc(100% - var(--pad));border-top:solid var(--accent2) 1px;margin-top:1.5rem;padding-top:.5rem;}nav.pdoc footer{font-size:small;}html, main{scroll-behavior:smooth;}.pdoc{color:var(--text);box-sizing:border-box;line-height:1.5;background:none;}.pdoc .pdoc-button{display:inline-block;border:solid black 1px;border-radius:2px;font-size:.75rem;padding:calc(0.5em - 1px) 1em;transition:100ms all;}.pdoc .visually-hidden{position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;overflow:hidden !important;clip:rect(0, 0, 0, 0) !important;white-space:nowrap !important;border:0 !important;}.pdoc h1, .pdoc h2, .pdoc h3{font-weight:300;margin:.3em 0;padding:.2em 0;}.pdoc a{text-decoration:none;color:var(--link);}.pdoc a:hover{color:var(--link-hover);}.pdoc blockquote{margin-left:2rem;}.pdoc pre{background-color:var(--code);border-top:1px solid var(--accent2);border-bottom:1px solid var(--accent2);margin-bottom:1em;padding:.5rem 0 .5rem .5rem;overflow-x:auto;}.pdoc code{color:var(--text);padding:.2em .4em;margin:0;font-size:85%;background-color:var(--code);border-radius:6px;}.pdoc a > code{color:inherit;}.pdoc pre > code{display:inline-block;font-size:inherit;background:none;border:none;padding:0;}.pdoc .modulename{margin-top:0;font-weight:bold;}.pdoc .modulename a{color:var(--link);transition:100ms all;}.pdoc .git-button{float:right;border:solid var(--link) 1px;}.pdoc .git-button:hover{background-color:var(--link);color:var(--pdoc-background);}.pdoc details{--shift:-40px;text-align:right;margin-top:var(--shift);margin-bottom:calc(0px - var(--shift));clear:both;filter:opacity(1);}.pdoc details:not([open]){height:0;overflow:visible;}.pdoc details > summary{font-size:.75rem;cursor:pointer;color:var(--muted);border-width:0;padding:0 .7em;display:inline-block;display:inline list-item;user-select:none;}.pdoc details > summary:focus{outline:0;}.pdoc details > div{margin-top:calc(0px - var(--shift) / 2);text-align:left;}.pdoc .docstring{margin-bottom:1.5rem;}.pdoc > section:first-of-type > .docstring{margin-bottom:3rem;}.pdoc .docstring pre{margin-left:1em;margin-right:1em;}.pdoc h1:target,.pdoc h2:target,.pdoc h3:target,.pdoc h4:target,.pdoc h5:target,.pdoc h6:target{background-color:var(--active);box-shadow:-1rem 0 0 0 var(--active);}.pdoc div:target > .attr,.pdoc section:target > .attr,.pdoc dd:target > a{background-color:var(--active);}.pdoc .attr:hover{filter:contrast(0.95);}.pdoc .headerlink{position:absolute;width:0;margin-left:-1.5rem;line-height:1.4rem;font-size:1.5rem;font-weight:normal;transition:all 100ms ease-in-out;opacity:0;}.pdoc .attr > .headerlink{margin-left:-2.5rem;}.pdoc *:hover > .headerlink,.pdoc *:target > .attr > .headerlink{opacity:1;}.pdoc .attr{display:block;color:var(--text);margin:1rem 0 .5rem;padding:.4rem 5rem .4rem 1rem;background-color:var(--accent);}.pdoc .classattr{margin-left:2rem;}.pdoc .name{color:var(--name);font-weight:bold;}.pdoc .def{color:var(--def);font-weight:bold;}.pdoc .signature{white-space:pre-wrap;}.pdoc .annotation{color:var(--annotation);}.pdoc .inherited{margin-left:2rem;}.pdoc .inherited dt{font-weight:700;}.pdoc .inherited dt, .pdoc .inherited dd{display:inline;margin-left:0;margin-bottom:.5rem;}.pdoc .inherited dd:not(:last-child):after{content:", ";}.pdoc .inherited .class:before{content:"class ";}.pdoc .inherited .function a:after{content:"()";}.pdoc .search-result .docstring{overflow:auto;max-height:25vh;}.pdoc .search-result.focused > .attr{background-color:var(--active);}.pdoc .attribution{margin-top:2rem;display:block;opacity:0.5;transition:all 200ms;filter:grayscale(100%);}.pdoc .attribution:hover{opacity:1;filter:grayscale(0%);}.pdoc .attribution img{margin-left:5px;height:35px;vertical-align:middle;width:70px;transition:all 200ms;}</style>
+</head>
+<body>        <nav class="pdoc">
+            <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
+            <input id="togglestate" type="checkbox">
+            <div>
+                        <a class="pdoc-button module-list-button" href="../index.html">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0v-2z"/>
+  <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
+</svg>                            &nbsp;spectrumdevice</a>
+
+
+                        <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
+                               pattern=".+" required>
+
+
+
+                    <h2>API Documentation</h2>
+                        <ul class="memberlist">
+            <li>
+                    <a class="class" href="#AcquisitionSettings">AcquisitionSettings</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#AcquisitionSettings.__init__">AcquisitionSettings</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AcquisitionSettings.acquisition_mode">acquisition_mode</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AcquisitionSettings.sample_rate_in_hz">sample_rate_in_hz</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AcquisitionSettings.acquisition_length_in_samples">acquisition_length_in_samples</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AcquisitionSettings.pre_trigger_length_in_samples">pre_trigger_length_in_samples</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AcquisitionSettings.timeout_in_ms">timeout_in_ms</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AcquisitionSettings.enabled_channels">enabled_channels</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AcquisitionSettings.vertical_ranges_in_mv">vertical_ranges_in_mv</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AcquisitionSettings.vertical_offsets_in_percent">vertical_offsets_in_percent</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#TriggerSettings">TriggerSettings</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#TriggerSettings.__init__">TriggerSettings</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TriggerSettings.trigger_sources">trigger_sources</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TriggerSettings.external_trigger_mode">external_trigger_mode</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TriggerSettings.external_trigger_level_in_mv">external_trigger_level_in_mv</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TriggerSettings.external_trigger_pulse_width_in_samples">external_trigger_pulse_width_in_samples</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#AcquisitionMode">AcquisitionMode</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#AcquisitionMode.SPC_REC_STD_SINGLE">SPC_REC_STD_SINGLE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AcquisitionMode.SPC_REC_FIFO_MULTI">SPC_REC_FIFO_MULTI</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#ClockMode">ClockMode</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#ClockMode.SPC_CM_INTPLL">SPC_CM_INTPLL</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ClockMode.SPC_CM_EXTERNAL">SPC_CM_EXTERNAL</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ClockMode.SPC_CM_EXTREFCLOCK">SPC_CM_EXTREFCLOCK</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#CardFeature">CardFeature</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_MULTI">SPCM_FEAT_MULTI</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_GATE">SPCM_FEAT_GATE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_DIGITAL">SPCM_FEAT_DIGITAL</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_TIMESTAMP">SPCM_FEAT_TIMESTAMP</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_STARHUB6_EXTM">SPCM_FEAT_STARHUB6_EXTM</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_STARHUB8_EXTM">SPCM_FEAT_STARHUB8_EXTM</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_STARHUB4">SPCM_FEAT_STARHUB4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_STARHUB5">SPCM_FEAT_STARHUB5</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_STARHUB16_EXTM">SPCM_FEAT_STARHUB16_EXTM</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_STARHUB8">SPCM_FEAT_STARHUB8</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_STARHUB16">SPCM_FEAT_STARHUB16</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_ABA">SPCM_FEAT_ABA</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_BASEXIO">SPCM_FEAT_BASEXIO</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_AMPLIFIER_10V">SPCM_FEAT_AMPLIFIER_10V</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_STARHUBSYSMASTER">SPCM_FEAT_STARHUBSYSMASTER</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_DIFFMODE">SPCM_FEAT_DIFFMODE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_SEQUENCE">SPCM_FEAT_SEQUENCE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_AMPMODULE_10V">SPCM_FEAT_AMPMODULE_10V</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_STARHUBSYSSLAVE">SPCM_FEAT_STARHUBSYSSLAVE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_NETBOX">SPCM_FEAT_NETBOX</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_REMOTESERVER">SPCM_FEAT_REMOTESERVER</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_SCAPP">SPCM_FEAT_SCAPP</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CardFeature.SPCM_FEAT_CUSTOMMOD_MASK">SPCM_FEAT_CUSTOMMOD_MASK</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#AdvancedCardFeature">AdvancedCardFeature</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#AdvancedCardFeature.SPCM_FEAT_EXTFW_SEGSTAT">SPCM_FEAT_EXTFW_SEGSTAT</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AdvancedCardFeature.SPCM_FEAT_EXTFW_SEGAVERAGE">SPCM_FEAT_EXTFW_SEGAVERAGE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AdvancedCardFeature.SPCM_FEAT_EXTFW_BOXCAR">SPCM_FEAT_EXTFW_BOXCAR</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#IOLineMode">IOLineMode</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#IOLineMode.SPCM_XMODE_DISABLE">SPCM_XMODE_DISABLE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#IOLineMode.SPCM_XMODE_ASYNCIN">SPCM_XMODE_ASYNCIN</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#IOLineMode.SPCM_XMODE_ASYNCOUT">SPCM_XMODE_ASYNCOUT</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#IOLineMode.SPCM_XMODE_DIGIN">SPCM_XMODE_DIGIN</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#IOLineMode.SPCM_XMODE_TRIGIN">SPCM_XMODE_TRIGIN</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#IOLineMode.SPCM_XMODE_DIGOUT">SPCM_XMODE_DIGOUT</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#IOLineMode.SPCM_XMODE_TRIGOUT">SPCM_XMODE_TRIGOUT</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#IOLineMode.SPCM_XMODE_RUNSTATE">SPCM_XMODE_RUNSTATE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#IOLineMode.SPCM_XMODE_ARMSTATE">SPCM_XMODE_ARMSTATE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#IOLineMode.SPCM_XMODE_CONTOUTMARK">SPCM_XMODE_CONTOUTMARK</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#AvailableIOModes">AvailableIOModes</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#AvailableIOModes.__init__">AvailableIOModes</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AvailableIOModes.X0">X0</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AvailableIOModes.X1">X1</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AvailableIOModes.X2">X2</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AvailableIOModes.X3">X3</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#TransferBuffer">TransferBuffer</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#TransferBuffer.__init__">TransferBuffer</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TransferBuffer.type">type</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TransferBuffer.direction">direction</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TransferBuffer.board_memory_offset_bytes">board_memory_offset_bytes</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TransferBuffer.data_array">data_array</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TransferBuffer.data_array_pointer">data_array_pointer</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TransferBuffer.data_array_length_in_bytes">data_array_length_in_bytes</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TransferBuffer.notify_size_in_bytes">notify_size_in_bytes</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#CardToPCDataTransferBuffer">CardToPCDataTransferBuffer</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#CardToPCDataTransferBuffer.__init__">CardToPCDataTransferBuffer</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#TriggerSource">TriggerSource</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#TriggerSource.SPC_TMASK_SOFTWARE">SPC_TMASK_SOFTWARE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TriggerSource.SPC_TMASK_EXT0">SPC_TMASK_EXT0</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TriggerSource.SPC_TMASK_EXT1">SPC_TMASK_EXT1</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TriggerSource.SPC_TMASK_EXT2">SPC_TMASK_EXT2</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TriggerSource.SPC_TMASK_EXT3">SPC_TMASK_EXT3</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TriggerSource.SPC_TMASK_NONE">SPC_TMASK_NONE</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#ExternalTriggerMode">ExternalTriggerMode</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#ExternalTriggerMode.SPC_TM_NONE">SPC_TM_NONE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ExternalTriggerMode.SPC_TM_POS">SPC_TM_POS</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ExternalTriggerMode.SPC_TM_NEG">SPC_TM_NEG</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ExternalTriggerMode.SPC_TM_BOTH">SPC_TM_BOTH</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ExternalTriggerMode.SPC_TM_HIGH">SPC_TM_HIGH</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ExternalTriggerMode.SPC_TM_LOW">SPC_TM_LOW</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ExternalTriggerMode.SPC_TM_PW_GREATER">SPC_TM_PW_GREATER</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ExternalTriggerMode.SPC_TM_PW_SMALLER">SPC_TM_PW_SMALLER</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="variable" href="#CARD_STATUS_TYPE">CARD_STATUS_TYPE</a>
+            </li>
+            <li>
+                    <a class="variable" href="#STAR_HUB_STATUS_TYPE">STAR_HUB_STATUS_TYPE</a>
+            </li>
+            <li>
+                    <a class="class" href="#StatusCode">StatusCode</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#StatusCode.M2STAT_NONE">M2STAT_NONE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StatusCode.M2STAT_CARD_PRETRIGGER">M2STAT_CARD_PRETRIGGER</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StatusCode.M2STAT_CARD_TRIGGER">M2STAT_CARD_TRIGGER</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StatusCode.M2STAT_CARD_READY">M2STAT_CARD_READY</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StatusCode.M2STAT_CARD_SEGMENT_PRETRG">M2STAT_CARD_SEGMENT_PRETRG</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StatusCode.M2STAT_DATA_BLOCKREADY">M2STAT_DATA_BLOCKREADY</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StatusCode.M2STAT_DATA_END">M2STAT_DATA_END</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StatusCode.M2STAT_DATA_OVERRUN">M2STAT_DATA_OVERRUN</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StatusCode.M2STAT_DATA_ERROR">M2STAT_DATA_ERROR</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StatusCode.M2STAT_EXTRA_BLOCKREADY">M2STAT_EXTRA_BLOCKREADY</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StatusCode.M2STAT_EXTRA_END">M2STAT_EXTRA_END</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StatusCode.M2STAT_EXTRA_OVERRUN">M2STAT_EXTRA_OVERRUN</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StatusCode.M2STAT_EXTRA_ERROR">M2STAT_EXTRA_ERROR</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#SpectrumRegisterLength">SpectrumRegisterLength</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#SpectrumRegisterLength.THIRTY_TWO">THIRTY_TWO</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#SpectrumRegisterLength.SIXTY_FOUR">SIXTY_FOUR</a>
+                        </li>
+                </ul>
+
+            </li>
+    </ul>
+
+
+
+                    <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev">
+                        built with <span class="visually-hidden">pdoc</span><img
+                            alt="pdoc logo"
+                            src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20role%3D%22img%22%20aria-label%3D%22pdoc%20logo%22%20width%3D%22300%22%20height%3D%22150%22%20viewBox%3D%22-1%200%2060%2030%22%3E%3Ctitle%3Epdoc%3C/title%3E%3Cpath%20d%3D%22M29.621%2021.293c-.011-.273-.214-.475-.511-.481a.5.5%200%200%200-.489.503l-.044%201.393c-.097.551-.695%201.215-1.566%201.704-.577.428-1.306.486-2.193.182-1.426-.617-2.467-1.654-3.304-2.487l-.173-.172a3.43%203.43%200%200%200-.365-.306.49.49%200%200%200-.286-.196c-1.718-1.06-4.931-1.47-7.353.191l-.219.15c-1.707%201.187-3.413%202.131-4.328%201.03-.02-.027-.49-.685-.141-1.763.233-.721.546-2.408.772-4.076.042-.09.067-.187.046-.288.166-1.347.277-2.625.241-3.351%201.378-1.008%202.271-2.586%202.271-4.362%200-.976-.272-1.935-.788-2.774-.057-.094-.122-.18-.184-.268.033-.167.052-.339.052-.516%200-1.477-1.202-2.679-2.679-2.679-.791%200-1.496.352-1.987.9a6.3%206.3%200%200%200-1.001.029c-.492-.564-1.207-.929-2.012-.929-1.477%200-2.679%201.202-2.679%202.679A2.65%202.65%200%200%200%20.97%206.554c-.383.747-.595%201.572-.595%202.41%200%202.311%201.507%204.29%203.635%205.107-.037.699-.147%202.27-.423%203.294l-.137.461c-.622%202.042-2.515%208.257%201.727%2010.643%201.614.908%203.06%201.248%204.317%201.248%202.665%200%204.492-1.524%205.322-2.401%201.476-1.559%202.886-1.854%206.491.82%201.877%201.393%203.514%201.753%204.861%201.068%202.223-1.713%202.811-3.867%203.399-6.374.077-.846.056-1.469.054-1.537zm-4.835%204.313c-.054.305-.156.586-.242.629-.034-.007-.131-.022-.307-.157-.145-.111-.314-.478-.456-.908.221.121.432.25.675.355.115.039.219.051.33.081zm-2.251-1.238c-.05.33-.158.648-.252.694-.022.001-.125-.018-.307-.157-.217-.166-.488-.906-.639-1.573.358.344.754.693%201.198%201.036zm-3.887-2.337c-.006-.116-.018-.231-.041-.342.635.145%201.189.368%201.599.625.097.231.166.481.174.642-.03.049-.055.101-.067.158-.046.013-.128.026-.298.004-.278-.037-.901-.57-1.367-1.087zm-1.127-.497c.116.306.176.625.12.71-.019.014-.117.045-.345.016-.206-.027-.604-.332-.986-.695.41-.051.816-.056%201.211-.031zm-4.535%201.535c.209.22.379.47.358.598-.006.041-.088.138-.351.234-.144.055-.539-.063-.979-.259a11.66%2011.66%200%200%200%20.972-.573zm.983-.664c.359-.237.738-.418%201.126-.554.25.237.479.548.457.694-.006.042-.087.138-.351.235-.174.064-.694-.105-1.232-.375zm-3.381%201.794c-.022.145-.061.29-.149.401-.133.166-.358.248-.69.251h-.002c-.133%200-.306-.26-.45-.621.417.091.854.07%201.291-.031zm-2.066-8.077a4.78%204.78%200%200%201-.775-.584c.172-.115.505-.254.88-.378l-.105.962zm-.331%202.302a10.32%2010.32%200%200%201-.828-.502c.202-.143.576-.328.984-.49l-.156.992zm-.45%202.157l-.701-.403c.214-.115.536-.249.891-.376a11.57%2011.57%200%200%201-.19.779zm-.181%201.716c.064.398.194.702.298.893-.194-.051-.435-.162-.736-.398.061-.119.224-.3.438-.495zM8.87%204.141c0%20.152-.123.276-.276.276s-.275-.124-.275-.276.123-.276.276-.276.275.124.275.276zm-.735-.389a1.15%201.15%200%200%200-.314.783%201.16%201.16%200%200%200%201.162%201.162c.457%200%20.842-.27%201.032-.653.026.117.042.238.042.362a1.68%201.68%200%200%201-1.679%201.679%201.68%201.68%200%200%201-1.679-1.679c0-.843.626-1.535%201.436-1.654zM5.059%205.406A1.68%201.68%200%200%201%203.38%207.085a1.68%201.68%200%200%201-1.679-1.679c0-.037.009-.072.011-.109.21.3.541.508.935.508a1.16%201.16%200%200%200%201.162-1.162%201.14%201.14%200%200%200-.474-.912c.015%200%20.03-.005.045-.005.926.001%201.679.754%201.679%201.68zM3.198%204.141c0%20.152-.123.276-.276.276s-.275-.124-.275-.276.123-.276.276-.276.275.124.275.276zM1.375%208.964c0-.52.103-1.035.288-1.52.466.394%201.06.64%201.717.64%201.144%200%202.116-.725%202.499-1.738.383%201.012%201.355%201.738%202.499%201.738.867%200%201.631-.421%202.121-1.062.307.605.478%201.267.478%201.942%200%202.486-2.153%204.51-4.801%204.51s-4.801-2.023-4.801-4.51zm24.342%2019.349c-.985.498-2.267.168-3.813-.979-3.073-2.281-5.453-3.199-7.813-.705-1.315%201.391-4.163%203.365-8.423.97-3.174-1.786-2.239-6.266-1.261-9.479l.146-.492c.276-1.02.395-2.457.444-3.268a6.11%206.11%200%200%200%201.18.115%206.01%206.01%200%200%200%202.536-.562l-.006.175c-.802.215-1.848.612-2.021%201.25-.079.295.021.601.274.837.219.203.415.364.598.501-.667.304-1.243.698-1.311%201.179-.02.144-.022.507.393.787.213.144.395.26.564.365-1.285.521-1.361.96-1.381%201.126-.018.142-.011.496.427.746l.854.489c-.473.389-.971.914-.999%201.429-.018.278.095.532.316.713.675.556%201.231.721%201.653.721.059%200%20.104-.014.158-.02.207.707.641%201.64%201.513%201.64h.013c.8-.008%201.236-.345%201.462-.626.173-.216.268-.457.325-.692.424.195.93.374%201.372.374.151%200%20.294-.021.423-.068.732-.27.944-.704.993-1.021.009-.061.003-.119.002-.179.266.086.538.147.789.147.15%200%20.294-.021.423-.069.542-.2.797-.489.914-.754.237.147.478.258.704.288.106.014.205.021.296.021.356%200%20.595-.101.767-.229.438.435%201.094.992%201.656%201.067.106.014.205.021.296.021a1.56%201.56%200%200%200%20.323-.035c.17.575.453%201.289.866%201.605.358.273.665.362.914.362a.99.99%200%200%200%20.421-.093%201.03%201.03%200%200%200%20.245-.164c.168.428.39.846.68%201.068.358.273.665.362.913.362a.99.99%200%200%200%20.421-.093c.317-.148.512-.448.639-.762.251.157.495.257.726.257.127%200%20.25-.024.37-.071.427-.17.706-.617.841-1.314.022-.015.047-.022.068-.038.067-.051.133-.104.196-.159-.443%201.486-1.107%202.761-2.086%203.257zM8.66%209.925a.5.5%200%201%200-1%200c0%20.653-.818%201.205-1.787%201.205s-1.787-.552-1.787-1.205a.5.5%200%201%200-1%200c0%201.216%201.25%202.205%202.787%202.205s2.787-.989%202.787-2.205zm4.4%2015.965l-.208.097c-2.661%201.258-4.708%201.436-6.086.527-1.542-1.017-1.88-3.19-1.844-4.198a.4.4%200%200%200-.385-.414c-.242-.029-.406.164-.414.385-.046%201.249.367%203.686%202.202%204.896.708.467%201.547.7%202.51.7%201.248%200%202.706-.392%204.362-1.174l.185-.086a.4.4%200%200%200%20.205-.527c-.089-.204-.326-.291-.527-.206zM9.547%202.292c.093.077.205.114.317.114a.5.5%200%200%200%20.318-.886L8.817.397a.5.5%200%200%200-.703.068.5.5%200%200%200%20.069.703l1.364%201.124zm-7.661-.065c.086%200%20.173-.022.253-.068l1.523-.893a.5.5%200%200%200-.506-.863l-1.523.892a.5.5%200%200%200-.179.685c.094.158.261.247.432.247z%22%20transform%3D%22matrix%28-1%200%200%201%2058%200%29%22%20fill%3D%22%233bb300%22/%3E%3Cpath%20d%3D%22M.3%2021.86V10.18q0-.46.02-.68.04-.22.18-.5.28-.54%201.34-.54%201.06%200%201.42.28.38.26.44.78.76-1.04%202.38-1.04%201.64%200%203.1%201.54%201.46%201.54%201.46%203.58%200%202.04-1.46%203.58-1.44%201.54-3.08%201.54-1.64%200-2.38-.92v4.04q0%20.46-.04.68-.02.22-.18.5-.14.3-.5.42-.36.12-.98.12-.62%200-1-.12-.36-.12-.52-.4-.14-.28-.18-.5-.02-.22-.02-.68zm3.96-9.42q-.46.54-.46%201.18%200%20.64.46%201.18.48.52%201.2.52.74%200%201.24-.52.52-.52.52-1.18%200-.66-.48-1.18-.48-.54-1.26-.54-.76%200-1.22.54zm14.741-8.36q.16-.3.54-.42.38-.12%201-.12.64%200%201.02.12.38.12.52.42.16.3.18.54.04.22.04.68v11.94q0%20.46-.04.7-.02.22-.18.5-.3.54-1.7.54-1.38%200-1.54-.98-.84.96-2.34.96-1.8%200-3.28-1.56-1.48-1.58-1.48-3.66%200-2.1%201.48-3.68%201.5-1.58%203.28-1.58%201.48%200%202.3%201v-4.2q0-.46.02-.68.04-.24.18-.52zm-3.24%2010.86q.52.54%201.26.54.74%200%201.22-.54.5-.54.5-1.18%200-.66-.48-1.22-.46-.56-1.26-.56-.8%200-1.28.56-.48.54-.48%201.2%200%20.66.52%201.2zm7.833-1.2q0-2.4%201.68-3.96%201.68-1.56%203.84-1.56%202.16%200%203.82%201.56%201.66%201.54%201.66%203.94%200%201.66-.86%202.96-.86%201.28-2.1%201.9-1.22.6-2.54.6-1.32%200-2.56-.64-1.24-.66-2.1-1.92-.84-1.28-.84-2.88zm4.18%201.44q.64.48%201.3.48.66%200%201.32-.5.66-.5.66-1.48%200-.98-.62-1.46-.62-.48-1.34-.48-.72%200-1.34.5-.62.5-.62%201.48%200%20.96.64%201.46zm11.412-1.44q0%20.84.56%201.32.56.46%201.18.46.64%200%201.18-.36.56-.38.9-.38.6%200%201.46%201.06.46.58.46%201.04%200%20.76-1.1%201.42-1.14.8-2.8.8-1.86%200-3.58-1.34-.82-.64-1.34-1.7-.52-1.08-.52-2.36%200-1.3.52-2.34.52-1.06%201.34-1.7%201.66-1.32%203.54-1.32.76%200%201.48.22.72.2%201.06.4l.32.2q.36.24.56.38.52.4.52.92%200%20.5-.42%201.14-.72%201.1-1.38%201.1-.38%200-1.08-.44-.36-.34-1.04-.34-.66%200-1.24.48-.58.48-.58%201.34z%22%20fill%3D%22green%22/%3E%3C/svg%3E"/>
+                    </a>
+            </div>
+        </nav>
+    <main class="pdoc">
+            <section>
+                    <h1 class="modulename">
+<a href="./../index.html">spectrumdevice</a><wbr>.settings    </h1>
+
+                        <div class="docstring"><p>Provides Enums and Dataclasses wrapping the register values provided by the Spectrum API, to be used for configuring
+hardware and interpreting responses received from hardware.</p>
+</div>
+
+                        <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Provides Enums and Dataclasses wrapping the register values provided by the Spectrum API, to be used for configuring</span>
+<span class="sd">hardware and interpreting responses received from hardware.&quot;&quot;&quot;</span>
+
+<span class="c1"># Christian Baker, King&#39;s College London</span>
+<span class="c1"># Copyright (c) 2021 School of Biomedical Engineering &amp; Imaging Sciences, King&#39;s College London</span>
+<span class="c1"># Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span> <span class="nn">spectrumdevice.settings.card_features</span> <span class="kn">import</span> <span class="n">CardFeature</span><span class="p">,</span> <span class="n">AdvancedCardFeature</span>
+<span class="kn">from</span> <span class="nn">spectrumdevice.settings.device_modes</span> <span class="kn">import</span> <span class="n">AcquisitionMode</span><span class="p">,</span> <span class="n">ClockMode</span>
+<span class="kn">from</span> <span class="nn">spectrumdevice.settings.io_lines</span> <span class="kn">import</span> <span class="n">IOLineMode</span><span class="p">,</span> <span class="n">AvailableIOModes</span>
+<span class="kn">from</span> <span class="nn">spectrumdevice.settings.transfer_buffer</span> <span class="kn">import</span> <span class="n">TransferBuffer</span><span class="p">,</span> <span class="n">CardToPCDataTransferBuffer</span>
+<span class="kn">from</span> <span class="nn">spectrumdevice.settings.triggering</span> <span class="kn">import</span> <span class="n">TriggerSource</span><span class="p">,</span> <span class="n">ExternalTriggerMode</span>
+<span class="kn">from</span> <span class="nn">spectrumdevice.settings.status</span> <span class="kn">import</span> <span class="n">CARD_STATUS_TYPE</span><span class="p">,</span> <span class="n">STAR_HUB_STATUS_TYPE</span><span class="p">,</span> <span class="n">StatusCode</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;AcquisitionSettings&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TriggerSettings&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AcquisitionMode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ClockMode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CardFeature&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AdvancedCardFeature&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;IOLineMode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AvailableIOModes&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TransferBuffer&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CardToPCDataTransferBuffer&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TriggerSource&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ExternalTriggerMode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CARD_STATUS_TYPE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;STAR_HUB_STATUS_TYPE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;StatusCode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SpectrumRegisterLength&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">SpectrumRegisterLength</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enum defining the possible lengths of a spectrum register.&quot;&quot;&quot;</span>
+
+    <span class="n">THIRTY_TWO</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;32 bit register&quot;&quot;&quot;</span>
+    <span class="n">SIXTY_FOUR</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;64 bit register&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">TriggerSettings</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A dataclass collecting all settings related to triggering. See Spectrum documentation.&quot;&quot;&quot;</span>
+
+    <span class="n">trigger_sources</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TriggerSource</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;The trigger sources to enable&quot;&quot;&quot;</span>
+    <span class="n">external_trigger_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExternalTriggerMode</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;The external trigger mode (if an external trigger is enabled).&quot;&quot;&quot;</span>
+    <span class="n">external_trigger_level_in_mv</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;The level an external signal must reach to cause a trigger event (if an external trigger is enabled).&quot;&quot;&quot;</span>
+    <span class="n">external_trigger_pulse_width_in_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;The required width of an external trigger pulse (if an external trigger is enabled).&quot;&quot;&quot;</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">AcquisitionSettings</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A dataclass collecting all settings required to configure an acquisition. See Spectrum documentation.&quot;&quot;&quot;</span>
+
+    <span class="n">acquisition_mode</span><span class="p">:</span> <span class="n">AcquisitionMode</span>
+    <span class="sd">&quot;&quot;&quot;Standard Single mode or Multi FIF mode.&quot;&quot;&quot;</span>
+    <span class="n">sample_rate_in_hz</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;Acquisition rate in samples per second.&quot;&quot;&quot;</span>
+    <span class="n">acquisition_length_in_samples</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;The length of the recording in samples per channel.&quot;&quot;&quot;</span>
+    <span class="n">pre_trigger_length_in_samples</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;The number of samples of the recording that will have been acquired before the trigger event.&quot;&quot;&quot;</span>
+    <span class="n">timeout_in_ms</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;How long to wait for a trigger event before timing out.&quot;&quot;&quot;</span>
+    <span class="n">enabled_channels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;The channel indices to enable for the acquisition.&quot;&quot;&quot;</span>
+    <span class="n">vertical_ranges_in_mv</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;The voltage range to apply to each enabled channel in mW.&quot;&quot;&quot;</span>
+    <span class="n">vertical_offsets_in_percent</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;The DC offset to apply to each enabled channel as percentages of their vertical ranges.&quot;&quot;&quot;</span>
+</pre></div>
+
+        </details>
+
+            </section>
+                <section id="AcquisitionSettings">
+                                <div class="attr class">
+        <a class="headerlink" href="#AcquisitionSettings">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@dataclass</div>
+
+        <span class="def">class</span>
+        <span class="name">AcquisitionSettings</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">AcquisitionSettings</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A dataclass collecting all settings required to configure an acquisition. See Spectrum documentation.&quot;&quot;&quot;</span>
+
+    <span class="n">acquisition_mode</span><span class="p">:</span> <span class="n">AcquisitionMode</span>
+    <span class="sd">&quot;&quot;&quot;Standard Single mode or Multi FIF mode.&quot;&quot;&quot;</span>
+    <span class="n">sample_rate_in_hz</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;Acquisition rate in samples per second.&quot;&quot;&quot;</span>
+    <span class="n">acquisition_length_in_samples</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;The length of the recording in samples per channel.&quot;&quot;&quot;</span>
+    <span class="n">pre_trigger_length_in_samples</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;The number of samples of the recording that will have been acquired before the trigger event.&quot;&quot;&quot;</span>
+    <span class="n">timeout_in_ms</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;How long to wait for a trigger event before timing out.&quot;&quot;&quot;</span>
+    <span class="n">enabled_channels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;The channel indices to enable for the acquisition.&quot;&quot;&quot;</span>
+    <span class="n">vertical_ranges_in_mv</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;The voltage range to apply to each enabled channel in mW.&quot;&quot;&quot;</span>
+    <span class="n">vertical_offsets_in_percent</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;The DC offset to apply to each enabled channel as percentages of their vertical ranges.&quot;&quot;&quot;</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>A dataclass collecting all settings required to configure an acquisition. See Spectrum documentation.</p>
+</div>
+
+
+                            <div id="AcquisitionSettings.__init__" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#AcquisitionSettings.__init__">#&nbsp;&nbsp</a>
+
+        
+            <span class="name">AcquisitionSettings</span><span class="signature">(
+    acquisition_mode: <a href="#device_modes.AcquisitionMode">spectrumdevice.settings.device_modes.AcquisitionMode</a>,
+    sample_rate_in_hz: int,
+    acquisition_length_in_samples: int,
+    pre_trigger_length_in_samples: int,
+    timeout_in_ms: int,
+    enabled_channels: List[int],
+    vertical_ranges_in_mv: List[int],
+    vertical_offsets_in_percent: List[int]
+)</span>
+    </div>
+
+        
+    
+
+                            </div>
+                            <div id="AcquisitionSettings.acquisition_mode" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionSettings.acquisition_mode">#&nbsp;&nbsp</a>
+
+        <span class="name">acquisition_mode</span><span class="annotation">: <a href="#device_modes.AcquisitionMode">spectrumdevice.settings.device_modes.AcquisitionMode</a></span>
+    </div>
+
+            <div class="docstring"><p>Standard Single mode or Multi FIF mode.</p>
+</div>
+
+
+                            </div>
+                            <div id="AcquisitionSettings.sample_rate_in_hz" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionSettings.sample_rate_in_hz">#&nbsp;&nbsp</a>
+
+        <span class="name">sample_rate_in_hz</span><span class="annotation">: int</span>
+    </div>
+
+            <div class="docstring"><p>Acquisition rate in samples per second.</p>
+</div>
+
+
+                            </div>
+                            <div id="AcquisitionSettings.acquisition_length_in_samples" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionSettings.acquisition_length_in_samples">#&nbsp;&nbsp</a>
+
+        <span class="name">acquisition_length_in_samples</span><span class="annotation">: int</span>
+    </div>
+
+            <div class="docstring"><p>The length of the recording in samples per channel.</p>
+</div>
+
+
+                            </div>
+                            <div id="AcquisitionSettings.pre_trigger_length_in_samples" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionSettings.pre_trigger_length_in_samples">#&nbsp;&nbsp</a>
+
+        <span class="name">pre_trigger_length_in_samples</span><span class="annotation">: int</span>
+    </div>
+
+            <div class="docstring"><p>The number of samples of the recording that will have been acquired before the trigger event.</p>
+</div>
+
+
+                            </div>
+                            <div id="AcquisitionSettings.timeout_in_ms" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionSettings.timeout_in_ms">#&nbsp;&nbsp</a>
+
+        <span class="name">timeout_in_ms</span><span class="annotation">: int</span>
+    </div>
+
+            <div class="docstring"><p>How long to wait for a trigger event before timing out.</p>
+</div>
+
+
+                            </div>
+                            <div id="AcquisitionSettings.enabled_channels" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionSettings.enabled_channels">#&nbsp;&nbsp</a>
+
+        <span class="name">enabled_channels</span><span class="annotation">: List[int]</span>
+    </div>
+
+            <div class="docstring"><p>The channel indices to enable for the acquisition.</p>
+</div>
+
+
+                            </div>
+                            <div id="AcquisitionSettings.vertical_ranges_in_mv" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionSettings.vertical_ranges_in_mv">#&nbsp;&nbsp</a>
+
+        <span class="name">vertical_ranges_in_mv</span><span class="annotation">: List[int]</span>
+    </div>
+
+            <div class="docstring"><p>The voltage range to apply to each enabled channel in mW.</p>
+</div>
+
+
+                            </div>
+                            <div id="AcquisitionSettings.vertical_offsets_in_percent" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionSettings.vertical_offsets_in_percent">#&nbsp;&nbsp</a>
+
+        <span class="name">vertical_offsets_in_percent</span><span class="annotation">: List[int]</span>
+    </div>
+
+            <div class="docstring"><p>The DC offset to apply to each enabled channel as percentages of their vertical ranges.</p>
+</div>
+
+
+                            </div>
+                </section>
+                <section id="TriggerSettings">
+                                <div class="attr class">
+        <a class="headerlink" href="#TriggerSettings">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@dataclass</div>
+
+        <span class="def">class</span>
+        <span class="name">TriggerSettings</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">TriggerSettings</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A dataclass collecting all settings related to triggering. See Spectrum documentation.&quot;&quot;&quot;</span>
+
+    <span class="n">trigger_sources</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TriggerSource</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;The trigger sources to enable&quot;&quot;&quot;</span>
+    <span class="n">external_trigger_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExternalTriggerMode</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;The external trigger mode (if an external trigger is enabled).&quot;&quot;&quot;</span>
+    <span class="n">external_trigger_level_in_mv</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;The level an external signal must reach to cause a trigger event (if an external trigger is enabled).&quot;&quot;&quot;</span>
+    <span class="n">external_trigger_pulse_width_in_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;The required width of an external trigger pulse (if an external trigger is enabled).&quot;&quot;&quot;</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>A dataclass collecting all settings related to triggering. See Spectrum documentation.</p>
+</div>
+
+
+                            <div id="TriggerSettings.__init__" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#TriggerSettings.__init__">#&nbsp;&nbsp</a>
+
+        
+            <span class="name">TriggerSettings</span><span class="signature">(
+    trigger_sources: List[<a href="#triggering.TriggerSource">spectrumdevice.settings.triggering.TriggerSource</a>],
+    external_trigger_mode: Optional[<a href="#triggering.ExternalTriggerMode">spectrumdevice.settings.triggering.ExternalTriggerMode</a>] = None,
+    external_trigger_level_in_mv: Optional[int] = None,
+    external_trigger_pulse_width_in_samples: Optional[int] = None
+)</span>
+    </div>
+
+        
+    
+
+                            </div>
+                            <div id="TriggerSettings.trigger_sources" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TriggerSettings.trigger_sources">#&nbsp;&nbsp</a>
+
+        <span class="name">trigger_sources</span><span class="annotation">: List[<a href="#triggering.TriggerSource">spectrumdevice.settings.triggering.TriggerSource</a>]</span>
+    </div>
+
+            <div class="docstring"><p>The trigger sources to enable</p>
+</div>
+
+
+                            </div>
+                            <div id="TriggerSettings.external_trigger_mode" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TriggerSettings.external_trigger_mode">#&nbsp;&nbsp</a>
+
+        <span class="name">external_trigger_mode</span><span class="annotation">: Optional[<a href="#triggering.ExternalTriggerMode">spectrumdevice.settings.triggering.ExternalTriggerMode</a>]</span><span class="default_value"> = None</span>
+    </div>
+
+            <div class="docstring"><p>The external trigger mode (if an external trigger is enabled).</p>
+</div>
+
+
+                            </div>
+                            <div id="TriggerSettings.external_trigger_level_in_mv" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TriggerSettings.external_trigger_level_in_mv">#&nbsp;&nbsp</a>
+
+        <span class="name">external_trigger_level_in_mv</span><span class="annotation">: Optional[int]</span><span class="default_value"> = None</span>
+    </div>
+
+            <div class="docstring"><p>The level an external signal must reach to cause a trigger event (if an external trigger is enabled).</p>
+</div>
+
+
+                            </div>
+                            <div id="TriggerSettings.external_trigger_pulse_width_in_samples" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TriggerSettings.external_trigger_pulse_width_in_samples">#&nbsp;&nbsp</a>
+
+        <span class="name">external_trigger_pulse_width_in_samples</span><span class="annotation">: Optional[int]</span><span class="default_value"> = None</span>
+    </div>
+
+            <div class="docstring"><p>The required width of an external trigger pulse (if an external trigger is enabled).</p>
+</div>
+
+
+                            </div>
+                </section>
+                <section id="AcquisitionMode">
+                                <div class="attr class">
+        <a class="headerlink" href="#AcquisitionMode">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">AcquisitionMode</span><wbr>(<span class="base">enum.Enum</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">AcquisitionMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enum representing the acquisition modes currently support by spectrumdevice. See Spectrum documentation for more</span>
+<span class="sd">    information about each mode.&quot;&quot;&quot;</span>
+
+    <span class="n">SPC_REC_STD_SINGLE</span> <span class="o">=</span> <span class="n">SPC_REC_STD_SINGLE</span>
+    <span class="sd">&quot;&quot;&quot;Data acquisition to on-board memory for one single trigger event.&quot;&quot;&quot;</span>
+    <span class="n">SPC_REC_FIFO_MULTI</span> <span class="o">=</span> <span class="n">SPC_REC_FIFO_MULTI</span>
+    <span class="sd">&quot;&quot;&quot;Continuous data acquisition for multiple trigger events.&quot;&quot;&quot;</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Enum representing the acquisition modes currently support by spectrumdevice. See Spectrum documentation for more
+information about each mode.</p>
+</div>
+
+
+                            <div id="AcquisitionMode.SPC_REC_STD_SINGLE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionMode.SPC_REC_STD_SINGLE">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_REC_STD_SINGLE</span><span class="default_value"> = &lt;<a href="#AcquisitionMode.SPC_REC_STD_SINGLE">AcquisitionMode.SPC_REC_STD_SINGLE</a>: 1&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Data acquisition to on-board memory for one single trigger event.</p>
+</div>
+
+
+                            </div>
+                            <div id="AcquisitionMode.SPC_REC_FIFO_MULTI" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionMode.SPC_REC_FIFO_MULTI">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_REC_FIFO_MULTI</span><span class="default_value"> = &lt;<a href="#AcquisitionMode.SPC_REC_FIFO_MULTI">AcquisitionMode.SPC_REC_FIFO_MULTI</a>: 32&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Continuous data acquisition for multiple trigger events.</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="AcquisitionMode.name" class="variable">name</dd>
+                <dd id="AcquisitionMode.value" class="variable">value</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="ClockMode">
+                                <div class="attr class">
+        <a class="headerlink" href="#ClockMode">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">ClockMode</span><wbr>(<span class="base">enum.Enum</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ClockMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enum representing the clock modes currently supported by spectrumdevice. See Spectrum documentation for more</span>
+<span class="sd">    information about each mode.&quot;&quot;&quot;</span>
+
+    <span class="n">SPC_CM_INTPLL</span> <span class="o">=</span> <span class="n">SPC_CM_INTPLL</span>
+    <span class="sd">&quot;&quot;&quot;Enables internal PLL with 20 MHz internal reference for sample clock generation.&quot;&quot;&quot;</span>
+    <span class="n">SPC_CM_EXTERNAL</span> <span class="o">=</span> <span class="n">SPC_CM_EXTERNAL</span>
+    <span class="sd">&quot;&quot;&quot;Enables external clock input for direct sample clock generation.&quot;&quot;&quot;</span>
+    <span class="n">SPC_CM_EXTREFCLOCK</span> <span class="o">=</span> <span class="n">SPC_CM_EXTREFCLOCK</span>
+    <span class="sd">&quot;&quot;&quot;Enables internal PLL with external reference for sample clock generation.&quot;&quot;&quot;</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Enum representing the clock modes currently supported by spectrumdevice. See Spectrum documentation for more
+information about each mode.</p>
+</div>
+
+
+                            <div id="ClockMode.SPC_CM_INTPLL" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ClockMode.SPC_CM_INTPLL">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_CM_INTPLL</span><span class="default_value"> = &lt;<a href="#ClockMode.SPC_CM_INTPLL">ClockMode.SPC_CM_INTPLL</a>: 1&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Enables internal PLL with 20 MHz internal reference for sample clock generation.</p>
+</div>
+
+
+                            </div>
+                            <div id="ClockMode.SPC_CM_EXTERNAL" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ClockMode.SPC_CM_EXTERNAL">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_CM_EXTERNAL</span><span class="default_value"> = &lt;<a href="#ClockMode.SPC_CM_EXTERNAL">ClockMode.SPC_CM_EXTERNAL</a>: 8&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Enables external clock input for direct sample clock generation.</p>
+</div>
+
+
+                            </div>
+                            <div id="ClockMode.SPC_CM_EXTREFCLOCK" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ClockMode.SPC_CM_EXTREFCLOCK">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_CM_EXTREFCLOCK</span><span class="default_value"> = &lt;<a href="#ClockMode.SPC_CM_EXTREFCLOCK">ClockMode.SPC_CM_EXTREFCLOCK</a>: 32&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Enables internal PLL with external reference for sample clock generation.</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="ClockMode.name" class="variable">name</dd>
+                <dd id="ClockMode.value" class="variable">value</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="CardFeature">
+                                <div class="attr class">
+        <a class="headerlink" href="#CardFeature">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">CardFeature</span><wbr>(<span class="base">enum.Enum</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">CardFeature</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enum representing the possible features of all Spectrum devices. A list of features can be read from a device</span>
+<span class="sd">    using the feature_list property. See the Spectrum documentation for descriptions of each of the features.&quot;&quot;&quot;</span>
+
+    <span class="n">SPCM_FEAT_MULTI</span> <span class="o">=</span> <span class="n">SPCM_FEAT_MULTI</span>
+    <span class="n">SPCM_FEAT_GATE</span> <span class="o">=</span> <span class="n">SPCM_FEAT_GATE</span>
+    <span class="n">SPCM_FEAT_DIGITAL</span> <span class="o">=</span> <span class="n">SPCM_FEAT_DIGITAL</span>
+    <span class="n">SPCM_FEAT_TIMESTAMP</span> <span class="o">=</span> <span class="n">SPCM_FEAT_TIMESTAMP</span>
+    <span class="n">SPCM_FEAT_STARHUB6_EXTM</span> <span class="o">=</span> <span class="n">SPCM_FEAT_STARHUB6_EXTM</span>
+    <span class="n">SPCM_FEAT_STARHUB8_EXTM</span> <span class="o">=</span> <span class="n">SPCM_FEAT_STARHUB8_EXTM</span>
+    <span class="n">SPCM_FEAT_STARHUB4</span> <span class="o">=</span> <span class="n">SPCM_FEAT_STARHUB4</span>
+    <span class="n">SPCM_FEAT_STARHUB5</span> <span class="o">=</span> <span class="n">SPCM_FEAT_STARHUB5</span>
+    <span class="n">SPCM_FEAT_STARHUB16_EXTM</span> <span class="o">=</span> <span class="n">SPCM_FEAT_STARHUB16_EXTM</span>
+    <span class="n">SPCM_FEAT_STARHUB8</span> <span class="o">=</span> <span class="n">SPCM_FEAT_STARHUB8</span>
+    <span class="n">SPCM_FEAT_STARHUB16</span> <span class="o">=</span> <span class="n">SPCM_FEAT_STARHUB16</span>
+    <span class="n">SPCM_FEAT_ABA</span> <span class="o">=</span> <span class="n">SPCM_FEAT_ABA</span>
+    <span class="n">SPCM_FEAT_BASEXIO</span> <span class="o">=</span> <span class="n">SPCM_FEAT_BASEXIO</span>
+    <span class="n">SPCM_FEAT_AMPLIFIER_10V</span> <span class="o">=</span> <span class="n">SPCM_FEAT_AMPLIFIER_10V</span>
+    <span class="n">SPCM_FEAT_STARHUBSYSMASTER</span> <span class="o">=</span> <span class="n">SPCM_FEAT_STARHUBSYSMASTER</span>
+    <span class="n">SPCM_FEAT_DIFFMODE</span> <span class="o">=</span> <span class="n">SPCM_FEAT_DIFFMODE</span>
+    <span class="n">SPCM_FEAT_SEQUENCE</span> <span class="o">=</span> <span class="n">SPCM_FEAT_SEQUENCE</span>
+    <span class="n">SPCM_FEAT_AMPMODULE_10V</span> <span class="o">=</span> <span class="n">SPCM_FEAT_AMPMODULE_10V</span>
+    <span class="n">SPCM_FEAT_STARHUBSYSSLAVE</span> <span class="o">=</span> <span class="n">SPCM_FEAT_STARHUBSYSSLAVE</span>
+    <span class="n">SPCM_FEAT_NETBOX</span> <span class="o">=</span> <span class="n">SPCM_FEAT_NETBOX</span>
+    <span class="n">SPCM_FEAT_REMOTESERVER</span> <span class="o">=</span> <span class="n">SPCM_FEAT_REMOTESERVER</span>
+    <span class="n">SPCM_FEAT_SCAPP</span> <span class="o">=</span> <span class="n">SPCM_FEAT_SCAPP</span>
+    <span class="n">SPCM_FEAT_CUSTOMMOD_MASK</span> <span class="o">=</span> <span class="n">SPCM_FEAT_CUSTOMMOD_MASK</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Enum representing the possible features of all Spectrum devices. A list of features can be read from a device
+using the feature_list property. See the Spectrum documentation for descriptions of each of the features.</p>
+</div>
+
+
+                            <div id="CardFeature.SPCM_FEAT_MULTI" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_MULTI">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_MULTI</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_MULTI">CardFeature.SPCM_FEAT_MULTI</a>: 1&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_GATE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_GATE">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_GATE</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_GATE">CardFeature.SPCM_FEAT_GATE</a>: 2&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_DIGITAL" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_DIGITAL">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_DIGITAL</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_DIGITAL">CardFeature.SPCM_FEAT_DIGITAL</a>: 4&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_TIMESTAMP" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_TIMESTAMP">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_TIMESTAMP</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_TIMESTAMP">CardFeature.SPCM_FEAT_TIMESTAMP</a>: 8&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_STARHUB6_EXTM" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_STARHUB6_EXTM">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_STARHUB6_EXTM</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_STARHUB6_EXTM">CardFeature.SPCM_FEAT_STARHUB6_EXTM</a>: 32&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_STARHUB8_EXTM" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_STARHUB8_EXTM">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_STARHUB8_EXTM</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_STARHUB6_EXTM">CardFeature.SPCM_FEAT_STARHUB6_EXTM</a>: 32&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_STARHUB4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_STARHUB4">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_STARHUB4</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_STARHUB6_EXTM">CardFeature.SPCM_FEAT_STARHUB6_EXTM</a>: 32&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_STARHUB5" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_STARHUB5">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_STARHUB5</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_STARHUB6_EXTM">CardFeature.SPCM_FEAT_STARHUB6_EXTM</a>: 32&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_STARHUB16_EXTM" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_STARHUB16_EXTM">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_STARHUB16_EXTM</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_STARHUB16_EXTM">CardFeature.SPCM_FEAT_STARHUB16_EXTM</a>: 64&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_STARHUB8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_STARHUB8">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_STARHUB8</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_STARHUB16_EXTM">CardFeature.SPCM_FEAT_STARHUB16_EXTM</a>: 64&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_STARHUB16" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_STARHUB16">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_STARHUB16</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_STARHUB16_EXTM">CardFeature.SPCM_FEAT_STARHUB16_EXTM</a>: 64&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_ABA" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_ABA">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_ABA</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_ABA">CardFeature.SPCM_FEAT_ABA</a>: 128&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_BASEXIO" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_BASEXIO">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_BASEXIO</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_BASEXIO">CardFeature.SPCM_FEAT_BASEXIO</a>: 256&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_AMPLIFIER_10V" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_AMPLIFIER_10V">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_AMPLIFIER_10V</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_AMPLIFIER_10V">CardFeature.SPCM_FEAT_AMPLIFIER_10V</a>: 512&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_STARHUBSYSMASTER" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_STARHUBSYSMASTER">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_STARHUBSYSMASTER</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_STARHUBSYSMASTER">CardFeature.SPCM_FEAT_STARHUBSYSMASTER</a>: 1024&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_DIFFMODE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_DIFFMODE">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_DIFFMODE</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_DIFFMODE">CardFeature.SPCM_FEAT_DIFFMODE</a>: 2048&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_SEQUENCE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_SEQUENCE">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_SEQUENCE</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_SEQUENCE">CardFeature.SPCM_FEAT_SEQUENCE</a>: 4096&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_AMPMODULE_10V" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_AMPMODULE_10V">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_AMPMODULE_10V</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_AMPMODULE_10V">CardFeature.SPCM_FEAT_AMPMODULE_10V</a>: 8192&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_STARHUBSYSSLAVE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_STARHUBSYSSLAVE">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_STARHUBSYSSLAVE</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_STARHUBSYSSLAVE">CardFeature.SPCM_FEAT_STARHUBSYSSLAVE</a>: 16384&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_NETBOX" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_NETBOX">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_NETBOX</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_NETBOX">CardFeature.SPCM_FEAT_NETBOX</a>: 32768&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_REMOTESERVER" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_REMOTESERVER">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_REMOTESERVER</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_REMOTESERVER">CardFeature.SPCM_FEAT_REMOTESERVER</a>: 65536&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_SCAPP" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_SCAPP">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_SCAPP</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_SCAPP">CardFeature.SPCM_FEAT_SCAPP</a>: 131072&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="CardFeature.SPCM_FEAT_CUSTOMMOD_MASK" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CardFeature.SPCM_FEAT_CUSTOMMOD_MASK">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_CUSTOMMOD_MASK</span><span class="default_value"> = &lt;<a href="#CardFeature.SPCM_FEAT_CUSTOMMOD_MASK">CardFeature.SPCM_FEAT_CUSTOMMOD_MASK</a>: 4026531840&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="CardFeature.name" class="variable">name</dd>
+                <dd id="CardFeature.value" class="variable">value</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="AdvancedCardFeature">
+                                <div class="attr class">
+        <a class="headerlink" href="#AdvancedCardFeature">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">AdvancedCardFeature</span><wbr>(<span class="base">enum.Enum</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">AdvancedCardFeature</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enum representing the possible advanced features of all Spectrum devices. A list of features can be read from a</span>
+<span class="sd">    device using the feature_list property. See the Spectrum documentation for descriptions of each of the features.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">SPCM_FEAT_EXTFW_SEGSTAT</span> <span class="o">=</span> <span class="n">SPCM_FEAT_EXTFW_SEGSTAT</span>
+    <span class="n">SPCM_FEAT_EXTFW_SEGAVERAGE</span> <span class="o">=</span> <span class="n">SPCM_FEAT_EXTFW_SEGAVERAGE</span>
+    <span class="n">SPCM_FEAT_EXTFW_BOXCAR</span> <span class="o">=</span> <span class="n">SPCM_FEAT_EXTFW_BOXCAR</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Enum representing the possible advanced features of all Spectrum devices. A list of features can be read from a
+device using the feature_list property. See the Spectrum documentation for descriptions of each of the features.</p>
+</div>
+
+
+                            <div id="AdvancedCardFeature.SPCM_FEAT_EXTFW_SEGSTAT" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AdvancedCardFeature.SPCM_FEAT_EXTFW_SEGSTAT">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_EXTFW_SEGSTAT</span><span class="default_value"> = &lt;<a href="#AdvancedCardFeature.SPCM_FEAT_EXTFW_SEGSTAT">AdvancedCardFeature.SPCM_FEAT_EXTFW_SEGSTAT</a>: 1&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="AdvancedCardFeature.SPCM_FEAT_EXTFW_SEGAVERAGE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AdvancedCardFeature.SPCM_FEAT_EXTFW_SEGAVERAGE">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_EXTFW_SEGAVERAGE</span><span class="default_value"> = &lt;<a href="#AdvancedCardFeature.SPCM_FEAT_EXTFW_SEGAVERAGE">AdvancedCardFeature.SPCM_FEAT_EXTFW_SEGAVERAGE</a>: 2&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="AdvancedCardFeature.SPCM_FEAT_EXTFW_BOXCAR" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AdvancedCardFeature.SPCM_FEAT_EXTFW_BOXCAR">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_EXTFW_BOXCAR</span><span class="default_value"> = &lt;<a href="#AdvancedCardFeature.SPCM_FEAT_EXTFW_BOXCAR">AdvancedCardFeature.SPCM_FEAT_EXTFW_BOXCAR</a>: 4&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="AdvancedCardFeature.name" class="variable">name</dd>
+                <dd id="AdvancedCardFeature.value" class="variable">value</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="IOLineMode">
+                                <div class="attr class">
+        <a class="headerlink" href="#IOLineMode">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">IOLineMode</span><wbr>(<span class="base">enum.Enum</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">IOLineMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enum representing the possible modes that a devices multi-purpose I/O line can support. A list of available</span>
+<span class="sd">    modes for each I/O line on a device is provided by the devices available_io_modes property. See the Spectrum</span>
+<span class="sd">    documentation for a description of each of the modes.&quot;&quot;&quot;</span>
+
+    <span class="n">SPCM_XMODE_DISABLE</span> <span class="o">=</span> <span class="n">SPCM_XMODE_DISABLE</span>
+    <span class="n">SPCM_XMODE_ASYNCIN</span> <span class="o">=</span> <span class="n">SPCM_XMODE_ASYNCIN</span>
+    <span class="n">SPCM_XMODE_ASYNCOUT</span> <span class="o">=</span> <span class="n">SPCM_XMODE_ASYNCOUT</span>
+    <span class="n">SPCM_XMODE_DIGIN</span> <span class="o">=</span> <span class="n">SPCM_XMODE_DIGIN</span>
+    <span class="n">SPCM_XMODE_TRIGIN</span> <span class="o">=</span> <span class="n">SPCM_XMODE_TRIGIN</span>
+    <span class="n">SPCM_XMODE_DIGOUT</span> <span class="o">=</span> <span class="n">SPCM_XMODE_DIGOUT</span>
+    <span class="n">SPCM_XMODE_TRIGOUT</span> <span class="o">=</span> <span class="n">SPCM_XMODE_TRIGOUT</span>
+    <span class="n">SPCM_XMODE_RUNSTATE</span> <span class="o">=</span> <span class="n">SPCM_XMODE_RUNSTATE</span>
+    <span class="n">SPCM_XMODE_ARMSTATE</span> <span class="o">=</span> <span class="n">SPCM_XMODE_ARMSTATE</span>
+    <span class="n">SPCM_XMODE_CONTOUTMARK</span> <span class="o">=</span> <span class="n">SPCM_XMODE_CONTOUTMARK</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Enum representing the possible modes that a devices multi-purpose I/O line can support. A list of available
+modes for each I/O line on a device is provided by the devices available_io_modes property. See the Spectrum
+documentation for a description of each of the modes.</p>
+</div>
+
+
+                            <div id="IOLineMode.SPCM_XMODE_DISABLE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#IOLineMode.SPCM_XMODE_DISABLE">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_XMODE_DISABLE</span><span class="default_value"> = &lt;<a href="#IOLineMode.SPCM_XMODE_DISABLE">IOLineMode.SPCM_XMODE_DISABLE</a>: 0&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="IOLineMode.SPCM_XMODE_ASYNCIN" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#IOLineMode.SPCM_XMODE_ASYNCIN">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_XMODE_ASYNCIN</span><span class="default_value"> = &lt;<a href="#IOLineMode.SPCM_XMODE_ASYNCIN">IOLineMode.SPCM_XMODE_ASYNCIN</a>: 1&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="IOLineMode.SPCM_XMODE_ASYNCOUT" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#IOLineMode.SPCM_XMODE_ASYNCOUT">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_XMODE_ASYNCOUT</span><span class="default_value"> = &lt;<a href="#IOLineMode.SPCM_XMODE_ASYNCOUT">IOLineMode.SPCM_XMODE_ASYNCOUT</a>: 2&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="IOLineMode.SPCM_XMODE_DIGIN" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#IOLineMode.SPCM_XMODE_DIGIN">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_XMODE_DIGIN</span><span class="default_value"> = &lt;<a href="#IOLineMode.SPCM_XMODE_DIGIN">IOLineMode.SPCM_XMODE_DIGIN</a>: 4&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="IOLineMode.SPCM_XMODE_TRIGIN" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#IOLineMode.SPCM_XMODE_TRIGIN">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_XMODE_TRIGIN</span><span class="default_value"> = &lt;<a href="#IOLineMode.SPCM_XMODE_TRIGIN">IOLineMode.SPCM_XMODE_TRIGIN</a>: 16&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="IOLineMode.SPCM_XMODE_DIGOUT" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#IOLineMode.SPCM_XMODE_DIGOUT">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_XMODE_DIGOUT</span><span class="default_value"> = &lt;<a href="#IOLineMode.SPCM_XMODE_DIGOUT">IOLineMode.SPCM_XMODE_DIGOUT</a>: 8&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="IOLineMode.SPCM_XMODE_TRIGOUT" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#IOLineMode.SPCM_XMODE_TRIGOUT">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_XMODE_TRIGOUT</span><span class="default_value"> = &lt;<a href="#IOLineMode.SPCM_XMODE_TRIGOUT">IOLineMode.SPCM_XMODE_TRIGOUT</a>: 32&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="IOLineMode.SPCM_XMODE_RUNSTATE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#IOLineMode.SPCM_XMODE_RUNSTATE">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_XMODE_RUNSTATE</span><span class="default_value"> = &lt;<a href="#IOLineMode.SPCM_XMODE_RUNSTATE">IOLineMode.SPCM_XMODE_RUNSTATE</a>: 256&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="IOLineMode.SPCM_XMODE_ARMSTATE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#IOLineMode.SPCM_XMODE_ARMSTATE">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_XMODE_ARMSTATE</span><span class="default_value"> = &lt;<a href="#IOLineMode.SPCM_XMODE_ARMSTATE">IOLineMode.SPCM_XMODE_ARMSTATE</a>: 512&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="IOLineMode.SPCM_XMODE_CONTOUTMARK" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#IOLineMode.SPCM_XMODE_CONTOUTMARK">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_XMODE_CONTOUTMARK</span><span class="default_value"> = &lt;<a href="#IOLineMode.SPCM_XMODE_CONTOUTMARK">IOLineMode.SPCM_XMODE_CONTOUTMARK</a>: 8192&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="IOLineMode.name" class="variable">name</dd>
+                <dd id="IOLineMode.value" class="variable">value</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="AvailableIOModes">
+                                <div class="attr class">
+        <a class="headerlink" href="#AvailableIOModes">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@dataclass</div>
+
+        <span class="def">class</span>
+        <span class="name">AvailableIOModes</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">AvailableIOModes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Stores a list of the available IOLineMode settings on each of the four I/O lines (X0, X1, X2 and X3) on a</span>
+<span class="sd">    device. Returned by the available_io_modes() method of a device.&quot;&quot;&quot;</span>
+
+    <span class="n">X0</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IOLineMode</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;IO modes available to the XO IO line.&quot;&quot;&quot;</span>
+    <span class="n">X1</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IOLineMode</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;IO modes available to the X1 IO line.&quot;&quot;&quot;</span>
+    <span class="n">X2</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IOLineMode</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;IO modes available to the X2 IO line.&quot;&quot;&quot;</span>
+    <span class="n">X3</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IOLineMode</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;IO modes available to the X3 IO line.&quot;&quot;&quot;</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Stores a list of the available IOLineMode settings on each of the four I/O lines (X0, X1, X2 and X3) on a
+device. Returned by the available_io_modes() method of a device.</p>
+</div>
+
+
+                            <div id="AvailableIOModes.__init__" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#AvailableIOModes.__init__">#&nbsp;&nbsp</a>
+
+        
+            <span class="name">AvailableIOModes</span><span class="signature">(
+    X0: List[<a href="#io_lines.IOLineMode">spectrumdevice.settings.io_lines.IOLineMode</a>],
+    X1: List[<a href="#io_lines.IOLineMode">spectrumdevice.settings.io_lines.IOLineMode</a>],
+    X2: List[<a href="#io_lines.IOLineMode">spectrumdevice.settings.io_lines.IOLineMode</a>],
+    X3: List[<a href="#io_lines.IOLineMode">spectrumdevice.settings.io_lines.IOLineMode</a>]
+)</span>
+    </div>
+
+        
+    
+
+                            </div>
+                            <div id="AvailableIOModes.X0" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AvailableIOModes.X0">#&nbsp;&nbsp</a>
+
+        <span class="name">X0</span><span class="annotation">: List[<a href="#io_lines.IOLineMode">spectrumdevice.settings.io_lines.IOLineMode</a>]</span>
+    </div>
+
+            <div class="docstring"><p>IO modes available to the XO IO line.</p>
+</div>
+
+
+                            </div>
+                            <div id="AvailableIOModes.X1" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AvailableIOModes.X1">#&nbsp;&nbsp</a>
+
+        <span class="name">X1</span><span class="annotation">: List[<a href="#io_lines.IOLineMode">spectrumdevice.settings.io_lines.IOLineMode</a>]</span>
+    </div>
+
+            <div class="docstring"><p>IO modes available to the X1 IO line.</p>
+</div>
+
+
+                            </div>
+                            <div id="AvailableIOModes.X2" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AvailableIOModes.X2">#&nbsp;&nbsp</a>
+
+        <span class="name">X2</span><span class="annotation">: List[<a href="#io_lines.IOLineMode">spectrumdevice.settings.io_lines.IOLineMode</a>]</span>
+    </div>
+
+            <div class="docstring"><p>IO modes available to the X2 IO line.</p>
+</div>
+
+
+                            </div>
+                            <div id="AvailableIOModes.X3" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AvailableIOModes.X3">#&nbsp;&nbsp</a>
+
+        <span class="name">X3</span><span class="annotation">: List[<a href="#io_lines.IOLineMode">spectrumdevice.settings.io_lines.IOLineMode</a>]</span>
+    </div>
+
+            <div class="docstring"><p>IO modes available to the X3 IO line.</p>
+</div>
+
+
+                            </div>
+                </section>
+                <section id="TransferBuffer">
+                                <div class="attr class">
+        <a class="headerlink" href="#TransferBuffer">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@dataclass</div>
+
+        <span class="def">class</span>
+        <span class="name">TransferBuffer</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">TransferBuffer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A buffer for transferring samples between spectrumdevice software and a hardware device. See the &#39;Definition of the</span>
+<span class="sd">    transfer buffer&#39; section of the Spectrum documentation for more information. This implementation of the buffer</span>
+<span class="sd">    sets the notify size equal to the acquisition length.&quot;&quot;&quot;</span>
+
+    <span class="nb">type</span><span class="p">:</span> <span class="n">BufferType</span>
+    <span class="sd">&quot;&quot;&quot;Specifies whether the buffer is to be used to transfer samples, timestamps or A/B data.&quot;&quot;&quot;</span>
+    <span class="n">direction</span><span class="p">:</span> <span class="n">BufferDirection</span>
+    <span class="sd">&quot;&quot;&quot;Specifies whether the buffer is to be used to transfer data from the card to the PC, or the PC to the card.&quot;&quot;&quot;</span>
+    <span class="n">board_memory_offset_bytes</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;Sets the offset for transfer in board memory. Typically 0. See Spectrum documentation for more information.&quot;&quot;&quot;</span>
+    <span class="n">data_array</span><span class="p">:</span> <span class="n">ndarray</span>
+    <span class="sd">&quot;&quot;&quot;1D numpy array into which samples will be written during transfer.&quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data_array_pointer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">c_void_p</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A pointer to the data array.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_array</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">c_void_p</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data_array_length_in_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The length of the array into which sample will be written, in bytes.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_array</span><span class="o">.</span><span class="n">size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_array</span><span class="o">.</span><span class="n">itemsize</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">notify_size_in_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The number of transferred bytes after which a notification of transfer is sent from the device. This is</span>
+<span class="sd">        currently always set to the length of the data array, meaning that a notification will be received once the</span>
+<span class="sd">        transfer is complete. See the Spectrum documentation for more information.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_array_length_in_bytes</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">TransferBuffer</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">direction</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">board_memory_offset_bytes</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">board_memory_offset_bytes</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_array</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">data_array</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>A buffer for transferring samples between spectrumdevice software and a hardware device. See the 'Definition of the
+transfer buffer' section of the Spectrum documentation for more information. This implementation of the buffer
+sets the notify size equal to the acquisition length.</p>
+</div>
+
+
+                            <div id="TransferBuffer.__init__" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#TransferBuffer.__init__">#&nbsp;&nbsp</a>
+
+        
+            <span class="name">TransferBuffer</span><span class="signature">(
+    type: <a href="#transfer_buffer.BufferType">spectrumdevice.settings.transfer_buffer.BufferType</a>,
+    direction: <a href="#transfer_buffer.BufferDirection">spectrumdevice.settings.transfer_buffer.BufferDirection</a>,
+    board_memory_offset_bytes: int,
+    data_array: numpy.ndarray
+)</span>
+    </div>
+
+        
+    
+
+                            </div>
+                            <div id="TransferBuffer.type" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TransferBuffer.type">#&nbsp;&nbsp</a>
+
+        <span class="name">type</span><span class="annotation">: <a href="#transfer_buffer.BufferType">spectrumdevice.settings.transfer_buffer.BufferType</a></span>
+    </div>
+
+            <div class="docstring"><p>Specifies whether the buffer is to be used to transfer samples, timestamps or A/B data.</p>
+</div>
+
+
+                            </div>
+                            <div id="TransferBuffer.direction" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TransferBuffer.direction">#&nbsp;&nbsp</a>
+
+        <span class="name">direction</span><span class="annotation">: <a href="#transfer_buffer.BufferDirection">spectrumdevice.settings.transfer_buffer.BufferDirection</a></span>
+    </div>
+
+            <div class="docstring"><p>Specifies whether the buffer is to be used to transfer data from the card to the PC, or the PC to the card.</p>
+</div>
+
+
+                            </div>
+                            <div id="TransferBuffer.board_memory_offset_bytes" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TransferBuffer.board_memory_offset_bytes">#&nbsp;&nbsp</a>
+
+        <span class="name">board_memory_offset_bytes</span><span class="annotation">: int</span>
+    </div>
+
+            <div class="docstring"><p>Sets the offset for transfer in board memory. Typically 0. See Spectrum documentation for more information.</p>
+</div>
+
+
+                            </div>
+                            <div id="TransferBuffer.data_array" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TransferBuffer.data_array">#&nbsp;&nbsp</a>
+
+        <span class="name">data_array</span><span class="annotation">: numpy.ndarray</span>
+    </div>
+
+            <div class="docstring"><p>1D numpy array into which samples will be written during transfer.</p>
+</div>
+
+
+                            </div>
+                            <div id="TransferBuffer.data_array_pointer" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TransferBuffer.data_array_pointer">#&nbsp;&nbsp</a>
+
+        <span class="name">data_array_pointer</span><span class="annotation">: ctypes.c_void_p</span>
+    </div>
+
+            <div class="docstring"><p>A pointer to the data array.</p>
+</div>
+
+
+                            </div>
+                            <div id="TransferBuffer.data_array_length_in_bytes" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TransferBuffer.data_array_length_in_bytes">#&nbsp;&nbsp</a>
+
+        <span class="name">data_array_length_in_bytes</span><span class="annotation">: int</span>
+    </div>
+
+            <div class="docstring"><p>The length of the array into which sample will be written, in bytes.</p>
+</div>
+
+
+                            </div>
+                            <div id="TransferBuffer.notify_size_in_bytes" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TransferBuffer.notify_size_in_bytes">#&nbsp;&nbsp</a>
+
+        <span class="name">notify_size_in_bytes</span><span class="annotation">: int</span>
+    </div>
+
+            <div class="docstring"><p>The number of transferred bytes after which a notification of transfer is sent from the device. This is
+currently always set to the length of the data array, meaning that a notification will be received once the
+transfer is complete. See the Spectrum documentation for more information.</p>
+</div>
+
+
+                            </div>
+                </section>
+                <section id="CardToPCDataTransferBuffer">
+                                <div class="attr class">
+        <a class="headerlink" href="#CardToPCDataTransferBuffer">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">CardToPCDataTransferBuffer</span><wbr>(<span class="base"><a href="#TransferBuffer">spectrumdevice.settings.TransferBuffer</a></span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">CardToPCDataTransferBuffer</span><span class="p">(</span><span class="n">TransferBuffer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A TransferBuffer configured for card-to-pc transfer of samples (rather than timestamps or ABA data).&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size_in_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">board_memory_offset_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            size_in_samples (int): The size of the array into which samples will be written, in samples.</span>
+<span class="sd">            board_memory_offset_bytes (int): Sets the offset for transfer in board memory. Default 0. See Spectrum</span>
+<span class="sd">                documentation for more information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">BufferType</span><span class="o">.</span><span class="n">SPCM_BUF_DATA</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">BufferDirection</span><span class="o">.</span><span class="n">SPCM_DIR_CARDTOPC</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">board_memory_offset_bytes</span> <span class="o">=</span> <span class="n">board_memory_offset_bytes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_array</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">size_in_samples</span><span class="p">,</span> <span class="n">int16</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>A TransferBuffer configured for card-to-pc transfer of samples (rather than timestamps or ABA data).</p>
+</div>
+
+
+                            <div id="CardToPCDataTransferBuffer.__init__" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#CardToPCDataTransferBuffer.__init__">#&nbsp;&nbsp</a>
+
+        
+            <span class="name">CardToPCDataTransferBuffer</span><span class="signature">(size_in_samples: int, board_memory_offset_bytes: int = 0)</span>
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size_in_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">board_memory_offset_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            size_in_samples (int): The size of the array into which samples will be written, in samples.</span>
+<span class="sd">            board_memory_offset_bytes (int): Sets the offset for transfer in board memory. Default 0. See Spectrum</span>
+<span class="sd">                documentation for more information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">BufferType</span><span class="o">.</span><span class="n">SPCM_BUF_DATA</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">BufferDirection</span><span class="o">.</span><span class="n">SPCM_DIR_CARDTOPC</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">board_memory_offset_bytes</span> <span class="o">=</span> <span class="n">board_memory_offset_bytes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_array</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">size_in_samples</span><span class="p">,</span> <span class="n">int16</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><h6 id="args">Args</h6>
+
+<ul>
+<li><strong>size_in_samples (int):</strong>  The size of the array into which samples will be written, in samples.</li>
+<li><strong>board_memory_offset_bytes (int):</strong>  Sets the offset for transfer in board memory. Default 0. See Spectrum
+documentation for more information.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="#TransferBuffer">TransferBuffer</a></dt>
+                                <dd id="CardToPCDataTransferBuffer.type" class="variable"><a href="#TransferBuffer.type">type</a></dd>
+                <dd id="CardToPCDataTransferBuffer.direction" class="variable"><a href="#TransferBuffer.direction">direction</a></dd>
+                <dd id="CardToPCDataTransferBuffer.board_memory_offset_bytes" class="variable"><a href="#TransferBuffer.board_memory_offset_bytes">board_memory_offset_bytes</a></dd>
+                <dd id="CardToPCDataTransferBuffer.data_array" class="variable"><a href="#TransferBuffer.data_array">data_array</a></dd>
+                <dd id="CardToPCDataTransferBuffer.data_array_pointer" class="variable"><a href="#TransferBuffer.data_array_pointer">data_array_pointer</a></dd>
+                <dd id="CardToPCDataTransferBuffer.data_array_length_in_bytes" class="variable"><a href="#TransferBuffer.data_array_length_in_bytes">data_array_length_in_bytes</a></dd>
+                <dd id="CardToPCDataTransferBuffer.notify_size_in_bytes" class="variable"><a href="#TransferBuffer.notify_size_in_bytes">notify_size_in_bytes</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="TriggerSource">
+                                <div class="attr class">
+        <a class="headerlink" href="#TriggerSource">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">TriggerSource</span><wbr>(<span class="base">enum.Enum</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">TriggerSource</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An Enum representing the possible trigger sources.&quot;&quot;&quot;</span>
+
+    <span class="n">SPC_TMASK_SOFTWARE</span> <span class="o">=</span> <span class="n">SPC_TMASK_SOFTWARE</span>
+    <span class="sd">&quot;&quot;&quot;Enables the software trigger for the OR mask. The card will trigger immediately after start.&quot;&quot;&quot;</span>
+    <span class="n">SPC_TMASK_EXT0</span> <span class="o">=</span> <span class="n">SPC_TMASK_EXT0</span>
+    <span class="sd">&quot;&quot;&quot;Enables the external (analog) trigger 0 for the OR mask.&quot;&quot;&quot;</span>
+    <span class="n">SPC_TMASK_EXT1</span> <span class="o">=</span> <span class="n">SPC_TMASK_EXT1</span>
+    <span class="sd">&quot;&quot;&quot;Enables the X1 (logic) trigger for the OR mask.&quot;&quot;&quot;</span>
+    <span class="n">SPC_TMASK_EXT2</span> <span class="o">=</span> <span class="n">SPC_TMASK_EXT2</span>
+    <span class="sd">&quot;&quot;&quot;Enables the X2 (logic) trigger for the OR mask.&quot;&quot;&quot;</span>
+    <span class="n">SPC_TMASK_EXT3</span> <span class="o">=</span> <span class="n">SPC_TMASK_EXT3</span>
+    <span class="sd">&quot;&quot;&quot;Enables the X3 (logic) trigger for the OR mask.&quot;&quot;&quot;</span>
+    <span class="n">SPC_TMASK_NONE</span> <span class="o">=</span> <span class="n">SPC_TMASK_NONE</span>
+    <span class="sd">&quot;&quot;&quot;No trigger source selected.&quot;&quot;&quot;</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>An Enum representing the possible trigger sources.</p>
+</div>
+
+
+                            <div id="TriggerSource.SPC_TMASK_SOFTWARE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TriggerSource.SPC_TMASK_SOFTWARE">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_TMASK_SOFTWARE</span><span class="default_value"> = &lt;<a href="#TriggerSource.SPC_TMASK_SOFTWARE">TriggerSource.SPC_TMASK_SOFTWARE</a>: 1&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Enables the software trigger for the OR mask. The card will trigger immediately after start.</p>
+</div>
+
+
+                            </div>
+                            <div id="TriggerSource.SPC_TMASK_EXT0" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TriggerSource.SPC_TMASK_EXT0">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_TMASK_EXT0</span><span class="default_value"> = &lt;<a href="#TriggerSource.SPC_TMASK_EXT0">TriggerSource.SPC_TMASK_EXT0</a>: 2&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Enables the external (analog) trigger 0 for the OR mask.</p>
+</div>
+
+
+                            </div>
+                            <div id="TriggerSource.SPC_TMASK_EXT1" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TriggerSource.SPC_TMASK_EXT1">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_TMASK_EXT1</span><span class="default_value"> = &lt;<a href="#TriggerSource.SPC_TMASK_EXT1">TriggerSource.SPC_TMASK_EXT1</a>: 4&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Enables the X1 (logic) trigger for the OR mask.</p>
+</div>
+
+
+                            </div>
+                            <div id="TriggerSource.SPC_TMASK_EXT2" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TriggerSource.SPC_TMASK_EXT2">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_TMASK_EXT2</span><span class="default_value"> = &lt;<a href="#TriggerSource.SPC_TMASK_EXT2">TriggerSource.SPC_TMASK_EXT2</a>: 8&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Enables the X2 (logic) trigger for the OR mask.</p>
+</div>
+
+
+                            </div>
+                            <div id="TriggerSource.SPC_TMASK_EXT3" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TriggerSource.SPC_TMASK_EXT3">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_TMASK_EXT3</span><span class="default_value"> = &lt;<a href="#TriggerSource.SPC_TMASK_EXT3">TriggerSource.SPC_TMASK_EXT3</a>: 16&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Enables the X3 (logic) trigger for the OR mask.</p>
+</div>
+
+
+                            </div>
+                            <div id="TriggerSource.SPC_TMASK_NONE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TriggerSource.SPC_TMASK_NONE">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_TMASK_NONE</span><span class="default_value"> = &lt;<a href="#TriggerSource.SPC_TMASK_NONE">TriggerSource.SPC_TMASK_NONE</a>: 0&gt;</span>
+    </div>
+
+            <div class="docstring"><p>No trigger source selected.</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="TriggerSource.name" class="variable">name</dd>
+                <dd id="TriggerSource.value" class="variable">value</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="ExternalTriggerMode">
+                                <div class="attr class">
+        <a class="headerlink" href="#ExternalTriggerMode">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">ExternalTriggerMode</span><wbr>(<span class="base">enum.Enum</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ExternalTriggerMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An Enum representing the supported trigger modes. See the Spectrum documentation more more Information.</span>
+
+<span class="sd">    SPC_TM_NONE:</span>
+<span class="sd">    SPC_TM_POS:</span>
+<span class="sd">    SPC_TM_NEG:</span>
+<span class="sd">    SPC_TM_BOTH:</span>
+<span class="sd">    SPC_TM_HIGH:</span>
+<span class="sd">    SPC_TM_LOW:</span>
+<span class="sd">    SPC_TM_PW_GREATER:</span>
+<span class="sd">    SPC_TM_PW_SMALLER:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">SPC_TM_NONE</span> <span class="o">=</span> <span class="n">SPC_TM_NONE</span>
+    <span class="sd">&quot;&quot;&quot;Channel is not used for trigger detection.&quot;&quot;&quot;</span>
+    <span class="n">SPC_TM_POS</span> <span class="o">=</span> <span class="n">SPC_TM_POS</span>
+    <span class="sd">&quot;&quot;&quot;Trigger detection for positive edges (crossing level 0 from below to above).&quot;&quot;&quot;</span>
+    <span class="n">SPC_TM_NEG</span> <span class="o">=</span> <span class="n">SPC_TM_NEG</span>
+    <span class="sd">&quot;&quot;&quot;Trigger detection for negative edges (crossing level 0 from above to below).&quot;&quot;&quot;</span>
+    <span class="n">SPC_TM_BOTH</span> <span class="o">=</span> <span class="n">SPC_TM_BOTH</span>
+    <span class="sd">&quot;&quot;&quot;Trigger detection for positive and negative edges (any crossing of level 0).&quot;&quot;&quot;</span>
+    <span class="n">SPC_TM_HIGH</span> <span class="o">=</span> <span class="n">SPC_TM_HIGH</span>
+    <span class="sd">&quot;&quot;&quot;Trigger detection for HIGH levels (signal above level 0).&quot;&quot;&quot;</span>
+    <span class="n">SPC_TM_LOW</span> <span class="o">=</span> <span class="n">SPC_TM_LOW</span>
+    <span class="sd">&quot;&quot;&quot;Trigger detection for LOW levels (signal below level 0).&quot;&quot;&quot;</span>
+    <span class="n">SPC_TM_PW_GREATER</span> <span class="o">=</span> <span class="n">SPC_TM_PW_GREATER</span>
+    <span class="sd">&quot;&quot;&quot;Sets the trigger mode for external trigger to detect pulses that are longer than the pulse width</span>
+<span class="sd">    chosen using the devices set_external_trigger_pulse_width_in_samples() method. Can only be used in combination</span>
+<span class="sd">    with one of the above modes.&quot;&quot;&quot;</span>
+    <span class="n">SPC_TM_PW_SMALLER</span> <span class="o">=</span> <span class="n">SPC_TM_PW_SMALLER</span>
+    <span class="sd">&quot;&quot;&quot;Sets the trigger mode for external trigger to detect pulses that are shorter than the pulse width</span>
+<span class="sd">    chosen using the devices set_external_trigger_pulse_width_in_samples() method. Can only be used in combination</span>
+<span class="sd">    with one of the above modes.&quot;&quot;&quot;</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>An Enum representing the supported trigger modes. See the Spectrum documentation more more Information.</p>
+
+<p>SPC_TM_NONE:
+SPC_TM_POS:
+SPC_TM_NEG:
+SPC_TM_BOTH:
+SPC_TM_HIGH:
+SPC_TM_LOW:
+SPC_TM_PW_GREATER:
+SPC_TM_PW_SMALLER:</p>
+</div>
+
+
+                            <div id="ExternalTriggerMode.SPC_TM_NONE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ExternalTriggerMode.SPC_TM_NONE">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_TM_NONE</span><span class="default_value"> = &lt;<a href="#ExternalTriggerMode.SPC_TM_NONE">ExternalTriggerMode.SPC_TM_NONE</a>: 0&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Channel is not used for trigger detection.</p>
+</div>
+
+
+                            </div>
+                            <div id="ExternalTriggerMode.SPC_TM_POS" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ExternalTriggerMode.SPC_TM_POS">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_TM_POS</span><span class="default_value"> = &lt;<a href="#ExternalTriggerMode.SPC_TM_POS">ExternalTriggerMode.SPC_TM_POS</a>: 1&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Trigger detection for positive edges (crossing level 0 from below to above).</p>
+</div>
+
+
+                            </div>
+                            <div id="ExternalTriggerMode.SPC_TM_NEG" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ExternalTriggerMode.SPC_TM_NEG">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_TM_NEG</span><span class="default_value"> = &lt;<a href="#ExternalTriggerMode.SPC_TM_NEG">ExternalTriggerMode.SPC_TM_NEG</a>: 2&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Trigger detection for negative edges (crossing level 0 from above to below).</p>
+</div>
+
+
+                            </div>
+                            <div id="ExternalTriggerMode.SPC_TM_BOTH" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ExternalTriggerMode.SPC_TM_BOTH">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_TM_BOTH</span><span class="default_value"> = &lt;<a href="#ExternalTriggerMode.SPC_TM_BOTH">ExternalTriggerMode.SPC_TM_BOTH</a>: 4&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Trigger detection for positive and negative edges (any crossing of level 0).</p>
+</div>
+
+
+                            </div>
+                            <div id="ExternalTriggerMode.SPC_TM_HIGH" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ExternalTriggerMode.SPC_TM_HIGH">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_TM_HIGH</span><span class="default_value"> = &lt;<a href="#ExternalTriggerMode.SPC_TM_HIGH">ExternalTriggerMode.SPC_TM_HIGH</a>: 8&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Trigger detection for HIGH levels (signal above level 0).</p>
+</div>
+
+
+                            </div>
+                            <div id="ExternalTriggerMode.SPC_TM_LOW" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ExternalTriggerMode.SPC_TM_LOW">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_TM_LOW</span><span class="default_value"> = &lt;<a href="#ExternalTriggerMode.SPC_TM_LOW">ExternalTriggerMode.SPC_TM_LOW</a>: 16&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Trigger detection for LOW levels (signal below level 0).</p>
+</div>
+
+
+                            </div>
+                            <div id="ExternalTriggerMode.SPC_TM_PW_GREATER" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ExternalTriggerMode.SPC_TM_PW_GREATER">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_TM_PW_GREATER</span><span class="default_value"> = &lt;<a href="#ExternalTriggerMode.SPC_TM_PW_GREATER">ExternalTriggerMode.SPC_TM_PW_GREATER</a>: 67108864&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Sets the trigger mode for external trigger to detect pulses that are longer than the pulse width
+chosen using the devices set_external_trigger_pulse_width_in_samples() method. Can only be used in combination
+with one of the above modes.</p>
+</div>
+
+
+                            </div>
+                            <div id="ExternalTriggerMode.SPC_TM_PW_SMALLER" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ExternalTriggerMode.SPC_TM_PW_SMALLER">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_TM_PW_SMALLER</span><span class="default_value"> = &lt;<a href="#ExternalTriggerMode.SPC_TM_PW_SMALLER">ExternalTriggerMode.SPC_TM_PW_SMALLER</a>: 33554432&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Sets the trigger mode for external trigger to detect pulses that are shorter than the pulse width
+chosen using the devices set_external_trigger_pulse_width_in_samples() method. Can only be used in combination
+with one of the above modes.</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="ExternalTriggerMode.name" class="variable">name</dd>
+                <dd id="ExternalTriggerMode.value" class="variable">value</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="CARD_STATUS_TYPE">
+                                <div class="attr variable"><a class="headerlink" href="#CARD_STATUS_TYPE">#&nbsp;&nbsp</a>
+
+        <span class="name">CARD_STATUS_TYPE</span><span class="default_value"> = typing.List[<a href="#status.StatusCode">spectrumdevice.settings.status.StatusCode</a>]</span>
+    </div>
+
+    
+
+                </section>
+                <section id="STAR_HUB_STATUS_TYPE">
+                                <div class="attr variable"><a class="headerlink" href="#STAR_HUB_STATUS_TYPE">#&nbsp;&nbsp</a>
+
+        <span class="name">STAR_HUB_STATUS_TYPE</span><span class="default_value"> = typing.List[typing.List[<a href="#status.StatusCode">spectrumdevice.settings.status.StatusCode</a>]]</span>
+    </div>
+
+    
+
+                </section>
+                <section id="StatusCode">
+                                <div class="attr class">
+        <a class="headerlink" href="#StatusCode">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">StatusCode</span><wbr>(<span class="base">enum.Enum</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">StatusCode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An Enum representing the possible status codes that can be returned by a SpectrumCard. See the Spectrum</span>
+<span class="sd">    documentation for a description of each status.&quot;&quot;&quot;</span>
+
+    <span class="n">M2STAT_NONE</span> <span class="o">=</span> <span class="n">M2STAT_NONE</span>
+    <span class="n">M2STAT_CARD_PRETRIGGER</span> <span class="o">=</span> <span class="n">M2STAT_CARD_PRETRIGGER</span>
+    <span class="n">M2STAT_CARD_TRIGGER</span> <span class="o">=</span> <span class="n">M2STAT_CARD_TRIGGER</span>
+    <span class="n">M2STAT_CARD_READY</span> <span class="o">=</span> <span class="n">M2STAT_CARD_READY</span>
+    <span class="n">M2STAT_CARD_SEGMENT_PRETRG</span> <span class="o">=</span> <span class="n">M2STAT_CARD_SEGMENT_PRETRG</span>
+    <span class="n">M2STAT_DATA_BLOCKREADY</span> <span class="o">=</span> <span class="n">M2STAT_DATA_BLOCKREADY</span>
+    <span class="n">M2STAT_DATA_END</span> <span class="o">=</span> <span class="n">M2STAT_DATA_END</span>
+    <span class="n">M2STAT_DATA_OVERRUN</span> <span class="o">=</span> <span class="n">M2STAT_DATA_OVERRUN</span>
+    <span class="n">M2STAT_DATA_ERROR</span> <span class="o">=</span> <span class="n">M2STAT_DATA_ERROR</span>
+    <span class="n">M2STAT_EXTRA_BLOCKREADY</span> <span class="o">=</span> <span class="n">M2STAT_DATA_BLOCKREADY</span>
+    <span class="n">M2STAT_EXTRA_END</span> <span class="o">=</span> <span class="n">M2STAT_DATA_END</span>
+    <span class="n">M2STAT_EXTRA_OVERRUN</span> <span class="o">=</span> <span class="n">M2STAT_DATA_OVERRUN</span>
+    <span class="n">M2STAT_EXTRA_ERROR</span> <span class="o">=</span> <span class="n">M2STAT_DATA_ERROR</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>An Enum representing the possible status codes that can be returned by a SpectrumCard. See the Spectrum
+documentation for a description of each status.</p>
+</div>
+
+
+                            <div id="StatusCode.M2STAT_NONE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#StatusCode.M2STAT_NONE">#&nbsp;&nbsp</a>
+
+        <span class="name">M2STAT_NONE</span><span class="default_value"> = &lt;<a href="#StatusCode.M2STAT_NONE">StatusCode.M2STAT_NONE</a>: 0&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="StatusCode.M2STAT_CARD_PRETRIGGER" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#StatusCode.M2STAT_CARD_PRETRIGGER">#&nbsp;&nbsp</a>
+
+        <span class="name">M2STAT_CARD_PRETRIGGER</span><span class="default_value"> = &lt;<a href="#StatusCode.M2STAT_CARD_PRETRIGGER">StatusCode.M2STAT_CARD_PRETRIGGER</a>: 1&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="StatusCode.M2STAT_CARD_TRIGGER" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#StatusCode.M2STAT_CARD_TRIGGER">#&nbsp;&nbsp</a>
+
+        <span class="name">M2STAT_CARD_TRIGGER</span><span class="default_value"> = &lt;<a href="#StatusCode.M2STAT_CARD_TRIGGER">StatusCode.M2STAT_CARD_TRIGGER</a>: 2&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="StatusCode.M2STAT_CARD_READY" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#StatusCode.M2STAT_CARD_READY">#&nbsp;&nbsp</a>
+
+        <span class="name">M2STAT_CARD_READY</span><span class="default_value"> = &lt;<a href="#StatusCode.M2STAT_CARD_READY">StatusCode.M2STAT_CARD_READY</a>: 4&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="StatusCode.M2STAT_CARD_SEGMENT_PRETRG" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#StatusCode.M2STAT_CARD_SEGMENT_PRETRG">#&nbsp;&nbsp</a>
+
+        <span class="name">M2STAT_CARD_SEGMENT_PRETRG</span><span class="default_value"> = &lt;<a href="#StatusCode.M2STAT_CARD_SEGMENT_PRETRG">StatusCode.M2STAT_CARD_SEGMENT_PRETRG</a>: 8&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="StatusCode.M2STAT_DATA_BLOCKREADY" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#StatusCode.M2STAT_DATA_BLOCKREADY">#&nbsp;&nbsp</a>
+
+        <span class="name">M2STAT_DATA_BLOCKREADY</span><span class="default_value"> = &lt;<a href="#StatusCode.M2STAT_DATA_BLOCKREADY">StatusCode.M2STAT_DATA_BLOCKREADY</a>: 256&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="StatusCode.M2STAT_DATA_END" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#StatusCode.M2STAT_DATA_END">#&nbsp;&nbsp</a>
+
+        <span class="name">M2STAT_DATA_END</span><span class="default_value"> = &lt;<a href="#StatusCode.M2STAT_DATA_END">StatusCode.M2STAT_DATA_END</a>: 512&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="StatusCode.M2STAT_DATA_OVERRUN" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#StatusCode.M2STAT_DATA_OVERRUN">#&nbsp;&nbsp</a>
+
+        <span class="name">M2STAT_DATA_OVERRUN</span><span class="default_value"> = &lt;<a href="#StatusCode.M2STAT_DATA_OVERRUN">StatusCode.M2STAT_DATA_OVERRUN</a>: 1024&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="StatusCode.M2STAT_DATA_ERROR" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#StatusCode.M2STAT_DATA_ERROR">#&nbsp;&nbsp</a>
+
+        <span class="name">M2STAT_DATA_ERROR</span><span class="default_value"> = &lt;<a href="#StatusCode.M2STAT_DATA_ERROR">StatusCode.M2STAT_DATA_ERROR</a>: 2048&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="StatusCode.M2STAT_EXTRA_BLOCKREADY" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#StatusCode.M2STAT_EXTRA_BLOCKREADY">#&nbsp;&nbsp</a>
+
+        <span class="name">M2STAT_EXTRA_BLOCKREADY</span><span class="default_value"> = &lt;<a href="#StatusCode.M2STAT_DATA_BLOCKREADY">StatusCode.M2STAT_DATA_BLOCKREADY</a>: 256&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="StatusCode.M2STAT_EXTRA_END" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#StatusCode.M2STAT_EXTRA_END">#&nbsp;&nbsp</a>
+
+        <span class="name">M2STAT_EXTRA_END</span><span class="default_value"> = &lt;<a href="#StatusCode.M2STAT_DATA_END">StatusCode.M2STAT_DATA_END</a>: 512&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="StatusCode.M2STAT_EXTRA_OVERRUN" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#StatusCode.M2STAT_EXTRA_OVERRUN">#&nbsp;&nbsp</a>
+
+        <span class="name">M2STAT_EXTRA_OVERRUN</span><span class="default_value"> = &lt;<a href="#StatusCode.M2STAT_DATA_OVERRUN">StatusCode.M2STAT_DATA_OVERRUN</a>: 1024&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="StatusCode.M2STAT_EXTRA_ERROR" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#StatusCode.M2STAT_EXTRA_ERROR">#&nbsp;&nbsp</a>
+
+        <span class="name">M2STAT_EXTRA_ERROR</span><span class="default_value"> = &lt;<a href="#StatusCode.M2STAT_DATA_ERROR">StatusCode.M2STAT_DATA_ERROR</a>: 2048&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="StatusCode.name" class="variable">name</dd>
+                <dd id="StatusCode.value" class="variable">value</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="SpectrumRegisterLength">
+                                <div class="attr class">
+        <a class="headerlink" href="#SpectrumRegisterLength">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">SpectrumRegisterLength</span><wbr>(<span class="base">enum.Enum</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">SpectrumRegisterLength</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enum defining the possible lengths of a spectrum register.&quot;&quot;&quot;</span>
+
+    <span class="n">THIRTY_TWO</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;32 bit register&quot;&quot;&quot;</span>
+    <span class="n">SIXTY_FOUR</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;64 bit register&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Enum defining the possible lengths of a spectrum register.</p>
+</div>
+
+
+                            <div id="SpectrumRegisterLength.THIRTY_TWO" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#SpectrumRegisterLength.THIRTY_TWO">#&nbsp;&nbsp</a>
+
+        <span class="name">THIRTY_TWO</span><span class="default_value"> = THIRTY_TWO</span>
+    </div>
+
+            <div class="docstring"><p>32 bit register</p>
+</div>
+
+
+                            </div>
+                            <div id="SpectrumRegisterLength.SIXTY_FOUR" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#SpectrumRegisterLength.SIXTY_FOUR">#&nbsp;&nbsp</a>
+
+        <span class="name">SIXTY_FOUR</span><span class="default_value"> = SIXTY_FOUR</span>
+    </div>
+
+            <div class="docstring"><p>64 bit register</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="SpectrumRegisterLength.name" class="variable">name</dd>
+                <dd id="SpectrumRegisterLength.value" class="variable">value</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+    </main>
+<script>
+    function escapeHTML(html) {
+        return document.createElement('div').appendChild(document.createTextNode(html)).parentNode.innerHTML;
+    }
+
+    const originalContent = document.querySelector("main.pdoc");
+    let currentContent = originalContent;
+
+    function setContent(innerHTML) {
+        let elem;
+        if (innerHTML) {
+            elem = document.createElement("main");
+            elem.classList.add("pdoc");
+            elem.innerHTML = innerHTML;
+        } else {
+            elem = originalContent;
+        }
+        if (currentContent !== elem) {
+            currentContent.replaceWith(elem);
+            currentContent = elem;
+        }
+    }
+
+    function getSearchTerm() {
+        return (new URL(window.location)).searchParams.get("search");
+    }
+
+    const searchBox = document.querySelector(".pdoc input[type=search]");
+    searchBox.addEventListener("input", function () {
+        let url = new URL(window.location);
+        if (searchBox.value.trim()) {
+            url.hash = "";
+            url.searchParams.set("search", searchBox.value);
+        } else {
+            url.searchParams.delete("search");
+        }
+        history.replaceState("", "", url.toString());
+        onInput();
+    });
+    window.addEventListener("popstate", onInput);
+
+
+    let search, searchErr;
+
+    async function initialize() {
+        try {
+            search = await new Promise((resolve, reject) => {
+                const script = document.createElement("script");
+                script.type = "text/javascript";
+                script.async = true;
+                script.onload = () => resolve(window.pdocSearch);
+                script.onerror = (e) => reject(e);
+                script.src = "../search.js";
+                document.getElementsByTagName("head")[0].appendChild(script);
+            });
+        } catch (e) {
+            console.error("Cannot fetch pdoc search index");
+            searchErr = "Cannot fetch search index.";
+        }
+        onInput();
+
+        document.querySelector("nav.pdoc").addEventListener("click", e => {
+            if (e.target.hash) {
+                searchBox.value = "";
+                searchBox.dispatchEvent(new Event("input"));
+            }
+        });
+    }
+
+    function onInput() {
+        setContent((() => {
+            const term = getSearchTerm();
+            if (!term) {
+                return null
+            }
+            if (searchErr) {
+                return `<h3>Error: ${searchErr}</h3>`
+            }
+            if (!search) {
+                return "<h3>Searching...</h3>"
+            }
+
+            window.scrollTo({top: 0, left: 0, behavior: 'auto'});
+
+            const results = search(term);
+
+            let html;
+            if (results.length === 0) {
+                html = `No search results for '${escapeHTML(term)}'.`
+            } else {
+                html = `<h4>${results.length} search result${results.length > 1 ? "s" : ""} for '${escapeHTML(term)}'.</h4>`;
+            }
+            for (let result of results.slice(0, 10)) {
+                let doc = result.doc;
+                let url = `../${doc.modulename.replaceAll(".", "/")}.html`;
+                if (doc.qualname) {
+                    url += `#${doc.qualname}`;
+                }
+
+                let heading;
+                switch (result.doc.type) {
+                    case "function":
+                        heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span><span class="signature">(${doc.parameters.join(", ")})</span>`;
+                        break;
+                    case "class":
+                        heading = `<span class="def">class</span> <span class="name">${doc.fullname}</span>`;
+                        break;
+                    default:
+                        heading = `<span class="name">${doc.fullname}</span>`;
+                        break;
+                }
+                html += `
+                        <section class="search-result">
+                        <a href="${url}" class="attr ${doc.type}">${heading}</a>
+                        <div class="docstring">${doc.doc}</div>
+                        </section>
+                    `;
+
+            }
+            return html;
+        })());
+    }
+
+    if (getSearchTerm()) {
+        initialize();
+        searchBox.value = getSearchTerm();
+        onInput();
+    } else {
+        searchBox.addEventListener("focus", initialize, {once: true});
+    }
+
+    searchBox.addEventListener("keydown", e => {
+        if (["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
+            let focused = currentContent.querySelector(".search-result.focused");
+            if (!focused) {
+                currentContent.querySelector(".search-result").classList.add("focused");
+            } else if (
+                e.key === "ArrowDown"
+                && focused.nextElementSibling
+                && focused.nextElementSibling.classList.contains("search-result")
+            ) {
+                focused.classList.remove("focused");
+                focused.nextElementSibling.classList.add("focused");
+                focused.nextElementSibling.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "nearest"
+                });
+            } else if (
+                e.key === "ArrowUp"
+                && focused.previousElementSibling
+                && focused.previousElementSibling.classList.contains("search-result")
+            ) {
+                focused.classList.remove("focused");
+                focused.previousElementSibling.classList.add("focused");
+                focused.previousElementSibling.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "nearest"
+                });
+            } else if (
+                e.key === "Enter"
+            ) {
+                focused.querySelector("a").click();
+            }
+        }
+    });
+</script></body>
+</html>
