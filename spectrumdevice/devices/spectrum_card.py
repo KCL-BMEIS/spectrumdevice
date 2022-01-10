@@ -224,10 +224,13 @@ class SpectrumCard(SpectrumDevice):
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
             self.wait_for_transfer_to_complete()
             num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
-            self.write_to_spectrum_device_register(SPC_DATA_AVAIL_CARD_LEN, num_available_bytes)
+        else:
+            num_available_bytes = 0
         waveforms_in_columns = copy(self.transfer_buffers[0].data_array).reshape(
             (self.acquisition_length_in_samples, len(self.enabled_channels))
         )
+        if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
+            self.write_to_spectrum_device_register(SPC_DATA_AVAIL_CARD_LEN, num_available_bytes)
         return [waveform for waveform in waveforms_in_columns.T]
 
     def disconnect(self) -> None:
