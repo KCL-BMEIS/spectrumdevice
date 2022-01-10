@@ -14,7 +14,7 @@ more information.
 
 * [Examples](https://github.com/KCL-BMEIS/spectrumdevice/tree/main/example_scripts)
 * [API reference documentation](https://kcl-bmeis.github.io/spectrumdevice/)
-* [PyPi](https://pypi.org/project/spectrumdevice/)
+* [PyPI](https://pypi.org/project/spectrumdevice/)
 
 ## Requirements
 `spectrumdevice` works with hardware on Windows and Linux. Spectrum do not currently provide a hardware driver for 

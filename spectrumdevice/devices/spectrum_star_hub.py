@@ -1,4 +1,4 @@
-"""Provides a concrete class for controlling Spectrum digitizer StarHubs."""
+"""Provides a concrete class for controlling Spectrum digitiser StarHubs."""
 
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
@@ -25,7 +25,7 @@ from spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK
 
 
 class SpectrumStarHub(SpectrumDevice):
-    """Composite class of SpectrumCards for controlling a StarHub device, for example the Spectrum NetBox. StarHub
+    """Composite class of `SpectrumCards` for controlling a StarHub device, for example the Spectrum NetBox. StarHub
     devices are composites of more than one Spectrum card. Acquisition from the child cards of a StarHub is
     synchronised, aggregating the channels of all child cards. This class enables the control of a StarHub device as if
     it were a single Spectrum card."""
@@ -39,7 +39,7 @@ class SpectrumStarHub(SpectrumDevice):
         """
         Args:
             device_number (int): The index of the StarHub to connect to. If only one StarHub is present, set to 0.
-            child_cards (Sequence[SpectrumCard]): A list of SpectrumCard objects defining the child cards located
+            child_cards (Sequence[`SpectrumCard`]): A list of `SpectrumCard` objects defining the child cards located
                 within the StarHub, including their IP addresses and/or device numbers.
             master_card_index (int): The position within child_cards where the master card (the card which controls the
                 clock) is located.
@@ -63,34 +63,34 @@ class SpectrumStarHub(SpectrumDevice):
         self._connected = False
 
     def reconnect(self) -> None:
-        """Reconnects to the hub after a disconnect(), and reconnects to each child card."""
+        """Reconnects to the hub after a `disconnect()`, and reconnects to each child card."""
         self._connect(self._visa_string)
         for card in self._child_cards:
             card.reconnect()
 
     @property
     def status(self) -> STAR_HUB_STATUS_TYPE:
-        """The statuses of each child card, in a list. See SpectrumCard.status for more information.
+        """The statuses of each child card, in a list. See `SpectrumCard.status` for more information.
         Returns:
-            statuses (STAR_HUB_STATUS_TYPE): A list of lists of CardStatus.
+            statuses (List[List[`CardStatus`]]): A list of lists of `CardStatus`.
         """
         return STAR_HUB_STATUS_TYPE([card.status for card in self._child_cards])
 
     def start_transfer(self) -> None:
-        """Start the transfer of samples from the on-device buffer of each child card to its TransferBuffer. See
-        SpectrumCard.start_transfer() for more information."""
+        """Start the transfer of samples from the on-device buffer of each child card to its `TransferBuffer`. See
+        `SpectrumCard.start_transfer()` for more information."""
         for card in self._child_cards:
             card.start_transfer()
 
     def stop_transfer(self) -> None:
-        """Stop the transfer of samples from each card to its TransferBuffer. See SpectrumCard.stop_transfer() for
+        """Stop the transfer of samples from each card to its `TransferBuffer`. See `SpectrumCard.stop_transfer()` for
         more information."""
         for card in self._child_cards:
             card.stop_transfer()
 
     def wait_for_transfer_to_complete(self) -> None:
-        """Wait for all cards to stop transferring samples to their TransferBuffers. See
-        SpectrumCard.wait_for_transfer_to_complete() for more information."""
+        """Wait for all cards to stop transferring samples to their `TransferBuffers`. See
+        `SpectrumCard.wait_for_transfer_to_complete()` for more information."""
         for card in self._child_cards:
             card.wait_for_transfer_to_complete()
 
@@ -114,14 +114,14 @@ class SpectrumStarHub(SpectrumDevice):
         """The clock mode currently configured on the master card.
 
         Returns:
-            mode (ClockMode): The currently configured clock mode."""
+            mode (`ClockMode`): The currently configured clock mode."""
         return self._master_card.clock_mode
 
     def set_clock_mode(self, mode: ClockMode) -> None:
         """Change the clock mode configured on the master card.
 
         Args:
-            mode (ClockMode): The desired clock mode."""
+            mode (`ClockMode`): The desired clock mode."""
         self._master_card.set_clock_mode(mode)
 
     @property
@@ -144,18 +144,18 @@ class SpectrumStarHub(SpectrumDevice):
     @property
     def trigger_sources(self) -> List[TriggerSource]:
         """The trigger sources configured on the triggering card, which by default is the master card. See
-        SpectrumCard.trigger_sources() for more information.
+        `SpectrumCard.trigger_sources()` for more information.
 
         Returns:
-            sources (List[TriggerSource]): A list of the currently enabled trigger sources."""
+            sources (List[`TriggerSource`]): A list of the currently enabled trigger sources."""
         return self._triggering_card.trigger_sources
 
     def set_trigger_sources(self, sources: List[TriggerSource]) -> None:
         """Change the trigger sources configured on the triggering card, which by default is the master card. See
-        SpectrumCard.trigger_sources() for more information.
+        `SpectrumCard.trigger_sources()` for more information.
 
         Args:
-            sources (List[TriggerSource]): The trigger sources to enable, in a list."""
+            sources (List[`TriggerSource`]): The trigger sources to enable, in a list."""
         self._triggering_card.set_trigger_sources(sources)
         for card in self._child_cards:
             if card is not self._triggering_card:
@@ -164,25 +164,25 @@ class SpectrumStarHub(SpectrumDevice):
     @property
     def external_trigger_mode(self) -> ExternalTriggerMode:
         """The trigger mode configured on the triggering card, which by default is the master card. See
-        SpectrumCard.external_trigger_mode() for more information.
+        `SpectrumCard.external_trigger_mode()` for more information.
 
         Returns:
-            mode (ExternalTriggerMode): The currently set external trigger mode.
+            mode (`ExternalTriggerMode`): The currently set external trigger mode.
         """
         return self._triggering_card.external_trigger_mode
 
     def set_external_trigger_mode(self, mode: ExternalTriggerMode) -> None:
         """Change the trigger mode configured on the triggering card, which by default is the master card. See
-        SpectrumCard.set_external_trigger_mode() for more information.
+        `SpectrumCard.set_external_trigger_mode()` for more information.
 
         Args:
-            mode (ExternalTriggerMode): The desired external trigger mode."""
+            mode (`ExternalTriggerMode`): The desired external trigger mode."""
         self._triggering_card.set_external_trigger_mode(mode)
 
     @property
     def external_trigger_level_in_mv(self) -> int:
         """The external trigger level configured on the triggering card, which by default is the master card. See
-        SpectrumCard.external_trigger_level_mv() for more information.
+        `SpectrumCard.external_trigger_level_mv()` for more information.
 
         Returns:
             level (int): The external trigger level in mV.
@@ -191,7 +191,7 @@ class SpectrumStarHub(SpectrumDevice):
 
     def set_external_trigger_level_in_mv(self, level: int) -> None:
         """Change the external trigger level configured on the triggering card, which by default is the master card.
-        See SpectrumCard.set_external_trigger_level_mv() for more information.
+        See `SpectrumCard.set_external_trigger_level_mv()` for more information.
 
         Args:
             level (int): The desired external trigger level in mV.
@@ -201,7 +201,7 @@ class SpectrumStarHub(SpectrumDevice):
     @property
     def external_trigger_pulse_width_in_samples(self) -> int:
         """The trigger pulse width (samples) configured on the triggering card, which by default is the master card.
-        See SpectrumCard.external_trigger_pulse_width_in_samples() for more information.
+        See `SpectrumCard.external_trigger_pulse_width_in_samples()` for more information.
 
         Returns:
             width (int): The current trigger pulse width in samples.
@@ -210,7 +210,7 @@ class SpectrumStarHub(SpectrumDevice):
 
     def set_external_trigger_pulse_width_in_samples(self, width: int) -> None:
         """Change the trigger pulse width (samples) configured on the triggering card, which by default is the master
-        card. See SpectrumCard.set_external_trigger_pulse_width_in_samples() for more information.
+        card. See `SpectrumCard.set_external_trigger_pulse_width_in_samples()` for more information.
 
         Args:
             width (int): The desired trigger pulse width in samples.
@@ -218,7 +218,7 @@ class SpectrumStarHub(SpectrumDevice):
         self._triggering_card.set_external_trigger_pulse_width_in_samples(width)
 
     def apply_channel_enabling(self) -> None:
-        """Apply the enabled channels chosen using set_enable_channels(). This happens automatically and does not
+        """Apply the enabled channels chosen using `set_enable_channels()`. This happens automatically and does not
         usually need to be called."""
         for d in self._child_cards:
             d.apply_channel_enabling()
@@ -258,21 +258,21 @@ class SpectrumStarHub(SpectrumDevice):
 
     @property
     def transfer_buffers(self) -> List[TransferBuffer]:
-        """The TransferBuffers of all of the child cards of the hub. See SpectrumCard.transfer_buffers for more
+        """The `TransferBuffer`s of all of the child cards of the hub. See `SpectrumCard.transfer_buffers` for more
         information.
 
         Returns:
-            buffers (List[TransferBuffer]): A list of the transfer buffers for each child card."""
+            buffers (List[`TransferBuffer`]): A list of the transfer buffers for each child card."""
         return [card.transfer_buffers[0] for card in self._child_cards]
 
     def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
-        """Create or provide CardToPCDataTransferBuffer objects for receiving acquired samples from the child cards. If
+        """Create or provide `CardToPCDataTransferBuffer` objects for receiving acquired samples from the child cards. If
         no buffers are provided, they will be created with the correct size and a board_memory_offset_bytes of 0. See
-        SpectrumCard.define_transfer_buffer() for more information
+        `SpectrumCard.define_transfer_buffer()` for more information
 
         Args:
-            buffer (Optional[CardToPCDataTransferBuffer]): A list containing pre-constructed
-            CardToPCDataTransferBuffer objects, one for each child card. The size of the buffers should be chosen
+            buffer (Optional[`CardToPCDataTransferBuffer`]): A list containing pre-constructed
+            `CardToPCDataTransferBuffer` objects, one for each child card. The size of the buffers should be chosen
             according to the current number of active channels in each card and the acquisition length.
         """
         if buffer:
@@ -283,7 +283,7 @@ class SpectrumStarHub(SpectrumDevice):
                 card.define_transfer_buffer()
 
     def wait_for_acquisition_to_complete(self) -> None:
-        """Wait for each card to finish its acquisition. See SpectrumCard.wait_for_acquisition_to_complete() for more
+        """Wait for each card to finish its acquisition. See `SpectrumCard.wait_for_acquisition_to_complete()` for more
         information."""
         for card in self._child_cards:
             card.wait_for_acquisition_to_complete()
@@ -292,7 +292,7 @@ class SpectrumStarHub(SpectrumDevice):
         """Get a list of of the most recently transferred waveforms.
 
         This method gets the waveforms from each child card and joins them into a new list, ordered by channel number.
-        See SpectrumCard.get_waveforms() for more information.
+        See `SpectrumCard.get_waveforms()` for more information.
 
         Returns:
             waveforms (List[ndarray]): A list of 1D numpy arrays, one per enabled channel in channel order.
@@ -304,11 +304,11 @@ class SpectrumStarHub(SpectrumDevice):
 
     @property
     def channels(self) -> Sequence[SpectrumChannel]:
-        """A tuple containing of all the channels of the child cards of the hub. See SpectrumCard.channels for more
+        """A tuple containing of all the channels of the child cards of the hub. See `SpectrumCard.channels` for more
         information.
 
         Returns:
-            channels (List[SpectrumChannel]): A list of SpectrumChannel objects.
+            channels (List[`SpectrumChannel`]): A list of `SpectrumChannel` objects.
         """
         channels: List[SpectrumChannel] = []
         for device in self._child_cards:
@@ -318,7 +318,7 @@ class SpectrumStarHub(SpectrumDevice):
     @property
     def acquisition_length_in_samples(self) -> int:
         """The currently set recording length, which should be the same for all child cards. If different recording
-        lengths are set, an exception is raised. See SpectrumCard.acquisition_length_in_samples for more information.
+        lengths are set, an exception is raised. See `SpectrumCard.acquisition_length_in_samples` for more information.
 
         Returns:
             length_in_samples: The currently set acquisition length in samples."""
@@ -328,8 +328,8 @@ class SpectrumStarHub(SpectrumDevice):
         return _check_settings_constant_across_devices(lengths, __name__)
 
     def set_acquisition_length_in_samples(self, length_in_samples: int) -> None:
-        """Set a new recording length for all child cards. See SpectrumCard.set_acquisition_length_in_samples() for more
-        information.
+        """Set a new recording length for all child cards. See `SpectrumCard.set_acquisition_length_in_samples()` for
+        more information.
 
         Args:
             length_in_samples (int): The desired acquisition length in samples."""
@@ -340,7 +340,7 @@ class SpectrumStarHub(SpectrumDevice):
     def post_trigger_length_in_samples(self) -> int:
         """The number of samples recorded after a trigger is receive. This should be consistent across all child
         cards. If different values are found across the child cards, an exception is raised. See
-        SpectrumCard.post_trigger_length_in_samples for more information.
+        `SpectrumCard.post_trigger_length_in_samples` for more information.
 
         Returns:
             length_in_samples (int): The current post trigger length in samples.
@@ -351,8 +351,8 @@ class SpectrumStarHub(SpectrumDevice):
         return _check_settings_constant_across_devices(lengths, __name__)
 
     def set_post_trigger_length_in_samples(self, length_in_samples: int) -> None:
-        """Set a new post trigger length for all child cards. See SpectrumCard.set_post_trigger_length_in_samples() for
-        more information.
+        """Set a new post trigger length for all child cards. See `SpectrumCard.set_post_trigger_length_in_samples()`
+        for more information.
 
         Args:
             length_in_samples (int): The desired post trigger length in samples.
@@ -363,10 +363,10 @@ class SpectrumStarHub(SpectrumDevice):
     @property
     def acquisition_mode(self) -> AcquisitionMode:
         """The acquisition mode, which should be the same for all child cards. If it's not, an exception is raised.
-        See SpectrumCard.acquisition_mode for more information.
+        See `SpectrumCard.acquisition_mode` for more information.
 
         Returns:
-            mode (AcquisitionMode): The currently enabled acquisition mode.
+            mode (`AcquisitionMode`): The currently enabled acquisition mode.
         """
         modes = []
         for d in self._child_cards:
@@ -374,11 +374,11 @@ class SpectrumStarHub(SpectrumDevice):
         return AcquisitionMode(_check_settings_constant_across_devices([m.value for m in modes], __name__))
 
     def set_acquisition_mode(self, mode: AcquisitionMode) -> None:
-        """Change the acquisition mode for all child cards. See SpectrumCard.set_acquisition_mode() for more
+        """Change the acquisition mode for all child cards. See `SpectrumCard.set_acquisition_mode()` for more
         information.
 
         Args:
-            mode (AcquisitionMode): The desired acquisition mode."""
+            mode (`AcquisitionMode`): The desired acquisition mode."""
         for d in self._child_cards:
             d.set_acquisition_mode(mode)
 
@@ -405,22 +405,22 @@ class SpectrumStarHub(SpectrumDevice):
 
     @property
     def feature_list(self) -> List[Tuple[List[CardFeature], List[AdvancedCardFeature]]]:
-        """Get a list of the features of the child cards. See CardFeature, AdvancedCardFeature and the Spectrum
+        """Get a list of the features of the child cards. See `CardFeature`, `AdvancedCardFeature` and the Spectrum
         documentation for more information.
 
         Returns:
-            features (List[Tuple[List[CardFeature], List[AdvancedCardFeature]]]): A list of tuples, one per child card.
-                Each tuple contains a list of features and a list of advanced features for that card.
+            features (List[Tuple[List[`CardFeature`], List[`AdvancedCardFeature`]]]): A list of tuples, one per child
+                card. Each tuple contains a list of features and a list of advanced features for that card.
         """
         return [card.feature_list[0] for card in self._child_cards]
 
     @property
     def available_io_modes(self) -> AvailableIOModes:
-        """For each multipurpose IO line on the master card, read the available modes. See IOLineMode and the Spectrum
+        """For each multipurpose IO line on the master card, read the available modes. See `IOLineMode` and the Spectrum
         Documentation for all possible available modes and their meanings.
 
         Returns:
-            modes (AvailableIOModes): An AvailableIOModes dataclass containing the modes available for each IO line.
+            modes (AvailableIOModes): An `AvailableIOModes` dataclass containing the modes available for each IO line.
         """
         return self._master_card.available_io_modes
 
