@@ -25,7 +25,8 @@ from spectrum_gmbh.regs import (
 from spectrumdevice.devices.spectrum_interface import (
     SpectrumDeviceInterface,
 )
-from spectrumdevice.settings import SpectrumRegisterLength, AcquisitionMode, TriggerSettings, AcquisitionSettings
+from spectrumdevice.settings import AcquisitionMode, TriggerSettings, AcquisitionSettings
+from spectrumdevice.settings import SpectrumRegisterLength
 from spectrumdevice.settings.triggering import EXTERNAL_TRIGGER_SOURCES
 from spectrumdevice.spectrum_wrapper import (
     get_spectrum_i32_api_param,

@@ -1,3 +1,4 @@
+from spectrumdevice.settings import CardType
 from spectrumdevice.devices.mock_devices import MockSpectrumCard, MockSpectrumStarHub
 from spectrumdevice.devices.spectrum_card import SpectrumCard
 from spectrumdevice.devices.spectrum_star_hub import SpectrumStarHub
@@ -23,6 +24,7 @@ def create_spectrum_card_for_testing() -> SpectrumCard:
     else:
         return MockSpectrumCard(
             device_number=TEST_DEVICE_NUMBER,
+            card_type=CardType.TYP_M2P5966_X4,
             mock_source_frame_rate_hz=MOCK_DEVICE_TEST_FRAME_RATE_HZ,
             num_modules=NUM_MODULES_PER_CARD,
             num_channels_per_module=NUM_CHANNELS_PER_MODULE,
@@ -43,6 +45,7 @@ def create_spectrum_star_hub_for_testing() -> SpectrumStarHub:
             mock_child_cards.append(
                 MockSpectrumCard(
                     device_number=0,
+                    card_type=CardType.TYP_M2P5966_X4,
                     mock_source_frame_rate_hz=MOCK_DEVICE_TEST_FRAME_RATE_HZ,
                     num_modules=NUM_MODULES_PER_CARD,
                     num_channels_per_module=NUM_CHANNELS_PER_MODULE,

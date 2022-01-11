@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import List, Optional
 
+from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.card_features import CardFeature, AdvancedCardFeature
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
 from spectrumdevice.settings.io_lines import IOLineMode, AvailableIOModes
@@ -34,19 +35,8 @@ __all__ = [
     "STAR_HUB_STATUS_TYPE",
     "StatusCode",
     "SpectrumRegisterLength",
+    "CardType",
 ]
-
-
-class SpectrumRegisterLength(Enum):
-    """Enum defining the possible lengths of a spectrum register."""
-
-    THIRTY_TWO = 0
-    """32 bit register"""
-    SIXTY_FOUR = 1
-    """64 bit register"""
-
-    def __repr__(self) -> str:
-        return self.name
 
 
 @dataclass
@@ -83,3 +73,15 @@ class AcquisitionSettings:
     """The voltage range to apply to each enabled channel in mW."""
     vertical_offsets_in_percent: List[int]
     """The DC offset to apply to each enabled channel as percentages of their vertical ranges."""
+
+
+class SpectrumRegisterLength(Enum):
+    """Enum defining the possible lengths of a spectrum register."""
+
+    THIRTY_TWO = 0
+    """32 bit register"""
+    SIXTY_FOUR = 1
+    """64 bit register"""
+
+    def __repr__(self) -> str:
+        return self.name
