@@ -27,11 +27,11 @@ jobs:
         git config --local user.email "christian.baker@kcl.ac.uk"
         git fetch
         git status
+        git checkout ${{ github.ref_name }}
+        git branch ${{ github.ref_name }}-branch
         git checkout docs
         git status
-        git fetch upstream
-        echo ${{ github.ref_name }}
-        git rebase --onto ${{ github.ref_name }} main
+        git rebase ${{ github.ref_name }}-branch
         export SPECTRUMDEVICE_VERSION=${{ github.ref_name }}
         source generate_docs.sh
         git add .
