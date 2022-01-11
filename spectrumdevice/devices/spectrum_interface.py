@@ -1,4 +1,4 @@
-"""Defines public interfaces for controlling Spectrum Digitizer devices and their channels."""
+"""Defines public interfaces for controlling Spectrum digitiser devices and their channels."""
 
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
@@ -21,7 +21,7 @@ from spectrumdevice.settings.transfer_buffer import TransferBuffer, CardToPCData
 
 
 class SpectrumChannelInterface(ABC):
-    """Defines the public interface for control of the channels of Spectrum Digitizer device. All properties are read-
+    """Defines the public interface for control of the channels of Spectrum digitiser device. All properties are read-
     only and must be set with their respective setter methods."""
 
     @property
@@ -49,8 +49,8 @@ class SpectrumChannelInterface(ABC):
 
 
 class SpectrumDeviceInterface(ABC):
-    """Defines the public interface for control of all Spectrum digitizer devices, be they StarHub composite devices
-    (e.g. the NetBox) or individual digitizer cards. All properties are read-only and must be set with their respective
+    """Defines the public interface for control of all Spectrum digitiser devices, be they StarHub composite devices
+    (e.g. the NetBox) or individual digitiser cards. All properties are read-only and must be set with their respective
     setter methods."""
 
     @property

@@ -1,5 +1,5 @@
 # spectrumdevice
-A high-level, object-oriented Python API for controlling Spectrum Instrumentation digitisers.
+A high-level, object-oriented Python library for controlling Spectrum Instrumentation digitisers.
 
 `spectrumdevice` can connect to individual digitisers or 
 [StarHubs](https://spectrum-instrumentation.com/en/m4i-star-hub) (e.g. the
@@ -14,7 +14,7 @@ more information.
 
 * [Examples](https://github.com/KCL-BMEIS/spectrumdevice/tree/main/example_scripts)
 * [API reference documentation](https://kcl-bmeis.github.io/spectrumdevice/)
-* [PyPi](https://pypi.org/project/spectrumdevice/)
+* [PyPI](https://pypi.org/project/spectrumdevice/)
 
 ## Requirements
 `spectrumdevice` works with hardware on Windows and Linux. Spectrum do not currently provide a hardware driver for 
@@ -27,9 +27,11 @@ in `libspcm_linux.so` on Linux. If no driver is present `spectrumdevice` can sti
 
 ## Installation and dependencies
 To install the latest release:
+
 `pip install spectrumdevice`
 
 Or to install the development version:
+
 `pip install https://github.com/KCL-BMEIS/spectrumdevice/tarball/main`.
 
 `spectrumdevice` depends only on NumPy, although its example scripts also make use of `matplotlib`. You can include this when you install `spectrumdevice` using the `[examples]` option:
@@ -50,9 +52,8 @@ Or to install the development version:
 [44xx](https://spectrum-instrumentation.com/de/44xx-1416-bit-digitizers-500-mss) and 
 [22xx](https://spectrum-instrumentation.com/de/22xx-8-bit-digitizers-5-gss) families are currently supported, and 
 `spectrumdevice` has only been tested on 59xx devices. However, `spectrumdevice` may work fine on older devices. If 
-  you've 
-tried `spectrumdevice` on an older device, please let us know if it works and raise any issues you encounter in the 
-issue tracker. It's likely possible to add support with minimal effort.
+you've tried `spectrumdevice` on an older device, please let us know if it works and raise any issues you encounter in
+the issue tracker. It's likely possible to add support with minimal effort.
 
 ## Usage
 ### Connect to devices

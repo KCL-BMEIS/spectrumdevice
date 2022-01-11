@@ -1,4 +1,4 @@
-"""Provides a concrete class for configuring the individual channels of Spectrum digitizer devices."""
+"""Provides a concrete class for configuring the individual channels of Spectrum digitiser devices."""
 
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
@@ -9,8 +9,8 @@ from spectrumdevice.devices.spectrum_interface import SpectrumChannelInterface, 
 
 
 class SpectrumChannel(SpectrumChannelInterface):
-    """Class for controlling an individual channel of a spectrum digitizer. Channels are constructed automatically when
-    a SpectrumDevice is instantiated, and accessed via the SpectrumDevice.channels property."""
+    """Class for controlling an individual channel of a spectrum digitiser. Channels are constructed automatically when
+    a SpectrumDevice is instantiated, and accessed via the `SpectrumDevice.channels` property."""
 
     def __init__(self, channel_number: int, parent_device: SpectrumDeviceInterface):
         self._name = SpectrumChannelName[f"CHANNEL{channel_number}"]
@@ -22,7 +22,7 @@ class SpectrumChannel(SpectrumChannelInterface):
         """The identifier assigned by the spectrum driver, formatted as an Enum by the settings package.
 
         Returns:
-            name (SpectrumChannelName): The name of the channel, as assigned by the driver."""
+            name (`SpectrumChannelName`): The name of the channel, as assigned by the driver."""
         return self._name
 
     @property

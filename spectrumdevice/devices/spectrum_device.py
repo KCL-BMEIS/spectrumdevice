@@ -39,10 +39,10 @@ from spectrumdevice.spectrum_wrapper import (
 
 
 class SpectrumDevice(SpectrumDeviceInterface, ABC):
-    """Abstract superclass which implements methods common to all Spectrum digitizer devices. Instances of this class
-    cannot be constructed directly. Instead, construct instances of the concrete classes SpectrumCard, SpectrumStarHub,
-    MockSpectrumCard or MockSpectrumStarHub, which inherit the methods defined here. Note that the mock devices override
-    several of the methods defined here."""
+    """Abstract superclass which implements methods common to all Spectrum digitiser devices. Instances of this class
+    cannot be constructed directly. Instead, construct instances of the concrete classes `SpectrumCard`,
+    `SpectrumStarHub`, `MockSpectrumCard` or `MockSpectrumStarHub`, which inherit the methods defined here. Note that
+    the mock devices override several of the methods defined here."""
 
     def _connect(self, visa_string: str) -> None:
         self._handle = spectrum_handle_factory(visa_string)
@@ -59,28 +59,28 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         """Start acquiring data.
 
         In Standard Single mode (SPC_REC_STD_SINGLE), this will need to be called once for each acquisition. In-between
-        calls, waveforms must be manually transferred from the device to a TransferBuffer using start_transfer(). The
-        TransferBuffer need not be defined until after start_acquisition is called.
+        calls, waveforms must be manually transferred from the device to a `TransferBuffer` using `start_transfer()`.
+        The `TransferBuffer` need not be defined until after `start_acquisition` is called.
 
         In Multi FIFO mode (SPC_REC_FIFO_MULTI), it needs to be called only once, immediately followed by a call to
-        start_transfer(). Frames will the be continuously streamed to the TransferBuffer, which must have already been
-        defined.
+        `start_transfer()`. Frames will the be continuously streamed to the `TransferBuffer`, which must have already
+        been defined.
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_START | M2CMD_CARD_ENABLETRIGGER)
 
     def stop_acquisition(self) -> None:
         """Stop acquiring data when in FIFO mode.
 
-        Stop the continuous acquisition of waveform data that occurs after calling start_acquisition() in FIFO mode
+        Stop the continuous acquisition of waveform data that occurs after calling `start_acquisition()` in FIFO mode
         (SPC_REC_FIFO_MULTI). Does not need to be called in Standard Single mode (SPC_REC_STD_SINGLE).
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_STOP)
 
     def configure_acquisition(self, settings: AcquisitionSettings) -> None:
-        """Apply all the settings contained in an AcquisitionSettings dataclass to the device.
+        """Apply all the settings contained in an `AcquisitionSettings` dataclass to the device.
 
         Args:
-            settings (AcquisitionSettings): An AcquisitionSettings dataclass containing the setting values to apply.
+            settings (`AcquisitionSettings`): An `AcquisitionSettings` dataclass containing the setting values to apply.
         """
         self._acquisition_mode = settings.acquisition_mode
         self.set_acquisition_mode(settings.acquisition_mode)
@@ -98,10 +98,10 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
             channel.set_vertical_offset_in_percent(v_offset)
 
     def configure_trigger(self, settings: TriggerSettings) -> None:
-        """Apply all the trigger settings contained in a TriggerSettings dataclass to the device.
+        """Apply all the trigger settings contained in a `TriggerSettings` dataclass to the device.
 
         Args:
-            settings (TriggerSettings): A TriggerSettings dataclass containing the setting values to apply."""
+            settings (`TriggerSettings`): A `TriggerSettings` dataclass containing the setting values to apply."""
         self.set_trigger_sources(settings.trigger_sources)
         if len(set(self.trigger_sources) & set(EXTERNAL_TRIGGER_SOURCES)) > 0:
             if settings.external_trigger_mode is not None:
@@ -115,8 +115,8 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         """Carry out an single measurement in standard single mode and return the acquired waveforms.
 
         This method automatically carries out a standard single mode acquisition, including handling the creation
-        of a transfer buffer and the retrieval of the acquired waveforms. After being called, it will wait until a
-        trigger event is received before carrying out the acquisition, and transferring and returning the acquired
+        of a `TransferBuffer` and the retrieval of the acquired waveforms. After being called, it will wait until a
+        trigger event is received before carrying out the acquisition and then transferring and returning the acquired
         waveforms. The device must be configured in SPC_REC_STD_SINGLE acquisition mode.
 
         Returns:
@@ -139,10 +139,10 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         """Carry out a finite number of Multi FIFO mode measurements and then stop the acquisitions.
 
         This method automatically carries out a defined number of measurement in Multi FIFO mode, including handling the
-        creation of a transfer buffer, streaming the acquired waveforms to the PC, terminating the acquisition and
+        creation of a `TransferBuffer`, streaming the acquired waveforms to the PC, terminating the acquisition and
         returning the acquired waveforms. After being called, it will wait for the requested number of triggers to be
         received, generating the correct number of measurements. It retrieves each measurement's waveforms from the
-        transfer buffer as they arrive. Once the requested number of measurements have been received, the acquisition
+        `TransferBuffer` as they arrive. Once the requested number of measurements have been received, the acquisition
         is terminated and the waveforms are returned. The device must be configured in SPC_REC_FIFO_MULTI acquisition
         mode.
 
@@ -164,10 +164,10 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         """Start a continuous Multi FIFO mode acquisition.
 
         This method automatically starts acquiring and streaming samples in Multi FIFO mode, including handling the
-        creation of a transfer buffer and streaming the acquired waveforms to the PC. It will return almost
+        creation of a `TransferBuffer` and streaming the acquired waveforms to the PC. It will return almost
         instantaneously. The acquired waveforms must then be read out of the transfer buffer in a loop using the
-        SpectrumDevice.get_waveforms() method. Waveforms must be read at least as fast as they are being acquired.
-        The FIFO acquisition and streaming will continue until SpectrumDevice.stop_acquisition() is called. The device
+        `get_waveforms()` method. Waveforms must be read at least as fast as they are being acquired.
+        The FIFO acquisition and streaming will continue until `stop_acquisition()` is called. The device
         must be configured in SPC_REC_FIFO_MULTI acquisition mode."""
         if self._acquisition_mode != AcquisitionMode.SPC_REC_FIFO_MULTI:
             raise SpectrumWrongAcquisitionMode(
@@ -185,17 +185,17 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         value: int,
         length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> None:
-        """Set the value of a register on the Spectrum digitizer.
+        """Set the value of a register on the Spectrum digitiser.
 
-        This method is used internally by SpectrumDevice and it's subclasses to configure a hardware device, but can
-        also used to set the value of registers that are not implemented in SpectrumDevice and it's subclasses.
+        This method is used internally by `SpectrumDevice` and its subclasses to configure a hardware device, but can
+        also used to set the value of registers that are not implemented in `SpectrumDevice` and its subclasses.
 
         Args:
             spectrum_register (int): Identifier of the register to set. This should be a global constant imported from
                 regs.py in the spectrum_gmbh package.
             value (int): Value to write to the register. This should be a global constant imported from
                 regs.py in the spectrum_gmbh package.
-            length (SpectrumRegisterLength): An SpectrumRegisterLength object specifying the length of the register
+            length (`SpectrumRegisterLength`): A `SpectrumRegisterLength` object specifying the length of the register
                 to set, in bits.
         """
         if not SPECTRUM_DRIVERS_FOUND:
@@ -218,17 +218,17 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         spectrum_register: int,
         length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> int:
-        """Get the value of a register on the Spectrum digitizer.
+        """Get the value of a register on the Spectrum digitiser.
 
-        This method is used internally by SpectrumDevice and it's subclasses to read the configration of a hardware
+        This method is used internally by `SpectrumDevice` and its subclasses to read the configuration of a hardware
         device, but can be also used to get the value of registers that are not implemented in
-        SpectrumDevice and it's subclasses.
+        SpectrumDevice and its subclasses.
 
         Args:
             spectrum_register (int): Identifier of the register to set. This should be a global constant imported from
                 spectrum_gmbh.regs.
-            length (SpectrumRegisterLength): An SpectrumRegisterLength object specifying the length of the register to
-                set, in bits.
+            length (`SpectrumRegisterLength`): A `SpectrumRegisterLength` object specifying the length of the register
+                to set, in bits.
 
         Returns:
             value (int): Value of the register. This can be matched to a global constant imported from

@@ -1,4 +1,4 @@
-"""Provides a concrete class for controlling an individual Spectrum digitizer device."""
+"""Provides a concrete class for controlling an individual Spectrum digitiser device."""
 
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
@@ -79,7 +79,7 @@ logger = logging.getLogger(__name__)
 
 
 class SpectrumCard(SpectrumDevice):
-    """Class for controlling individual Spectrum digitizer cards."""
+    """Class for controlling individual Spectrum digitiser cards."""
 
     def __init__(self, device_number: int = 0, ip_address: Optional[str] = None):
         """
@@ -109,8 +109,8 @@ class SpectrumCard(SpectrumDevice):
     def status(self) -> CARD_STATUS_TYPE:
         """Read the current acquisition status of the card.
         Returns:
-            Statuses (List[StatusCode]): A list of StatusCode Enums describing the current acquisition status of the
-                card. See StatusCode (and the Spectrum documentation) for the list off possible acquisition
+            Statuses (`List[StatusCode]`): A list of `StatusCode` Enums describing the current acquisition status of the
+                card. See `StatusCode` (and the Spectrum documentation) for the list off possible acquisition
                 statuses.
         """
         return decode_status(self.read_spectrum_device_register(SPC_M2STATUS))
@@ -118,69 +118,69 @@ class SpectrumCard(SpectrumDevice):
     def wait_for_acquisition_to_complete(self) -> None:
         """Blocks until the current acquisition has finished, or the timeout is reached.
 
-        In Standard Single mode (SPC_REC_STD_SINGLE), this should be called after start_acquisition(). Once the call
-            to wait_for_acquisition_to_complete() returns, the newly acquired samples are in the on_device buffer and
-            ready for transfer to the TransferBuffer using start_transfer().
+        In Standard Single mode (SPC_REC_STD_SINGLE), this should be called after `start_acquisition()`. Once the call
+            to `wait_for_acquisition_to_complete()` returns, the newly acquired samples are in the on_device buffer and
+            ready for transfer to the `TransferBuffer` using `start_transfer()`.
 
         In FIFO mode (SPC_REC_FIFO_MULTI), the card will continue to acquire samples until
-            stop_acquisition() is called, so wait_for_acquisition_to_complete() should not be used.
+            `stop_acquisition()` is called, so `wait_for_acquisition_to_complete()` should not be used.
 
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_WAITREADY)
 
     def start_transfer(self) -> None:
-        """Transfer acquired waveforms from the on-device buffer to the TransferBuffer.
+        """Transfer acquired waveforms from the on-device buffer to the `TransferBuffer`.
 
-        Requires that a TransferBuffer has been defined (see SpectrumCard.define_transfer_buffer()).
+        Requires that a `TransferBuffer` has been defined (see `define_transfer_buffer()`).
 
-        In Standard Single mode (SPC_REC_STD_SINGLE), SpectrumCard.start_transfer() should be called after each
-        acquisition has completed.
+        In Standard Single mode (SPC_REC_STD_SINGLE), `start_transfer()` should be called after each acquisition has
+        completed.
 
-        In FIFO mode (SPC_REC_FIFO_MULTI), SpectrumCard.start_transfer() should be called immediately after
-        SpectrumDevice.start_acquisition() has been called, so that the waveform data can be continuously streamed into
-        the transfer buffer as it is acquired.
+        In FIFO mode (SPC_REC_FIFO_MULTI), `start_transfer()` should be called immediately after `start_acquisition()`
+        has been called, so that the waveform data can be continuously streamed into the transfer buffer as it is
+        acquired.
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_STARTDMA)
 
     def stop_transfer(self) -> None:
-        """Stop the transfer of samples from the on-device buffer to the TransferBuffer.
+        """Stop the transfer of samples from the on-device buffer to the `TransferBuffer`.
 
         Transfer is usually stopped automatically when an acquisition or stream of acquisitions completes, so this
         method is rarely required. It may invalidate transferred samples.
 
         In Standard Single mode (SPC_REC_STD_SINGLE), transfer will automatically stop once all acquired samples have
-        been transferred, so stop_transfer() should not be used. Instead, call wait_for_transfer_to_complete() after
-        start_transfer().
+        been transferred, so `stop_transfer()` should not be used. Instead, call `wait_for_transfer_to_complete()` after
+        `start_transfer()`.
 
         In FIFO mode (SPC_REC_FIFO_MULTI), samples are transferred continuously during acquisition,
-        and transfer will automatically stop when SpectrumDevice.stop_acquisition() is called as there will be no more
-        samples to transfer, so stop_transfer() should not be used.
+        and transfer will automatically stop when `stop_acquisition()` is called as there will be no more
+        samples to transfer, so `stop_transfer()` should not be used.
 
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_STOPDMA)
 
     def wait_for_transfer_to_complete(self) -> None:
-        """Blocks until the currently active transfer of samples from the on-device buffer to the TransferBuffer is
+        """Blocks until the currently active transfer of samples from the on-device buffer to the `TransferBuffer` is
         complete.
 
         Used in Standard Single mode (SPC_REC_STD_SINGLE) after starting a transfer. Once the method returns, all
-        acquired waveforms have been transferred from the on_device buffer to the TransferBuffer and can be read using
-        the SpectrumDevice.get_waveforms() method.
+        acquired waveforms have been transferred from the on_device buffer to the `TransferBuffer` and can be read using
+        the `get_waveforms()` method.
 
         Not required in FIFO mode (SPC_REC_FIFO_MULTI) because samples are continuously streamed until
-        SpectrumDevice.stop_acquisition() is called.
+        `stop_acquisition()` is called.
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_WAITDMA)
 
     @property
     def transfer_buffers(self) -> List[TransferBuffer]:
-        """Return the TransferBuffer object containing the latest transferred samples.
+        """Return the `TransferBuffer` object containing the latest transferred samples.
 
         Returns:
-            buffer (List[TransferBuffer]): A length-1 list containing the TransferBuffer object. The samples within the
-                TransferBuffer can be accessed using its own interface, but the samples are stored as a 1D array, with
-                the samples of each channel interleaved. It is more convenient to read waveform data using the
-                SpectrumCard.get_waveforms() method.
+            buffer (List[`TransferBuffer`]): A length-1 list containing the `TransferBuffer` object. The samples within
+                the `TransferBuffer` can be accessed using its own interface, but the samples are stored as a 1D array,
+                with the samples of each channel interleaved. It is more convenient to read waveform data using the
+                `get_waveforms()` method.
 
         """
         if self._transfer_buffer is not None:
@@ -189,13 +189,13 @@ class SpectrumCard(SpectrumDevice):
             raise SpectrumNoTransferBufferDefined("Cannot find TransferBuffer.")
 
     def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
-        """Create or provide a CardToPCDataTransferBuffer object for receiving acquired samples from the device.
+        """Create or provide a `CardToPCDataTransferBuffer` object for receiving acquired samples from the device.
 
         If no buffer is provided, one will be created with the correct size and a board_memory_offset_bytes of 0.
 
         Args:
-            buffer (Optional[List[CardToPCDataTransferBuffer]]): A length-1 list containing a pre-constructed
-                CardToPCDataTransferBuffer  The size of the buffer should be chosen according to the current number of
+            buffer (Optional[List[`CardToPCDataTransferBuffer`]]): A length-1 list containing a pre-constructed
+                `CardToPCDataTransferBuffer`  The size of the buffer should be chosen according to the current number of
                 active channels and the acquisition length.
         """
         if buffer:
@@ -209,14 +209,14 @@ class SpectrumCard(SpectrumDevice):
     def get_waveforms(self) -> List[ndarray]:
         """Get a list of the most recently transferred waveforms, in channel order.
 
-        This method copies and reshapes the samples in the TransferBuffer into a list of 1D NumPy arrays (waveforms) and
-        returns the list.
+        This method copies and reshapes the samples in the `TransferBuffer` into a list of 1D NumPy arrays (waveforms)
+        and returns the list.
 
-        In Standard Single mode (SPC_REC_STD_SINGLE), get_waveforms() should be called after
-        wait_for_transfer_to_complete() has returned.
+        In Standard Single mode (SPC_REC_STD_SINGLE), `get_waveforms()` should be called after
+        `wait_for_transfer_to_complete()` has returned.
 
         In FIFO mode (SPC_REC_FIFO_MULTI), while the card is continuously acquiring samples and transferring them to the
-        TransferBuffer, this method should be called in a loop . The method will block until each new transfer is
+        `TransferBuffer`, this method should be called in a loop . The method will block until each new transfer is
         received, so the loop will run at the same rate as the acquisition (in SPC_REC_FIFO_MULTI mode, for example,
         this would the rate at which your trigger source was running).
 
@@ -256,13 +256,13 @@ class SpectrumCard(SpectrumDevice):
 
     @property
     def channels(self) -> Sequence[SpectrumChannel]:
-        """A tuple containing the channels that belong to the digitizer card.
+        """A tuple containing the channels that belong to the digitiser card.
 
         Properties of the individual channels (e.g. vertical range) can be set by calling the methods of the
-            returned objects directly. See spectrumdevice.SpectrumChannel for more information.
+            returned objects directly. See `SpectrumChannel` for more information.
 
         Returns:
-            channels (Sequence[SpectrumChannel]): A tuple of SpectrumChannel objects.
+            channels (Sequence[`SpectrumChannel`]): A tuple of `SpectrumChannel` objects.
         """
         return self._channels
 
@@ -291,7 +291,7 @@ class SpectrumCard(SpectrumDevice):
         """The currently enabled trigger sources
 
         Returns:
-            sources (List[TriggerSource]): A list of TriggerSources.
+            sources (List[`TriggerSource`]): A list of TriggerSources.
         """
         or_of_sources = self.read_spectrum_device_register(SPC_TRIG_ORMASK)
         self._trigger_sources = decode_trigger_sources(or_of_sources)
@@ -301,7 +301,7 @@ class SpectrumCard(SpectrumDevice):
         """Change the enabled trigger sources.
 
         Args:
-            sources (List[TriggerSources]): The TriggerSources to enable.
+            sources (List[`TriggerSource`]): The TriggerSources to enable.
         """
         self._trigger_sources = sources
         or_of_sources = reduce(or_, [s.value for s in sources])
@@ -313,7 +313,7 @@ class SpectrumCard(SpectrumDevice):
         """The currently enabled external trigger mode. An external trigger source must be enabled.
 
         Returns:
-            sources (ExternalTriggerMode): The currently enabled ExternalTriggerMode."""
+            sources (`ExternalTriggerMode`): The currently enabled `ExternalTriggerMode`."""
         if len(self._active_external_triggers) == 0:
             raise SpectrumExternalTriggerNotEnabled("Cannot get external trigger mode.")
         else:
@@ -329,7 +329,7 @@ class SpectrumCard(SpectrumDevice):
         """Change the currently enabled trigger mode. An external trigger source must be enabled.
 
         Args:
-            mode (ExternalTriggerMode): The ExternalTriggerMode to apply.
+            mode (`ExternalTriggerMode`): The `ExternalTriggerMode` to apply.
         """
         if len(self._active_external_triggers) == 0:
             raise SpectrumExternalTriggerNotEnabled("Cannot set external trigger mode.")
@@ -387,7 +387,7 @@ class SpectrumCard(SpectrumDevice):
     @property
     def external_trigger_pulse_width_in_samples(self) -> int:
         """The pulse width (in samples) needed to trigger an acquisition using an external trigger source, if
-        SPC_TM_PW_SMALLER or SPC_TM_PW_GREATER ExternalTriggerMode is selected. An external trigger source must be
+        SPC_TM_PW_SMALLER or SPC_TM_PW_GREATER `ExternalTriggerMode` is selected. An external trigger source must be
         enabled.
 
         Returns:
@@ -406,7 +406,7 @@ class SpectrumCard(SpectrumDevice):
 
     def set_external_trigger_pulse_width_in_samples(self, width: int) -> None:
         """Change the pulse width (samples) needed to trigger an acquisition using an external trigger source if
-        SPC_TM_PW_SMALLER or SPC_TM_PW_GREATER ExternalTriggerMode is selected. An external trigger source must be
+        SPC_TM_PW_SMALLER or SPC_TM_PW_GREATER `ExternalTriggerMode` is selected. An external trigger source must be
         enabled.
 
         Args:
@@ -495,18 +495,19 @@ class SpectrumCard(SpectrumDevice):
 
     @property
     def acquisition_mode(self) -> AcquisitionMode:
-        """The currently enabled card mode. Will raise an exception if the current mode is not supported by spectrumdevice.
+        """The currently enabled card mode. Will raise an exception if the current mode is not supported by
+        `spectrumdevice`.
 
         Returns:
-            mode (AcquisitionMode): The currently enabled card acquisition mode."""
+            mode (`AcquisitionMode`): The currently enabled card acquisition mode."""
         return AcquisitionMode(self.read_spectrum_device_register(SPC_CARDMODE))
 
     def set_acquisition_mode(self, mode: AcquisitionMode) -> None:
-        """Change the currently enabled card mode. See AcquisitionMode and the Spectrum documentation
+        """Change the currently enabled card mode. See `AcquisitionMode` and the Spectrum documentation
         for the available modes.
 
         Args:
-            mode (AcquisitionMode): The desired acquisition mode."""
+            mode (`AcquisitionMode`): The desired acquisition mode."""
         self.write_to_spectrum_device_register(SPC_CARDMODE, mode.value)
 
     @property
@@ -533,15 +534,15 @@ class SpectrumCard(SpectrumDevice):
         """The currently enabled clock mode.
 
         Returns:
-            mode (ClockMode): The currently set clock mode.
+            mode (`ClockMode`): The currently set clock mode.
         """
         return ClockMode(self.read_spectrum_device_register(SPC_CLOCKMODE))
 
     def set_clock_mode(self, mode: ClockMode) -> None:
-        """Change the clock mode. See ClockMode and the Spectrum documentation for available modes.
+        """Change the clock mode. See `ClockMode` and the Spectrum documentation for available modes.
 
         Args:
-            mode (ClockMode): The desired clock mode.
+            mode (`ClockMode`): The desired clock mode.
         """
         self.write_to_spectrum_device_register(SPC_CLOCKMODE, mode.value)
 
@@ -551,7 +552,7 @@ class SpectrumCard(SpectrumDevice):
         Documentation for all possible available modes and their meanings.
 
         Returns:
-            modes (AvailableIOModes): An AvailableIOModes dataclass containing the modes available for each IO line."""
+            modes (`AvailableIOModes`): An `AvailableIOModes` dataclass containing the modes for each IO line."""
         return AvailableIOModes(
             X0=decode_available_io_modes(self.read_spectrum_device_register(SPCM_X0_AVAILMODES)),
             X1=decode_available_io_modes(self.read_spectrum_device_register(SPCM_X1_AVAILMODES)),
@@ -561,12 +562,12 @@ class SpectrumCard(SpectrumDevice):
 
     @property
     def feature_list(self) -> List[Tuple[List[CardFeature], List[AdvancedCardFeature]]]:
-        """Get a list of the features of the card. See CardFeature, AdvancedCardFeature and the Spectrum
+        """Get a list of the features of the card. See `CardFeature`, `AdvancedCardFeature` and the Spectrum
         documentation for more information.
 
         Returns:
-            features (List[Tuple[List[CardFeature], List[AdvancedCardFeature]]]): A tuple of two lists - of features and
-                advanced features respectively - wrapped in a list.
+            features (List[Tuple[List[`CardFeature`], List[`AdvancedCardFeature`]]]): A tuple of two lists - of features
+                and advanced features respectively - wrapped in a list.
         """
         normal_features = decode_card_features(self.read_spectrum_device_register(SPC_PCIFEATURES))
         advanced_features = decode_advanced_card_features(self.read_spectrum_device_register(SPC_PCIEXTFEATURES))

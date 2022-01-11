@@ -69,6 +69,9 @@ from spectrum_gmbh.regs import (
 
 
 class CardType(Enum):
+    """An Enum representing the integer values returned by a device when its type identifier is queried by reading the
+    SPC_PCITYP register. Only the supported card types are listed: 22xx, 44xx and 59xx family devices."""
+
     TYP_M4I2210_X8 = TYP_M4I2210_X8
     TYP_M4I2211_X8 = TYP_M4I2211_X8
     TYP_M4I2212_X8 = TYP_M4I2212_X8
@@ -139,6 +142,5 @@ MEMSIZE_STEP_SIZES = {
 
 
 def get_memsize_step_size(card_type: CardType) -> int:
-    """Get the step size for FIFO mode acquisition length (MEMSIZE) and post trigger length for a card using the
-    type identifier returned by reading the SPC_PCITYP register."""
+    """Get the step size for FIFO mode acquisition length (MEMSIZE) and post trigger length for a card its CardType."""
     return MEMSIZE_STEP_SIZES[card_type.value & TYP_FAMILYMASK]

@@ -9,13 +9,13 @@ The main module `spectrumdevice` provides two classes `SpectrumCard` and `Spectr
 data from individual digitisers and StarHubs respectively. Mock classes are also provided for testing software without
 drivers installed or hardware connected.
 
-The submodule [`spectrumdevice.settings`](https://kcl-bmeis.github.io/spectrumdevice/spectrumdevice/settings.html)
-provides Enums and Dataclasses wrapping the register values provided by the Spectrum API, to be used for configuring
-hardware and interpreting responses received from hardware.
+The submodule `spectrumdevice.settings` provides Enums and Dataclasses wrapping the register values provided by the
+Spectrum API, to be used for configuring hardware and interpreting responses received from hardware.
 
 * [Source on GitHub](https://github.com/KCL-BMEIS/spectrumdevice)
 * [README including quickstart](https://github.com/KCL-BMEIS/spectrumdevice/blob/main/README.md)
 * [Examples](https://github.com/KCL-BMEIS/spectrumdevice/tree/main/example_scripts)
+* [PyPi](https://pypi.org/project/spectrumdevice/)
 * [API reference documentation](https://kcl-bmeis.github.io/spectrumdevice/)
 """
 
