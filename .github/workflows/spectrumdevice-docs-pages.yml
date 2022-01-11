@@ -29,6 +29,8 @@ jobs:
         git status
         git checkout docs
         git status
+        git fetch upstream
+        echo ${{ github.ref_name }}
         git rebase --onto ${{ github.ref_name }} main
         export SPECTRUMDEVICE_VERSION=${{ github.ref_name }}
         source generate_docs.sh
