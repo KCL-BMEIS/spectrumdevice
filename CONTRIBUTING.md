@@ -36,8 +36,13 @@ Please let us know in the pull request if you have successfully run tests on har
 Once your branch is merged into the main branch, documentation will be automatically generated from README.md and the
 Python docstrings using [pdoc](https://pdoc.dev). Any new functions, classes and methods — particularly those that form 
 part of  the external API — should therefore include docstrings (in NumPy format). You should check that any changes you
-have made are reflected well in the documentation by building the docs locally using the `generate_docs.bat` shell
-script, which should work on Windows, Linux and macOS.
+have made are reflected well in the documentation by building the docs locally using the `generate_docs.sh`
+script, which should work on Linux and macOS. To include the correct version number in your locally-built docs, 
+you'll need to first set a `SPECTRUMDEVICE_VERSION` environment variable:
+```
+export SPECTRUMDEVICE_VERSION='vx.x.x'
+source generate_docs.sh
+```
 
 ### Testing on hardware
 We'll accept code into the main branch that has not necessarily been tested on real hardware, as long as it passes the 

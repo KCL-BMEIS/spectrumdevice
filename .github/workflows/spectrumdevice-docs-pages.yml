@@ -30,9 +30,10 @@ jobs:
         git checkout docs
         git status
         git rebase --onto ${{ github.ref_name }} main
-        source generate_docs.bat
+        export SPECTRUMDEVICE_VERSION=${{ github.ref_name }}
+        source generate_docs.sh
         git add .
-        git commit -m 'Automatic documentation update'
+        git commit -m 'Automatic documentation update ${{ github.ref_name }}'
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:

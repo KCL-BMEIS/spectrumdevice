@@ -27,9 +27,11 @@ in `libspcm_linux.so` on Linux. If no driver is present `spectrumdevice` can sti
 
 ## Installation and dependencies
 To install the latest release:
+
 `pip install spectrumdevice`
 
 Or to install the development version:
+
 `pip install https://github.com/KCL-BMEIS/spectrumdevice/tarball/main`.
 
 `spectrumdevice` depends only on NumPy, although its example scripts also make use of `matplotlib`. You can include this when you install `spectrumdevice` using the `[examples]` option:
@@ -50,9 +52,8 @@ Or to install the development version:
 [44xx](https://spectrum-instrumentation.com/de/44xx-1416-bit-digitizers-500-mss) and 
 [22xx](https://spectrum-instrumentation.com/de/22xx-8-bit-digitizers-5-gss) families are currently supported, and 
 `spectrumdevice` has only been tested on 59xx devices. However, `spectrumdevice` may work fine on older devices. If 
-  you've 
-tried `spectrumdevice` on an older device, please let us know if it works and raise any issues you encounter in the 
-issue tracker. It's likely possible to add support with minimal effort.
+you've tried `spectrumdevice` on an older device, please let us know if it works and raise any issues you encounter in
+the issue tracker. It's likely possible to add support with minimal effort.
 
 ## Usage
 ### Connect to devices
