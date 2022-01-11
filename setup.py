@@ -9,5 +9,4 @@ if __name__ == "__main__":
     import versioneer
 
     setuptools.setup(version=versioneer.get_version(),
-                     cmdclass=versioneer.get_cmdclass(),
-                     packages=setuptools.find_packages(".", exclude=["tests", "example_scripts"]))
+                     cmdclass=versioneer.get_cmdclass())
