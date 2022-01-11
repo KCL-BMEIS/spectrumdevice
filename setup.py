@@ -10,4 +10,4 @@ if __name__ == "__main__":
 
     setuptools.setup(version=versioneer.get_version(),
                      cmdclass=versioneer.get_cmdclass(),
-                     packages=setuptools.find_packages(".", exclude=["test", "example_scripts"]))
+                     packages=setuptools.find_packages(".", exclude=["tests", "example_scripts"]))
