@@ -22,25 +22,26 @@ macOS, but `spectrumdevice` provides mock classes for development and testing wi
 
 To work with hardware, `spectrumdevice` requires that you have installed the
 [Spectrum driver](https://spectrum-instrumentation.com/en/drivers-and-examples-overview) for your platform.
-This should be located at `c:\windows\system32\spcm_win64.dll` (or `spcm_win32.dll` on a 32-bit system) on Windows, or
-in `libspcm_linux.so` on Linux. If no driver is present `spectrumdevice` can still run in mock mode.
+On Windows, this should be located at `c:\windows\system32\spcm_win64.dll` (or `spcm_win32.dll` on a 32-bit system). On
+Linux, it will be called `libspcm_linux.so`. If no driver is present `spectrumdevice` can still run in mock mode.
 
 ## Installation and dependencies
-To install the latest release:
+To install the latest release using `pip`:
+```
+pip install spectrumdevice
+```
+To install the latest release using `conda`:
+```
+conda install -c conda-forge spectrumdevice
+```
 
-`pip install spectrumdevice`
+To install the development version:
+```
+pip install https://github.com/KCL-BMEIS/spectrumdevice/tarball/main.
+```
 
-Or to install the development version:
-
-`pip install https://github.com/KCL-BMEIS/spectrumdevice/tarball/main`.
-
-`spectrumdevice` depends only on NumPy, although its example scripts also make use of `matplotlib`. You can include this when you install `spectrumdevice` using the `[examples]` option:
-
-`pip install spectrumdevice[examples]`
-
-`pip install https://github.com/KCL-BMEIS/spectrumdevice/tarball/main[examples]`.
-
-`spectrumdevice` includes a module called `spectrum_gmbh` containing a few files taken from the `spcm_examples` directory, provided with Spectrum hardware. The files in this module were written by Spectrum GMBH and are included with their permission. The files provide `spectrumdevice` with a low-level Python interface to the Spectrum driver and define global constants which are used throughout `spectrumdevice`.
+`spectrumdevice` depends only on NumPy. `spectrumdevice` includes a module called `spectrum_gmbh` containing a few 
+files taken from the `spcm_examples` directory, provided with Spectrum hardware. The files in this module were written by Spectrum GMBH and are included with their permission. The files provide `spectrumdevice` with a low-level Python interface to the Spectrum driver and define global constants which are used throughout `spectrumdevice`.
 
 ## Limitations
 * Currently, `spectrumdevice` only supports Standard Single and Multi FIFO acquisition modes. See the 
