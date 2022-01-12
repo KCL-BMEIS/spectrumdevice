@@ -9,6 +9,4 @@ if __name__ == "__main__":
     import versioneer
 
     setuptools.setup(version=versioneer.get_version(),
-                     cmdclass=versioneer.get_cmdclass(),
-                     packages=['spectrumdevice', 'spectrumdevice.devices', 'spectrumdevice.settings',
-                               'spectrumdevice.spectrum_wrapper', 'spectrum_gmbh'])
+                     cmdclass=versioneer.get_cmdclass())
