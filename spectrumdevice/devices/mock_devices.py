@@ -11,7 +11,7 @@ from time import sleep, monotonic
 from typing import Optional, Sequence, List
 
 from numpy import ndarray, zeros
-from numpy.random import randn
+from numpy.random import uniform
 
 from spectrumdevice.devices.spectrum_card import SpectrumCard
 from spectrumdevice.devices.spectrum_device import SpectrumDevice
@@ -42,6 +42,7 @@ from spectrum_gmbh.regs import (
     SPC_MEMSIZE,
     SPC_CARDMODE,
     SPC_PCITYP,
+    SPC_MIINST_MAXADCVALUE,
 )
 
 logger = logging.getLogger(__name__)
@@ -70,6 +71,7 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
             SPC_SEGMENTSIZE: 1000,
             SPC_MEMSIZE: 1000,
             SPC_CARDMODE: AcquisitionMode.SPC_REC_STD_SINGLE.value,
+            SPC_MIINST_MAXADCVALUE: 128,
         }
 
         self._buffer_lock = Lock()
@@ -86,10 +88,17 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
 
         """
         target = mock_waveform_source_factory(self.acquisition_mode)
+        amplitude = self.read_spectrum_device_register(SPC_MIINST_MAXADCVALUE)
         self._acquisition_stop_event.clear()
         self._acquisition_thread = Thread(
             target=target,
-            args=(self._acquisition_stop_event, self._source_frame_rate_hz, self._on_device_buffer, self._buffer_lock),
+            args=(
+                self._acquisition_stop_event,
+                self._source_frame_rate_hz,
+                amplitude,
+                self._on_device_buffer,
+                self._buffer_lock,
+            ),
         )
         self._acquisition_thread.start()
 
@@ -329,18 +338,23 @@ class MockWaveformSource(ABC):
     When called, `MockWaveformSource` implementations will fill a provided buffer with noise samples."""
 
     @abstractmethod
-    def __call__(self, stop_flag: Event, frame_rate: float, on_device_buffer: ndarray, buffer_lock: Lock) -> None:
+    def __call__(
+        self, stop_flag: Event, frame_rate: float, amplitude: float, on_device_buffer: ndarray, buffer_lock: Lock
+    ) -> None:
         raise NotImplementedError()
 
 
 class SingleModeMockWaveformSource(MockWaveformSource):
-    def __call__(self, stop_flag: Event, frame_rate: float, on_device_buffer: ndarray, buffer_lock: Lock) -> None:
+    def __call__(
+        self, stop_flag: Event, frame_rate: float, amplitude: float, on_device_buffer: ndarray, buffer_lock: Lock
+    ) -> None:
         """When called, this MockWaveformSource simulates SPC_REC_STD_SINGLE Mode, placing a single frames worth of
         samples into a provided mock on_device_buffer.
 
         Args:
             stop_flag (Event): A threading event that will be used in the calling thread to stop the acquisition.
             frame_rate (float): The samples will be generated 1 / frame_rate seconds after __call__ is called.
+            amplitude (float): Waveforms will contain random values in the range -amplitude to +amplitude
             on_device_buffer (ndarray): The numpy array into which the noise samples will be written.
             buffer_lock (Lock): A threading lock created in the calling thread that will be used to ensure access to
                 the on_device_buffer array is thread safe.
@@ -351,17 +365,21 @@ class SingleModeMockWaveformSource(MockWaveformSource):
             sleep(0.001)
         if not stop_flag.is_set():
             with buffer_lock:
-                on_device_buffer[:] = randn(len(on_device_buffer))
+                on_device_buffer[:] = uniform(low=-1 * amplitude, high=amplitude, size=len(on_device_buffer))
 
 
 class MultiFIFOModeMockWaveformSource(MockWaveformSource):
-    def __call__(self, stop_flag: Event, frame_rate: float, on_device_buffer: ndarray, buffer_lock: Lock) -> None:
+    def __call__(
+        self, stop_flag: Event, frame_rate: float, amplitude: float, on_device_buffer: ndarray, buffer_lock: Lock
+    ) -> None:
         """When called, this `MockWaveformSource` simulates SPC_REC_FIFO_MULTI Mode, continuously replacing the contents
         of on_device_buffer with new frames of noise samples.
 
         Args:
             stop_flag (Event): A threading event that will be used in the calling thread to stop the acquisition.
             frame_rate (float): The contents of the on_device_buffer will be updated at this rate (Hz).
+            amplitude (float): Waveforms will contain random values from a uniform distribution in the range -amplitude
+            to +amplitude
             on_device_buffer (ndarray): The numpy array into which the noise samples will be written.
             buffer_lock (Lock): A threading lock created in the calling thread that will be used to ensure access to
                 the on_device_buffer array is thread safe.
@@ -369,7 +387,7 @@ class MultiFIFOModeMockWaveformSource(MockWaveformSource):
         """
         while not stop_flag.is_set():
             with buffer_lock:
-                on_device_buffer[:] = randn(len(on_device_buffer))
+                on_device_buffer[:] = uniform(low=-1 * amplitude, high=amplitude, size=len(on_device_buffer))
                 sleep(1 / frame_rate)
 
 
