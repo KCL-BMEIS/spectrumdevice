@@ -37,6 +37,9 @@ class SingleCardIntegrationTests(TestCase):
         )
         self.assertEqual(len(waveforms), 1)
         self.assertEqual([wfm.shape for wfm in waveforms], [(400,)])
+        if self._single_card_mock_mode:
+            self.assertAlmostEqual(waveforms[0].max() - waveforms[0].min(), 0.4, 1)
+            self.assertAlmostEqual(waveforms[0].mean(), 0.0, 1)
 
     def test_finite_multi_fifo_mode(self) -> None:
         measurements = finite_multi_fifo_example(

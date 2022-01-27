@@ -65,7 +65,7 @@ def standard_single_mode_example(
 
 if __name__ == "__main__":
 
-    from matplotlib.pyplot import plot, show
+    from matplotlib.pyplot import plot, show, xlabel, tight_layout, ylabel
 
     waveforms = standard_single_mode_example(
         mock_mode=True, trigger_source=TriggerSource.SPC_TMASK_EXT0, device_number=0
@@ -74,6 +74,9 @@ if __name__ == "__main__":
     # Plot waveforms
     for waveform in waveforms:
         plot(waveform)
+        xlabel("Time (samples)")
+        ylabel("Amplitude (Volts)")
+        tight_layout()
 
     print(f"Acquired {len(waveforms)} waveforms with the following shapes:")
     print([wfm.shape for wfm in waveforms])
