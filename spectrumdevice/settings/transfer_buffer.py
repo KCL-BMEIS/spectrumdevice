@@ -22,8 +22,8 @@ try:
         SPCM_BUF_TIMESTAMP,
         SPCM_DIR_PCTOCARD,
         SPCM_DIR_CARDTOPC,
-        spcm_dwDefTransfer_i64,
-    )
+        spcm_dwDefTransfer_i64, uint64,
+)
 except OSError:
     from spectrumdevice.spectrum_wrapper.mock_pyspcm import (
         SPCM_BUF_DATA,
@@ -110,6 +110,14 @@ class CardToPCDataTransferBuffer(TransferBuffer):
         self.direction = BufferDirection.SPCM_DIR_CARDTOPC
         self.board_memory_offset_bytes = board_memory_offset_bytes
         self.data_array = zeros(size_in_samples, int16)
+
+
+class CardToPCTimestampTransferBuffer(TransferBuffer):
+    def __init__(self, num_timestamps_per_frame: int) -> None:
+        self.type = BufferType.SPCM_BUF_TIMESTAMP
+        self.direction = BufferDirection.SPCM_DIR_CARDTOPC
+        self.board_memory_offset_bytes = 0
+        self.data_array: ndarray = zeros((num_timestamps_per_frame * 2,), uint64)
 
 
 def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffer) -> None:

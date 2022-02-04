@@ -72,7 +72,7 @@ from spectrum_gmbh.regs import (
     SPC_DATA_AVAIL_USER_LEN,
     SPC_DATA_AVAIL_CARD_LEN,
     SPC_SEGMENTSIZE,
-    SPC_PCITYP,
+    SPC_PCITYP, M2CMD_EXTRA_WAITDMA,
 )
 
 logger = logging.getLogger(__name__)
@@ -160,7 +160,7 @@ class SpectrumCard(SpectrumDevice):
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_STOPDMA)
 
     def wait_for_transfer_to_complete(self) -> None:
-        """Blocks until the currently active transfer of samples from the on-device buffer to the `TransferBuffer` is
+        """Blocks until the currently active transfer of samples from the on-device buffers to the TransferBuffer is
         complete.
 
         Used in Standard Single mode (SPC_REC_STD_SINGLE) after starting a transfer. Once the method returns, all
