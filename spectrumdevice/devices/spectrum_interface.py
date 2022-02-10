@@ -47,6 +47,10 @@ class SpectrumChannelInterface(ABC):
     def set_vertical_offset_in_percent(self, offset: int) -> None:
         raise NotImplementedError()
 
+    @abstractmethod
+    def convert_raw_waveform_to_voltage_waveform(self, raw_waveform: ndarray) -> ndarray:
+        raise NotImplementedError()
+
 
 class SpectrumDeviceInterface(ABC):
     """Defines the public interface for control of all Spectrum digitiser devices, be they StarHub composite devices

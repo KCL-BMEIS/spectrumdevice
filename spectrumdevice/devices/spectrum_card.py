@@ -235,7 +235,10 @@ class SpectrumCard(SpectrumDevice):
         )
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
             self.write_to_spectrum_device_register(SPC_DATA_AVAIL_CARD_LEN, num_available_bytes)
-        return [waveform for waveform in waveforms_in_columns.T]
+        return [
+            ch.convert_raw_waveform_to_voltage_waveform(waveform)
+            for ch, waveform in zip(self.channels, waveforms_in_columns.T)
+        ]
 
     def disconnect(self) -> None:
         """Terminate the connection to the card."""

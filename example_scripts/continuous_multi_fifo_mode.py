@@ -3,7 +3,7 @@ integration test."""
 from time import monotonic
 from typing import List, Optional
 
-from numpy import ndarray
+from numpy import ndarray, array
 
 from spectrumdevice import MockSpectrumCard, SpectrumCard
 from spectrumdevice.settings import (
@@ -41,7 +41,7 @@ def continuous_multi_fifo_example(
     trigger_settings = TriggerSettings(
         trigger_sources=[trigger_source],
         external_trigger_mode=ExternalTriggerMode.SPC_TM_POS,
-        external_trigger_level_in_mv=1000,
+        external_trigger_level_in_mv=2000,
     )
 
     # Acquisition settings
@@ -72,6 +72,9 @@ def continuous_multi_fifo_example(
     # Stop the acquisition (and streaming)
     card.stop_acquisition()
 
+    fake_waveform = array([1000.0, 2000.0, 3000.0])
+    print(card.channels[0].convert_raw_waveform_to_voltage_waveform(fake_waveform))
+
     card.reset()
     card.disconnect()
     return measurements_list
@@ -79,7 +82,7 @@ def continuous_multi_fifo_example(
 
 if __name__ == "__main__":
 
-    from matplotlib.pyplot import plot, show, figure, title
+    from matplotlib.pyplot import plot, show, figure, title, xlabel, ylabel, tight_layout
 
     measurements = continuous_multi_fifo_example(
         mock_mode=True,
@@ -94,6 +97,9 @@ if __name__ == "__main__":
         title(f"Measurement {n}")
         for waveform in measurement:
             plot(waveform)
+            xlabel("Time (samples)")
+            ylabel("Amplitude (Volts)")
+            tight_layout()
 
     print(f"Completed {len(measurements)} measurements each containing {len(measurements[0])} waveforms.")
     print(f"Waveforms had the following shape: {measurements[0][0].shape}")
