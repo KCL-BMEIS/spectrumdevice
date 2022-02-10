@@ -230,21 +230,22 @@ class SpectrumCard(SpectrumDevice):
                 ordered by channel number.
 
         """
+        num_available_bytes = 0
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
             self.wait_for_transfer_to_complete()
             num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
+
+        if self._timestamper is not None:
+            timestamps = self._timestamper.get_timestamps()
+            print(timestamps)
         else:
-            num_available_bytes = 0
-        waveforms_in_columns = copy(self.transfer_buffers[0].data_array).reshape(
+            raise SpectrumNoTransferBufferDefined("cannot find a timestamp transfer buffer")
+
+        waveforms_in_columns = self.transfer_buffers[0].copy_contents().reshape(
             (self.acquisition_length_in_samples, len(self.enabled_channels))
         )
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
             self.write_to_spectrum_device_register(SPC_DATA_AVAIL_CARD_LEN, num_available_bytes)
-
-        if self._timestamper is not None:
-            timestamps = self._timestamper.get_timestamps()
-        else:
-            raise SpectrumNoTransferBufferDefined("cannot find a timestamp transfer buffer")
 
         voltage_waveforms = [ch.convert_raw_waveform_to_voltage_waveform(waveform)
                              for ch, waveform in zip(self.channels, waveforms_in_columns.T)]

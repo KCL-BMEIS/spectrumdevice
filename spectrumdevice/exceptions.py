@@ -54,6 +54,10 @@ class SpectrumApiCallFailed(IOError):
         return f"Spectrum API error code: 0x{error_code:08x}"
 
 
+class SpectrumFIFOModeHardwareBufferOverrun(SpectrumApiCallFailed):
+    pass
+
+
 class SpectrumWrongAcquisitionMode(IOError):
     def __init__(self, msg: str) -> None:
         super().__init__(f"Incorrect acquisition mode: {msg}")
@@ -62,3 +66,15 @@ class SpectrumWrongAcquisitionMode(IOError):
 class SpectrumDriversNotFound(IOError):
     def __init__(self, msg: str) -> None:
         super().__init__(f"Spectrum drivers not found: {msg}")
+
+
+class SpectrumNotEnoughRoomInTimestampsBufferError(IOError):
+    pass
+
+
+class SpectrumNoTimestampsAvailableError(IOError):
+    pass
+
+
+class SpectrumTimestampsPollingTimeout(IOError):
+    pass
