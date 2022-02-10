@@ -8,11 +8,12 @@ from functools import reduce
 from operator import or_
 from typing import List, Optional, Sequence, Tuple
 
-from numpy import arange, ndarray
+from numpy import arange
 
 from spectrumdevice.devices.spectrum_channel import SpectrumChannel
 from spectrumdevice.devices.spectrum_device import SpectrumDevice
 from spectrumdevice.devices.spectrum_card import SpectrumCard
+from spectrumdevice.devices.waveform import Waveform
 from spectrumdevice.exceptions import SpectrumSettingsMismatchError
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
 from spectrumdevice.spectrum_wrapper import destroy_handle
@@ -288,7 +289,7 @@ class SpectrumStarHub(SpectrumDevice):
         for card in self._child_cards:
             card.wait_for_acquisition_to_complete()
 
-    def get_waveforms(self) -> List[ndarray]:
+    def get_waveforms(self) -> List[Waveform]:
         """Get a list of of the most recently transferred waveforms.
 
         This method gets the waveforms from each child card and joins them into a new list, ordered by channel number.

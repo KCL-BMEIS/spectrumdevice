@@ -6,6 +6,7 @@ from typing import List, Optional
 from numpy import ndarray
 
 from spectrumdevice import MockSpectrumCard, SpectrumCard
+from spectrumdevice.devices.waveform import Waveform
 from spectrumdevice.settings import (
     AcquisitionMode,
     CardType,
@@ -18,7 +19,7 @@ from spectrumdevice.settings import (
 
 def standard_single_mode_example(
     mock_mode: bool, trigger_source: TriggerSource, device_number: int, ip_address: Optional[str] = None
-) -> List[ndarray]:
+) -> List[Waveform]:
 
     if not mock_mode:
         # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
@@ -73,12 +74,14 @@ if __name__ == "__main__":
 
     # Plot waveforms
     for waveform in waveforms:
-        plot(waveform)
+        plot(waveform.samples)
         xlabel("Time (samples)")
         ylabel("Amplitude (Volts)")
         tight_layout()
 
     print(f"Acquired {len(waveforms)} waveforms with the following shapes:")
-    print([wfm.shape for wfm in waveforms])
+    print([wfm.samples.shape for wfm in waveforms])
+    print("and the following timestamps:")
+    print([wfm.timestamp for wfm in waveforms])
 
     show()

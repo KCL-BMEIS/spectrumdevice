@@ -8,6 +8,7 @@ from example_scripts.connect_to_star_hub import star_hub_example
 from example_scripts.continuous_multi_fifo_mode import continuous_multi_fifo_example
 from example_scripts.finite_multi_fifo_mode import finite_multi_fifo_example
 from example_scripts.standard_single_mode import standard_single_mode_example
+from spectrumdevice.devices.waveform import Waveform
 from spectrumdevice.exceptions import SpectrumDriversNotFound
 from tests.configuration import (
     INTEGRATION_TEST_TRIGGER_SOURCE,
@@ -36,10 +37,10 @@ class SingleCardIntegrationTests(TestCase):
             ip_address=TEST_DEVICE_IP,
         )
         self.assertEqual(len(waveforms), 1)
-        self.assertEqual([wfm.shape for wfm in waveforms], [(400,)])
+        self.assertEqual([wfm.samples.shape for wfm in waveforms], [(400,)])
         if self._single_card_mock_mode:
-            self.assertAlmostEqual(waveforms[0].max() - waveforms[0].min(), 0.4, 1)
-            self.assertAlmostEqual(waveforms[0].mean(), 0.0, 1)
+            self.assertAlmostEqual(waveforms[0].samples.max() - waveforms[0].min(), 0.4, 1)
+            self.assertAlmostEqual(waveforms[0].samples.mean(), 0.0, 1)
 
     def test_finite_multi_fifo_mode(self) -> None:
         measurements = finite_multi_fifo_example(
@@ -61,10 +62,10 @@ class SingleCardIntegrationTests(TestCase):
         )
         self._asserts_for_fifo_mode(measurements)
 
-    def _asserts_for_fifo_mode(self, measurements: List[List[ndarray]]) -> None:
+    def _asserts_for_fifo_mode(self, measurements: List[List[Waveform]]) -> None:
         self.assertTrue((array([len(measurement) for measurement in measurements]) == 1).all())
         self.assertTrue(
-            (array([[wfm.shape for wfm in waveforms] for waveforms in measurements]).flatten() == 400).all()
+            (array([[wfm.samples.shape for wfm in waveforms] for waveforms in measurements]).flatten() == 400).all()
         )
 
 

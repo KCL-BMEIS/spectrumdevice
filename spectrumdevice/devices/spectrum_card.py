@@ -10,9 +10,10 @@ from functools import reduce
 from operator import or_
 from typing import List, Optional, Tuple, Sequence
 
-from numpy import ndarray, mod
+from numpy import mod
 
 from spectrumdevice.devices.spectrum_timestamper import Timestamper
+from spectrumdevice.devices.waveform import Waveform
 from spectrumdevice.settings.card_dependent_properties import get_memsize_step_size
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
 from spectrumdevice.spectrum_wrapper import destroy_handle
@@ -210,7 +211,7 @@ class SpectrumCard(SpectrumDevice):
         set_transfer_buffer(self._handle, self._transfer_buffer)
         self._timestamper = Timestamper(self, self._handle, len(self.enabled_channels))
 
-    def get_waveforms(self) -> List[ndarray]:
+    def get_waveforms(self) -> List[Waveform]:
         """Get a list of the most recently transferred waveforms, in channel order.
 
         This method copies and reshapes the samples in the `TransferBuffer` into a list of 1D NumPy arrays (waveforms)
@@ -239,10 +240,16 @@ class SpectrumCard(SpectrumDevice):
         )
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
             self.write_to_spectrum_device_register(SPC_DATA_AVAIL_CARD_LEN, num_available_bytes)
-        return [
-            ch.convert_raw_waveform_to_voltage_waveform(waveform)
-            for ch, waveform in zip(self.channels, waveforms_in_columns.T)
-        ]
+
+        if self._timestamper is not None:
+            timestamps = self._timestamper.get_timestamps()
+        else:
+            raise SpectrumNoTransferBufferDefined("cannot find a timestamp transfer buffer")
+
+        voltage_waveforms = [ch.convert_raw_waveform_to_voltage_waveform(waveform)
+                             for ch, waveform in zip(self.channels, waveforms_in_columns.T)]
+
+        return [Waveform(timestamp=ts, samples=samples) for ts, samples in zip(timestamps, voltage_waveforms)]
 
     def disconnect(self) -> None:
         """Terminate the connection to the card."""

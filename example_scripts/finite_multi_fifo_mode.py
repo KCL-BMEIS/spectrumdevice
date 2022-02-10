@@ -5,6 +5,7 @@ from typing import List, Optional
 from numpy import ndarray
 
 from spectrumdevice import MockSpectrumCard, SpectrumCard
+from spectrumdevice.devices.waveform import Waveform
 from spectrumdevice.settings import (
     AcquisitionMode,
     CardType,
@@ -21,7 +22,7 @@ def finite_multi_fifo_example(
     trigger_source: TriggerSource,
     device_number: int,
     ip_address: Optional[str] = None,
-) -> List[List[ndarray]]:
+) -> List[List[Waveform]]:
 
     if not mock_mode:
         # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
@@ -82,6 +83,7 @@ if __name__ == "__main__":
             plot(waveform)
 
     print(f"Completed {len(measurements)} measurements each containing {len(measurements[0])} waveforms.")
-    print(f"Waveforms had the following shape: {measurements[0][0].shape}")
+    print(f"Waveforms had the following shape: {measurements[0][0].samples.shape}")
+    print(f"and the following timestamps: {[[wfm.timestamp for wfm in measurement] for measurement in measurements]}")
 
     show()

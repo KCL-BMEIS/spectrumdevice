@@ -9,6 +9,7 @@ from typing import List
 
 from numpy import ndarray
 
+from spectrumdevice.devices.waveform import Waveform
 from spectrumdevice.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumWrongAcquisitionMode,
@@ -111,7 +112,7 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
             if settings.external_trigger_pulse_width_in_samples is not None:
                 self.set_external_trigger_pulse_width_in_samples(settings.external_trigger_pulse_width_in_samples)
 
-    def execute_standard_single_acquisition(self) -> List[ndarray]:
+    def execute_standard_single_acquisition(self) -> List[Waveform]:
         """Carry out an single measurement in standard single mode and return the acquired waveforms.
 
         This method automatically carries out a standard single mode acquisition, including handling the creation
@@ -135,7 +136,7 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         self.wait_for_transfer_to_complete()
         return self.get_waveforms()
 
-    def execute_finite_multi_fifo_acquisition(self, num_measurements: int) -> List[List[ndarray]]:
+    def execute_finite_multi_fifo_acquisition(self, num_measurements: int) -> List[List[Waveform]]:
         """Carry out a finite number of Multi FIFO mode measurements and then stop the acquisitions.
 
         This method automatically carries out a defined number of measurement in Multi FIFO mode, including handling the

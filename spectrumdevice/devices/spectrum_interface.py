@@ -9,6 +9,7 @@ from typing import List, Optional, Union, Tuple, Sequence
 
 from numpy import ndarray
 
+from spectrumdevice.devices.waveform import Waveform
 from spectrumdevice.settings import TriggerSettings, AcquisitionSettings
 from spectrumdevice.settings import SpectrumRegisterLength
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
@@ -103,11 +104,11 @@ class SpectrumDeviceInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def execute_standard_single_acquisition(self) -> List[ndarray]:
+    def execute_standard_single_acquisition(self) -> List[Waveform]:
         raise NotImplementedError()
 
     @abstractmethod
-    def execute_finite_multi_fifo_acquisition(self, num_iterations: int) -> List[List[ndarray]]:
+    def execute_finite_multi_fifo_acquisition(self, num_iterations: int) -> List[List[Waveform]]:
         raise NotImplementedError()
 
     @abstractmethod
@@ -128,7 +129,7 @@ class SpectrumDeviceInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_waveforms(self) -> List[ndarray]:
+    def get_waveforms(self) -> List[Waveform]:
         raise NotImplementedError()
 
     @property
