@@ -12,6 +12,7 @@ from typing import List, Optional, Tuple, Sequence
 
 from numpy import ndarray, mod
 
+from spectrumdevice.devices.spectrum_timestamper import Timestamper
 from spectrumdevice.settings.card_dependent_properties import get_memsize_step_size
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
 from spectrumdevice.spectrum_wrapper import destroy_handle
@@ -72,7 +73,7 @@ from spectrum_gmbh.regs import (
     SPC_DATA_AVAIL_USER_LEN,
     SPC_DATA_AVAIL_CARD_LEN,
     SPC_SEGMENTSIZE,
-    SPC_PCITYP, M2CMD_EXTRA_WAITDMA,
+    SPC_PCITYP,
 )
 
 logger = logging.getLogger(__name__)
@@ -100,6 +101,7 @@ class SpectrumCard(SpectrumDevice):
         self._transfer_buffer: Optional[TransferBuffer] = None
         self.apply_channel_enabling()
         self._acquisition_mode = self.acquisition_mode
+        self._timestamper: Optional[Timestamper] = None
 
     def reconnect(self) -> None:
         """Reconnect to the card after disconnect() has been called."""
@@ -191,7 +193,8 @@ class SpectrumCard(SpectrumDevice):
     def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
         """Create or provide a `CardToPCDataTransferBuffer` object for receiving acquired samples from the device.
 
-        If no buffer is provided, one will be created with the correct size and a board_memory_offset_bytes of 0.
+        If no buffer is provided, one will be created with the correct size and a board_memory_offset_bytes of 0. A
+        seperate buffer for transfering Timestamps will also be created using the Timestamper class.
 
         Args:
             buffer (Optional[List[`CardToPCDataTransferBuffer`]]): A length-1 list containing a pre-constructed
@@ -205,6 +208,7 @@ class SpectrumCard(SpectrumDevice):
                 self.acquisition_length_in_samples * len(self.enabled_channels)
             )
         set_transfer_buffer(self._handle, self._transfer_buffer)
+        self._timestamper = Timestamper(self, self._handle, len(self.enabled_channels))
 
     def get_waveforms(self) -> List[ndarray]:
         """Get a list of the most recently transferred waveforms, in channel order.

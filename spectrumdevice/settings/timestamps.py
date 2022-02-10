@@ -1,8 +1,15 @@
 from datetime import datetime
 from enum import Enum
 
-from spectrum_gmbh.regs import SPC_TSMODE_STANDARD, SPC_TSMODE_STARTRESET, SPC_TSCNT_REFCLOCKPOS, SPC_TSCNT_REFCLOCKNEG, \
-    SPC_TSCNT_INTERNAL, SPC_TSFEAT_NONE, SPC_TSMODE_DISABLE
+from spectrum_gmbh.regs import (
+    SPC_TSMODE_STANDARD,
+    SPC_TSMODE_STARTRESET,
+    SPC_TSCNT_REFCLOCKPOS,
+    SPC_TSCNT_REFCLOCKNEG,
+    SPC_TSCNT_INTERNAL,
+    SPC_TSFEAT_NONE,
+    SPC_TSMODE_DISABLE,
+)
 
 
 class TimestampMode(Enum):
@@ -28,5 +35,3 @@ def spectrum_ref_time_to_datetime(ref_time_int: int, ref_date_int: int) -> datet
     day = ref_date_int >> 0 & 0b1111111
 
     return datetime(year, month, day, hour, minute, second)
-
-

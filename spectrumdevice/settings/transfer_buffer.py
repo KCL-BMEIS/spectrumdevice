@@ -22,8 +22,9 @@ try:
         SPCM_BUF_TIMESTAMP,
         SPCM_DIR_PCTOCARD,
         SPCM_DIR_CARDTOPC,
-        spcm_dwDefTransfer_i64, uint64,
-)
+        spcm_dwDefTransfer_i64,
+        uint64,
+    )
 except OSError:
     from spectrumdevice.spectrum_wrapper.mock_pyspcm import (
         SPCM_BUF_DATA,
