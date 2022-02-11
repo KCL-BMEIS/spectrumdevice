@@ -24,6 +24,8 @@ from spectrumdevice.settings.timestamps import spectrum_ref_time_to_datetime, Ti
 from spectrumdevice.settings.transfer_buffer import CardToPCTimestampTransferBuffer, set_transfer_buffer
 from spectrumdevice.spectrum_wrapper import DEVICE_HANDLE_TYPE
 
+MAX_POLL_COUNT = 100
+
 
 class Timestamper(ABC):
     def __init__(
@@ -37,7 +39,6 @@ class Timestamper(ABC):
         set_transfer_buffer(parent_device_handle, self._transfer_buffer)
         self._expected_timestamp_bytes_per_frame = self._transfer_buffer.data_array_length_in_bytes
         self._n_timestamps_per_frame = n_timestamps_per_frame
-
 
         # Set the local PC time to the reference time register on the card
         self._parent_device.write_to_spectrum_device_register(SPC_TIMESTAMP_CMD, SPC_TS_RESET)
@@ -55,30 +56,26 @@ class Timestamper(ABC):
         return spectrum_ref_time_to_datetime(start_time, start_date)
 
     def get_timestamps(self) -> List[datetime]:
-        transferred_bytes = 0
+        num_available_bytes = 0
         poll_count = 0
 
         if self._parent_device.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
-            while (transferred_bytes < self._expected_timestamp_bytes_per_frame) and (poll_count < 100):
+
+            while (num_available_bytes < self._expected_timestamp_bytes_per_frame) and (poll_count < MAX_POLL_COUNT):
                 num_available_bytes = self._parent_device.read_spectrum_device_register(SPC_TS_AVAIL_USER_LEN)
                 start_pos = self._parent_device.read_spectrum_device_register(SPC_TS_AVAIL_USER_POS)
                 print(f"\nStart pos is {start_pos} and there are {num_available_bytes} available")
-                if (start_pos + num_available_bytes) > self._transfer_buffer.data_array_length_in_bytes:
-                    num_bytes_to_keep = self._transfer_buffer.data_array_length_in_bytes - start_pos
-                else:
-                    num_bytes_to_keep = num_available_bytes
-                transferred_bytes += num_bytes_to_keep
-
-                if num_available_bytes > 0:
-                    self._parent_device.write_to_spectrum_device_register(SPC_TS_AVAIL_CARD_LEN, num_bytes_to_keep)
-
+                if start_pos != 0 or num_available_bytes > self._expected_timestamp_bytes_per_frame:
+                    raise SpectrumNotEnoughRoomInTimestampsBufferError()
                 poll_count += 1
 
-            print(f"\nPolled {poll_count} times, transferred {transferred_bytes} bytes "
-                  f"(expected {self._expected_timestamp_bytes_per_frame} bytes).")
-            timestamps_in_samples = self._transfer_buffer.copy_contents()
-            if len(timestamps_in_samples) != self._n_timestamps_per_frame:
+            if num_available_bytes < self._expected_timestamp_bytes_per_frame:
                 raise SpectrumTimestampsPollingTimeout()
+
+            timestamps_in_samples = self._transfer_buffer.copy_contents()
+            self._parent_device.write_to_spectrum_device_register(SPC_TS_AVAIL_CARD_LEN, num_available_bytes)
+            print(f"\nPolled {poll_count} times, transferred {num_available_bytes} bytes "
+                  f"(expected {self._expected_timestamp_bytes_per_frame} bytes).")
 
         else:
             timestamps_in_samples = self._transfer_buffer.copy_contents()
