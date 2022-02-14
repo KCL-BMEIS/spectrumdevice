@@ -5,12 +5,13 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
 import logging
+import time
 from abc import ABC, abstractmethod
 from threading import Event, Lock, Thread
 from time import sleep, monotonic
 from typing import Optional, Sequence, List
 
-from numpy import ndarray, zeros
+from numpy import ndarray, zeros, uint64, ones, arange, concatenate
 from numpy.random import uniform
 
 from spectrumdevice.devices.spectrum_card import SpectrumCard
@@ -18,12 +19,12 @@ from spectrumdevice.devices.spectrum_device import SpectrumDevice
 from spectrumdevice.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumNoTransferBufferDefined,
-    SpectrumSettingsMismatchError,
+    SpectrumSettingsMismatchError, SpectrumNotEnoughRoomInTimestampsBufferError,
 )
 from spectrumdevice.settings import SpectrumRegisterLength
 from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.device_modes import AcquisitionMode
-from spectrumdevice.settings.transfer_buffer import CardToPCDataTransferBuffer
+from spectrumdevice.settings.transfer_buffer import CardToPCDataTransferBuffer, CardToPCTimestampTransferBuffer
 from spectrumdevice.devices.spectrum_star_hub import SpectrumStarHub
 from spectrum_gmbh.regs import (
     SPC_MIINST_MODULES,
@@ -46,6 +47,10 @@ from spectrum_gmbh.regs import (
 )
 
 logger = logging.getLogger(__name__)
+BYTES_PER_TIMESTAMP = 16
+BYTES_PER_TIMESTAMP_BUFFER_ELEMENT = 8
+TIMESTAMP_BUFFER_ELEMENT_D_TYPE = uint64
+ON_BOARD_TIMESTAMP_MEMORY_SIZE_BYTES = 16384
 
 
 class MockSpectrumDevice(SpectrumDevice, ABC):
@@ -398,3 +403,138 @@ def mock_waveform_source_factory(acquisition_mode: AcquisitionMode) -> MockWavef
         return SingleModeMockWaveformSource()
     else:
         raise NotImplementedError(f"Mock waveform source not yet implemented for {acquisition_mode} acquisition mode.")
+
+
+class MockTimestampSource(ABC):
+    """Simulates the transfer of timestamps into a timestamp transfer buffer in polling mode."""
+    def __init__(self, transfer_buffer: CardToPCTimestampTransferBuffer, sample_rate_hz: float):
+        self._on_device_memory_lock = Lock()
+        self._buffer_next_write_position_counter_in_bytes = 0
+        self._transfer_buffer = transfer_buffer
+        self._transfer_buffer_elements_free_status = ones(len(self._transfer_buffer.data_array), dtype=bool)
+
+        self._reference_time = time.monotonic()
+        self._sample_rate = sample_rate_hz
+
+        on_board_array_size = int(ON_BOARD_TIMESTAMP_MEMORY_SIZE_BYTES / BYTES_PER_TIMESTAMP_BUFFER_ELEMENT)
+        self._on_device_memory = zeros(on_board_array_size, dtype=TIMESTAMP_BUFFER_ELEMENT_D_TYPE)
+        self._device_memory_next_write_position_counter_in_elements = 0
+        self._on_device_memory_free_status = ones(on_board_array_size, dtype=bool)
+
+        self._last_returned_start_pos_in_bytes = 0
+        self._last_returned_n_available_bytes = 0
+
+    @abstractmethod
+    def __call__(self, stop_flag: Event, frame_rate: float, timestamps_per_frame: int):
+        raise NotImplementedError()
+
+    def mark_transfer_buffer_elements_as_free(self, num_elements: int):
+
+        start_pos_in_elements = int(self._last_returned_start_pos_in_bytes / BYTES_PER_TIMESTAMP_BUFFER_ELEMENT)
+        self._transfer_buffer_elements_free_status[start_pos_in_elements:start_pos_in_elements + num_elements] = True
+
+    def transfer_timestamps_to_buffer(self) -> (int, int):
+
+        start_write_index = int(self._buffer_next_write_position_counter_in_bytes / BYTES_PER_TIMESTAMP_BUFFER_ELEMENT)
+
+        try:
+            with self._on_device_memory_lock:
+                print("Timestamps to transfer")
+                print(self._on_device_memory[[not s for s in self._on_device_memory_free_status]])
+                last_index_wrtn = _write_to_circular_buffer(
+                    self._transfer_buffer.data_array,
+                    self._transfer_buffer_elements_free_status,
+                    self._on_device_memory,
+                    start_write_index,
+                    self._on_device_memory_free_status
+                )
+                print("Buffer array after transfer")
+                print(self._transfer_buffer.data_array)
+                print(self._transfer_buffer_elements_free_status)
+                print(f"last index written: {last_index_wrtn}")
+
+        except MockCircularBufferOverrunError:
+            raise SpectrumNotEnoughRoomInTimestampsBufferError()
+
+        self._buffer_next_write_position_counter_in_bytes = (last_index_wrtn + 1) * BYTES_PER_TIMESTAMP_BUFFER_ELEMENT
+        num_occupied_elements_in_buffer = len(self._transfer_buffer.data_array[
+                                                  [not s for s in self._transfer_buffer_elements_free_status]
+                                              ])
+
+        self._last_returned_n_available_bytes = num_occupied_elements_in_buffer * BYTES_PER_TIMESTAMP_BUFFER_ELEMENT
+        self._last_returned_start_pos_in_bytes = start_write_index * BYTES_PER_TIMESTAMP_BUFFER_ELEMENT
+        return self._last_returned_start_pos_in_bytes, self._last_returned_n_available_bytes
+
+
+class MockSingleModeMockTimestampSource(MockTimestampSource):
+    def __call__(self, stop_flag: Event, frame_rate: float, timestamps_per_frame: int):
+        start_time = monotonic()
+        while not stop_flag.is_set() and ((monotonic() - start_time) < (1 / frame_rate)):
+            sleep(0.001)
+        if not stop_flag.is_set():
+            timestamp_in_samples = round((time.monotonic() - self._reference_time) * self._sample_rate)
+            timestamps = ones(timestamps_per_frame, dtype=TIMESTAMP_BUFFER_ELEMENT_D_TYPE) \
+                * TIMESTAMP_BUFFER_ELEMENT_D_TYPE(timestamp_in_samples)
+            timestamps_128bit = concatenate([[TIMESTAMP_BUFFER_ELEMENT_D_TYPE(0), t] for t in timestamps])
+            print("New timestamps")
+            print(timestamps_128bit)
+            with self._on_device_memory_lock:
+                last_position_written_to = _write_to_circular_buffer(
+                    self._on_device_memory,
+                    self._on_device_memory_free_status,
+                    timestamps_128bit,
+                    self._device_memory_next_write_position_counter_in_elements,
+                )
+            self._device_memory_next_write_position_counter_in_elements = last_position_written_to + 1
+            print("On device memory after write")
+            print(self._on_device_memory)
+
+
+def _wrap_indices(indices: ndarray, array_size: int) -> ndarray:
+    for i, index in enumerate(indices):
+        indices[i] = _wrap_index(index, array_size)
+    return indices
+
+
+def _wrap_index(index: int, array_size: int) -> int:
+    if index < array_size:
+        return index
+    else:
+        return index - array_size
+
+
+def _write_to_circular_buffer(dest_buffer: ndarray, dest_buffer_free_status: ndarray, source_buffer: ndarray,
+                              start_index: int, source_buffer_free_status: Optional[ndarray] = None) -> int:
+
+    if source_buffer_free_status is not None:
+        source_indices_to_write = arange(len(source_buffer))[[not s for s in source_buffer_free_status]]
+    else:
+        source_indices_to_write = arange(len(source_buffer))
+    n_elements_to_write = len(source_indices_to_write)
+
+    if n_elements_to_write > 0:
+
+        buffer_len = len(dest_buffer)
+        num_free_elements_in_buffer = len(dest_buffer[dest_buffer_free_status])
+
+        if n_elements_to_write > num_free_elements_in_buffer:
+            raise MockCircularBufferOverrunError()
+
+        write_indices = arange(n_elements_to_write + start_index)
+        wrapped_write_indices = _wrap_indices(write_indices, buffer_len)
+
+        for source_index, destination_index in zip(source_indices_to_write, wrapped_write_indices):
+            dest_buffer[destination_index] = source_buffer[source_index]
+            if source_buffer_free_status is not None:
+                source_buffer_free_status[source_index] = True
+            dest_buffer_free_status[destination_index] = False
+
+        last_index_written = wrapped_write_indices[-1]
+        return last_index_written
+
+    else:
+        raise ValueError("No data to write")
+
+
+class MockCircularBufferOverrunError(Exception):
+    pass
