@@ -13,12 +13,14 @@ from typing import Optional, Sequence, List
 from numpy import ndarray, zeros
 from numpy.random import uniform
 
+from spectrumdevice.devices.mocks.timestamps import MockTimestamper
 from spectrumdevice.devices.spectrum_card import SpectrumCard
 from spectrumdevice.devices.spectrum_device import SpectrumDevice
 from spectrumdevice.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumNoTransferBufferDefined,
-    SpectrumSettingsMismatchError, )
+    SpectrumSettingsMismatchError,
+)
 from spectrumdevice.settings import SpectrumRegisterLength
 from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.device_modes import AcquisitionMode
@@ -45,6 +47,7 @@ from spectrum_gmbh.regs import (
 )
 
 logger = logging.getLogger(__name__)
+NUM_TIMESTAMPS_PER_FRAME = 1
 
 
 class MockSpectrumDevice(SpectrumDevice, ABC):
@@ -238,6 +241,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
             self._transfer_buffer = CardToPCDataTransferBuffer(
                 self.acquisition_length_in_samples * len(self.enabled_channels)
             )
+        self._timestamper = MockTimestamper(self, self._handle, NUM_TIMESTAMPS_PER_FRAME)
 
     def start_transfer(self) -> None:
         """See `SpectrumCard.start_transfer()`. This mock implementation simulates the continuous transfer of samples

@@ -5,7 +5,6 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
 import logging
-from copy import copy
 from functools import reduce
 from operator import or_
 from typing import List, Optional, Tuple, Sequence
@@ -241,14 +240,18 @@ class SpectrumCard(SpectrumDevice):
         else:
             raise SpectrumNoTransferBufferDefined("cannot find a timestamp transfer buffer")
 
-        waveforms_in_columns = self.transfer_buffers[0].copy_contents().reshape(
-            (self.acquisition_length_in_samples, len(self.enabled_channels))
+        waveforms_in_columns = (
+            self.transfer_buffers[0]
+            .copy_contents()
+            .reshape((self.acquisition_length_in_samples, len(self.enabled_channels)))
         )
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
             self.write_to_spectrum_device_register(SPC_DATA_AVAIL_CARD_LEN, num_available_bytes)
 
-        voltage_waveforms = [ch.convert_raw_waveform_to_voltage_waveform(waveform)
-                             for ch, waveform in zip(self.channels, waveforms_in_columns.T)]
+        voltage_waveforms = [
+            ch.convert_raw_waveform_to_voltage_waveform(waveform)
+            for ch, waveform in zip(self.channels, waveforms_in_columns.T)
+        ]
 
         return [Waveform(timestamp=ts, samples=samples) for ts, samples in zip(timestamps, voltage_waveforms)]
 

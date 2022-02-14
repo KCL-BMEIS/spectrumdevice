@@ -3,7 +3,7 @@ integration test."""
 from time import monotonic
 from typing import List, Optional
 
-from numpy import ndarray, array
+from numpy import array
 
 from spectrumdevice import MockSpectrumCard, SpectrumCard
 from spectrumdevice.devices.waveform import Waveform

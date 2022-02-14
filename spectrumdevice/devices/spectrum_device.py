@@ -7,8 +7,6 @@
 from abc import ABC
 from typing import List
 
-from numpy import ndarray
-
 from spectrumdevice.devices.waveform import Waveform
 from spectrumdevice.exceptions import (
     SpectrumDeviceNotConnected,

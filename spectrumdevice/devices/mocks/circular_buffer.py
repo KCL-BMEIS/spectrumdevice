@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, cast
 
 from numpy import ndarray, arange
 
@@ -16,8 +16,13 @@ def _wrap_index(index: int, array_size: int) -> int:
         return index - array_size
 
 
-def _write_to_circular_buffer(dest_buffer: ndarray, dest_buffer_free_status: ndarray, source_buffer: ndarray,
-                              start_index: int, source_buffer_free_status: Optional[ndarray] = None) -> int:
+def _write_to_circular_buffer(
+    dest_buffer: ndarray,
+    dest_buffer_free_status: ndarray,
+    source_buffer: ndarray,
+    start_index: int,
+    source_buffer_free_status: Optional[ndarray] = None,
+) -> int:
 
     if source_buffer_free_status is not None:
         source_indices_to_write = arange(len(source_buffer))[[not s for s in source_buffer_free_status]]
@@ -43,7 +48,7 @@ def _write_to_circular_buffer(dest_buffer: ndarray, dest_buffer_free_status: nda
             dest_buffer_free_status[destination_index] = False
 
         last_index_written = wrapped_write_indices[-1]
-        return last_index_written
+        return cast(int, last_index_written)
 
     else:
         raise ValueError("No data to write")

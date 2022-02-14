@@ -2,8 +2,6 @@
 integration test."""
 from typing import List, Optional
 
-from numpy import ndarray
-
 from spectrumdevice import MockSpectrumCard, SpectrumCard
 from spectrumdevice.devices.waveform import Waveform
 from spectrumdevice.settings import (

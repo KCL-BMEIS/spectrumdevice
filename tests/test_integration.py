@@ -2,7 +2,7 @@ from typing import List
 from unittest import TestCase
 
 import pytest
-from numpy import array, ndarray
+from numpy import array
 
 from example_scripts.connect_to_star_hub import star_hub_example
 from example_scripts.continuous_multi_fifo_mode import continuous_multi_fifo_example
@@ -39,7 +39,7 @@ class SingleCardIntegrationTests(TestCase):
         self.assertEqual(len(waveforms), 1)
         self.assertEqual([wfm.samples.shape for wfm in waveforms], [(400,)])
         if self._single_card_mock_mode:
-            self.assertAlmostEqual(waveforms[0].samples.max() - waveforms[0].min(), 0.4, 1)
+            self.assertAlmostEqual(waveforms[0].samples.max() - waveforms[0].samples.min(), 0.4, 1)
             self.assertAlmostEqual(waveforms[0].samples.mean(), 0.0, 1)
 
     def test_finite_multi_fifo_mode(self) -> None:
