@@ -1,6 +1,8 @@
-from typing import Optional, cast
+from dataclasses import dataclass
+from typing import Optional
 
-from numpy import ndarray, arange
+from numpy import ndarray, arange, bool_, uint64
+from numpy.typing import NDArray
 
 
 def _wrap_indices(indices: ndarray, array_size: int) -> ndarray:
@@ -16,13 +18,19 @@ def _wrap_index(index: int, array_size: int) -> int:
         return index - array_size
 
 
+@dataclass
+class WriteHead:
+    last_write_pos: Optional[int]
+    next_write_pos: int
+
+
 def _write_to_circular_buffer(
-    dest_buffer: ndarray,
-    dest_buffer_free_status: ndarray,
-    source_buffer: ndarray,
+    dest_buffer: NDArray[uint64],
+    dest_buffer_free_status: NDArray[bool_],
+    source_buffer: NDArray[uint64],
     start_index: int,
-    source_buffer_free_status: Optional[ndarray] = None,
-) -> int:
+    source_buffer_free_status: Optional[Optional[NDArray[bool_]]] = None,
+) -> WriteHead:
 
     if source_buffer_free_status is not None:
         source_indices_to_write = arange(len(source_buffer))[[not s for s in source_buffer_free_status]]
@@ -48,10 +56,12 @@ def _write_to_circular_buffer(
             dest_buffer_free_status[destination_index] = False
 
         last_index_written = wrapped_write_indices[-1]
-        return cast(int, last_index_written)
+        return WriteHead(
+            last_write_pos=last_index_written, next_write_pos=_wrap_index(last_index_written + 1, buffer_len)
+        )
 
     else:
-        raise ValueError("No data to write")
+        return WriteHead(last_write_pos=None, next_write_pos=start_index)
 
 
 class MockCircularBufferOverrunError(Exception):

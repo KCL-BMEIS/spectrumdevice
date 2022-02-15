@@ -236,7 +236,6 @@ class SpectrumCard(SpectrumDevice):
 
         if self._timestamper is not None:
             timestamps = self._timestamper.get_timestamps()
-            print(timestamps)
         else:
             raise SpectrumNoTransferBufferDefined("cannot find a timestamp transfer buffer")
 

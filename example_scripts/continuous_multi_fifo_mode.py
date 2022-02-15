@@ -97,7 +97,7 @@ if __name__ == "__main__":
         figure()
         title(f"Measurement {n}")
         for waveform in measurement:
-            plot(waveform)
+            plot(waveform.samples)
             xlabel("Time (samples)")
             ylabel("Amplitude (Volts)")
             tight_layout()

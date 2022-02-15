@@ -132,7 +132,9 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         self.define_transfer_buffer()
         self.start_transfer()
         self.wait_for_transfer_to_complete()
-        return self.get_waveforms()
+        waveforms = self.get_waveforms()
+        self.stop_acquisition()  # Only strictly required for Mock devices. Should have not effect on hardware.
+        return waveforms
 
     def execute_finite_multi_fifo_acquisition(self, num_measurements: int) -> List[List[Waveform]]:
         """Carry out a finite number of Multi FIFO mode measurements and then stop the acquisitions.

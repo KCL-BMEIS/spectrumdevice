@@ -1,5 +1,6 @@
 from abc import ABC
 from datetime import datetime, timedelta
+from time import sleep
 from typing import List, Tuple
 
 from numpy import array
@@ -25,7 +26,7 @@ from spectrumdevice.settings.timestamps import spectrum_ref_time_to_datetime, Ti
 from spectrumdevice.settings.transfer_buffer import CardToPCTimestampTransferBuffer, set_transfer_buffer
 from spectrumdevice.spectrum_wrapper import DEVICE_HANDLE_TYPE
 
-MAX_POLL_COUNT = 100
+MAX_POLL_COUNT = 3000
 
 
 class Timestamper(ABC):
@@ -42,10 +43,7 @@ class Timestamper(ABC):
 
         self._configure_parent_device(parent_device_handle)
 
-        if self._parent_device.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
-            # Enable polling mode so we can get the timestamps without waiting for a notification
-            self._parent_device.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_EXTRA_POLL)
-        self._ref_time = self._get_ref_time()
+        self._ref_time = self._read_ref_time_from_device()
         self._sampling_rate_hz = self._parent_device.sample_rate_in_hz
 
     def _configure_parent_device(self, handle: DEVICE_HANDLE_TYPE) -> None:
@@ -54,8 +52,11 @@ class Timestamper(ABC):
         self._parent_device.write_to_spectrum_device_register(SPC_TIMESTAMP_CMD, SPC_TS_RESET)
         # Enable standard timestamp mode (timestamps are in seconds relative to the reference time)
         self._parent_device.write_to_spectrum_device_register(SPC_TIMESTAMP_CMD, TimestampMode.STANDARD.value)
+        if self._parent_device.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
+            # Enable polling mode so we can get the timestamps without waiting for a notification
+            self._parent_device.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_EXTRA_POLL)
 
-    def _get_ref_time(self) -> datetime:
+    def _read_ref_time_from_device(self) -> datetime:
         start_time = self._parent_device.read_spectrum_device_register(SPC_TIMESTAMP_STARTTIME)
         start_date = self._parent_device.read_spectrum_device_register(SPC_TIMESTAMP_STARTDATE)
         return spectrum_ref_time_to_datetime(start_time, start_date)
@@ -76,31 +77,25 @@ class Timestamper(ABC):
 
             while (num_available_bytes < self._expected_timestamp_bytes_per_frame) and (poll_count < MAX_POLL_COUNT):
                 start_pos, num_available_bytes = self._transfer_timestamps_to_transfer_buffer()
-                print(f"\nStart pos is {start_pos} and there are {num_available_bytes} available")
                 if start_pos != 0 or num_available_bytes > self._expected_timestamp_bytes_per_frame:
-                    raise SpectrumNotEnoughRoomInTimestampsBufferError()
+                    raise SpectrumNotEnoughRoomInTimestampsBufferError(
+                        f"Trying to insert {num_available_bytes} bytes" f" at position {start_pos}"
+                    )
                 poll_count += 1
+                sleep(1e-3)
 
             if num_available_bytes < self._expected_timestamp_bytes_per_frame:
                 raise SpectrumTimestampsPollingTimeout()
 
             timestamps_in_samples = self._transfer_buffer.copy_contents()
             self._mark_transfer_buffer_elements_as_free(num_available_bytes)
-            print(
-                f"\nPolled {poll_count} times, transferred {num_available_bytes} bytes "
-                f"(expected {self._expected_timestamp_bytes_per_frame} bytes)."
-            )
 
         else:
             timestamps_in_samples = self._transfer_buffer.copy_contents()
 
         timestamps_in_seconds_since_ref = array(
-            [timedelta(seconds=ts / self._sampling_rate_hz) for ts in timestamps_in_samples]
+            [timedelta(seconds=float(ts) / self._sampling_rate_hz) for ts in timestamps_in_samples]
         )
-        try:
-            timestamps_in_datetime = self._ref_time + timestamps_in_seconds_since_ref
-        except OverflowError as e:
-            print(timestamps_in_seconds_since_ref)
-            raise e
+        timestamps_in_datetime = self._ref_time + timestamps_in_seconds_since_ref
 
         return list(timestamps_in_datetime)
