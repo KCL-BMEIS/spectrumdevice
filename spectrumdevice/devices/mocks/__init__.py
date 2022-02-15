@@ -88,7 +88,6 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
         """Starts a mock waveform source in a separate thread. The source generates noise samples according to the
         number of currently enabled channels and the acquisition length, and places them in the virtual on device buffer
         (the _on_device_buffer attribute).
-
         """
         waveform_source = mock_waveform_source_factory(self.acquisition_mode)
         amplitude = self.read_spectrum_device_register(SPC_MIINST_MAXADCVALUE)
@@ -165,9 +164,9 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
     """A mock spectrum card, for testing software written to use the `SpectrumCard` class.
 
     This class overrides methods of `SpectrumCard` that communicate with hardware with mocked implementations, allowing
-    software to be tested without Spectrum hardware connected or drivers installed, e.g. during CI. It also overrides
+    software to be tested without Spectrum hardware connected or drivers installed, e.g. during CI. It overrides
     methods to use to set up a mock 'on device buffer' attribute into which a mock waveform source will write
-    samples.
+    samples. It also uses a MockTimestamper to generated timestamps for mock waveforms.
     """
 
     def __init__(
@@ -212,6 +211,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         self._timestamper = MockTimestamper(self, self._handle, NUM_TIMESTAMPS_PER_FRAME)
 
     def start_acquisition(self) -> None:
+        """Starts a mock waveform source and mock timestamp source in separate threads."""
         super().start_acquisition()
         timestamp_source = self._timestamper.mock_source_function_factory(
             self._acquisition_stop_event, self._source_frame_rate_hz, NUM_TIMESTAMPS_PER_FRAME

@@ -1,10 +1,11 @@
 from datetime import datetime
 from dataclasses import dataclass
 
-from numpy import ndarray
+from numpy import float_
+from numpy.typing import NDArray
 
 
 @dataclass
 class Waveform:
     timestamp: datetime
-    samples: ndarray
+    samples: NDArray[float_]

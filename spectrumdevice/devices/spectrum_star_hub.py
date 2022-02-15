@@ -48,7 +48,7 @@ class SpectrumStarHub(SpectrumDevice):
         self._child_cards = child_cards
         self._master_card = child_cards[master_card_index]
         self._triggering_card = child_cards[master_card_index]
-        child_card_logical_indices = (2 ** n for n in range(len(self._child_cards)))
+        child_card_logical_indices = (2**n for n in range(len(self._child_cards)))
         self._visa_string = f"sync{device_number}"
         self._connect(self._visa_string)
         all_cards_binary_mask = reduce(or_, child_card_logical_indices)
