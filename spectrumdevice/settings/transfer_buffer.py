@@ -123,7 +123,7 @@ class CardToPCTimestampTransferBuffer(TransferBuffer):
         self.data_array: ndarray = zeros(num_timestamps_per_frame * 2, dtype=uint64)
 
     def copy_contents(self) -> ndarray:
-        return copy(self.data_array[1::2])  # only every other item in the array has a timestamp written to it
+        return copy(self.data_array[0::2])  # only every other item in the array has a timestamp written to it
 
     @property
     def notify_size_in_bytes(self) -> int:

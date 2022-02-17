@@ -67,7 +67,8 @@ if __name__ == "__main__":
     from matplotlib.pyplot import plot, show, xlabel, tight_layout, ylabel
 
     waveforms = standard_single_mode_example(
-        mock_mode=True, trigger_source=TriggerSource.SPC_TMASK_EXT0, device_number=0
+        mock_mode=False, trigger_source=TriggerSource.SPC_TMASK_EXT0,
+        device_number=1, ip_address="169.254.142.75"
     )
 
     # Plot waveforms
@@ -77,9 +78,10 @@ if __name__ == "__main__":
         ylabel("Amplitude (Volts)")
         tight_layout()
 
+    ts_format = '%Y-%m-%d %H:%M:%S.%f'
     print(f"Acquired {len(waveforms)} waveforms with the following shapes:")
     print([wfm.samples.shape for wfm in waveforms])
     print("and the following timestamps:")
-    print([wfm.timestamp for wfm in waveforms])
+    print([wfm.timestamp.strftime(ts_format) for wfm in waveforms])
 
     show()

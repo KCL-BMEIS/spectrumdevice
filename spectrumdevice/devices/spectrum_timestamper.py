@@ -1,9 +1,10 @@
 from abc import ABC
+from copy import copy
 from datetime import datetime, timedelta
 from time import sleep
 from typing import List, Tuple
 
-from numpy import array
+from numpy import array, concatenate, floor
 
 from spectrum_gmbh.regs import (
     SPC_TIMESTAMP_CMD,
@@ -48,10 +49,10 @@ class Timestamper(ABC):
 
     def _configure_parent_device(self, handle: DEVICE_HANDLE_TYPE) -> None:
         set_transfer_buffer(handle, self._transfer_buffer)
-        # Set the local PC time to the reference time register on the card
-        self._parent_device.write_to_spectrum_device_register(SPC_TIMESTAMP_CMD, SPC_TS_RESET)
         # Enable standard timestamp mode (timestamps are in seconds relative to the reference time)
         self._parent_device.write_to_spectrum_device_register(SPC_TIMESTAMP_CMD, TimestampMode.STANDARD.value)
+        # Set the local PC time to the reference time register on the card
+        self._parent_device.write_to_spectrum_device_register(SPC_TIMESTAMP_CMD, SPC_TS_RESET)
         if self._parent_device.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
             # Enable polling mode so we can get the timestamps without waiting for a notification
             self._parent_device.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_EXTRA_POLL)
@@ -70,32 +71,57 @@ class Timestamper(ABC):
         self._parent_device.write_to_spectrum_device_register(SPC_TS_AVAIL_CARD_LEN, num_available_bytes)
 
     def get_timestamps(self) -> List[datetime]:
-        num_available_bytes = 0
         poll_count = 0
+        n_kept_bytes = 0
 
         if self._parent_device.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
 
-            while (num_available_bytes < self._expected_timestamp_bytes_per_frame) and (poll_count < MAX_POLL_COUNT):
-                start_pos, num_available_bytes = self._transfer_timestamps_to_transfer_buffer()
-                if start_pos != 0 or num_available_bytes > self._expected_timestamp_bytes_per_frame:
-                    raise SpectrumNotEnoughRoomInTimestampsBufferError(
-                        f"Trying to insert {num_available_bytes} bytes" f" at position {start_pos}"
-                    )
-                poll_count += 1
-                sleep(1e-3)
+            kept_timestamps = []
+            while (n_kept_bytes < self._expected_timestamp_bytes_per_frame) and (poll_count < MAX_POLL_COUNT):
+                start_pos_int_bytes, num_available_bytes = self._transfer_timestamps_to_transfer_buffer()
+                sleep(10e-3)
 
-            if num_available_bytes < self._expected_timestamp_bytes_per_frame:
+                print(f"Trying to insert {num_available_bytes} bytes" f" at position {start_pos_int_bytes}"
+                f" (poll count {poll_count})")
+
+                if (start_pos_int_bytes + num_available_bytes) >= self._transfer_buffer.data_array_length_in_bytes:
+                    n_bytes_to_keep = self._transfer_buffer.data_array_length_in_bytes - start_pos_int_bytes
+                else:
+                    n_bytes_to_keep = num_available_bytes
+
+                start_pos_in_elements = int(floor(start_pos_int_bytes / self._transfer_buffer.data_array.itemsize))
+                n_elements_to_keep = int(floor(n_bytes_to_keep / self._transfer_buffer.data_array.itemsize))
+                n_bytes_to_keep = n_elements_to_keep * self._transfer_buffer.data_array.itemsize
+
+                if n_bytes_to_keep > 0:
+                    print(f"Keeping {n_elements_to_keep} elements starting at element {start_pos_in_elements}")
+                    kept_timestamps.append(copy(
+                        self._transfer_buffer.data_array[start_pos_in_elements:start_pos_in_elements+n_elements_to_keep]))
+                    print(f"Kept {kept_timestamps[-1]}")
+                    n_kept_bytes += n_bytes_to_keep
+                    self._mark_transfer_buffer_elements_as_free(n_bytes_to_keep)
+                else:
+                    print("No new full element was filled")
+
+                print(self._transfer_buffer.data_array)
+                poll_count += 1
+
+            if n_kept_bytes < self._expected_timestamp_bytes_per_frame:
                 raise SpectrumTimestampsPollingTimeout()
 
-            timestamps_in_samples = self._transfer_buffer.copy_contents()
-            self._mark_transfer_buffer_elements_as_free(num_available_bytes)
-
+            timestamps_in_samples = concatenate(kept_timestamps)
+            print('-------------------')
+            print(f'GOT A TIMESTAMP! {concatenate(kept_timestamps)}')
+            print('-------------------')
         else:
             timestamps_in_samples = self._transfer_buffer.copy_contents()
 
         timestamps_in_seconds_since_ref = array(
-            [timedelta(seconds=float(ts) / self._sampling_rate_hz) for ts in timestamps_in_samples]
+            [[timedelta(seconds=float(ts) / self._sampling_rate_hz) for ts in timestamps_in_samples][0]]
         )
         timestamps_in_datetime = self._ref_time + timestamps_in_seconds_since_ref
+
+        print('REF TIME:')
+        print(self._ref_time)
 
         return list(timestamps_in_datetime)
