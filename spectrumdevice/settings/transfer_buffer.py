@@ -10,7 +10,7 @@ from ctypes import c_void_p
 from dataclasses import dataclass
 from enum import Enum
 
-from numpy import ndarray, zeros, int16, uint64
+from numpy import ndarray, zeros, int16, uint64, uint8
 
 from spectrumdevice.spectrum_wrapper import DEVICE_HANDLE_TYPE
 from spectrumdevice.spectrum_wrapper.error_handler import error_handler
@@ -120,7 +120,7 @@ class CardToPCTimestampTransferBuffer(TransferBuffer):
         self.type = BufferType.SPCM_BUF_TIMESTAMP
         self.direction = BufferDirection.SPCM_DIR_CARDTOPC
         self.board_memory_offset_bytes = 0
-        self.data_array: ndarray = zeros(num_timestamps_per_frame * 2, dtype=uint64)
+        self.data_array: ndarray = zeros(num_timestamps_per_frame * 16, dtype=uint8)
 
     def copy_contents(self) -> ndarray:
         return copy(self.data_array[0::2])  # only every other item in the array has a timestamp written to it

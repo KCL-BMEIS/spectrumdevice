@@ -1,3 +1,4 @@
+import struct
 from abc import ABC
 from copy import copy
 from datetime import datetime, timedelta
@@ -76,48 +77,54 @@ class Timestamper(ABC):
 
         if self._parent_device.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
 
-            kept_timestamps = []
+            kept_bytes = []
             while (n_kept_bytes < self._expected_timestamp_bytes_per_frame) and (poll_count < MAX_POLL_COUNT):
+
+                print(f"\n NEW POLL STARTING (poll count {poll_count}) \n")
+                print("Transfer buffer contents at start of poll:")
+                print(self._transfer_buffer.data_array)
+
                 start_pos_int_bytes, num_available_bytes = self._transfer_timestamps_to_transfer_buffer()
                 sleep(10e-3)
-
-                print(f"Trying to insert {num_available_bytes} bytes" f" at position {start_pos_int_bytes}"
-                f" (poll count {poll_count})")
+                print(f"The card has inserted {num_available_bytes} bytes into the buffer"
+                      f" at position {start_pos_int_bytes}")
 
                 if (start_pos_int_bytes + num_available_bytes) >= self._transfer_buffer.data_array_length_in_bytes:
+                    print("(new bytes wrapping around to beginning of buffer)")
                     n_bytes_to_keep = self._transfer_buffer.data_array_length_in_bytes - start_pos_int_bytes
                 else:
                     n_bytes_to_keep = num_available_bytes
 
-                start_pos_in_elements = int(floor(start_pos_int_bytes / self._transfer_buffer.data_array.itemsize))
-                n_elements_to_keep = int(floor(n_bytes_to_keep / self._transfer_buffer.data_array.itemsize))
-                n_bytes_to_keep = n_elements_to_keep * self._transfer_buffer.data_array.itemsize
-
                 if n_bytes_to_keep > 0:
-                    print(f"Keeping {n_elements_to_keep} elements starting at element {start_pos_in_elements}")
-                    kept_timestamps.append(copy(
-                        self._transfer_buffer.data_array[start_pos_in_elements:start_pos_in_elements+n_elements_to_keep]))
-                    print(f"Kept {kept_timestamps[-1]}")
+                    if n_bytes_to_keep > self._expected_timestamp_bytes_per_frame:
+                        n_bytes_to_keep = self._expected_timestamp_bytes_per_frame
+                    print(f"*** Keeping {n_bytes_to_keep} bytes starting at position {start_pos_int_bytes}:")
+                    kept_bytes += list(copy(
+                        self._transfer_buffer.data_array[start_pos_int_bytes:start_pos_int_bytes+n_bytes_to_keep]))
+                    print(f"{kept_bytes[-n_bytes_to_keep:]}")
                     n_kept_bytes += n_bytes_to_keep
                     self._mark_transfer_buffer_elements_as_free(n_bytes_to_keep)
-                else:
-                    print("No new full element was filled")
 
+                print("Transfer buffer contents at end of poll:")
                 print(self._transfer_buffer.data_array)
                 poll_count += 1
 
             if n_kept_bytes < self._expected_timestamp_bytes_per_frame:
                 raise SpectrumTimestampsPollingTimeout()
-
-            timestamps_in_samples = concatenate(kept_timestamps)
-            print('-------------------')
-            print(f'GOT A TIMESTAMP! {concatenate(kept_timestamps)}')
-            print('-------------------')
         else:
-            timestamps_in_samples = self._transfer_buffer.copy_contents()
+            kept_bytes = self._transfer_buffer.copy_contents()
+
+        bigendian = struct.unpack(">2Q", struct.pack(f">{len(kept_bytes)}B", *kept_bytes))
+        littleendian = struct.unpack("<2Q", struct.pack(f"<{len(kept_bytes)}B", *kept_bytes))
+
+        print('-------------------')
+        print(f'GOT BYTES! {kept_bytes}')
+        print(f'ENCODED BIGENDIAN: {bigendian}')
+        print(f'ENCODED LITTLEENDIAN: {littleendian}')
+        print('-------------------')
 
         timestamps_in_seconds_since_ref = array(
-            [[timedelta(seconds=float(ts) / self._sampling_rate_hz) for ts in timestamps_in_samples][0]]
+            [[timedelta(seconds=float(ts) / self._sampling_rate_hz) for ts in littleendian][0]]
         )
         timestamps_in_datetime = self._ref_time + timestamps_in_seconds_since_ref
 
