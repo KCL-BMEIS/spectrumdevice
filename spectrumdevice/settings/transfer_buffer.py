@@ -120,7 +120,7 @@ class CardToPCTimestampTransferBuffer(TransferBuffer):
         self.type = BufferType.SPCM_BUF_TIMESTAMP
         self.direction = BufferDirection.SPCM_DIR_CARDTOPC
         self.board_memory_offset_bytes = 0
-        self.data_array: ndarray = zeros(num_timestamps_per_frame * 16, dtype=uint8)
+        self.data_array: ndarray = zeros(4096, dtype=uint8)
 
     def copy_contents(self) -> ndarray:
         return copy(self.data_array[0::2])  # only every other item in the array has a timestamp written to it
