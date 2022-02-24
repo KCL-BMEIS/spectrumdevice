@@ -45,7 +45,7 @@ class SingleCardIntegrationTests(TestCase):
     def test_finite_multi_fifo_mode(self) -> None:
         measurements = finite_multi_fifo_example(
             mock_mode=self._single_card_mock_mode,
-            num_measurements=20,
+            num_measurements=5,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
             device_number=TEST_DEVICE_NUMBER,
             ip_address=TEST_DEVICE_IP,

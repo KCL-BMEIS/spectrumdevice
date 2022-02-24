@@ -106,7 +106,7 @@ class Timestamper(ABC):
             if n_kept_bytes < self._expected_timestamp_bytes_per_frame:
                 raise SpectrumTimestampsPollingTimeout()
         else:
-            kept_bytes = self._transfer_buffer.copy_contents()
+            raise NotImplementedError()
 
         # bigendian = struct.unpack(">2Q", struct.pack(f">{len(kept_bytes)}B", *kept_bytes))
         littleendian = struct.unpack("<2Q", struct.pack(f"<{len(kept_bytes)}B", *kept_bytes))
