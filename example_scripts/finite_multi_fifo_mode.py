@@ -70,8 +70,7 @@ if __name__ == "__main__":
     from matplotlib.pyplot import plot, show, figure, title
 
     measurements = finite_multi_fifo_example(
-        mock_mode=False, num_measurements=5, trigger_source=TriggerSource.SPC_TMASK_EXT0,
-        device_number=1, ip_address="169.254.142.75"
+        mock_mode=True, num_measurements=5, trigger_source=TriggerSource.SPC_TMASK_EXT0, device_number=0,
     )
 
     # Plot waveforms
