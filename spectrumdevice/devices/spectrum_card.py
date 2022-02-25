@@ -101,7 +101,7 @@ class SpectrumCard(SpectrumDevice):
         self._transfer_buffer: Optional[TransferBuffer] = None
         self.apply_channel_enabling()
         self._acquisition_mode = self.acquisition_mode
-        self._timestamper: Optional[Timestamper] = None
+        self._timestamper = Timestamper(self, self._handle, len(self.enabled_channels))
 
     def reconnect(self) -> None:
         """Reconnect to the card after disconnect() has been called."""
@@ -208,7 +208,6 @@ class SpectrumCard(SpectrumDevice):
                 self.acquisition_length_in_samples * len(self.enabled_channels)
             )
         set_transfer_buffer(self._handle, self._transfer_buffer)
-        self._timestamper = Timestamper(self, self._handle, len(self.enabled_channels))
 
     def get_waveforms(self) -> List[Waveform]:
         """Get a list of the most recently transferred waveforms, in channel order.
@@ -235,7 +234,7 @@ class SpectrumCard(SpectrumDevice):
             num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
 
         if self._timestamper is not None:
-            timestamps = self._timestamper.get_timestamps()
+            timestamp = self._timestamper.get_timestamp()
         else:
             raise SpectrumNoTransferBufferDefined("cannot find a timestamp transfer buffer")
 
@@ -252,7 +251,7 @@ class SpectrumCard(SpectrumDevice):
             for ch, waveform in zip(self.channels, waveforms_in_columns.T)
         ]
 
-        return [Waveform(timestamp=ts, samples=samples) for ts, samples in zip(timestamps, voltage_waveforms)]
+        return [Waveform(timestamp=timestamp, samples=samples) for samples in voltage_waveforms]
 
     def disconnect(self) -> None:
         """Terminate the connection to the card."""

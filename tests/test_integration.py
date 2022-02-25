@@ -43,6 +43,9 @@ class SingleCardIntegrationTests(TestCase):
             self.assertAlmostEqual(waveforms[0].samples.max() - waveforms[0].samples.min(), 0.4, 1)
             self.assertAlmostEqual(waveforms[0].samples.mean(), 0.0, 1)
 
+        two_seconds_ago = datetime.datetime.now() - datetime.timedelta(seconds=2)
+        self.assertTrue(two_seconds_ago < waveforms[0].timestamp < datetime.datetime.now())
+
     def test_finite_multi_fifo_mode(self) -> None:
         measurements = finite_multi_fifo_example(
             mock_mode=self._single_card_mock_mode,
@@ -51,6 +54,7 @@ class SingleCardIntegrationTests(TestCase):
             device_number=TEST_DEVICE_NUMBER,
             ip_address=TEST_DEVICE_IP,
         )
+        self.assertEqual(len(measurements), 5)
         self._asserts_for_fifo_mode(measurements)
 
     def test_continuous_multi_fifo_mode(self) -> None:
@@ -71,8 +75,8 @@ class SingleCardIntegrationTests(TestCase):
 
         timestamps = array([[wfm.timestamp for wfm in waveforms] for waveforms in measurements]).flatten()
         # Check timestamps all occurred within last second
-        a_second_ago = datetime.datetime.now() - datetime.timedelta(seconds=1)
-        self.assertTrue((a_second_ago < timestamps).all() and (timestamps < datetime.datetime.now()).all())
+        two_seconds_ago = datetime.datetime.now() - datetime.timedelta(seconds=2)
+        self.assertTrue((two_seconds_ago < timestamps).all() and (timestamps < datetime.datetime.now()).all())
 
 
 @pytest.mark.integration
