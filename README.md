@@ -214,6 +214,15 @@ to stop the acquisition:
 card.stop_acquisition()
 ```
 and execute some logic to exit the `while` loop.
+
+## Timestamps 
+
+Timestamps are shipped with acquired waveforms in every allowed mode (Standard Single, Multi Fifo), in 
+a `datetime` format.
+
+They correspond to the moment the trigger for a given acquisition is raised. The trigger source
+is configured before the acquisition starts. 
+
 ## Examples
 See the `example_scripts` directory.
 
