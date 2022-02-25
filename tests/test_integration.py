@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 from unittest import TestCase
 
@@ -55,7 +56,7 @@ class SingleCardIntegrationTests(TestCase):
     def test_continuous_multi_fifo_mode(self) -> None:
         measurements = continuous_multi_fifo_example(
             mock_mode=self._single_card_mock_mode,
-            acquisition_duration_in_seconds=1.0,
+            acquisition_duration_in_seconds=0.5,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
             device_number=TEST_DEVICE_NUMBER,
             ip_address=TEST_DEVICE_IP,
@@ -64,9 +65,14 @@ class SingleCardIntegrationTests(TestCase):
 
     def _asserts_for_fifo_mode(self, measurements: List[List[Waveform]]) -> None:
         self.assertTrue((array([len(measurement) for measurement in measurements]) == 1).all())
-        self.assertTrue(
-            (array([[wfm.samples.shape for wfm in waveforms] for waveforms in measurements]).flatten() == 400).all()
-        )
+
+        waveform_shapes = array([[wfm.samples.shape for wfm in waveforms] for waveforms in measurements]).flatten()
+        self.assertTrue((waveform_shapes == 400).all())
+
+        timestamps = array([[wfm.timestamp for wfm in waveforms] for waveforms in measurements]).flatten()
+        # Check timestamps all occurred within last second
+        a_second_ago = datetime.datetime.now() - datetime.timedelta(seconds=1)
+        self.assertTrue((a_second_ago < timestamps).all() and (timestamps < datetime.datetime.now()).all())
 
 
 @pytest.mark.integration
