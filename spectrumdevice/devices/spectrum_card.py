@@ -101,6 +101,9 @@ class SpectrumCard(SpectrumDevice):
         self._transfer_buffer: Optional[TransferBuffer] = None
         self.apply_channel_enabling()
         self._acquisition_mode = self.acquisition_mode
+        self. _create_timestamper()
+
+    def _create_timestamper(self):
         self._timestamper = Timestamper(self, self._handle, len(self.enabled_channels))
 
     def reconnect(self) -> None:

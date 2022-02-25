@@ -7,6 +7,7 @@
 from abc import ABC
 from typing import List
 
+from spectrumdevice.devices.spectrum_timestamper import Timestamper
 from spectrumdevice.devices.waveform import Waveform
 from spectrumdevice.exceptions import (
     SpectrumDeviceNotConnected,
