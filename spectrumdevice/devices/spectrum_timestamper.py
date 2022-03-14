@@ -1,4 +1,5 @@
 import struct
+import time
 from abc import ABC
 from copy import copy
 from datetime import datetime, timedelta
@@ -26,10 +27,6 @@ from spectrumdevice.settings.transfer_buffer import CardToPCTimestampTransferBuf
 from spectrumdevice.spectrum_wrapper import DEVICE_HANDLE_TYPE
 
 MAX_POLL_COUNT = 100
-
-# Timestamp acquisition is made with polling, the thread needs to be paused to save some CPU time
-# The data rate is expected to be lower than 200Hz. To be safe, we chose a default pause of 2.5ms.
-TIMESTAMP_POLLING_PAUSE_IN_SEC = 2.5e-3
 
 
 class Timestamper(ABC):
@@ -84,11 +81,14 @@ class Timestamper(ABC):
         n_kept_bytes = 0
         kept_bytes = []
 
+        t1 = time.perf_counter()
         while (n_kept_bytes < self._expected_timestamp_bytes_per_frame) and (poll_count < MAX_POLL_COUNT):
 
             n_bytes_not_yet_received = self._expected_timestamp_bytes_per_frame - n_kept_bytes
+            t2 = time.perf_counter()
             num_available_bytes = self._parent_device.read_spectrum_device_register(SPC_TS_AVAIL_USER_LEN)
             start_pos_int_bytes = self._parent_device.read_spectrum_device_register(SPC_TS_AVAIL_USER_POS)
+            print(f'Reading bytes from spectrum took {1e3 * (time.perf_counter() - t2)} ms')
 
             # don't go beyond the size of the ts data buffer
             if (start_pos_int_bytes + num_available_bytes) >= self._transfer_buffer.data_array_length_in_bytes:
@@ -101,18 +101,20 @@ class Timestamper(ABC):
 
             if n_bytes_to_keep > 0:
                 kept_bytes += list(copy(
-                    self._transfer_buffer.data_array[start_pos_int_bytes:start_pos_int_bytes
-                                                                         + num_available_bytes]))
+                    self._transfer_buffer.data_array[start_pos_int_bytes:start_pos_int_bytes + n_bytes_to_keep]))
                 n_kept_bytes += len(kept_bytes)
                 self._mark_transfer_buffer_elements_as_free(len(kept_bytes))
 
             poll_count += 1
-            sleep(TIMESTAMP_POLLING_PAUSE_IN_SEC)
+        print(f'Polling loop {1e3 * (time.perf_counter() - t1)} ms')
+        print(f'Timestamper poll count: {poll_count}')
 
         if n_kept_bytes < self._expected_timestamp_bytes_per_frame:
             raise SpectrumTimestampsPollingTimeout()
 
+        t1 = time.perf_counter()
         timestamp_in_samples = struct.unpack("<2Q", struct.pack(f"<{len(kept_bytes)}B", *kept_bytes))[0]
+        print(f'Unpacking took {1e3 * (time.perf_counter() - t1)} ms')
         timestamp_in_seconds_since_ref = timedelta(seconds=float(timestamp_in_samples) / self._sampling_rate_hz)
 
         timestamp_in_datetime = self._ref_time + timestamp_in_seconds_since_ref

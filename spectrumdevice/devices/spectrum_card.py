@@ -5,6 +5,7 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
 import logging
+import time
 from functools import reduce
 from operator import or_
 from typing import List, Optional, Tuple, Sequence
@@ -240,6 +241,10 @@ class SpectrumCard(SpectrumDevice):
             timestamp = self._timestamper.get_timestamp()
         else:
             raise SpectrumNoTransferBufferDefined("cannot find a timestamp transfer buffer")
+
+        num_expected_bytes_per_frame = self._transfer_buffer.data_array_length_in_bytes
+        if num_available_bytes > num_expected_bytes_per_frame:
+            num_available_bytes = num_expected_bytes_per_frame
 
         waveforms_in_columns = (
             self.transfer_buffers[0]
