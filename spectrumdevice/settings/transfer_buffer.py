@@ -10,7 +10,7 @@ from ctypes import c_void_p
 from dataclasses import dataclass
 from enum import Enum
 
-from numpy import ndarray, zeros, int16, uint64, uint8
+from numpy import ndarray, zeros, int16, uint8
 
 from spectrumdevice.spectrum_wrapper import DEVICE_HANDLE_TYPE
 from spectrumdevice.spectrum_wrapper.error_handler import error_handler

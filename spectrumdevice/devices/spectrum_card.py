@@ -5,7 +5,6 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
 import logging
-import time
 from functools import reduce
 from operator import or_
 from typing import List, Optional, Tuple, Sequence
@@ -102,9 +101,9 @@ class SpectrumCard(SpectrumDevice):
         self._transfer_buffer: Optional[TransferBuffer] = None
         self.apply_channel_enabling()
         self._acquisition_mode = self.acquisition_mode
-        self. _create_timestamper()
+        self._create_timestamper()
 
-    def _create_timestamper(self):
+    def _create_timestamper(self) -> None:
         self._timestamper = Timestamper(self, self._handle, len(self.enabled_channels))
 
     def reconnect(self) -> None:
@@ -240,11 +239,14 @@ class SpectrumCard(SpectrumDevice):
         if self._timestamper is not None:
             timestamp = self._timestamper.get_timestamp()
         else:
-            raise SpectrumNoTransferBufferDefined("cannot find a timestamp transfer buffer")
+            raise SpectrumNoTransferBufferDefined("Cannot find a timestamp transfer buffer")
 
-        num_expected_bytes_per_frame = self._transfer_buffer.data_array_length_in_bytes
-        if num_available_bytes > num_expected_bytes_per_frame:
-            num_available_bytes = num_expected_bytes_per_frame
+        if self._transfer_buffer is not None:
+            num_expected_bytes_per_frame = self._transfer_buffer.data_array_length_in_bytes
+            if num_available_bytes > num_expected_bytes_per_frame:
+                num_available_bytes = num_expected_bytes_per_frame
+        else:
+            raise SpectrumNoTransferBufferDefined("Cannot find a samples transfer buffer")
 
         waveforms_in_columns = (
             self.transfer_buffers[0]

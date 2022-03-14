@@ -199,7 +199,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         self._connect(self._visa_string)
         self._acquisition_mode = self.acquisition_mode
 
-    def _create_timestamper(self):
+    def _create_timestamper(self) -> None:
         self._timestamper: MockTimestamper = MockTimestamper(self, self._handle, NUM_TIMESTAMPS_PER_FRAME)
 
     def set_acquisition_mode(self, mode: AcquisitionMode) -> None:

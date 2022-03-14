@@ -3,7 +3,6 @@ import time
 from abc import ABC
 from copy import copy
 from datetime import datetime, timedelta
-from time import sleep
 from typing import Tuple
 
 from spectrum_gmbh.regs import (
@@ -15,26 +14,27 @@ from spectrum_gmbh.regs import (
     SPC_TIMESTAMP_STARTTIME,
     SPC_TIMESTAMP_STARTDATE,
     M2CMD_EXTRA_POLL,
-    SPC_TS_AVAIL_USER_POS, M2CMD_CARD_WRITESETUP, M2CMD_EXTRA_STARTDMA, M2CMD_EXTRA_WAITDMA,
+    SPC_TS_AVAIL_USER_POS,
+    M2CMD_CARD_WRITESETUP,
 )
 from spectrumdevice.devices.spectrum_interface import SpectrumDeviceInterface
 from spectrumdevice.exceptions import (
     SpectrumTimestampsPollingTimeout,
 )
-from spectrumdevice.settings import AcquisitionMode, TriggerSource
+from spectrumdevice.settings import TriggerSource
 from spectrumdevice.settings.timestamps import spectrum_ref_time_to_datetime, TimestampMode
 from spectrumdevice.settings.transfer_buffer import CardToPCTimestampTransferBuffer, set_transfer_buffer
 from spectrumdevice.spectrum_wrapper import DEVICE_HANDLE_TYPE
 
-MAX_POLL_COUNT = 100
+MAX_POLL_COUNT = 50
 
 
 class Timestamper(ABC):
     def __init__(
-            self,
-            parent_device: SpectrumDeviceInterface,
-            parent_device_handle: DEVICE_HANDLE_TYPE,
-            n_timestamps_per_frame: int,
+        self,
+        parent_device: SpectrumDeviceInterface,
+        parent_device_handle: DEVICE_HANDLE_TYPE,
+        n_timestamps_per_frame: int,
     ):
         self._parent_device = parent_device
         self._transfer_buffer = CardToPCTimestampTransferBuffer(n_timestamps_per_frame)
@@ -81,14 +81,11 @@ class Timestamper(ABC):
         n_kept_bytes = 0
         kept_bytes = []
 
-        t1 = time.perf_counter()
         while (n_kept_bytes < self._expected_timestamp_bytes_per_frame) and (poll_count < MAX_POLL_COUNT):
 
             n_bytes_not_yet_received = self._expected_timestamp_bytes_per_frame - n_kept_bytes
-            t2 = time.perf_counter()
             num_available_bytes = self._parent_device.read_spectrum_device_register(SPC_TS_AVAIL_USER_LEN)
             start_pos_int_bytes = self._parent_device.read_spectrum_device_register(SPC_TS_AVAIL_USER_POS)
-            print(f'Reading bytes from spectrum took {1e3 * (time.perf_counter() - t2)} ms')
 
             # don't go beyond the size of the ts data buffer
             if (start_pos_int_bytes + num_available_bytes) >= self._transfer_buffer.data_array_length_in_bytes:
@@ -100,21 +97,18 @@ class Timestamper(ABC):
                 n_bytes_to_keep = n_bytes_not_yet_received
 
             if n_bytes_to_keep > 0:
-                kept_bytes += list(copy(
-                    self._transfer_buffer.data_array[start_pos_int_bytes:start_pos_int_bytes + n_bytes_to_keep]))
+                kept_bytes += list(
+                    copy(self._transfer_buffer.data_array[start_pos_int_bytes : start_pos_int_bytes + n_bytes_to_keep])
+                )
                 n_kept_bytes += len(kept_bytes)
                 self._mark_transfer_buffer_elements_as_free(len(kept_bytes))
 
             poll_count += 1
-        print(f'Polling loop {1e3 * (time.perf_counter() - t1)} ms')
-        print(f'Timestamper poll count: {poll_count}')
 
         if n_kept_bytes < self._expected_timestamp_bytes_per_frame:
             raise SpectrumTimestampsPollingTimeout()
 
-        t1 = time.perf_counter()
         timestamp_in_samples = struct.unpack("<2Q", struct.pack(f"<{len(kept_bytes)}B", *kept_bytes))[0]
-        print(f'Unpacking took {1e3 * (time.perf_counter() - t1)} ms')
         timestamp_in_seconds_since_ref = timedelta(seconds=float(timestamp_in_samples) / self._sampling_rate_hz)
 
         timestamp_in_datetime = self._ref_time + timestamp_in_seconds_since_ref
