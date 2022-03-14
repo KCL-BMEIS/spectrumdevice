@@ -85,6 +85,8 @@ class Timestamper(ABC):
         kept_bytes = []
 
         while (n_kept_bytes < self._expected_timestamp_bytes_per_frame) and (poll_count < MAX_POLL_COUNT):
+
+            n_bytes_not_yet_received = self._expected_timestamp_bytes_per_frame - n_kept_bytes
             num_available_bytes = self._parent_device.read_spectrum_device_register(SPC_TS_AVAIL_USER_LEN)
             start_pos_int_bytes = self._parent_device.read_spectrum_device_register(SPC_TS_AVAIL_USER_POS)
 
@@ -92,12 +94,17 @@ class Timestamper(ABC):
             if (start_pos_int_bytes + num_available_bytes) >= self._transfer_buffer.data_array_length_in_bytes:
                 num_available_bytes = self._transfer_buffer.data_array_length_in_bytes - start_pos_int_bytes
 
-            if num_available_bytes > 0:
+            if 0 < num_available_bytes <= n_bytes_not_yet_received:
+                n_bytes_to_keep = num_available_bytes
+            else:
+                n_bytes_to_keep = n_bytes_not_yet_received
+
+            if n_bytes_to_keep > 0:
                 kept_bytes += list(copy(
                     self._transfer_buffer.data_array[start_pos_int_bytes:start_pos_int_bytes
                                                                          + num_available_bytes]))
-                n_kept_bytes += num_available_bytes
-                self._mark_transfer_buffer_elements_as_free(num_available_bytes)
+                n_kept_bytes += len(kept_bytes)
+                self._mark_transfer_buffer_elements_as_free(len(kept_bytes))
 
             poll_count += 1
             sleep(TIMESTAMP_POLLING_PAUSE_IN_SEC)
