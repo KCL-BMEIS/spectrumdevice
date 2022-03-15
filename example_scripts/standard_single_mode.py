@@ -1,10 +1,11 @@
 """Standard Single Mode (SPC_REC_STD_SINGLE) example. The function defined here is used by the tests module as an
 integration test."""
 
-from typing import List, Optional
+from typing import Optional
 
 from spectrumdevice import MockSpectrumCard, SpectrumCard
-from spectrumdevice.devices.waveform import Waveform
+
+from spectrumdevice.devices.measurement import Measurement
 from spectrumdevice.settings import (
     AcquisitionMode,
     CardType,
@@ -17,7 +18,7 @@ from spectrumdevice.settings import (
 
 def standard_single_mode_example(
     mock_mode: bool, trigger_source: TriggerSource, device_number: int, ip_address: Optional[str] = None
-) -> List[Waveform]:
+) -> Measurement:
 
     if not mock_mode:
         # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
@@ -56,33 +57,33 @@ def standard_single_mode_example(
     card.configure_acquisition(acquisition_settings)
 
     # Execute acquisition
-    waveform_list = card.execute_standard_single_acquisition()
+    meas = card.execute_standard_single_acquisition()
     card.reset()
     card.disconnect()
-    return waveform_list
+    return meas
 
 
 if __name__ == "__main__":
 
     from matplotlib.pyplot import plot, show, xlabel, tight_layout, ylabel
 
-    waveforms = standard_single_mode_example(
+    meas = standard_single_mode_example(
         mock_mode=True,
         trigger_source=TriggerSource.SPC_TMASK_EXT0,
         device_number=0,
     )
 
     # Plot waveforms
-    for waveform in waveforms:
-        plot(waveform.samples)
+    for waveform in meas.waveforms:
+        plot(waveform)
         xlabel("Time (samples)")
         ylabel("Amplitude (Volts)")
         tight_layout()
 
     ts_format = "%Y-%m-%d %H:%M:%S.%f"
-    print(f"Acquired {len(waveforms)} waveforms with the following shapes:")
-    print([wfm.samples.shape for wfm in waveforms])
-    print("and the following timestamps:")
-    print([wfm.timestamp.strftime(ts_format) for wfm in waveforms])
+    print(f"Acquired {len(meas.waveforms)} waveforms with the following shapes:")
+    print([wfm.shape for wfm in meas.waveforms])
+    print("and the following timestamp:")
+    print(meas.timestamp.strftime(ts_format))
 
     show()

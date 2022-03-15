@@ -6,7 +6,8 @@ from typing import List, Optional
 from numpy import array
 
 from spectrumdevice import MockSpectrumCard, SpectrumCard
-from spectrumdevice.devices.waveform import Waveform
+
+from spectrumdevice.devices.measurement import Measurement
 from spectrumdevice.settings import (
     AcquisitionMode,
     CardType,
@@ -23,7 +24,7 @@ def continuous_multi_fifo_example(
     trigger_source: TriggerSource,
     device_number: int,
     ip_address: Optional[str] = None,
-) -> List[List[Waveform]]:
+) -> List[Measurement]:
 
     if not mock_mode:
         # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
@@ -52,9 +53,9 @@ def continuous_multi_fifo_example(
         acquisition_length_in_samples=400,
         pre_trigger_length_in_samples=0,
         timeout_in_ms=1000,
-        enabled_channels=[0],
-        vertical_ranges_in_mv=[200],
-        vertical_offsets_in_percent=[0],
+        enabled_channels=[0, 1, 2, 3, 4, 5, 6, 7],
+        vertical_ranges_in_mv=[200, 200, 200, 200, 200, 200, 200, 200],
+        vertical_offsets_in_percent=[0, 0, 0, 0, 0, 0, 0, 0],
     )
 
     # Apply settings
@@ -68,13 +69,11 @@ def continuous_multi_fifo_example(
     # Retrieve streamed waveform data until desired time has elapsed
     measurements_list = []
     while (monotonic() - start_time) < acquisition_duration_in_seconds:
-        measurements_list.append(card.get_waveforms())
+        measurements_list.append(Measurement(waveforms=card.get_waveforms(),
+                                             timestamp=card.get_timestamp()))
 
     # Stop the acquisition (and streaming)
     card.stop_acquisition()
-
-    fake_waveform = array([1000.0, 2000.0, 3000.0])
-    print(card.channels[0].convert_raw_waveform_to_voltage_waveform(fake_waveform))
 
     card.reset()
     card.disconnect()
@@ -87,7 +86,7 @@ if __name__ == "__main__":
 
     measurements = continuous_multi_fifo_example(
         mock_mode=True,
-        acquisition_duration_in_seconds=4.0,
+        acquisition_duration_in_seconds=3.0,
         trigger_source=TriggerSource.SPC_TMASK_EXT0,
         device_number=0,
     )
@@ -96,14 +95,16 @@ if __name__ == "__main__":
     for n, measurement in enumerate(measurements):
         figure()
         title(f"Measurement {n}")
-        for waveform in measurement:
-            plot(waveform.samples)
+        for waveform in measurement.waveforms:
+            plot(waveform)
             xlabel("Time (samples)")
             ylabel("Amplitude (Volts)")
             tight_layout()
 
-    print(f"Completed {len(measurements)} measurements each containing {len(measurements[0])} waveforms.")
-    print(f"Waveforms had the following shape: {measurements[0][0].samples.shape}")
-    print(f"and the following timestamps: {[[wfm.timestamp for wfm in measurement] for measurement in measurements]}")
+    print(f"Completed {len(measurements)} measurements each containing {len(measurements[0].waveforms)} waveforms.")
+    print(f"Waveforms had the following shape: {measurements[0].waveforms[0].shape}")
+    print('And the following timestamps:')
+    for m in measurements:
+        print(m.timestamp)
 
     show()

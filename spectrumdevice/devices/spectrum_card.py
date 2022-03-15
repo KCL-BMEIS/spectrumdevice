@@ -3,16 +3,16 @@
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
-
+import datetime
 import logging
 from functools import reduce
 from operator import or_
 from typing import List, Optional, Tuple, Sequence
 
-from numpy import mod
+from numpy import mod, float_
+from numpy.typing import NDArray
 
 from spectrumdevice.devices.spectrum_timestamper import Timestamper
-from spectrumdevice.devices.waveform import Waveform
 from spectrumdevice.settings.card_dependent_properties import get_memsize_step_size
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
 from spectrumdevice.spectrum_wrapper import destroy_handle
@@ -212,7 +212,7 @@ class SpectrumCard(SpectrumDevice):
             )
         set_transfer_buffer(self._handle, self._transfer_buffer)
 
-    def get_waveforms(self) -> List[Waveform]:
+    def get_waveforms(self) -> List[NDArray[float_]]:
         """Get a list of the most recently transferred waveforms, in channel order.
 
         This method copies and reshapes the samples in the `TransferBuffer` into a list of 1D NumPy arrays (waveforms)
@@ -227,19 +227,14 @@ class SpectrumCard(SpectrumDevice):
         this would the rate at which your trigger source was running).
 
         Returns:
-            waveforms (List[ndarray]): A list of 1D NumPy arrays, one for each channel enabled for the acquisition,
-                ordered by channel number.
+            waveforms (List[NDArray[float_]]): A list of 1D NumPy arrays, one for each channel enabled for the
+                acquisition, ordered by channel number.
 
         """
         num_available_bytes = 0
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
             self.wait_for_transfer_to_complete()
             num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
-
-        if self._timestamper is not None:
-            timestamp = self._timestamper.get_timestamp()
-        else:
-            raise SpectrumNoTransferBufferDefined("Cannot find a timestamp transfer buffer")
 
         if self._transfer_buffer is not None:
             num_expected_bytes_per_frame = self._transfer_buffer.data_array_length_in_bytes
@@ -261,7 +256,14 @@ class SpectrumCard(SpectrumDevice):
             for ch, waveform in zip(self.channels, waveforms_in_columns.T)
         ]
 
-        return [Waveform(timestamp=timestamp, samples=samples) for samples in voltage_waveforms]
+        return voltage_waveforms
+
+    def get_timestamp(self) -> datetime:
+        """ Get timestamp for the last acquisition"""
+        if self._timestamper is not None:
+            return self._timestamper.get_timestamp()
+        else:
+            raise SpectrumNoTransferBufferDefined("Cannot find a timestamp transfer buffer")
 
     def disconnect(self) -> None:
         """Terminate the connection to the card."""

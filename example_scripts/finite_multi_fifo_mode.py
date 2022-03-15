@@ -70,7 +70,10 @@ if __name__ == "__main__":
     from matplotlib.pyplot import plot, show, figure, title
 
     measurements = finite_multi_fifo_example(
-        mock_mode=True, num_measurements=5, trigger_source=TriggerSource.SPC_TMASK_EXT0, device_number=0,
+        mock_mode=True,
+        num_measurements=5,
+        trigger_source=TriggerSource.SPC_TMASK_EXT0,
+        device_number=0,
     )
 
     # Plot waveforms
@@ -80,7 +83,7 @@ if __name__ == "__main__":
         for waveform in measurement:
             plot(waveform.samples)
 
-    ts_format = '%Y-%m-%d %H:%M:%S.%f'
+    ts_format = "%Y-%m-%d %H:%M:%S.%f"
     print(f"Completed {len(measurements)} measurements each containing {len(measurements[0])} waveforms.")
     print(f"Waveforms had the following shape: {measurements[0][0].samples.shape}")
     print(f"and the following timestamps:")

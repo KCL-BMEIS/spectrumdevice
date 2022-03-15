@@ -7,7 +7,10 @@
 from abc import ABC
 from typing import List
 
-from spectrumdevice.devices.waveform import Waveform
+from numpy import float_
+from numpy.typing import NDArray
+
+from spectrumdevice.devices.measurement import Measurement
 from spectrumdevice.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumWrongAcquisitionMode,
@@ -110,7 +113,7 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
             if settings.external_trigger_pulse_width_in_samples is not None:
                 self.set_external_trigger_pulse_width_in_samples(settings.external_trigger_pulse_width_in_samples)
 
-    def execute_standard_single_acquisition(self) -> List[Waveform]:
+    def execute_standard_single_acquisition(self) -> Measurement:
         """Carry out an single measurement in standard single mode and return the acquired waveforms.
 
         This method automatically carries out a standard single mode acquisition, including handling the creation
@@ -134,9 +137,9 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         self.wait_for_transfer_to_complete()
         waveforms = self.get_waveforms()
         self.stop_acquisition()  # Only strictly required for Mock devices. Should have not effect on hardware.
-        return waveforms
+        return Measurement(waveforms=waveforms, timestamp=self.get_timestamp())
 
-    def execute_finite_multi_fifo_acquisition(self, num_measurements: int) -> List[List[Waveform]]:
+    def execute_finite_multi_fifo_acquisition(self, num_measurements: int) -> List[Measurement]:
         """Carry out a finite number of Multi FIFO mode measurements and then stop the acquisitions.
 
         This method automatically carries out a defined number of measurement in Multi FIFO mode, including handling the
@@ -157,7 +160,8 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         self.execute_continuous_multi_fifo_acquisition()
         measurements = []
         for _ in range(num_measurements):
-            measurements.append(self.get_waveforms())
+            measurements.append(Measurement(waveforms=self.get_waveforms(),
+                                            timestamp=self.get_timestamp()))
         self.stop_acquisition()
         return measurements
 
