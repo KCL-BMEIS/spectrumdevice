@@ -73,6 +73,7 @@ class AcquisitionSettings:
     """The voltage range to apply to each enabled channel in mW."""
     vertical_offsets_in_percent: List[int]
     """The DC offset to apply to each enabled channel as percentages of their vertical ranges."""
+    timestamping_enabled: bool
 
 
 class SpectrumRegisterLength(Enum):

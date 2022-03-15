@@ -50,6 +50,7 @@ def standard_single_mode_example(
         enabled_channels=[0],
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
+        timestamping_enabled=True,
     )
 
     # Apply settings
@@ -84,6 +85,6 @@ if __name__ == "__main__":
     print(f"Acquired {len(meas.waveforms)} waveforms with the following shapes:")
     print([wfm.shape for wfm in meas.waveforms])
     print("and the following timestamp:")
-    print(meas.timestamp.strftime(ts_format))
+    print(meas.timestamp.strftime(ts_format) if meas.timestamp else "Timestamping disabled")
 
     show()

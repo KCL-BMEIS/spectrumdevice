@@ -1,5 +1,6 @@
 """Continuous Multi-FIFO mode (SPC_REC_FIFO_MULTI) example. The function defined here is used by the tests module as an
 integration test."""
+import datetime
 from time import monotonic
 from typing import List, Optional
 
@@ -46,13 +47,14 @@ def continuous_multi_fifo_example(
     # Acquisition settings
     acquisition_settings = AcquisitionSettings(
         acquisition_mode=AcquisitionMode.SPC_REC_FIFO_MULTI,
-        sample_rate_in_hz=40000000,
+        sample_rate_in_hz=10000000,
         acquisition_length_in_samples=400,
         pre_trigger_length_in_samples=0,
         timeout_in_ms=1000,
         enabled_channels=[0],
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
+        timestamping_enabled=True,
     )
 
     # Apply settings
@@ -67,6 +69,8 @@ def continuous_multi_fifo_example(
     measurements_list = []
     while (monotonic() - start_time) < acquisition_duration_in_seconds:
         measurements_list.append(Measurement(waveforms=card.get_waveforms(), timestamp=card.get_timestamp()))
+        print(f"Time now : {datetime.datetime.now()}")
+        print(f"Timestamp: {measurements_list[-1].timestamp}")
 
     # Stop the acquisition (and streaming)
     card.stop_acquisition()
@@ -81,10 +85,11 @@ if __name__ == "__main__":
     from matplotlib.pyplot import plot, show, figure, title, xlabel, ylabel, tight_layout
 
     measurements = continuous_multi_fifo_example(
-        mock_mode=True,
-        acquisition_duration_in_seconds=3.0,
+        mock_mode=False,
+        acquisition_duration_in_seconds=1.0,
         trigger_source=TriggerSource.SPC_TMASK_EXT0,
-        device_number=0,
+        device_number=1,
+        ip_address="169.254.142.75",
     )
 
     # Plot waveforms

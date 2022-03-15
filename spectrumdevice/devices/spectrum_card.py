@@ -101,9 +101,9 @@ class SpectrumCard(SpectrumDevice):
         self._transfer_buffer: Optional[TransferBuffer] = None
         self.apply_channel_enabling()
         self._acquisition_mode = self.acquisition_mode
-        self._create_timestamper()
+        self._timestamper: Optional[Timestamper] = None
 
-    def _create_timestamper(self) -> None:
+    def enable_timestamping(self) -> None:
         self._timestamper = Timestamper(self, self._handle)
 
     def reconnect(self) -> None:
@@ -258,12 +258,12 @@ class SpectrumCard(SpectrumDevice):
 
         return voltage_waveforms
 
-    def get_timestamp(self) -> datetime.datetime:
+    def get_timestamp(self) -> Optional[datetime.datetime]:
         """Get timestamp for the last acquisition"""
         if self._timestamper is not None:
             return self._timestamper.get_timestamp()
         else:
-            raise SpectrumNoTransferBufferDefined("Cannot find a timestamp transfer buffer")
+            return None
 
     def disconnect(self) -> None:
         """Terminate the connection to the card."""

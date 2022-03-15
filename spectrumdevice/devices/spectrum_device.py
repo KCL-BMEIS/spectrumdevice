@@ -94,6 +94,8 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         ):
             channel.set_vertical_range_in_mv(v_range)
             channel.set_vertical_offset_in_percent(v_offset)
+        if settings.timestamping_enabled:
+            self.enable_timestamping()
 
     def configure_trigger(self, settings: TriggerSettings) -> None:
         """Apply all the trigger settings contained in a `TriggerSettings` dataclass to the device.

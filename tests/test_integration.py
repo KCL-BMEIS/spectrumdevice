@@ -45,7 +45,10 @@ class SingleCardIntegrationTests(TestCase):
 
         two_seconds_ago = datetime.datetime.now() - datetime.timedelta(seconds=2)
         now = datetime.datetime.now()
-        self.assertTrue(two_seconds_ago < measurement.timestamp <= now)
+        if measurement.timestamp:
+            self.assertTrue(two_seconds_ago < measurement.timestamp <= now)
+        else:
+            raise IOError("No timestamp available")
 
     def test_finite_multi_fifo_mode(self) -> None:
         measurements = finite_multi_fifo_example(

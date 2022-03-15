@@ -2,7 +2,7 @@ import struct
 from abc import ABC
 from copy import copy
 from datetime import datetime, timedelta
-from typing import Tuple
+from typing import Tuple, Optional
 
 from spectrum_gmbh.regs import (
     SPC_TIMESTAMP_CMD,
@@ -10,8 +10,6 @@ from spectrum_gmbh.regs import (
     SPC_M2CMD,
     SPC_TS_AVAIL_USER_LEN,
     SPC_TS_AVAIL_CARD_LEN,
-    SPC_TIMESTAMP_STARTTIME,
-    SPC_TIMESTAMP_STARTDATE,
     M2CMD_EXTRA_POLL,
     SPC_TS_AVAIL_USER_POS,
     M2CMD_CARD_WRITESETUP,
@@ -21,12 +19,13 @@ from spectrumdevice.exceptions import (
     SpectrumTimestampsPollingTimeout,
 )
 from spectrumdevice.settings import TriggerSource
-from spectrumdevice.settings.timestamps import spectrum_ref_time_to_datetime, TimestampMode
+from spectrumdevice.settings.timestamps import TimestampMode
 from spectrumdevice.settings.transfer_buffer import CardToPCTimestampTransferBuffer, set_transfer_buffer
 from spectrumdevice.spectrum_wrapper import DEVICE_HANDLE_TYPE
 
 MAX_POLL_COUNT = 50
 BYTES_PER_TIMESTAMP = 16
+REF_TIME_PRECISION_IN_SEC = 10e-3
 
 
 class Timestamper(ABC):
@@ -39,26 +38,23 @@ class Timestamper(ABC):
         self._transfer_buffer = CardToPCTimestampTransferBuffer()
         self._expected_timestamp_bytes_per_frame = BYTES_PER_TIMESTAMP
 
+        self._ref_time: Optional[datetime] = None
         self._configure_parent_device(parent_device_handle)
-
-        self._ref_time = self._read_ref_time_from_device()
 
     def _configure_parent_device(self, handle: DEVICE_HANDLE_TYPE) -> None:
         set_transfer_buffer(handle, self._transfer_buffer)
         # Enable standard timestamp mode (timestamps are in seconds relative to the reference time)
         self._parent_device.write_to_spectrum_device_register(SPC_TIMESTAMP_CMD, TimestampMode.STANDARD.value)
 
+        # Write the configuration to the card
         self._parent_device.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_WRITESETUP)
+
         # Set the local PC time to the reference time register on the card
+        self._ref_time = datetime.now()
         self._parent_device.write_to_spectrum_device_register(SPC_TIMESTAMP_CMD, SPC_TS_RESET)
 
         # Enable polling mode so we can get the timestamps without waiting for a notification
         self._parent_device.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_EXTRA_POLL)
-
-    def _read_ref_time_from_device(self) -> datetime:
-        start_time = self._parent_device.read_spectrum_device_register(SPC_TIMESTAMP_STARTTIME)
-        start_date = self._parent_device.read_spectrum_device_register(SPC_TIMESTAMP_STARTDATE)
-        return spectrum_ref_time_to_datetime(start_time, start_date)
 
     def _transfer_timestamps_to_transfer_buffer(self) -> Tuple[int, int]:
         num_available_bytes = self._parent_device.read_spectrum_device_register(SPC_TS_AVAIL_USER_LEN)
@@ -106,11 +102,17 @@ class Timestamper(ABC):
             raise SpectrumTimestampsPollingTimeout()
 
         timestamp_in_samples = struct.unpack("<2Q", struct.pack(f"<{len(kept_bytes)}B", *kept_bytes))[0]
+        print(f"Samples since ref time: {timestamp_in_samples}")
+        print(f"Ref time: {self._ref_time}")
         print(f"Calculating timestamp using rate {self._parent_device.sample_rate_in_hz} hz")
         timestamp_in_seconds_since_ref = timedelta(
             seconds=float(timestamp_in_samples) / self._parent_device.sample_rate_in_hz
         )
+        print(f"Seconds since ref time {timestamp_in_seconds_since_ref}")
 
-        timestamp_in_datetime = self._ref_time + timestamp_in_seconds_since_ref
+        if self._ref_time is not None:
+            timestamp_in_datetime = self._ref_time + timestamp_in_seconds_since_ref
+        else:
+            raise IOError("No timestamp reference time has been set.")
 
         return timestamp_in_datetime

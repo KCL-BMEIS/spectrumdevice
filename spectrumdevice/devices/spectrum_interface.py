@@ -134,7 +134,11 @@ class SpectrumDeviceInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_timestamp(self) -> datetime:
+    def get_timestamp(self) -> Optional[datetime]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def enable_timestamping(self) -> None:
         raise NotImplementedError()
 
     @property

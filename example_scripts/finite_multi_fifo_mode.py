@@ -52,6 +52,7 @@ def finite_multi_fifo_example(
         enabled_channels=[0],
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
+        timestamping_enabled=True,
     )
 
     # Apply settings
@@ -88,6 +89,6 @@ if __name__ == "__main__":
     print(f"Waveforms had the following shape: {measurements[0].waveforms[0].shape}")
     print(f"and the following timestamps:")
     for measurement in measurements:
-        print(measurement.timestamp.strftime(ts_format))
+        print(measurement.timestamp.strftime(ts_format) if measurement.timestamp else "Timestamping disabled")
 
     show()

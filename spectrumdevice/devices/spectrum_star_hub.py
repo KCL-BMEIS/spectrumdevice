@@ -304,9 +304,12 @@ class SpectrumStarHub(SpectrumDevice):
 
         return waveforms_all_cards
 
-    def get_timestamp(self) -> datetime.datetime:
+    def get_timestamp(self) -> Optional[datetime.datetime]:
         """Get timestamp for the last acquisition"""
         return self._triggering_card.get_timestamp()
+
+    def enable_timestamping(self) -> None:
+        self._triggering_card.enable_timestamping()
 
     @property
     def channels(self) -> Sequence[SpectrumChannel]:
