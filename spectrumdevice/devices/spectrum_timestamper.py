@@ -42,7 +42,6 @@ class Timestamper(ABC):
         self._configure_parent_device(parent_device_handle)
 
         self._ref_time = self._read_ref_time_from_device()
-        self._sampling_rate_hz = self._parent_device.sample_rate_in_hz
 
     def _configure_parent_device(self, handle: DEVICE_HANDLE_TYPE) -> None:
         set_transfer_buffer(handle, self._transfer_buffer)
@@ -107,7 +106,10 @@ class Timestamper(ABC):
             raise SpectrumTimestampsPollingTimeout()
 
         timestamp_in_samples = struct.unpack("<2Q", struct.pack(f"<{len(kept_bytes)}B", *kept_bytes))[0]
-        timestamp_in_seconds_since_ref = timedelta(seconds=float(timestamp_in_samples) / self._sampling_rate_hz)
+        print(f"Calculating timestamp using rate {self._parent_device.sample_rate_in_hz} hz")
+        timestamp_in_seconds_since_ref = timedelta(
+            seconds=float(timestamp_in_samples) / self._parent_device.sample_rate_in_hz
+        )
 
         timestamp_in_datetime = self._ref_time + timestamp_in_seconds_since_ref
 
