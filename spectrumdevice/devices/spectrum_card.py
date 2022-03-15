@@ -104,7 +104,7 @@ class SpectrumCard(SpectrumDevice):
         self._create_timestamper()
 
     def _create_timestamper(self) -> None:
-        self._timestamper = Timestamper(self, self._handle, len(self.enabled_channels))
+        self._timestamper = Timestamper(self, self._handle)
 
     def reconnect(self) -> None:
         """Reconnect to the card after disconnect() has been called."""
@@ -258,8 +258,8 @@ class SpectrumCard(SpectrumDevice):
 
         return voltage_waveforms
 
-    def get_timestamp(self) -> datetime:
-        """ Get timestamp for the last acquisition"""
+    def get_timestamp(self) -> datetime.datetime:
+        """Get timestamp for the last acquisition"""
         if self._timestamper is not None:
             return self._timestamper.get_timestamp()
         else:

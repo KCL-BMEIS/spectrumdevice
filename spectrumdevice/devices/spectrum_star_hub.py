@@ -304,8 +304,8 @@ class SpectrumStarHub(SpectrumDevice):
 
         return waveforms_all_cards
 
-    def get_timestamp(self) -> datetime:
-        """ Get timestamp for the last acquisition"""
+    def get_timestamp(self) -> datetime.datetime:
+        """Get timestamp for the last acquisition"""
         return self._triggering_card.get_timestamp()
 
     @property

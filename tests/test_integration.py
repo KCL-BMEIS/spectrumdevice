@@ -3,13 +3,13 @@ from typing import List
 from unittest import TestCase
 
 import pytest
-from numpy import array
+from numpy import array, concatenate
 
 from example_scripts.connect_to_star_hub import star_hub_example
 from example_scripts.continuous_multi_fifo_mode import continuous_multi_fifo_example
 from example_scripts.finite_multi_fifo_mode import finite_multi_fifo_example
 from example_scripts.standard_single_mode import standard_single_mode_example
-from spectrumdevice.devices.waveform import Waveform
+from spectrumdevice.devices.measurement import Measurement
 from spectrumdevice.exceptions import SpectrumDriversNotFound
 from tests.configuration import (
     INTEGRATION_TEST_TRIGGER_SOURCE,
@@ -31,21 +31,21 @@ class SingleCardIntegrationTests(TestCase):
         self._single_card_mock_mode = SINGLE_CARD_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
 
     def test_standard_single_mode(self) -> None:
-        waveforms = standard_single_mode_example(
+        measurement = standard_single_mode_example(
             mock_mode=self._single_card_mock_mode,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
             device_number=TEST_DEVICE_NUMBER,
             ip_address=TEST_DEVICE_IP,
         )
-        self.assertEqual(len(waveforms), 1)
-        self.assertEqual([wfm.samples.shape for wfm in waveforms], [(400,)])
+        self.assertEqual(len(measurement.waveforms), 1)
+        self.assertEqual([wfm.shape for wfm in measurement.waveforms], [(400,)])
         if self._single_card_mock_mode:
-            self.assertAlmostEqual(waveforms[0].samples.max() - waveforms[0].samples.min(), 0.4, 1)
-            self.assertAlmostEqual(waveforms[0].samples.mean(), 0.0, 1)
+            self.assertAlmostEqual(measurement.waveforms[0].max() - measurement.waveforms[0].min(), 0.4, 1)
+            self.assertAlmostEqual(measurement.waveforms[0].mean(), 0.0, 1)
 
         two_seconds_ago = datetime.datetime.now() - datetime.timedelta(seconds=2)
         now = datetime.datetime.now()
-        self.assertTrue(two_seconds_ago < waveforms[0].timestamp <= now)
+        self.assertTrue(two_seconds_ago < measurement.timestamp <= now)
 
     def test_finite_multi_fifo_mode(self) -> None:
         measurements = finite_multi_fifo_example(
@@ -68,13 +68,14 @@ class SingleCardIntegrationTests(TestCase):
         )
         self._asserts_for_fifo_mode(measurements)
 
-    def _asserts_for_fifo_mode(self, measurements: List[List[Waveform]]) -> None:
-        self.assertTrue((array([len(measurement) for measurement in measurements]) == 1).all())
+    def _asserts_for_fifo_mode(self, measurements: List[Measurement]) -> None:
+        self.assertTrue((array([len(measurement.waveforms) for measurement in measurements]) == 1).all())
 
-        waveform_shapes = array([[wfm.samples.shape for wfm in waveforms] for waveforms in measurements]).flatten()
+        waveforms = concatenate([measurement.waveforms for measurement in measurements])
+        waveform_shapes = array([wfm.shape for wfm in waveforms])
         self.assertTrue((waveform_shapes == 400).all())
 
-        timestamps = array([[wfm.timestamp for wfm in waveforms] for waveforms in measurements]).flatten()
+        timestamps = array([measurement.timestamp for measurement in measurements])
         # Check timestamps all occurred within last second
         two_seconds_ago = datetime.datetime.now() - datetime.timedelta(seconds=2)
         self.assertTrue((two_seconds_ago < timestamps).all() and (timestamps <= datetime.datetime.now()).all())

@@ -3,7 +3,7 @@
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
-import datetime
+from datetime import datetime
 from abc import ABC, abstractmethod
 from typing import List, Optional, Union, Tuple, Sequence
 

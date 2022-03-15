@@ -3,10 +3,7 @@ integration test."""
 from time import monotonic
 from typing import List, Optional
 
-from numpy import array
-
 from spectrumdevice import MockSpectrumCard, SpectrumCard
-
 from spectrumdevice.devices.measurement import Measurement
 from spectrumdevice.settings import (
     AcquisitionMode,
@@ -53,9 +50,9 @@ def continuous_multi_fifo_example(
         acquisition_length_in_samples=400,
         pre_trigger_length_in_samples=0,
         timeout_in_ms=1000,
-        enabled_channels=[0, 1, 2, 3, 4, 5, 6, 7],
-        vertical_ranges_in_mv=[200, 200, 200, 200, 200, 200, 200, 200],
-        vertical_offsets_in_percent=[0, 0, 0, 0, 0, 0, 0, 0],
+        enabled_channels=[0],
+        vertical_ranges_in_mv=[200],
+        vertical_offsets_in_percent=[0],
     )
 
     # Apply settings
@@ -69,8 +66,7 @@ def continuous_multi_fifo_example(
     # Retrieve streamed waveform data until desired time has elapsed
     measurements_list = []
     while (monotonic() - start_time) < acquisition_duration_in_seconds:
-        measurements_list.append(Measurement(waveforms=card.get_waveforms(),
-                                             timestamp=card.get_timestamp()))
+        measurements_list.append(Measurement(waveforms=card.get_waveforms(), timestamp=card.get_timestamp()))
 
     # Stop the acquisition (and streaming)
     card.stop_acquisition()
@@ -103,7 +99,7 @@ if __name__ == "__main__":
 
     print(f"Completed {len(measurements)} measurements each containing {len(measurements[0].waveforms)} waveforms.")
     print(f"Waveforms had the following shape: {measurements[0].waveforms[0].shape}")
-    print('And the following timestamps:')
+    print("And the following timestamps:")
     for m in measurements:
         print(m.timestamp)
 

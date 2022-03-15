@@ -7,15 +7,6 @@
 from abc import ABC
 from typing import List
 
-from numpy import float_
-from numpy.typing import NDArray
-
-from spectrumdevice.devices.measurement import Measurement
-from spectrumdevice.exceptions import (
-    SpectrumDeviceNotConnected,
-    SpectrumWrongAcquisitionMode,
-    SpectrumDriversNotFound,
-)
 from spectrum_gmbh.regs import (
     M2CMD_CARD_RESET,
     M2CMD_CARD_START,
@@ -23,9 +14,14 @@ from spectrum_gmbh.regs import (
     M2CMD_CARD_ENABLETRIGGER,
     M2CMD_CARD_STOP,
 )
-
+from spectrumdevice.devices.measurement import Measurement
 from spectrumdevice.devices.spectrum_interface import (
     SpectrumDeviceInterface,
+)
+from spectrumdevice.exceptions import (
+    SpectrumDeviceNotConnected,
+    SpectrumWrongAcquisitionMode,
+    SpectrumDriversNotFound,
 )
 from spectrumdevice.settings import AcquisitionMode, TriggerSettings, AcquisitionSettings
 from spectrumdevice.settings import SpectrumRegisterLength
@@ -160,8 +156,7 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         self.execute_continuous_multi_fifo_acquisition()
         measurements = []
         for _ in range(num_measurements):
-            measurements.append(Measurement(waveforms=self.get_waveforms(),
-                                            timestamp=self.get_timestamp()))
+            measurements.append(Measurement(waveforms=self.get_waveforms(), timestamp=self.get_timestamp()))
         self.stop_acquisition()
         return measurements
 

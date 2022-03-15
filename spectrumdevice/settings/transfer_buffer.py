@@ -116,7 +116,7 @@ class CardToPCDataTransferBuffer(TransferBuffer):
 
 
 class CardToPCTimestampTransferBuffer(TransferBuffer):
-    def __init__(self, num_timestamps_per_frame: int) -> None:
+    def __init__(self) -> None:
         self.type = BufferType.SPCM_BUF_TIMESTAMP
         self.direction = BufferDirection.SPCM_DIR_CARDTOPC
         self.board_memory_offset_bytes = 0

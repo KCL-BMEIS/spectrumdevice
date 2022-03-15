@@ -47,7 +47,6 @@ from spectrum_gmbh.regs import (
 )
 
 logger = logging.getLogger(__name__)
-NUM_TIMESTAMPS_PER_FRAME = 1
 
 
 class MockSpectrumDevice(SpectrumDevice, ABC):
@@ -200,26 +199,17 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         self._acquisition_mode = self.acquisition_mode
 
     def _create_timestamper(self) -> None:
-        self._timestamper: MockTimestamper = MockTimestamper(self, self._handle, NUM_TIMESTAMPS_PER_FRAME)
+        self._timestamper: MockTimestamper = MockTimestamper(self, self._handle)
 
     def set_acquisition_mode(self, mode: AcquisitionMode) -> None:
         """Mock timestamper needs to be recreated if the acquisition mode is changed."""
         super().set_acquisition_mode(mode)
-        self._timestamper = MockTimestamper(self, self._handle, NUM_TIMESTAMPS_PER_FRAME)
+        self._timestamper = MockTimestamper(self, self._handle)
 
     def set_sample_rate_in_hz(self, rate: int) -> None:
         """Mock timestamper needs to be recreated if the sample rate is changed."""
         super().set_sample_rate_in_hz(rate)
-        self._timestamper = MockTimestamper(self, self._handle, NUM_TIMESTAMPS_PER_FRAME)
-
-    def start_acquisition(self) -> None:
-        """Starts a mock waveform source and mock timestamp source in separate threads."""
-        super().start_acquisition()
-        timestamp_source = self._timestamper.mock_source_function_factory(
-            self._acquisition_stop_event, self._source_frame_rate_hz, NUM_TIMESTAMPS_PER_FRAME
-        )
-        self._timestamp_thread = Thread(target=timestamp_source)
-        self._timestamp_thread.start()
+        self._timestamper = MockTimestamper(self, self._handle)
 
     def set_acquisition_length_in_samples(self, length_in_samples: int) -> None:
         """Set length of mock recording (per channel). In FIFO mode, this will be quantised to the nearest 8 samples.

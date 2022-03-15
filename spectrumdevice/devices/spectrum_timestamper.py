@@ -1,5 +1,4 @@
 import struct
-import time
 from abc import ABC
 from copy import copy
 from datetime import datetime, timedelta
@@ -27,6 +26,7 @@ from spectrumdevice.settings.transfer_buffer import CardToPCTimestampTransferBuf
 from spectrumdevice.spectrum_wrapper import DEVICE_HANDLE_TYPE
 
 MAX_POLL_COUNT = 50
+BYTES_PER_TIMESTAMP = 16
 
 
 class Timestamper(ABC):
@@ -34,12 +34,10 @@ class Timestamper(ABC):
         self,
         parent_device: SpectrumDeviceInterface,
         parent_device_handle: DEVICE_HANDLE_TYPE,
-        n_timestamps_per_frame: int,
     ):
         self._parent_device = parent_device
-        self._transfer_buffer = CardToPCTimestampTransferBuffer(n_timestamps_per_frame)
-        self._expected_timestamp_bytes_per_frame = 16
-        self._n_timestamps_per_frame = n_timestamps_per_frame
+        self._transfer_buffer = CardToPCTimestampTransferBuffer()
+        self._expected_timestamp_bytes_per_frame = BYTES_PER_TIMESTAMP
 
         self._configure_parent_device(parent_device_handle)
 
