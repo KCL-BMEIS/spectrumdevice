@@ -23,6 +23,7 @@ Spectrum API, to be used for configuring hardware and interpreting responses rec
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
+from .devices.measurement import Measurement
 from .devices.spectrum_device import SpectrumDevice
 from .devices.spectrum_card import SpectrumCard
 from .devices.spectrum_channel import SpectrumChannel
@@ -37,6 +38,7 @@ __all__ = [
     "MockSpectrumCard",
     "MockSpectrumStarHub",
     "settings",
+    "Measurement",
 ]
 
 

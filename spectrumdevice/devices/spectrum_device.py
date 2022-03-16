@@ -62,7 +62,7 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         The `TransferBuffer` need not be defined until after `start_acquisition` is called.
 
         In Multi FIFO mode (SPC_REC_FIFO_MULTI), it needs to be called only once, immediately followed by a call to
-        `start_transfer()`. Frames will the be continuously streamed to the `TransferBuffer`, which must have already
+        `start_transfer()`. Frames will then be continuously streamed to the `TransferBuffer`, which must have already
         been defined.
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_START | M2CMD_CARD_ENABLETRIGGER)
@@ -128,8 +128,11 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         waveforms. The device must be configured in SPC_REC_STD_SINGLE acquisition mode.
 
         Returns:
-            waveforms (List[ndarray]): A list of 1D NumPy arrays, each containing the waveform data received on one
-                channel, in channel order."""
+            measurement (Measurement): A Measurement object. The `.waveforms` attribute of `measurement` will be a list
+                of 1D NumPy arrays, each array containing the waveform data received on one channel, in channel order.
+                The Waveform object also has a timestamp attribute, which (if timestamping was enabled in acquisition
+                settings) contains the time at which the acquisition was triggered.
+        """
         if self._acquisition_mode != AcquisitionMode.SPC_REC_STD_SINGLE:
             raise SpectrumWrongAcquisitionMode(
                 "Set the acquisition mode to SPC_REC_STD_SINGLE using "
@@ -160,8 +163,11 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
             num_measurements (int): The number of measurements to carry out, each triggered by subsequent trigger
                 events.
         Returns:
-            measurements (List[List[ndarray]]): A list of lists of 1D NumPy arrays containing the waveform data. Each
-                list of arrays contains the waveforms acquired from each enable channel after a single trigger event.
+            measurements (List[Measurement]): A list of Measurement objects with length `num_measurements`. Each
+                Measurement object has a `waveforms` attribute containing a list of 1D NumPy arrays. Each array is a
+                waveform acquired from one channel. The arrays are in channel order. The Waveform objects also have a
+                timestamp attribute, which (if timestamping was enabled in acquisition settings) contains the time at
+                which the acquisition was triggered.
         """
         self.execute_continuous_multi_fifo_acquisition()
         measurements = []
