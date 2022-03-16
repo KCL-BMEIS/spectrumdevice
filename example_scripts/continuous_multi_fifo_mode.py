@@ -69,8 +69,11 @@ def continuous_multi_fifo_example(
     measurements_list = []
     while (monotonic() - start_time) < acquisition_duration_in_seconds:
         measurements_list.append(Measurement(waveforms=card.get_waveforms(), timestamp=card.get_timestamp()))
-        print(f"Time now : {datetime.datetime.now()}")
-        print(f"Timestamp: {measurements_list[-1].timestamp}")
+        if measurements_list[-1].timestamp is not None:
+            print(
+                f"Got measurement triggered at {measurements_list[-1].timestamp.time()} (acquisition latency of"
+                f" {(datetime.datetime.now() - measurements_list[-1].timestamp).microseconds * 1e-3} ms)"
+            )
 
     # Stop the acquisition (and streaming)
     card.stop_acquisition()
@@ -85,11 +88,10 @@ if __name__ == "__main__":
     from matplotlib.pyplot import plot, show, figure, title, xlabel, ylabel, tight_layout
 
     measurements = continuous_multi_fifo_example(
-        mock_mode=False,
+        mock_mode=True,
         acquisition_duration_in_seconds=1.0,
         trigger_source=TriggerSource.SPC_TMASK_EXT0,
-        device_number=1,
-        ip_address="169.254.142.75",
+        device_number=0,
     )
 
     # Plot waveforms
@@ -104,8 +106,5 @@ if __name__ == "__main__":
 
     print(f"Completed {len(measurements)} measurements each containing {len(measurements[0].waveforms)} waveforms.")
     print(f"Waveforms had the following shape: {measurements[0].waveforms[0].shape}")
-    print("And the following timestamps:")
-    for m in measurements:
-        print(m.timestamp)
 
     show()

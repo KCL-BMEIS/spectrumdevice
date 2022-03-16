@@ -13,6 +13,7 @@ from spectrum_gmbh.regs import (
     SPC_M2CMD,
     M2CMD_CARD_ENABLETRIGGER,
     M2CMD_CARD_STOP,
+    M2CMD_CARD_WRITESETUP,
 )
 from spectrumdevice.devices.measurement import Measurement
 from spectrumdevice.devices.spectrum_interface import (
@@ -94,6 +95,10 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         ):
             channel.set_vertical_range_in_mv(v_range)
             channel.set_vertical_offset_in_percent(v_offset)
+
+        # Write the configuration to the card
+        self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_WRITESETUP)
+
         if settings.timestamping_enabled:
             self.enable_timestamping()
 
@@ -110,6 +115,9 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
                 self.set_external_trigger_level_in_mv(settings.external_trigger_level_in_mv)
             if settings.external_trigger_pulse_width_in_samples is not None:
                 self.set_external_trigger_pulse_width_in_samples(settings.external_trigger_pulse_width_in_samples)
+
+        # Write the configuration to the card
+        self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_WRITESETUP)
 
     def execute_standard_single_acquisition(self) -> Measurement:
         """Carry out an single measurement in standard single mode and return the acquired waveforms.

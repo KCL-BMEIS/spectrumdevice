@@ -102,13 +102,9 @@ class Timestamper(ABC):
             raise SpectrumTimestampsPollingTimeout()
 
         timestamp_in_samples = struct.unpack("<2Q", struct.pack(f"<{len(kept_bytes)}B", *kept_bytes))[0]
-        print(f"Samples since ref time: {timestamp_in_samples}")
-        print(f"Ref time: {self._ref_time}")
-        print(f"Calculating timestamp using rate {self._parent_device.sample_rate_in_hz} hz")
         timestamp_in_seconds_since_ref = timedelta(
             seconds=float(timestamp_in_samples) / self._parent_device.sample_rate_in_hz
         )
-        print(f"Seconds since ref time {timestamp_in_seconds_since_ref}")
 
         if self._ref_time is not None:
             timestamp_in_datetime = self._ref_time + timestamp_in_seconds_since_ref
