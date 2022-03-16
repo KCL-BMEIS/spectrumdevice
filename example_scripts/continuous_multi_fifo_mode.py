@@ -47,7 +47,7 @@ def continuous_multi_fifo_example(
     # Acquisition settings
     acquisition_settings = AcquisitionSettings(
         acquisition_mode=AcquisitionMode.SPC_REC_FIFO_MULTI,
-        sample_rate_in_hz=10000000,
+        sample_rate_in_hz=40000000,
         acquisition_length_in_samples=400,
         pre_trigger_length_in_samples=0,
         timeout_in_ms=1000,
