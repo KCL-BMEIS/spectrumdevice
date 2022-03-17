@@ -3,12 +3,13 @@
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
-
+import datetime
 from functools import reduce
 from operator import or_
 from typing import List, Optional, Sequence, Tuple
 
-from numpy import arange, ndarray
+from numpy import arange, float_
+from numpy.typing import NDArray
 
 from spectrumdevice.devices.spectrum_channel import SpectrumChannel
 from spectrumdevice.devices.spectrum_device import SpectrumDevice
@@ -47,7 +48,7 @@ class SpectrumStarHub(SpectrumDevice):
         self._child_cards = child_cards
         self._master_card = child_cards[master_card_index]
         self._triggering_card = child_cards[master_card_index]
-        child_card_logical_indices = (2 ** n for n in range(len(self._child_cards)))
+        child_card_logical_indices = (2**n for n in range(len(self._child_cards)))
         self._visa_string = f"sync{device_number}"
         self._connect(self._visa_string)
         all_cards_binary_mask = reduce(or_, child_card_logical_indices)
@@ -288,19 +289,27 @@ class SpectrumStarHub(SpectrumDevice):
         for card in self._child_cards:
             card.wait_for_acquisition_to_complete()
 
-    def get_waveforms(self) -> List[ndarray]:
+    def get_waveforms(self) -> List[NDArray[float_]]:
         """Get a list of of the most recently transferred waveforms.
 
         This method gets the waveforms from each child card and joins them into a new list, ordered by channel number.
         See `SpectrumCard.get_waveforms()` for more information.
 
         Returns:
-            waveforms (List[ndarray]): A list of 1D numpy arrays, one per enabled channel in channel order.
+            waveforms (List[NDArray[float_]]): A list of 1D numpy arrays, one per enabled channel, in channel order.
         """
-        waveforms = []
+        waveforms_all_cards = []
         for card in self._child_cards:
-            waveforms += card.get_waveforms()
-        return waveforms
+            waveforms_all_cards += card.get_waveforms()
+
+        return waveforms_all_cards
+
+    def get_timestamp(self) -> Optional[datetime.datetime]:
+        """Get timestamp for the last acquisition"""
+        return self._triggering_card.get_timestamp()
+
+    def enable_timestamping(self) -> None:
+        self._triggering_card.enable_timestamping()
 
     @property
     def channels(self) -> Sequence[SpectrumChannel]:

@@ -13,6 +13,7 @@ from typing import Optional, Sequence, List
 from numpy import ndarray, zeros
 from numpy.random import uniform
 
+from spectrumdevice.devices.mocks.timestamps import MockTimestamper
 from spectrumdevice.devices.spectrum_card import SpectrumCard
 from spectrumdevice.devices.spectrum_device import SpectrumDevice
 from spectrumdevice.exceptions import (
@@ -77,6 +78,7 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
         self._buffer_lock = Lock()
         self._acquisition_stop_event = Event()
         self._acquisition_thread: Optional[Thread] = None
+        self._timestamp_thread: Optional[Thread] = None
         self._enabled_channels = [0]
         self._on_device_buffer: ndarray = zeros(1000)
         self._previous_data = self._on_device_buffer.copy()
@@ -85,13 +87,12 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
         """Starts a mock waveform source in a separate thread. The source generates noise samples according to the
         number of currently enabled channels and the acquisition length, and places them in the virtual on device buffer
         (the _on_device_buffer attribute).
-
         """
-        target = mock_waveform_source_factory(self.acquisition_mode)
+        waveform_source = mock_waveform_source_factory(self.acquisition_mode)
         amplitude = self.read_spectrum_device_register(SPC_MIINST_MAXADCVALUE)
         self._acquisition_stop_event.clear()
         self._acquisition_thread = Thread(
-            target=target,
+            target=waveform_source,
             args=(
                 self._acquisition_stop_event,
                 self._source_frame_rate_hz,
@@ -103,7 +104,7 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
         self._acquisition_thread.start()
 
     def stop_acquisition(self) -> None:
-        """Stops the mock waveform source thread."""
+        """Stops the mock waveform source and timestamp threads."""
         self._acquisition_stop_event.set()
 
     def write_to_spectrum_device_register(
@@ -162,9 +163,9 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
     """A mock spectrum card, for testing software written to use the `SpectrumCard` class.
 
     This class overrides methods of `SpectrumCard` that communicate with hardware with mocked implementations, allowing
-    software to be tested without Spectrum hardware connected or drivers installed, e.g. during CI. It also overrides
+    software to be tested without Spectrum hardware connected or drivers installed, e.g. during CI. It overrides
     methods to use to set up a mock 'on device buffer' attribute into which a mock waveform source will write
-    samples.
+    samples. It also uses a MockTimestamper to generated timestamps for mock waveforms.
     """
 
     def __init__(
@@ -196,6 +197,19 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         self._visa_string = f"MockCard{device_number}"
         self._connect(self._visa_string)
         self._acquisition_mode = self.acquisition_mode
+
+    def enable_timestamping(self) -> None:
+        self._timestamper: MockTimestamper = MockTimestamper(self, self._handle)
+
+    def set_acquisition_mode(self, mode: AcquisitionMode) -> None:
+        """Mock timestamper needs to be recreated if the acquisition mode is changed."""
+        super().set_acquisition_mode(mode)
+        self._timestamper = MockTimestamper(self, self._handle)
+
+    def set_sample_rate_in_hz(self, rate: int) -> None:
+        """Mock timestamper needs to be recreated if the sample rate is changed."""
+        super().set_sample_rate_in_hz(rate)
+        self._timestamper = MockTimestamper(self, self._handle)
 
     def set_acquisition_length_in_samples(self, length_in_samples: int) -> None:
         """Set length of mock recording (per channel). In FIFO mode, this will be quantised to the nearest 8 samples.

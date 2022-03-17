@@ -49,6 +49,8 @@ files taken from the `spcm_examples` directory, provided with Spectrum hardware.
 * When defining a transfer buffer - the software buffer into which samples are transferred from a hardware device - 
   the notify-size is automatically set equal to the buffer length. This works fine for most situations. See the 
   Spectrum documentation for more information.
+* If timestamping is enabled, timestamps are acquired using Spectrum's 'polling' mode. This seems to add around
+  5 to 10 ms of latency to the acquisition.
 * Only current digitisers from the [59xx](https://spectrum-instrumentation.com/de/59xx-16-bit-digitizer-125-mss),
 [44xx](https://spectrum-instrumentation.com/de/44xx-1416-bit-digitizers-500-mss) and 
 [22xx](https://spectrum-instrumentation.com/de/22xx-8-bit-digitizers-5-gss) families are currently supported, and 
@@ -172,6 +174,7 @@ acquisition_settings = AcquisitionSettings(
   enabled_channels=[0, 1, 2, 3],
   vertical_ranges_in_mv=[200, 200, 200, 200],
   vertical_offsets_in_percent=[0, 0, 0, 0],
+  timestamping_enabled=True
 )
 
 card.configure_trigger(trigger_settings)
@@ -182,9 +185,14 @@ card.configure_acquisition(acquisition_settings)
 To acquire data in standard single mode, place the device into the correct mode using `configure_acquisition()` or `
 card.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)` and then execute the acquisition:
 ```python
-waveforms = card.execute_standard_single_acquisition()
+measurement = card.execute_standard_single_acquisition()
 ```
-`waveforms` (a list of 1D NumPy arrays) will contain the waveforms received by each enabled channel.
+`measurement` is a `Measurement` dataclass containing the waveforms received by each enabled channel and, if 
+timestamping was enabled in the `AcquisitionSettings`, the time at which the acquisition was triggered:
+```python
+waveforms = measurement.waveforms  # A list of 1D numpy arrays
+timestamp = measurement.timestamp  # A datetime.datetime object
+```
 
 ### Acquiring waveforms (multi FIFO mode)
 To acquire data in multi FIFO mode, place the device into the correct mode using `configure_acquisition()` or `
@@ -195,18 +203,20 @@ You can then carry out a predefined number of Multi FIFO measurements like this:
 NUM_MEASUREMENTS = 2
 measurements = card.execute_finite_multi_fifo_acquisition(NUM_MEASUREMENTS)
 ```
-`measurements` (a list of lists of 1D NumPy arrays) will contain `NUM_MEASUREMENTS` lists of waveforms, where each 
-list of waveforms contains the waveforms received by each enabled channel during a measurement.
+`measurements` will be a list of `Measurement` dataclasses (of length `NUM_MEASUREMENTS`), where each 
+`Measurement` object contains the waveforms received by each enabled channel during a measurement.
 
 Alternatively, you can start a Multi FIFO acquisition continuously writing data to a software 'transfer' buffer:
 ```python
 card.execute_continuous_multi_fifo_acquisition()
 ```
-But you'll then need to pull the data out of the transfer buffer at least as fast as the data is being acquired:
+But you'll then need to pull the data out of the transfer buffer at least as fast as the data is being acquired,
+manually obtaining the waveforms and timestamp:
 ```python
-measurements = []
+measurements_list = []
 while True:
-    measurements.append(card.get_waveforms())
+    measurements_list.append(Measurement(waveforms=card.get_waveforms(),
+                                         timestamp=card.get_timestamp()))
 ```
 Each call to `get_waveforms()` will wait until the next set of waveform data is available. When ready, you'll need 
 to stop the acquisition:
@@ -214,6 +224,7 @@ to stop the acquisition:
 card.stop_acquisition()
 ```
 and execute some logic to exit the `while` loop.
+
 ## Examples
 See the `example_scripts` directory.
 

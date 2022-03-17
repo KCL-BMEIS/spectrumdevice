@@ -7,23 +7,22 @@
 from abc import ABC
 from typing import List
 
-from numpy import ndarray
-
-from spectrumdevice.exceptions import (
-    SpectrumDeviceNotConnected,
-    SpectrumWrongAcquisitionMode,
-    SpectrumDriversNotFound,
-)
 from spectrum_gmbh.regs import (
     M2CMD_CARD_RESET,
     M2CMD_CARD_START,
     SPC_M2CMD,
     M2CMD_CARD_ENABLETRIGGER,
     M2CMD_CARD_STOP,
+    M2CMD_CARD_WRITESETUP,
 )
-
+from spectrumdevice.devices.measurement import Measurement
 from spectrumdevice.devices.spectrum_interface import (
     SpectrumDeviceInterface,
+)
+from spectrumdevice.exceptions import (
+    SpectrumDeviceNotConnected,
+    SpectrumWrongAcquisitionMode,
+    SpectrumDriversNotFound,
 )
 from spectrumdevice.settings import AcquisitionMode, TriggerSettings, AcquisitionSettings
 from spectrumdevice.settings import SpectrumRegisterLength
@@ -63,7 +62,7 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         The `TransferBuffer` need not be defined until after `start_acquisition` is called.
 
         In Multi FIFO mode (SPC_REC_FIFO_MULTI), it needs to be called only once, immediately followed by a call to
-        `start_transfer()`. Frames will the be continuously streamed to the `TransferBuffer`, which must have already
+        `start_transfer()`. Frames will then be continuously streamed to the `TransferBuffer`, which must have already
         been defined.
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_START | M2CMD_CARD_ENABLETRIGGER)
@@ -97,6 +96,12 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
             channel.set_vertical_range_in_mv(v_range)
             channel.set_vertical_offset_in_percent(v_offset)
 
+        # Write the configuration to the card
+        self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_WRITESETUP)
+
+        if settings.timestamping_enabled:
+            self.enable_timestamping()
+
     def configure_trigger(self, settings: TriggerSettings) -> None:
         """Apply all the trigger settings contained in a `TriggerSettings` dataclass to the device.
 
@@ -111,7 +116,10 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
             if settings.external_trigger_pulse_width_in_samples is not None:
                 self.set_external_trigger_pulse_width_in_samples(settings.external_trigger_pulse_width_in_samples)
 
-    def execute_standard_single_acquisition(self) -> List[ndarray]:
+        # Write the configuration to the card
+        self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_WRITESETUP)
+
+    def execute_standard_single_acquisition(self) -> Measurement:
         """Carry out an single measurement in standard single mode and return the acquired waveforms.
 
         This method automatically carries out a standard single mode acquisition, including handling the creation
@@ -120,8 +128,11 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         waveforms. The device must be configured in SPC_REC_STD_SINGLE acquisition mode.
 
         Returns:
-            waveforms (List[ndarray]): A list of 1D NumPy arrays, each containing the waveform data received on one
-                channel, in channel order."""
+            measurement (Measurement): A Measurement object. The `.waveforms` attribute of `measurement` will be a list
+                of 1D NumPy arrays, each array containing the waveform data received on one channel, in channel order.
+                The Waveform object also has a timestamp attribute, which (if timestamping was enabled in acquisition
+                settings) contains the time at which the acquisition was triggered.
+        """
         if self._acquisition_mode != AcquisitionMode.SPC_REC_STD_SINGLE:
             raise SpectrumWrongAcquisitionMode(
                 "Set the acquisition mode to SPC_REC_STD_SINGLE using "
@@ -133,9 +144,11 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         self.define_transfer_buffer()
         self.start_transfer()
         self.wait_for_transfer_to_complete()
-        return self.get_waveforms()
+        waveforms = self.get_waveforms()
+        self.stop_acquisition()  # Only strictly required for Mock devices. Should have not effect on hardware.
+        return Measurement(waveforms=waveforms, timestamp=self.get_timestamp())
 
-    def execute_finite_multi_fifo_acquisition(self, num_measurements: int) -> List[List[ndarray]]:
+    def execute_finite_multi_fifo_acquisition(self, num_measurements: int) -> List[Measurement]:
         """Carry out a finite number of Multi FIFO mode measurements and then stop the acquisitions.
 
         This method automatically carries out a defined number of measurement in Multi FIFO mode, including handling the
@@ -150,13 +163,16 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
             num_measurements (int): The number of measurements to carry out, each triggered by subsequent trigger
                 events.
         Returns:
-            measurements (List[List[ndarray]]): A list of lists of 1D NumPy arrays containing the waveform data. Each
-                list of arrays contains the waveforms acquired from each enable channel after a single trigger event.
+            measurements (List[Measurement]): A list of Measurement objects with length `num_measurements`. Each
+                Measurement object has a `waveforms` attribute containing a list of 1D NumPy arrays. Each array is a
+                waveform acquired from one channel. The arrays are in channel order. The Waveform objects also have a
+                timestamp attribute, which (if timestamping was enabled in acquisition settings) contains the time at
+                which the acquisition was triggered.
         """
         self.execute_continuous_multi_fifo_acquisition()
         measurements = []
         for _ in range(num_measurements):
-            measurements.append(self.get_waveforms())
+            measurements.append(Measurement(waveforms=self.get_waveforms(), timestamp=self.get_timestamp()))
         self.stop_acquisition()
         return measurements
 

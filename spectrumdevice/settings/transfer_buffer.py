@@ -5,12 +5,12 @@ a transfer buffer."""
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
-
+from copy import copy
 from ctypes import c_void_p
 from dataclasses import dataclass
 from enum import Enum
 
-from numpy import ndarray, zeros, int16
+from numpy import ndarray, zeros, int16, uint8
 
 from spectrumdevice.spectrum_wrapper import DEVICE_HANDLE_TYPE
 from spectrumdevice.spectrum_wrapper.error_handler import error_handler
@@ -67,6 +67,9 @@ class TransferBuffer:
     data_array: ndarray
     """1D numpy array into which samples will be written during transfer."""
 
+    def copy_contents(self) -> ndarray:
+        return copy(self.data_array)
+
     @property
     def data_array_pointer(self) -> c_void_p:
         """A pointer to the data array."""
@@ -110,6 +113,21 @@ class CardToPCDataTransferBuffer(TransferBuffer):
         self.direction = BufferDirection.SPCM_DIR_CARDTOPC
         self.board_memory_offset_bytes = board_memory_offset_bytes
         self.data_array = zeros(size_in_samples, int16)
+
+
+class CardToPCTimestampTransferBuffer(TransferBuffer):
+    def __init__(self) -> None:
+        self.type = BufferType.SPCM_BUF_TIMESTAMP
+        self.direction = BufferDirection.SPCM_DIR_CARDTOPC
+        self.board_memory_offset_bytes = 0
+        self.data_array: ndarray = zeros(4096, dtype=uint8)
+
+    def copy_contents(self) -> ndarray:
+        return copy(self.data_array[0::2])  # only every other item in the array has a timestamp written to it
+
+    @property
+    def notify_size_in_bytes(self) -> int:
+        return 4096  # Timestamp buffer uses polling mode which requires the (ignored) notify size to be set to 4096
 
 
 def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffer) -> None:

@@ -6,9 +6,9 @@
 
 import logging
 from functools import wraps
-from typing import Callable, Dict, Any
+from typing import Callable, Dict, Any, Type
 
-from spectrumdevice.exceptions import SpectrumApiCallFailed
+from spectrumdevice.exceptions import SpectrumApiCallFailed, SpectrumFIFOModeHardwareBufferOverrun
 from spectrum_gmbh.spcerr import (
     ERR_OK,
     ERR_LASTERR,
@@ -18,6 +18,7 @@ from spectrum_gmbh.spcerr import (
     ERR_INVALIDHANDLE,
     ERR_SETUP,
     ERR_RUNNING,
+    ERR_FIFOHWOVERRUN,
 )
 
 logger = logging.getLogger(__name__)
@@ -42,7 +43,11 @@ def error_handler(func: Callable) -> Callable:
         ERR_SETUP: "The programmed setup for the card is not valid.",
         ERR_RUNNING: "The board is still running. this function is not available now or this register is not accessible"
         " now.",
+        ERR_FIFOHWOVERRUN: "Hardware buffer overrun in FIFO mode. The complete onboard memory has been filled with data"
+        " and data wasn't transferred fast enough to PC memory.",
     }
+
+    exceptions_for_known_raised_error_codes = {ERR_FIFOHWOVERRUN: SpectrumFIFOModeHardwareBufferOverrun}
 
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> None:
@@ -55,7 +60,11 @@ def error_handler(func: Callable) -> Callable:
                 f"({error_code})"
             )
         elif error_code in known_raised_error_codes:
-            raise SpectrumApiCallFailed(func.__name__, error_code, known_raised_error_codes[error_code])
+            if error_code in exceptions_for_known_raised_error_codes:
+                e: Type[Exception] = exceptions_for_known_raised_error_codes[error_code]
+            else:
+                e = SpectrumApiCallFailed
+            raise e(func.__name__, error_code, known_raised_error_codes[error_code])
         else:
             raise SpectrumApiCallFailed(func.__name__, error_code, f"command or value {args[1]}.")
 

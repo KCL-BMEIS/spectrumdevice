@@ -3,15 +3,16 @@
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
-
+import datetime
 import logging
-from copy import copy
 from functools import reduce
 from operator import or_
 from typing import List, Optional, Tuple, Sequence
 
-from numpy import ndarray, mod
+from numpy import mod, float_
+from numpy.typing import NDArray
 
+from spectrumdevice.devices.spectrum_timestamper import Timestamper
 from spectrumdevice.settings.card_dependent_properties import get_memsize_step_size
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
 from spectrumdevice.spectrum_wrapper import destroy_handle
@@ -100,6 +101,10 @@ class SpectrumCard(SpectrumDevice):
         self._transfer_buffer: Optional[TransferBuffer] = None
         self.apply_channel_enabling()
         self._acquisition_mode = self.acquisition_mode
+        self._timestamper: Optional[Timestamper] = None
+
+    def enable_timestamping(self) -> None:
+        self._timestamper = Timestamper(self, self._handle)
 
     def reconnect(self) -> None:
         """Reconnect to the card after disconnect() has been called."""
@@ -160,7 +165,7 @@ class SpectrumCard(SpectrumDevice):
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_STOPDMA)
 
     def wait_for_transfer_to_complete(self) -> None:
-        """Blocks until the currently active transfer of samples from the on-device buffer to the `TransferBuffer` is
+        """Blocks until the currently active transfer of samples from the on-device buffers to the TransferBuffer is
         complete.
 
         Used in Standard Single mode (SPC_REC_STD_SINGLE) after starting a transfer. Once the method returns, all
@@ -191,7 +196,8 @@ class SpectrumCard(SpectrumDevice):
     def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
         """Create or provide a `CardToPCDataTransferBuffer` object for receiving acquired samples from the device.
 
-        If no buffer is provided, one will be created with the correct size and a board_memory_offset_bytes of 0.
+        If no buffer is provided, one will be created with the correct size and a board_memory_offset_bytes of 0. A
+        seperate buffer for transfering Timestamps will also be created using the Timestamper class.
 
         Args:
             buffer (Optional[List[`CardToPCDataTransferBuffer`]]): A length-1 list containing a pre-constructed
@@ -206,7 +212,7 @@ class SpectrumCard(SpectrumDevice):
             )
         set_transfer_buffer(self._handle, self._transfer_buffer)
 
-    def get_waveforms(self) -> List[ndarray]:
+    def get_waveforms(self) -> List[NDArray[float_]]:
         """Get a list of the most recently transferred waveforms, in channel order.
 
         This method copies and reshapes the samples in the `TransferBuffer` into a list of 1D NumPy arrays (waveforms)
@@ -221,24 +227,43 @@ class SpectrumCard(SpectrumDevice):
         this would the rate at which your trigger source was running).
 
         Returns:
-            waveforms (List[ndarray]): A list of 1D NumPy arrays, one for each channel enabled for the acquisition,
-                ordered by channel number.
+            waveforms (List[NDArray[float_]]): A list of 1D NumPy arrays, one for each channel enabled for the
+                acquisition, ordered by channel number.
 
         """
+        num_available_bytes = 0
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
             self.wait_for_transfer_to_complete()
             num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
+
+        if self._transfer_buffer is not None:
+            num_expected_bytes_per_frame = self._transfer_buffer.data_array_length_in_bytes
+            if num_available_bytes > num_expected_bytes_per_frame:
+                num_available_bytes = num_expected_bytes_per_frame
         else:
-            num_available_bytes = 0
-        waveforms_in_columns = copy(self.transfer_buffers[0].data_array).reshape(
-            (self.acquisition_length_in_samples, len(self.enabled_channels))
+            raise SpectrumNoTransferBufferDefined("Cannot find a samples transfer buffer")
+
+        waveforms_in_columns = (
+            self.transfer_buffers[0]
+            .copy_contents()
+            .reshape((self.acquisition_length_in_samples, len(self.enabled_channels)))
         )
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
             self.write_to_spectrum_device_register(SPC_DATA_AVAIL_CARD_LEN, num_available_bytes)
-        return [
+
+        voltage_waveforms = [
             ch.convert_raw_waveform_to_voltage_waveform(waveform)
             for ch, waveform in zip(self.channels, waveforms_in_columns.T)
         ]
+
+        return voltage_waveforms
+
+    def get_timestamp(self) -> Optional[datetime.datetime]:
+        """Get timestamp for the last acquisition"""
+        if self._timestamper is not None:
+            return self._timestamper.get_timestamp()
+        else:
+            return None
 
     def disconnect(self) -> None:
         """Terminate the connection to the card."""

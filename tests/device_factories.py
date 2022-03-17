@@ -1,5 +1,5 @@
 from spectrumdevice.settings import CardType
-from spectrumdevice.devices.mock_devices import MockSpectrumCard, MockSpectrumStarHub
+from spectrumdevice.devices.mocks import MockSpectrumCard, MockSpectrumStarHub
 from spectrumdevice.devices.spectrum_card import SpectrumCard
 from spectrumdevice.devices.spectrum_star_hub import SpectrumStarHub
 from tests.configuration import (

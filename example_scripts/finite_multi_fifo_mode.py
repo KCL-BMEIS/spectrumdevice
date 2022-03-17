@@ -2,9 +2,8 @@
 integration test."""
 from typing import List, Optional
 
-from numpy import ndarray
-
 from spectrumdevice import MockSpectrumCard, SpectrumCard
+from spectrumdevice.devices.measurement import Measurement
 from spectrumdevice.settings import (
     AcquisitionMode,
     CardType,
@@ -21,7 +20,7 @@ def finite_multi_fifo_example(
     trigger_source: TriggerSource,
     device_number: int,
     ip_address: Optional[str] = None,
-) -> List[List[ndarray]]:
+) -> List[Measurement]:
 
     if not mock_mode:
         # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
@@ -53,6 +52,7 @@ def finite_multi_fifo_example(
         enabled_channels=[0],
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
+        timestamping_enabled=True,
     )
 
     # Apply settings
@@ -60,10 +60,10 @@ def finite_multi_fifo_example(
     card.configure_acquisition(acquisition_settings)
 
     # Execute acquisition
-    waveform_list = card.execute_finite_multi_fifo_acquisition(num_measurements)
+    measurements = card.execute_finite_multi_fifo_acquisition(num_measurements)
     card.reset()
     card.disconnect()
-    return waveform_list
+    return measurements
 
 
 if __name__ == "__main__":
@@ -71,17 +71,24 @@ if __name__ == "__main__":
     from matplotlib.pyplot import plot, show, figure, title
 
     measurements = finite_multi_fifo_example(
-        mock_mode=True, num_measurements=2, trigger_source=TriggerSource.SPC_TMASK_EXT0, device_number=0
+        mock_mode=True,
+        num_measurements=5,
+        trigger_source=TriggerSource.SPC_TMASK_EXT0,
+        device_number=0,
     )
 
     # Plot waveforms
     for n, measurement in enumerate(measurements):
         figure()
         title(f"Measurement {n}")
-        for waveform in measurement:
-            plot(waveform)
+        for wfm in measurement.waveforms:
+            plot(wfm)
 
-    print(f"Completed {len(measurements)} measurements each containing {len(measurements[0])} waveforms.")
-    print(f"Waveforms had the following shape: {measurements[0][0].shape}")
+    ts_format = "%Y-%m-%d %H:%M:%S.%f"
+    print(f"Completed {len(measurements)} measurements each containing {len(measurements[0].waveforms)} waveforms.")
+    print(f"Waveforms had the following shape: {measurements[0].waveforms[0].shape}")
+    print(f"and the following timestamps:")
+    for measurement in measurements:
+        print(measurement.timestamp.strftime(ts_format) if measurement.timestamp else "Timestamping disabled")
 
     show()

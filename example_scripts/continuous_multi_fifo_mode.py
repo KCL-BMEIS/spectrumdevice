@@ -1,11 +1,11 @@
 """Continuous Multi-FIFO mode (SPC_REC_FIFO_MULTI) example. The function defined here is used by the tests module as an
 integration test."""
+import datetime
 from time import monotonic
 from typing import List, Optional
 
-from numpy import ndarray, array
-
 from spectrumdevice import MockSpectrumCard, SpectrumCard
+from spectrumdevice.devices.measurement import Measurement
 from spectrumdevice.settings import (
     AcquisitionMode,
     CardType,
@@ -22,7 +22,7 @@ def continuous_multi_fifo_example(
     trigger_source: TriggerSource,
     device_number: int,
     ip_address: Optional[str] = None,
-) -> List[List[ndarray]]:
+) -> List[Measurement]:
 
     if not mock_mode:
         # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
@@ -54,6 +54,7 @@ def continuous_multi_fifo_example(
         enabled_channels=[0],
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
+        timestamping_enabled=True,
     )
 
     # Apply settings
@@ -67,13 +68,15 @@ def continuous_multi_fifo_example(
     # Retrieve streamed waveform data until desired time has elapsed
     measurements_list = []
     while (monotonic() - start_time) < acquisition_duration_in_seconds:
-        measurements_list.append(card.get_waveforms())
+        measurements_list.append(Measurement(waveforms=card.get_waveforms(), timestamp=card.get_timestamp()))
+        if measurements_list[-1].timestamp is not None:
+            print(
+                f"Got measurement triggered at {measurements_list[-1].timestamp.time()} (acquisition latency of"
+                f" {(datetime.datetime.now() - measurements_list[-1].timestamp).microseconds * 1e-3} ms)"
+            )
 
     # Stop the acquisition (and streaming)
     card.stop_acquisition()
-
-    fake_waveform = array([1000.0, 2000.0, 3000.0])
-    print(card.channels[0].convert_raw_waveform_to_voltage_waveform(fake_waveform))
 
     card.reset()
     card.disconnect()
@@ -86,7 +89,7 @@ if __name__ == "__main__":
 
     measurements = continuous_multi_fifo_example(
         mock_mode=True,
-        acquisition_duration_in_seconds=4.0,
+        acquisition_duration_in_seconds=1.0,
         trigger_source=TriggerSource.SPC_TMASK_EXT0,
         device_number=0,
     )
@@ -95,13 +98,13 @@ if __name__ == "__main__":
     for n, measurement in enumerate(measurements):
         figure()
         title(f"Measurement {n}")
-        for waveform in measurement:
+        for waveform in measurement.waveforms:
             plot(waveform)
             xlabel("Time (samples)")
             ylabel("Amplitude (Volts)")
             tight_layout()
 
-    print(f"Completed {len(measurements)} measurements each containing {len(measurements[0])} waveforms.")
-    print(f"Waveforms had the following shape: {measurements[0][0].shape}")
+    print(f"Completed {len(measurements)} measurements each containing {len(measurements[0].waveforms)} waveforms.")
+    print(f"Waveforms had the following shape: {measurements[0].waveforms[0].shape}")
 
     show()
