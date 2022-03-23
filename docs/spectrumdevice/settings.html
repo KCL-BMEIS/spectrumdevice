@@ -22,7 +22,7 @@
   <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
 </svg>                            &nbsp;spectrumdevice</a>
 
-    <h2>spectrumdevice v0.1.4</h2>
+    <h2>spectrumdevice v0.2.0</h2>
 
                         <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
                                pattern=".+" required>
@@ -60,6 +60,9 @@
                         </li>
                         <li>
                                 <a class="variable" href="#AcquisitionSettings.vertical_offsets_in_percent">vertical_offsets_in_percent</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AcquisitionSettings.timestamping_enabled">timestamping_enabled</a>
                         </li>
                 </ul>
 
@@ -261,6 +264,9 @@
                         </li>
                         <li>
                                 <a class="variable" href="#TransferBuffer.data_array">data_array</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#TransferBuffer.copy_contents">copy_contents</a>
                         </li>
                         <li>
                                 <a class="variable" href="#TransferBuffer.data_array_pointer">data_array_pointer</a>
@@ -589,7 +595,7 @@
     </ul>
 
 
-    <footer>spectrumdevice v0.1.4</footer>
+    <footer>spectrumdevice v0.2.0</footer>
 
                     <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev">
                         built with <span class="visually-hidden">pdoc</span><img
@@ -684,6 +690,9 @@ hardware and interpreting responses received from hardware.</p>
     <span class="sd">&quot;&quot;&quot;The voltage range to apply to each enabled channel in mW.&quot;&quot;&quot;</span>
     <span class="n">vertical_offsets_in_percent</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
     <span class="sd">&quot;&quot;&quot;The DC offset to apply to each enabled channel as percentages of their vertical ranges.&quot;&quot;&quot;</span>
+    <span class="n">timestamping_enabled</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="sd">&quot;&quot;&quot;If True, Measurements will include the time at which the acquisition was triggered. Increases latency by ~10 ms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">SpectrumRegisterLength</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -733,6 +742,9 @@ hardware and interpreting responses received from hardware.</p>
     <span class="sd">&quot;&quot;&quot;The voltage range to apply to each enabled channel in mW.&quot;&quot;&quot;</span>
     <span class="n">vertical_offsets_in_percent</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
     <span class="sd">&quot;&quot;&quot;The DC offset to apply to each enabled channel as percentages of their vertical ranges.&quot;&quot;&quot;</span>
+    <span class="n">timestamping_enabled</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="sd">&quot;&quot;&quot;If True, Measurements will include the time at which the acquisition was triggered. Increases latency by ~10 ms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
@@ -753,7 +765,8 @@ hardware and interpreting responses received from hardware.</p>
     timeout_in_ms: int,
     enabled_channels: List[int],
     vertical_ranges_in_mv: List[int],
-    vertical_offsets_in_percent: List[int]
+    vertical_offsets_in_percent: List[int],
+    timestamping_enabled: bool
 )</span>
     </div>
 
@@ -845,6 +858,17 @@ hardware and interpreting responses received from hardware.</p>
     </div>
 
             <div class="docstring"><p>The DC offset to apply to each enabled channel as percentages of their vertical ranges.</p>
+</div>
+
+
+                            </div>
+                            <div id="AcquisitionSettings.timestamping_enabled" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionSettings.timestamping_enabled">#&nbsp;&nbsp</a>
+
+        <span class="name">timestamping_enabled</span><span class="annotation">: bool</span>
+    </div>
+
+            <div class="docstring"><p>If True, Measurements will include the time at which the acquisition was triggered. Increases latency by ~10 ms.</p>
 </div>
 
 
@@ -1618,6 +1642,9 @@ device. Returned by the available_io_modes() method of a device.</p>
     <span class="n">data_array</span><span class="p">:</span> <span class="n">ndarray</span>
     <span class="sd">&quot;&quot;&quot;1D numpy array into which samples will be written during transfer.&quot;&quot;&quot;</span>
 
+    <span class="k">def</span> <span class="nf">copy_contents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_array</span><span class="p">)</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data_array_pointer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">c_void_p</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;A pointer to the data array.&quot;&quot;&quot;</span>
@@ -1713,6 +1740,25 @@ sets the notify size equal to the acquisition length.</p>
             <div class="docstring"><p>1D numpy array into which samples will be written during transfer.</p>
 </div>
 
+
+                            </div>
+                            <div id="TransferBuffer.copy_contents" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#TransferBuffer.copy_contents">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">copy_contents</span><span class="signature">(self) -&gt; numpy.ndarray</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">copy_contents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_array</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+    
 
                             </div>
                             <div id="TransferBuffer.data_array_pointer" class="classattr">
@@ -1827,6 +1873,7 @@ documentation for more information.</li>
                 <dd id="CardToPCDataTransferBuffer.direction" class="variable"><a href="#TransferBuffer.direction">direction</a></dd>
                 <dd id="CardToPCDataTransferBuffer.board_memory_offset_bytes" class="variable"><a href="#TransferBuffer.board_memory_offset_bytes">board_memory_offset_bytes</a></dd>
                 <dd id="CardToPCDataTransferBuffer.data_array" class="variable"><a href="#TransferBuffer.data_array">data_array</a></dd>
+                <dd id="CardToPCDataTransferBuffer.copy_contents" class="function"><a href="#TransferBuffer.copy_contents">copy_contents</a></dd>
                 <dd id="CardToPCDataTransferBuffer.data_array_pointer" class="variable"><a href="#TransferBuffer.data_array_pointer">data_array_pointer</a></dd>
                 <dd id="CardToPCDataTransferBuffer.data_array_length_in_bytes" class="variable"><a href="#TransferBuffer.data_array_length_in_bytes">data_array_length_in_bytes</a></dd>
                 <dd id="CardToPCDataTransferBuffer.notify_size_in_bytes" class="variable"><a href="#TransferBuffer.notify_size_in_bytes">notify_size_in_bytes</a></dd>
