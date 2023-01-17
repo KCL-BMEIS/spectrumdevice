@@ -48,6 +48,7 @@ from spectrumdevice.exceptions import (
 )
 from spectrum_gmbh.regs import (
     M2CMD_CARD_WAITREADY,
+    SPC_AVERAGES,
     SPC_M2CMD,
     M2CMD_DATA_STARTDMA,
     M2CMD_DATA_STOPDMA,
@@ -520,6 +521,16 @@ class SpectrumCard(SpectrumDevice):
                 )
                 value = int(value - mod(value, get_memsize_step_size(self._card_type)))
         return value
+
+    @property
+    def number_of_averages(self) -> int:
+        return self.read_spectrum_device_register(SPC_AVERAGES)
+
+    def set_number_of_averages(self, num_averages: int) -> None:
+        if num_averages > 0:
+            self.write_to_spectrum_device_register(SPC_AVERAGES, num_averages)
+        else:
+            raise ValueError("Number of averages must be greater than 0.")
 
     @property
     def acquisition_mode(self) -> AcquisitionMode:
