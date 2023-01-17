@@ -7,7 +7,7 @@
 from enum import Enum
 
 from spectrum_gmbh.regs import (
-    SPC_REC_STD_SINGLE,
+    SPC_REC_FIFO_AVERAGE, SPC_REC_STD_AVERAGE, SPC_REC_STD_AVERAGE_16BIT, SPC_REC_STD_SINGLE,
     SPC_REC_FIFO_MULTI,
     SPC_CM_INTPLL,
     SPC_CM_EXTERNAL,
@@ -23,6 +23,10 @@ class AcquisitionMode(Enum):
     """Data acquisition to on-board memory for one single trigger event."""
     SPC_REC_FIFO_MULTI = SPC_REC_FIFO_MULTI
     """Continuous data acquisition for multiple trigger events."""
+    SPC_REC_STD_AVERAGE = SPC_REC_STD_AVERAGE
+    """Data acquisition to on-board memory for the average of multiple trigger events."""
+    SPC_REC_FIFO_AVERAGE = SPC_REC_FIFO_AVERAGE
+    """Continuous data acquisition for multiple trigger events, with on-board averaging."""
 
 
 class ClockMode(Enum):
