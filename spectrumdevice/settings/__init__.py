@@ -58,7 +58,7 @@ class AcquisitionSettings:
     """A dataclass collecting all settings required to configure an acquisition. See Spectrum documentation."""
 
     acquisition_mode: AcquisitionMode
-    """Standard Single mode or Multi FIF mode."""
+    """Standard Single mode, Multi FIF mode or an averaging mode."""
     sample_rate_in_hz: int
     """Acquisition rate in samples per second."""
     acquisition_length_in_samples: int
@@ -76,6 +76,8 @@ class AcquisitionSettings:
     timestamping_enabled: bool
     """If True, Measurements will include the time at which the acquisition was triggered. Increases latency by ~10 ms.
     """
+    number_of_averages: int = 1
+    """If an averaging AcquisitionMode is selected, this defines the number of averages."""
 
 
 class SpectrumRegisterLength(Enum):
