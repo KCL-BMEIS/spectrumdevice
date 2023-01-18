@@ -109,11 +109,11 @@ class SpectrumDeviceInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def execute_finite_multi_fifo_acquisition(self, num_iterations: int) -> List[Measurement]:
+    def execute_finite_fifo_acquisition(self, num_iterations: int) -> List[Measurement]:
         raise NotImplementedError()
 
     @abstractmethod
-    def execute_continuous_multi_fifo_acquisition(self) -> None:
+    def execute_continuous_fifo_acquisition(self) -> None:
         raise NotImplementedError()
 
     @abstractmethod

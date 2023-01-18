@@ -16,9 +16,10 @@ from spectrumdevice.settings import (
 )
 
 
-def continuous_multi_fifo_example(
+def continuous_averaging_multi_fifo_example(
     mock_mode: bool,
     acquisition_duration_in_seconds: float,
+    num_averages: int,
     trigger_source: TriggerSource,
     device_number: int,
     ip_address: Optional[str] = None,
@@ -46,7 +47,7 @@ def continuous_multi_fifo_example(
 
     # Acquisition settings
     acquisition_settings = AcquisitionSettings(
-        acquisition_mode=AcquisitionMode.SPC_REC_FIFO_MULTI,
+        acquisition_mode=AcquisitionMode.SPC_REC_FIFO_AVERAGE,
         sample_rate_in_hz=40000000,
         acquisition_length_in_samples=400,
         pre_trigger_length_in_samples=0,
@@ -55,6 +56,7 @@ def continuous_multi_fifo_example(
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
         timestamping_enabled=True,
+        number_of_averages=num_averages
     )
 
     # Apply settings
@@ -87,9 +89,10 @@ if __name__ == "__main__":
 
     from matplotlib.pyplot import plot, show, figure, title, xlabel, ylabel, tight_layout
 
-    measurements = continuous_multi_fifo_example(
+    measurements = continuous_averaging_multi_fifo_example(
         mock_mode=True,
         acquisition_duration_in_seconds=1.0,
+        num_averages=8,
         trigger_source=TriggerSource.SPC_TMASK_EXT0,
         device_number=0,
     )

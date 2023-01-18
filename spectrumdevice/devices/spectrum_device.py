@@ -148,16 +148,16 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
         self.stop_acquisition()  # Only strictly required for Mock devices. Should have not effect on hardware.
         return Measurement(waveforms=waveforms, timestamp=self.get_timestamp())
 
-    def execute_finite_multi_fifo_acquisition(self, num_measurements: int) -> List[Measurement]:
-        """Carry out a finite number of Multi FIFO mode measurements and then stop the acquisitions.
+    def execute_finite_fifo_acquisition(self, num_measurements: int) -> List[Measurement]:
+        """Carry out a finite number of FIFO mode measurements and then stop the acquisitions.
 
         This method automatically carries out a defined number of measurement in Multi FIFO mode, including handling the
         creation of a `TransferBuffer`, streaming the acquired waveforms to the PC, terminating the acquisition and
         returning the acquired waveforms. After being called, it will wait for the requested number of triggers to be
         received, generating the correct number of measurements. It retrieves each measurement's waveforms from the
         `TransferBuffer` as they arrive. Once the requested number of measurements have been received, the acquisition
-        is terminated and the waveforms are returned. The device must be configured in SPC_REC_FIFO_MULTI acquisition
-        mode.
+        is terminated and the waveforms are returned. The device must be configured in SPC_REC_FIFO_MULTI or
+        SPC_REC_FIFO_AVERAGE acquisition mode.
 
         Args:
             num_measurements (int): The number of measurements to carry out, each triggered by subsequent trigger
@@ -169,27 +169,27 @@ class SpectrumDevice(SpectrumDeviceInterface, ABC):
                 timestamp attribute, which (if timestamping was enabled in acquisition settings) contains the time at
                 which the acquisition was triggered.
         """
-        self.execute_continuous_multi_fifo_acquisition()
+        self.execute_continuous_fifo_acquisition()
         measurements = []
         for _ in range(num_measurements):
             measurements.append(Measurement(waveforms=self.get_waveforms(), timestamp=self.get_timestamp()))
         self.stop_acquisition()
         return measurements
 
-    def execute_continuous_multi_fifo_acquisition(self) -> None:
-        """Start a continuous Multi FIFO mode acquisition.
+    def execute_continuous_fifo_acquisition(self) -> None:
+        """Start a continuous FIFO mode acquisition.
 
-        This method automatically starts acquiring and streaming samples in Multi FIFO mode, including handling the
+        This method automatically starts acquiring and streaming samples in FIFO mode, including handling the
         creation of a `TransferBuffer` and streaming the acquired waveforms to the PC. It will return almost
         instantaneously. The acquired waveforms must then be read out of the transfer buffer in a loop using the
         `get_waveforms()` method. Waveforms must be read at least as fast as they are being acquired.
         The FIFO acquisition and streaming will continue until `stop_acquisition()` is called. The device
-        must be configured in SPC_REC_FIFO_MULTI acquisition mode."""
-        if self._acquisition_mode != AcquisitionMode.SPC_REC_FIFO_MULTI:
+        must be configured in SPC_REC_FIFO_MULTI or SPC_REC_FIFO_AVERAGE acquisition mode."""
+        if self._acquisition_mode not in (AcquisitionMode.SPC_REC_FIFO_MULTI, AcquisitionMode.SPC_REC_FIFO_AVERAGE):
             raise SpectrumWrongAcquisitionMode(
-                "Set the acquisition mode to SPC_REC_FIFO_MULTI using "
+                "Set the acquisition mode to SPC_REC_FIFO_MULTI or SPC_REC_FIFO_AVERAGE using "
                 "configure_acquisition() or set_acquisition_mode() before executing "
-                "a multi fifo mode acquisition."
+                "a fifo mode acquisition."
             )
         self.define_transfer_buffer()
         self.start_acquisition()
