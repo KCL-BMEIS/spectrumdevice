@@ -22,7 +22,7 @@
   <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
 </svg>                            &nbsp;spectrumdevice</a>
 
-    <h2>spectrumdevice v0.2.0</h2>
+    <h2>spectrumdevice v0.3.0</h2>
 
                         <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
                                pattern=".+" required>
@@ -595,7 +595,7 @@
     </ul>
 
 
-    <footer>spectrumdevice v0.2.0</footer>
+    <footer>spectrumdevice v0.3.0</footer>
 
                     <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev">
                         built with <span class="visually-hidden">pdoc</span><img
@@ -658,50 +658,50 @@ hardware and interpreting responses received from hardware.</p>
 
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">TriggerSettings</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A dataclass collecting all settings related to triggering. See Spectrum documentation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dataclass collecting all settings related to triggering. See Spectrum documentation.&quot;&quot;&quot;</span>
 
     <span class="n">trigger_sources</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TriggerSource</span><span class="p">]</span>
-    <span class="sd">&quot;&quot;&quot;The trigger sources to enable&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The trigger sources to enable&quot;&quot;&quot;</span>
     <span class="n">external_trigger_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExternalTriggerMode</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="sd">&quot;&quot;&quot;The external trigger mode (if an external trigger is enabled).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The external trigger mode (if an external trigger is enabled).&quot;&quot;&quot;</span>
     <span class="n">external_trigger_level_in_mv</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="sd">&quot;&quot;&quot;The level an external signal must reach to cause a trigger event (if an external trigger is enabled).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The level an external signal must reach to cause a trigger event (if an external trigger is enabled).&quot;&quot;&quot;</span>
     <span class="n">external_trigger_pulse_width_in_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="sd">&quot;&quot;&quot;The required width of an external trigger pulse (if an external trigger is enabled).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The required width of an external trigger pulse (if an external trigger is enabled).&quot;&quot;&quot;</span>
 
 
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">AcquisitionSettings</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A dataclass collecting all settings required to configure an acquisition. See Spectrum documentation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dataclass collecting all settings required to configure an acquisition. See Spectrum documentation.&quot;&quot;&quot;</span>
 
     <span class="n">acquisition_mode</span><span class="p">:</span> <span class="n">AcquisitionMode</span>
-    <span class="sd">&quot;&quot;&quot;Standard Single mode or Multi FIF mode.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Standard Single mode or Multi FIF mode.&quot;&quot;&quot;</span>
     <span class="n">sample_rate_in_hz</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="sd">&quot;&quot;&quot;Acquisition rate in samples per second.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Acquisition rate in samples per second.&quot;&quot;&quot;</span>
     <span class="n">acquisition_length_in_samples</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="sd">&quot;&quot;&quot;The length of the recording in samples per channel.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The length of the recording in samples per channel.&quot;&quot;&quot;</span>
     <span class="n">pre_trigger_length_in_samples</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="sd">&quot;&quot;&quot;The number of samples of the recording that will have been acquired before the trigger event.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The number of samples of the recording that will have been acquired before the trigger event.&quot;&quot;&quot;</span>
     <span class="n">timeout_in_ms</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="sd">&quot;&quot;&quot;How long to wait for a trigger event before timing out.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;How long to wait for a trigger event before timing out.&quot;&quot;&quot;</span>
     <span class="n">enabled_channels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="sd">&quot;&quot;&quot;The channel indices to enable for the acquisition.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The channel indices to enable for the acquisition.&quot;&quot;&quot;</span>
     <span class="n">vertical_ranges_in_mv</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="sd">&quot;&quot;&quot;The voltage range to apply to each enabled channel in mW.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The voltage range to apply to each enabled channel in mW.&quot;&quot;&quot;</span>
     <span class="n">vertical_offsets_in_percent</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="sd">&quot;&quot;&quot;The DC offset to apply to each enabled channel as percentages of their vertical ranges.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The DC offset to apply to each enabled channel as percentages of their vertical ranges.&quot;&quot;&quot;</span>
     <span class="n">timestamping_enabled</span><span class="p">:</span> <span class="nb">bool</span>
-    <span class="sd">&quot;&quot;&quot;If True, Measurements will include the time at which the acquisition was triggered. Increases latency by ~10 ms.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If True, Measurements will include the time at which the acquisition was triggered. Increases latency by ~10 ms.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">SpectrumRegisterLength</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Enum defining the possible lengths of a spectrum register.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum defining the possible lengths of a spectrum register.&quot;&quot;&quot;</span>
 
     <span class="n">THIRTY_TWO</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">&quot;&quot;&quot;32 bit register&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;32 bit register&quot;&quot;&quot;</span>
     <span class="n">SIXTY_FOUR</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="sd">&quot;&quot;&quot;64 bit register&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;64 bit register&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
@@ -724,26 +724,26 @@ hardware and interpreting responses received from hardware.</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">AcquisitionSettings</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A dataclass collecting all settings required to configure an acquisition. See Spectrum documentation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dataclass collecting all settings required to configure an acquisition. See Spectrum documentation.&quot;&quot;&quot;</span>
 
     <span class="n">acquisition_mode</span><span class="p">:</span> <span class="n">AcquisitionMode</span>
-    <span class="sd">&quot;&quot;&quot;Standard Single mode or Multi FIF mode.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Standard Single mode or Multi FIF mode.&quot;&quot;&quot;</span>
     <span class="n">sample_rate_in_hz</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="sd">&quot;&quot;&quot;Acquisition rate in samples per second.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Acquisition rate in samples per second.&quot;&quot;&quot;</span>
     <span class="n">acquisition_length_in_samples</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="sd">&quot;&quot;&quot;The length of the recording in samples per channel.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The length of the recording in samples per channel.&quot;&quot;&quot;</span>
     <span class="n">pre_trigger_length_in_samples</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="sd">&quot;&quot;&quot;The number of samples of the recording that will have been acquired before the trigger event.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The number of samples of the recording that will have been acquired before the trigger event.&quot;&quot;&quot;</span>
     <span class="n">timeout_in_ms</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="sd">&quot;&quot;&quot;How long to wait for a trigger event before timing out.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;How long to wait for a trigger event before timing out.&quot;&quot;&quot;</span>
     <span class="n">enabled_channels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="sd">&quot;&quot;&quot;The channel indices to enable for the acquisition.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The channel indices to enable for the acquisition.&quot;&quot;&quot;</span>
     <span class="n">vertical_ranges_in_mv</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="sd">&quot;&quot;&quot;The voltage range to apply to each enabled channel in mW.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The voltage range to apply to each enabled channel in mW.&quot;&quot;&quot;</span>
     <span class="n">vertical_offsets_in_percent</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="sd">&quot;&quot;&quot;The DC offset to apply to each enabled channel as percentages of their vertical ranges.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The DC offset to apply to each enabled channel as percentages of their vertical ranges.&quot;&quot;&quot;</span>
     <span class="n">timestamping_enabled</span><span class="p">:</span> <span class="nb">bool</span>
-    <span class="sd">&quot;&quot;&quot;If True, Measurements will include the time at which the acquisition was triggered. Increases latency by ~10 ms.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If True, Measurements will include the time at which the acquisition was triggered. Increases latency by ~10 ms.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 </pre></div>
 
@@ -888,16 +888,16 @@ hardware and interpreting responses received from hardware.</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">TriggerSettings</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A dataclass collecting all settings related to triggering. See Spectrum documentation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dataclass collecting all settings related to triggering. See Spectrum documentation.&quot;&quot;&quot;</span>
 
     <span class="n">trigger_sources</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TriggerSource</span><span class="p">]</span>
-    <span class="sd">&quot;&quot;&quot;The trigger sources to enable&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The trigger sources to enable&quot;&quot;&quot;</span>
     <span class="n">external_trigger_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExternalTriggerMode</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="sd">&quot;&quot;&quot;The external trigger mode (if an external trigger is enabled).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The external trigger mode (if an external trigger is enabled).&quot;&quot;&quot;</span>
     <span class="n">external_trigger_level_in_mv</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="sd">&quot;&quot;&quot;The level an external signal must reach to cause a trigger event (if an external trigger is enabled).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The level an external signal must reach to cause a trigger event (if an external trigger is enabled).&quot;&quot;&quot;</span>
     <span class="n">external_trigger_pulse_width_in_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="sd">&quot;&quot;&quot;The required width of an external trigger pulse (if an external trigger is enabled).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The required width of an external trigger pulse (if an external trigger is enabled).&quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
@@ -979,13 +979,13 @@ hardware and interpreting responses received from hardware.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">AcquisitionMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Enum representing the acquisition modes currently support by spectrumdevice. See Spectrum documentation for more</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum representing the acquisition modes currently support by spectrumdevice. See Spectrum documentation for more</span>
 <span class="sd">    information about each mode.&quot;&quot;&quot;</span>
 
     <span class="n">SPC_REC_STD_SINGLE</span> <span class="o">=</span> <span class="n">SPC_REC_STD_SINGLE</span>
-    <span class="sd">&quot;&quot;&quot;Data acquisition to on-board memory for one single trigger event.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data acquisition to on-board memory for one single trigger event.&quot;&quot;&quot;</span>
     <span class="n">SPC_REC_FIFO_MULTI</span> <span class="o">=</span> <span class="n">SPC_REC_FIFO_MULTI</span>
-    <span class="sd">&quot;&quot;&quot;Continuous data acquisition for multiple trigger events.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Continuous data acquisition for multiple trigger events.&quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
@@ -1040,15 +1040,15 @@ information about each mode.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ClockMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Enum representing the clock modes currently supported by spectrumdevice. See Spectrum documentation for more</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum representing the clock modes currently supported by spectrumdevice. See Spectrum documentation for more</span>
 <span class="sd">    information about each mode.&quot;&quot;&quot;</span>
 
     <span class="n">SPC_CM_INTPLL</span> <span class="o">=</span> <span class="n">SPC_CM_INTPLL</span>
-    <span class="sd">&quot;&quot;&quot;Enables internal PLL with 20 MHz internal reference for sample clock generation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enables internal PLL with 20 MHz internal reference for sample clock generation.&quot;&quot;&quot;</span>
     <span class="n">SPC_CM_EXTERNAL</span> <span class="o">=</span> <span class="n">SPC_CM_EXTERNAL</span>
-    <span class="sd">&quot;&quot;&quot;Enables external clock input for direct sample clock generation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enables external clock input for direct sample clock generation.&quot;&quot;&quot;</span>
     <span class="n">SPC_CM_EXTREFCLOCK</span> <span class="o">=</span> <span class="n">SPC_CM_EXTREFCLOCK</span>
-    <span class="sd">&quot;&quot;&quot;Enables internal PLL with external reference for sample clock generation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enables internal PLL with external reference for sample clock generation.&quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
@@ -1114,7 +1114,7 @@ information about each mode.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">CardFeature</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Enum representing the possible features of all Spectrum devices. A list of features can be read from a device</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum representing the possible features of all Spectrum devices. A list of features can be read from a device</span>
 <span class="sd">    using the feature_list property. See the Spectrum documentation for descriptions of each of the features.&quot;&quot;&quot;</span>
 
     <span class="n">SPCM_FEAT_MULTI</span> <span class="o">=</span> <span class="n">SPCM_FEAT_MULTI</span>
@@ -1329,7 +1329,7 @@ using the feature_list property. See the Spectrum documentation for descriptions
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">AdvancedCardFeature</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Enum representing the possible advanced features of all Spectrum devices. A list of features can be read from a</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum representing the possible advanced features of all Spectrum devices. A list of features can be read from a</span>
 <span class="sd">    device using the feature_list property. See the Spectrum documentation for descriptions of each of the features.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1395,7 +1395,7 @@ device using the feature_list property. See the Spectrum documentation for descr
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">IOLineMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Enum representing the possible modes that a devices multi-purpose I/O line can support. A list of available</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum representing the possible modes that a devices multi-purpose I/O line can support. A list of available</span>
 <span class="sd">    modes for each I/O line on a device is provided by the devices available_io_modes property. See the Spectrum</span>
 <span class="sd">    documentation for a description of each of the modes.&quot;&quot;&quot;</span>
 
@@ -1534,17 +1534,17 @@ documentation for a description of each of the modes.</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">AvailableIOModes</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Stores a list of the available IOLineMode settings on each of the four I/O lines (X0, X1, X2 and X3) on a</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Stores a list of the available IOLineMode settings on each of the four I/O lines (X0, X1, X2 and X3) on a</span>
 <span class="sd">    device. Returned by the available_io_modes() method of a device.&quot;&quot;&quot;</span>
 
     <span class="n">X0</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IOLineMode</span><span class="p">]</span>
-    <span class="sd">&quot;&quot;&quot;IO modes available to the XO IO line.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;IO modes available to the XO IO line.&quot;&quot;&quot;</span>
     <span class="n">X1</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IOLineMode</span><span class="p">]</span>
-    <span class="sd">&quot;&quot;&quot;IO modes available to the X1 IO line.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;IO modes available to the X1 IO line.&quot;&quot;&quot;</span>
     <span class="n">X2</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IOLineMode</span><span class="p">]</span>
-    <span class="sd">&quot;&quot;&quot;IO modes available to the X2 IO line.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;IO modes available to the X2 IO line.&quot;&quot;&quot;</span>
     <span class="n">X3</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IOLineMode</span><span class="p">]</span>
-    <span class="sd">&quot;&quot;&quot;IO modes available to the X3 IO line.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;IO modes available to the X3 IO line.&quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
@@ -1629,35 +1629,35 @@ device. Returned by the available_io_modes() method of a device.</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">TransferBuffer</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A buffer for transferring samples between spectrumdevice software and a hardware device. See the &#39;Definition of the</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A buffer for transferring samples between spectrumdevice software and a hardware device. See the &#39;Definition of the</span>
 <span class="sd">    transfer buffer&#39; section of the Spectrum documentation for more information. This implementation of the buffer</span>
 <span class="sd">    sets the notify size equal to the acquisition length.&quot;&quot;&quot;</span>
 
     <span class="nb">type</span><span class="p">:</span> <span class="n">BufferType</span>
-    <span class="sd">&quot;&quot;&quot;Specifies whether the buffer is to be used to transfer samples, timestamps or A/B data.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Specifies whether the buffer is to be used to transfer samples, timestamps or A/B data.&quot;&quot;&quot;</span>
     <span class="n">direction</span><span class="p">:</span> <span class="n">BufferDirection</span>
-    <span class="sd">&quot;&quot;&quot;Specifies whether the buffer is to be used to transfer data from the card to the PC, or the PC to the card.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Specifies whether the buffer is to be used to transfer data from the card to the PC, or the PC to the card.&quot;&quot;&quot;</span>
     <span class="n">board_memory_offset_bytes</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="sd">&quot;&quot;&quot;Sets the offset for transfer in board memory. Typically 0. See Spectrum documentation for more information.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the offset for transfer in board memory. Typically 0. See Spectrum documentation for more information.&quot;&quot;&quot;</span>
     <span class="n">data_array</span><span class="p">:</span> <span class="n">ndarray</span>
-    <span class="sd">&quot;&quot;&quot;1D numpy array into which samples will be written during transfer.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;1D numpy array into which samples will be written during transfer.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">copy_contents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ndarray</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_array</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data_array_pointer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">c_void_p</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;A pointer to the data array.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A pointer to the data array.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_array</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">c_void_p</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data_array_length_in_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The length of the array into which sample will be written, in bytes.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The length of the array into which sample will be written, in bytes.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_array</span><span class="o">.</span><span class="n">size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_array</span><span class="o">.</span><span class="n">itemsize</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">notify_size_in_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The number of transferred bytes after which a notification of transfer is sent from the device. This is</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of transferred bytes after which a notification of transfer is sent from the device. This is</span>
 <span class="sd">        currently always set to the length of the data array, meaning that a notification will be received once the</span>
 <span class="sd">        transfer is complete. See the Spectrum documentation for more information.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_array_length_in_bytes</span>
@@ -1809,10 +1809,10 @@ transfer is complete. See the Spectrum documentation for more information.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">CardToPCDataTransferBuffer</span><span class="p">(</span><span class="n">TransferBuffer</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A TransferBuffer configured for card-to-pc transfer of samples (rather than timestamps or ABA data).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A TransferBuffer configured for card-to-pc transfer of samples (rather than timestamps or ABA data).&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size_in_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">board_memory_offset_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            size_in_samples (int): The size of the array into which samples will be written, in samples.</span>
 <span class="sd">            board_memory_offset_bytes (int): Sets the offset for transfer in board memory. Default 0. See Spectrum</span>
@@ -1840,7 +1840,7 @@ transfer is complete. See the Spectrum documentation for more information.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size_in_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">board_memory_offset_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            size_in_samples (int): The size of the array into which samples will be written, in samples.</span>
 <span class="sd">            board_memory_offset_bytes (int): Sets the offset for transfer in board memory. Default 0. See Spectrum</span>
@@ -1894,20 +1894,20 @@ documentation for more information.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">TriggerSource</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;An Enum representing the possible trigger sources.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An Enum representing the possible trigger sources.&quot;&quot;&quot;</span>
 
     <span class="n">SPC_TMASK_SOFTWARE</span> <span class="o">=</span> <span class="n">SPC_TMASK_SOFTWARE</span>
-    <span class="sd">&quot;&quot;&quot;Enables the software trigger for the OR mask. The card will trigger immediately after start.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enables the software trigger for the OR mask. The card will trigger immediately after start.&quot;&quot;&quot;</span>
     <span class="n">SPC_TMASK_EXT0</span> <span class="o">=</span> <span class="n">SPC_TMASK_EXT0</span>
-    <span class="sd">&quot;&quot;&quot;Enables the external (analog) trigger 0 for the OR mask.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enables the external (analog) trigger 0 for the OR mask.&quot;&quot;&quot;</span>
     <span class="n">SPC_TMASK_EXT1</span> <span class="o">=</span> <span class="n">SPC_TMASK_EXT1</span>
-    <span class="sd">&quot;&quot;&quot;Enables the X1 (logic) trigger for the OR mask.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enables the X1 (logic) trigger for the OR mask.&quot;&quot;&quot;</span>
     <span class="n">SPC_TMASK_EXT2</span> <span class="o">=</span> <span class="n">SPC_TMASK_EXT2</span>
-    <span class="sd">&quot;&quot;&quot;Enables the X2 (logic) trigger for the OR mask.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enables the X2 (logic) trigger for the OR mask.&quot;&quot;&quot;</span>
     <span class="n">SPC_TMASK_EXT3</span> <span class="o">=</span> <span class="n">SPC_TMASK_EXT3</span>
-    <span class="sd">&quot;&quot;&quot;Enables the X3 (logic) trigger for the OR mask.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enables the X3 (logic) trigger for the OR mask.&quot;&quot;&quot;</span>
     <span class="n">SPC_TMASK_NONE</span> <span class="o">=</span> <span class="n">SPC_TMASK_NONE</span>
-    <span class="sd">&quot;&quot;&quot;No trigger source selected.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;No trigger source selected.&quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
@@ -2005,7 +2005,7 @@ documentation for more information.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ExternalTriggerMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;An Enum representing the supported trigger modes. See the Spectrum documentation more more Information.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An Enum representing the supported trigger modes. See the Spectrum documentation more more Information.</span>
 
 <span class="sd">    SPC_TM_NONE:</span>
 <span class="sd">    SPC_TM_POS:</span>
@@ -2018,23 +2018,23 @@ documentation for more information.</li>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">SPC_TM_NONE</span> <span class="o">=</span> <span class="n">SPC_TM_NONE</span>
-    <span class="sd">&quot;&quot;&quot;Channel is not used for trigger detection.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Channel is not used for trigger detection.&quot;&quot;&quot;</span>
     <span class="n">SPC_TM_POS</span> <span class="o">=</span> <span class="n">SPC_TM_POS</span>
-    <span class="sd">&quot;&quot;&quot;Trigger detection for positive edges (crossing level 0 from below to above).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger detection for positive edges (crossing level 0 from below to above).&quot;&quot;&quot;</span>
     <span class="n">SPC_TM_NEG</span> <span class="o">=</span> <span class="n">SPC_TM_NEG</span>
-    <span class="sd">&quot;&quot;&quot;Trigger detection for negative edges (crossing level 0 from above to below).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger detection for negative edges (crossing level 0 from above to below).&quot;&quot;&quot;</span>
     <span class="n">SPC_TM_BOTH</span> <span class="o">=</span> <span class="n">SPC_TM_BOTH</span>
-    <span class="sd">&quot;&quot;&quot;Trigger detection for positive and negative edges (any crossing of level 0).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger detection for positive and negative edges (any crossing of level 0).&quot;&quot;&quot;</span>
     <span class="n">SPC_TM_HIGH</span> <span class="o">=</span> <span class="n">SPC_TM_HIGH</span>
-    <span class="sd">&quot;&quot;&quot;Trigger detection for HIGH levels (signal above level 0).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger detection for HIGH levels (signal above level 0).&quot;&quot;&quot;</span>
     <span class="n">SPC_TM_LOW</span> <span class="o">=</span> <span class="n">SPC_TM_LOW</span>
-    <span class="sd">&quot;&quot;&quot;Trigger detection for LOW levels (signal below level 0).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger detection for LOW levels (signal below level 0).&quot;&quot;&quot;</span>
     <span class="n">SPC_TM_PW_GREATER</span> <span class="o">=</span> <span class="n">SPC_TM_PW_GREATER</span>
-    <span class="sd">&quot;&quot;&quot;Sets the trigger mode for external trigger to detect pulses that are longer than the pulse width</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the trigger mode for external trigger to detect pulses that are longer than the pulse width</span>
 <span class="sd">    chosen using the devices set_external_trigger_pulse_width_in_samples() method. Can only be used in combination</span>
 <span class="sd">    with one of the above modes.&quot;&quot;&quot;</span>
     <span class="n">SPC_TM_PW_SMALLER</span> <span class="o">=</span> <span class="n">SPC_TM_PW_SMALLER</span>
-    <span class="sd">&quot;&quot;&quot;Sets the trigger mode for external trigger to detect pulses that are shorter than the pulse width</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the trigger mode for external trigger to detect pulses that are shorter than the pulse width</span>
 <span class="sd">    chosen using the devices set_external_trigger_pulse_width_in_samples() method. Can only be used in combination</span>
 <span class="sd">    with one of the above modes.&quot;&quot;&quot;</span>
 </pre></div>
@@ -2187,7 +2187,7 @@ with one of the above modes.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">StatusCode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;An Enum representing the possible status codes that can be returned by a SpectrumCard. See the Spectrum</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An Enum representing the possible status codes that can be returned by a SpectrumCard. See the Spectrum</span>
 <span class="sd">    documentation for a description of each status.&quot;&quot;&quot;</span>
 
     <span class="n">M2STAT_NONE</span> <span class="o">=</span> <span class="n">M2STAT_NONE</span>
@@ -2352,12 +2352,12 @@ documentation for a description of each status.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">SpectrumRegisterLength</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Enum defining the possible lengths of a spectrum register.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum defining the possible lengths of a spectrum register.&quot;&quot;&quot;</span>
 
     <span class="n">THIRTY_TWO</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">&quot;&quot;&quot;32 bit register&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;32 bit register&quot;&quot;&quot;</span>
     <span class="n">SIXTY_FOUR</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="sd">&quot;&quot;&quot;64 bit register&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;64 bit register&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
@@ -2414,7 +2414,7 @@ documentation for a description of each status.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">CardType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;An Enum representing the integer values returned by a device when its type identifier is queried by reading the</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An Enum representing the integer values returned by a device when its type identifier is queried by reading the</span>
 <span class="sd">    SPC_PCITYP register. Only the supported card types are listed: 22xx, 44xx and 59xx family devices.&quot;&quot;&quot;</span>
 
     <span class="n">TYP_M4I2210_X8</span> <span class="o">=</span> <span class="n">TYP_M4I2210_X8</span>
