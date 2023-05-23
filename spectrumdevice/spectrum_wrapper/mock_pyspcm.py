@@ -38,27 +38,27 @@ SPCM_BUF_TIMESTAMP = 3000  # buffer for timestamps
 
 
 def spcm_dwGetParam_i32(handle: ctypes.c_void_p, command: int, value: Any) -> None:
-    pass
+    return
 
 
 def spcm_dwSetParam_i32(handle: ctypes.c_void_p, command: int, value: int) -> None:
-    pass
+    return
 
 
 def spcm_dwGetParam_i64(handle: ctypes.c_void_p, command: int, value: Any) -> None:
-    pass
+    return
 
 
 def spcm_dwSetParam_i64(handle: ctypes.c_void_p, command: int, value: int) -> None:
-    pass
+    return
 
 
 def spcm_hOpen(string_buffer: ctypes.c_char_p) -> ctypes.c_void_p:
-    pass
+    return ctypes.c_void_p()
 
 
 def spcm_vClose(handle: ctypes.c_void_p) -> None:
-    pass
+    return
 
 
 def spcm_dwDefTransfer_i64(
@@ -70,4 +70,4 @@ def spcm_dwDefTransfer_i64(
     offset: int,
     length: int,
 ) -> int:
-    pass
+    return 0
