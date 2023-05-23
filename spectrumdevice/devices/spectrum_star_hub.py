@@ -246,6 +246,7 @@ class SpectrumStarHub(SpectrumDevice):
         Returns:
             channel_nums (List[int]): The indices to enable.
         """
+        channels_nums.sort()
         channels_to_enable_all_cards = channels_nums
 
         for child_card in self._child_cards:
