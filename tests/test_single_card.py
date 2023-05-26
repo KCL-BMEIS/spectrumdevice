@@ -32,7 +32,7 @@ class SingleCardTest(TestCase):
 
     def test_count_channels(self) -> None:
         channels = self._device.channels
-        self.assertEqual(len(channels), self._expected_num_channels)
+        self.assertEqual(self._expected_num_channels, len(channels))
 
     def test_get_channels(self) -> None:
         channels = self._device.channels
