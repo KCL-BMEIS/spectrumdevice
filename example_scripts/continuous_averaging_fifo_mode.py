@@ -56,7 +56,7 @@ def continuous_averaging_multi_fifo_example(
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
         timestamping_enabled=True,
-        number_of_averages=num_averages
+        number_of_averages=num_averages,
     )
 
     # Apply settings
