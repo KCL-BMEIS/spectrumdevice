@@ -6,6 +6,7 @@ import pytest
 from numpy import array, concatenate
 
 from example_scripts.connect_to_star_hub import star_hub_example
+from example_scripts.continuous_averaging_fifo_mode import continuous_averaging_multi_fifo_example
 from example_scripts.continuous_multi_fifo_mode import continuous_multi_fifo_example
 from example_scripts.finite_multi_fifo_mode import finite_multi_fifo_example
 from example_scripts.standard_single_mode import standard_single_mode_example
@@ -65,6 +66,17 @@ class SingleCardIntegrationTests(TestCase):
         measurements = continuous_multi_fifo_example(
             mock_mode=self._single_card_mock_mode,
             acquisition_duration_in_seconds=0.5,
+            trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
+            device_number=TEST_DEVICE_NUMBER,
+            ip_address=TEST_DEVICE_IP,
+        )
+        self._asserts_for_fifo_mode(measurements)
+
+    def test_averaging_continuous_multi_fifo_example(self) -> None:
+        measurements = continuous_averaging_multi_fifo_example(
+            mock_mode=self._single_card_mock_mode,
+            acquisition_duration_in_seconds=0.1,
+            num_averages=3,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
             device_number=TEST_DEVICE_NUMBER,
             ip_address=TEST_DEVICE_IP,

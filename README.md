@@ -194,21 +194,23 @@ waveforms = measurement.waveforms  # A list of 1D numpy arrays
 timestamp = measurement.timestamp  # A datetime.datetime object
 ```
 
-### Acquiring waveforms (multi FIFO mode)
-To acquire data in multi FIFO mode, place the device into the correct mode using `configure_acquisition()` or `
+### Acquiring waveforms (FIFO mode)
+To acquire data in FIFO mode, place the device into the correct mode using `configure_acquisition()` or `
 card.set_acquisition_mode(AcquisitionMode.SPC_REC_FIFO_MULTI)`.
 
 You can then carry out a predefined number of Multi FIFO measurements like this:
+
 ```python
 NUM_MEASUREMENTS = 2
-measurements = card.execute_finite_multi_fifo_acquisition(NUM_MEASUREMENTS)
+measurements = card.execute_finite_fifo_acquisition(NUM_MEASUREMENTS)
 ```
 `measurements` will be a list of `Measurement` dataclasses (of length `NUM_MEASUREMENTS`), where each 
 `Measurement` object contains the waveforms received by each enabled channel during a measurement.
 
 Alternatively, you can start a Multi FIFO acquisition continuously writing data to a software 'transfer' buffer:
+
 ```python
-card.execute_continuous_multi_fifo_acquisition()
+card.execute_continuous_fifo_acquisition()
 ```
 But you'll then need to pull the data out of the transfer buffer at least as fast as the data is being acquired,
 manually obtaining the waveforms and timestamp:

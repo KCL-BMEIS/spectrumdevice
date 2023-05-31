@@ -24,7 +24,7 @@ class SpectrumChannel(SpectrumChannelInterface):
         self._vertical_offset_in_percent = self.vertical_offset_in_percent
 
     def convert_raw_waveform_to_voltage_waveform(self, raw_waveform: ndarray) -> ndarray:
-        vertical_offset_mv = 0.01 * float(self._vertical_range_mv) * float(self._vertical_offset_in_percent)
+        vertical_offset_mv = 0.01 * float(self._vertical_range_mv * self._vertical_offset_in_percent)
         return 1e-3 * (
             float(self._vertical_range_mv) * raw_waveform / float(self._full_scale_value) + vertical_offset_mv
         )
