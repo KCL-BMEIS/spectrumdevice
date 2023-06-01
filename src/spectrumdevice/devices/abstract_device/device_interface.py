@@ -1,4 +1,4 @@
-"""Defines public interfaces for controlling Spectrum devices and their channels."""
+"""Defines a common public interface for controlling all Spectrum devices and their channels."""
 
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
@@ -25,7 +25,7 @@ from spectrumdevice.settings.channel import SpectrumChannelName
 
 
 class SpectrumChannelInterface(ABC):
-    """Defines the public interface for control of the channels of Spectrum digitiser and AWG abstract_device. All properties are
+    """Defines the common public interface for control of the channels of Digitiser and AWG devices. All properties are
     read-only and must be set with their respective setter methods."""
 
     @property
@@ -35,9 +35,9 @@ class SpectrumChannelInterface(ABC):
 
 
 class SpectrumDeviceInterface(ABC):
-    """Defines the common public interface for control of all Spectrum digitiser and AWG devices, be they StarHub
-    composite devices (e.g. the NetBox) or individual cards. All properties are read-only and must be set with
-    their respective setter methods."""
+    """Defines the common public interface for control of all digitiser and AWG devices, be they StarHub composite
+    devices (e.g. the NetBox) or individual cards. All properties are read-only and must be set with their respective
+    setter methods."""
 
     @property
     @abstractmethod

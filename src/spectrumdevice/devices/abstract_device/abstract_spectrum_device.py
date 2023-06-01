@@ -30,9 +30,9 @@ from spectrumdevice.spectrum_wrapper import (
 
 class AbstractSpectrumDevice(SpectrumDeviceInterface, ABC):
     """Abstract superclass which implements methods common to all Spectrum devices. Instances of this class
-    cannot be constructed directly. Instead, construct instances of the concrete classes `SpectrumDigitiserCard`,
-    `SpectrumStarHub`, `MockSpectrumDigitiserCard` or `MockSpectrumStarHub`, which inherit the methods defined here. Note that
-    the mock devices override several of the methods defined here."""
+    cannot be constructed directly. Instead, construct instances of the concrete classes listed in
+    spectrumdevice/__init__.py, which inherit the methods defined here. Note that the concrete mock devices override
+    several of the methods defined here."""
 
     def _connect(self, visa_string: str) -> None:
         self._handle = spectrum_handle_factory(visa_string)
@@ -42,32 +42,36 @@ class AbstractSpectrumDevice(SpectrumDeviceInterface, ABC):
         """Perform a software and hardware reset.
 
         All settings are set to hardware default values. The data in the board’s on-board memory will be no longer
-        valid. Any output signals like trigger or clock output will be disabled."""
+        valid. Any output signals (including triggers and clocks) will be disabled."""
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_RESET)
 
     def start(self) -> None:
-        """Start acquiring data.
+        """Start the device.
 
-        In Standard Single mode (SPC_REC_STD_SINGLE), this will need to be called once for each acquisition. In-between
-        calls, waveforms must be manually transferred from the abstract_device to a `TransferBuffer` using `start_transfer()`.
-        The `TransferBuffer` need not be defined until after `start_acquisition` is called.
+        For digitisers in Standard Single mode (SPC_REC_STD_SINGLE), this will need to be called once for each
+        acquisition. In-between calls, waveforms must be manually transferred from the device to a `TransferBuffer`
+        using `start_transfer()`. The `TransferBuffer` need not be defined until after `start` is called.
 
-        In Multi FIFO mode (SPC_REC_FIFO_MULTI), it needs to be called only once, immediately followed by a call to
-        `start_transfer()`. Frames will then be continuously streamed to the `TransferBuffer`, which must have already
-        been defined.
+        For digitisers in Multi FIFO mode (SPC_REC_FIFO_MULTI), it needs to be called only once, immediately followed by
+        a call to `start_transfer()`. Frames will then be continuously streamed to the `TransferBuffer`, which must have
+        already been defined.
+
+        # todo: docstring for different AWG modes
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_START | M2CMD_CARD_ENABLETRIGGER)
 
     def stop(self) -> None:
-        """Stop acquiring data when in FIFO mode.
+        """Stop the device.
 
-        Stop the continuous acquisition of waveform data that occurs after calling `start_acquisition()` in FIFO mode
-        (SPC_REC_FIFO_MULTI). Does not need to be called in Standard Single mode (SPC_REC_STD_SINGLE).
+        For digitisers in FIFO mode (SPC_REC_FIFO_MULTI), this stops the continuous acquisition of waveform data that
+        occurs after calling `start()`. Does not need to be called in Standard Single mode (SPC_REC_STD_SINGLE).
+
+        # todo: docstring for AWG
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_STOP)
 
     def configure_trigger(self, settings: TriggerSettings) -> None:
-        """Apply all the trigger settings contained in a `TriggerSettings` dataclass to the abstract_device.
+        """Apply all the trigger settings contained in a `TriggerSettings` dataclass to the device.
 
         Args:
             settings (`TriggerSettings`): A `TriggerSettings` dataclass containing the setting values to apply."""
@@ -89,10 +93,11 @@ class AbstractSpectrumDevice(SpectrumDeviceInterface, ABC):
         value: int,
         length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> None:
-        """Set the value of a register on the Spectrum digitiser.
+        """Set the value of a register on the Spectrum device.
 
-        This method is used internally by `AbstractSpectrumDigitiser` and its subclasses to configure a hardware abstract_device, but can
-        also used to set the value of registers that are not implemented in `AbstractSpectrumDigitiser` and its subclasses.
+        This method is used internally by `AbstractSpectrumDigitiser` and its subclasses to configure a hardware
+        device, but can also be used to set the value of registers that are not implemented in
+        `AbstractSpectrumDigitiser` and its subclasses.
 
         Args:
             spectrum_register (int): Identifier of the register to set. This should be a global constant imported from
@@ -124,9 +129,9 @@ class AbstractSpectrumDevice(SpectrumDeviceInterface, ABC):
     ) -> int:
         """Get the value of a register on the Spectrum digitiser.
 
-        This method is used internally by `AbstractSpectrumDigitiser` and its subclasses to read the configuration of a hardware
-        abstract_device, but can be also used to get the value of registers that are not implemented in
-        AbstractSpectrumDigitiser and its subclasses.
+        This method is used internally by `AbstractSpectrumDigitiser` and its subclasses to read the configuration of a
+        hardware device, but can be also used to get the value of registers that are not implemented in
+        `AbstractSpectrumDigitiser` and its subclasses.
 
         Args:
             spectrum_register (int): Identifier of the register to set. This should be a global constant imported from
@@ -141,7 +146,7 @@ class AbstractSpectrumDevice(SpectrumDeviceInterface, ABC):
         if not SPECTRUM_DRIVERS_FOUND:
             raise SpectrumDriversNotFound(
                 "Cannot communicate with hardware. For testing on a system without drivers or connected hardware, use"
-                " a MockAbstractSpectrumDigitiser instead (i.e. MockSpectrumDigitiserCard or MockSpectrumStarHub)."
+                " a mock device instead (e.g. MockSpectrumDigitiserCard or MockSpectrumStarHub)."
             )
         if self.connected:
             if length == SpectrumRegisterLength.THIRTY_TWO:

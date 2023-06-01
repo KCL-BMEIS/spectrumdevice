@@ -1,4 +1,5 @@
-"""Provides a concrete class for controlling an individual Spectrum digitiser abstract_device."""
+"""Provides a partially implemented abstract superclass for all individual Spectrum cards (as opposed to Spectrum Star
+Hubs, which are aggregates of multiple cards)."""
 
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
@@ -64,7 +65,7 @@ logger = logging.getLogger(__name__)
 
 
 class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
-    """Abstract base class implementing methods common to all individual "card" devices (as opposed to "hub" devices)."""
+    """Abstract superclass implementing methods common to all individual "card" devices (as opposed to "hub" devices)."""
 
     def __init__(self, device_number: int = 0, ip_address: Optional[str] = None):
         """
@@ -91,7 +92,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
 
     @property
     def status(self) -> CARD_STATUS_TYPE:
-        """Read the current acquisition status of the card.
+        """Read the current status of the card.
         Returns:
             Statuses (`List[StatusCode]`): A list of `StatusCode` Enums describing the current acquisition status of the
                 card. See `StatusCode` (and the Spectrum documentation) for the list off possible acquisition
@@ -100,59 +101,63 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         return decode_status(self.read_spectrum_device_register(SPC_M2STATUS))
 
     def start_transfer(self) -> None:
-        """Transfer acquired waveforms from the on-abstract_device buffer to the `TransferBuffer`.
+        """Transfer between the on-device buffer and the `TransferBuffer`.
 
         Requires that a `TransferBuffer` has been defined (see `define_transfer_buffer()`).
 
-        In Standard Single mode (SPC_REC_STD_SINGLE), `start_transfer()` should be called after each acquisition has
-        completed.
+        For digitisers in Standard Single mode (SPC_REC_STD_SINGLE), `start_transfer()` should be called after each
+        acquisition has completed to transfer the acquired waveforms from the device to the `TransferBuffer`.
 
-        In FIFO mode (SPC_REC_FIFO_MULTI), `start_transfer()` should be called immediately after `start_acquisition()`
-        has been called, so that the waveform data can be continuously streamed into the transfer buffer as it is
-        acquired.
+        For digitisers in FIFO mode (SPC_REC_FIFO_MULTI), `start_transfer()` should be called immediately after
+        `start()` has been called, so that the waveform data can be continuously streamed into the transfer buffer as it
+        is acquired.
+
+        # todo: docstring for AWG transfers
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_STARTDMA)
 
     def stop_transfer(self) -> None:
-        """Stop the transfer of samples from the on-abstract_device buffer to the `TransferBuffer`.
+        """Stop the transfer of data between the on-device buffer and the `TransferBuffer`.
 
         Transfer is usually stopped automatically when an acquisition or stream of acquisitions completes, so this
         method is rarely required. It may invalidate transferred samples.
 
-        In Standard Single mode (SPC_REC_STD_SINGLE), transfer will automatically stop once all acquired samples have
-        been transferred, so `stop_transfer()` should not be used. Instead, call `wait_for_transfer_to_complete()` after
-        `start_transfer()`.
+        For digitisers in Standard Single mode (SPC_REC_STD_SINGLE), transfer will automatically stop once all acquired
+        samples have been transferred, so `stop_transfer()` should not be used. Instead, call
+        `wait_for_transfer_to_complete()` after `start_transfer()`.
 
-        In FIFO mode (SPC_REC_FIFO_MULTI), samples are transferred continuously during acquisition,
-        and transfer will automatically stop when `stop_acquisition()` is called as there will be no more
+        For digitisers in FIFO mode (SPC_REC_FIFO_MULTI), samples are transferred continuously during acquisition,
+        and transfer will automatically stop when `stop()` is called as there will be no more
         samples to transfer, so `stop_transfer()` should not be used.
 
+        # todo: docstring for AWG
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_STOPDMA)
 
     def wait_for_transfer_to_complete(self) -> None:
-        """Blocks until the currently active transfer of samples from the on-abstract_device buffers to the TransferBuffer is
+        """Blocks until the currently active transfer of between the on-device buffer and the TransferBuffer is
         complete.
 
-        Used in Standard Single mode (SPC_REC_STD_SINGLE) after starting a transfer. Once the method returns, all
-        acquired waveforms have been transferred from the on_device buffer to the `TransferBuffer` and can be read using
-        the `get_waveforms()` method.
+        For digitisers in Standard Single mode (SPC_REC_STD_SINGLE), use after starting a transfer. Once the method
+        returns, all acquired waveforms have been transferred from the on-device buffer to the `TransferBuffer` and can
+        be read using the `get_waveforms()` method.
 
-        Not required in FIFO mode (SPC_REC_FIFO_MULTI) because samples are continuously streamed until
-        `stop_acquisition()` is called.
+        For digitisers in FIFO mode (SPC_REC_FIFO_MULTI) this method is not required because samples are continuously
+        streamed until `stop()` is called.
+
+        # todo: docstring for AWG
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_WAITDMA)
 
     @property
     def transfer_buffers(self) -> List[TransferBuffer]:
-        """Return the `TransferBuffer` object containing the latest transferred samples.
+        """Return the `TransferBuffer` configured for transferring data between the card and the software.
 
         Returns:
-            buffer (List[`TransferBuffer`]): A length-1 list containing the `TransferBuffer` object. The samples within
+            buffer (List[`TransferBuffer`]): A length-1 list containing the `TransferBuffer` object. Any data within
                 the `TransferBuffer` can be accessed using its own interface, but the samples are stored as a 1D array,
-                with the samples of each channel interleaved. It is more convenient to read waveform data using the
-                `get_waveforms()` method.
-
+                with the samples of each channel interleaved as per the Spectrum user manual. For digitisers, it is more
+                convenient to read waveform data using the `get_waveforms()` method.
         """
         if self._transfer_buffer is not None:
             return [self._transfer_buffer]
@@ -178,13 +183,14 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
 
     @property
     def channels(self) -> Sequence[SpectrumChannelInterface]:
-        """A tuple containing the channels that belong to the digitiser card.
+        """A tuple containing the channels that belong to the card.
 
-        Properties of the individual channels (e.g. vertical range) can be set by calling the methods of the
-            returned objects directly. See `SpectrumDigitiserChannel` for more information.
+        Properties of the individual channels can be set by calling the methods of the
+            returned objects directly. See `SpectrumDigitiserChannel` and `SpectrumAWGChannel` for more information.
 
         Returns:
-            channels (Sequence[`SpectrumDigitiserChannel`]): A tuple of `SpectrumDigitiserChannel` objects.
+            channels (Sequence[`SpectrumChannelInterface`]): A tuple of objects conforming to the
+            `SpectrumChannelInterface` interface.
         """
         return self._channels
 
@@ -275,7 +281,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
 
     @property
     def external_trigger_level_in_mv(self) -> int:
-        """The signal level (mV) needed to trigger an acquisition using an external trigger source. An external
+        """The signal level (mV) needed to trigger an event using an external trigger source. An external
         trigger source must be enabled.
 
         Returns:
@@ -291,7 +297,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
                 raise SpectrumTriggerOperationNotImplemented(f"Cannot get trigger level of {first_trig_source.name}.")
 
     def set_external_trigger_level_in_mv(self, level: int) -> None:
-        """Change the signal level (mV) needed to trigger an acquisition using an external trigger source. An external
+        """Change the signal level (mV) needed to trigger an event using an external trigger source. An external
         trigger source must be enabled.
 
         Args:
@@ -308,7 +314,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
 
     @property
     def external_trigger_pulse_width_in_samples(self) -> int:
-        """The pulse width (in samples) needed to trigger an acquisition using an external trigger source, if
+        """The pulse width (in samples) needed to trigger an event using an external trigger source, if
         SPC_TM_PW_SMALLER or SPC_TM_PW_GREATER `ExternalTriggerMode` is selected. An external trigger source must be
         enabled.
 
@@ -327,7 +333,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
                 raise SpectrumTriggerOperationNotImplemented(f"Cannot get pulse width of {first_trig_source.name}.")
 
     def set_external_trigger_pulse_width_in_samples(self, width: int) -> None:
-        """Change the pulse width (samples) needed to trigger an acquisition using an external trigger source if
+        """Change the pulse width (samples) needed to trigger an event using an external trigger source if
         SPC_TM_PW_SMALLER or SPC_TM_PW_GREATER `ExternalTriggerMode` is selected. An external trigger source must be
         enabled.
 
@@ -362,20 +368,20 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
 
     @property
     def timeout_in_ms(self) -> int:
-        """The time for which the card will wait for a trigger to tbe received after an acquisition has started
+        """The time for which the card will wait for a trigger to be received after the device has been started
         before returning an error.
 
         Returns:
-            timeout_in_ms (in)t: The currently set acquisition timeout in ms.
+            timeout_in_ms (in)t: The currently set timeout in ms.
         """
         return self.read_spectrum_device_register(SPC_TIMEOUT)
 
     def set_timeout_in_ms(self, timeout_in_ms: int) -> None:
-        """Change the time for which the card will wait for a trigger to tbe received after an acquisition has started
+        """Change the time for which the card will wait for a trigger to tbe received after the device has started
         before returning an error.
 
         Args:
-            timeout_in_ms (int): The desired acquisition timeout in ms.
+            timeout_in_ms (int): The desired timeout in ms.
         """
         self.write_to_spectrum_device_register(SPC_TIMEOUT, timeout_in_ms)
 
@@ -425,7 +431,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
 
     @property
     def sample_rate_in_hz(self) -> int:
-        """The rate at which samples will be acquired during an acquisition, in Hz.
+        """The rate at which samples will be acquired or generated, in Hz.
 
         Returns:
             rate (int): The currently set sample rate in Hz.
@@ -433,7 +439,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         return self.read_spectrum_device_register(SPC_SAMPLERATE, SpectrumRegisterLength.SIXTY_FOUR)
 
     def set_sample_rate_in_hz(self, rate: int) -> None:
-        """Change the rate at which samples will be acquired during an acquisition, in Hz.
+        """Change the rate at which samples will be acquired or generated, in Hz.
         Args:
             rate (int): The desired sample rate in Hz.
         """
