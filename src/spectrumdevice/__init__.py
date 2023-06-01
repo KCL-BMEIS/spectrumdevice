@@ -27,14 +27,14 @@ from .devices.measurement import Measurement
 from .devices.digitiser.digitiser_card import SpectrumDigitiserCard
 from .devices.digitiser.digitiser_channel import SpectrumDigitiserChannel
 from .devices.digitiser.digitiser_star_hub import SpectrumDigitiserStarHub
-from .devices.mocks import MockSpectrumDigitiserCard, MockSpectrumStarHub
+from .devices.mocks import MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub
 
 __all__ = [
     "SpectrumDigitiserChannel",
     "SpectrumDigitiserCard",
     "SpectrumDigitiserStarHub",
     "MockSpectrumDigitiserCard",
-    "MockSpectrumStarHub",
+    "MockSpectrumDigitiserStarHub",
     "settings",
     "Measurement",
 ]

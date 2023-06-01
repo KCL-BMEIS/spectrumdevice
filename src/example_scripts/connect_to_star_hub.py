@@ -1,10 +1,7 @@
+from spectrumdevice.devices.mocks import MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub
+from spectrumdevice.devices.digitiser.digitiser_card import SpectrumDigitiserCard
+from spectrumdevice.devices.digitiser.digitiser_star_hub import SpectrumDigitiserStarHub
 from spectrumdevice.settings import CardType
-from spectrumdevice import (
-    MockSpectrumStarHub,
-    MockSpectrumDigitiserCard,
-    SpectrumDigitiserCard,
-    SpectrumDigitiserStarHub,
-)
 
 
 def star_hub_example(mock_mode: bool, num_cards: int, master_card_index: int) -> SpectrumDigitiserStarHub:
@@ -31,7 +28,9 @@ def star_hub_example(mock_mode: bool, num_cards: int, master_card_index: int) ->
                 )
             )
         # Create a mock hub containing the above devices
-        return MockSpectrumStarHub(device_number=0, child_cards=mock_child_cards, master_card_index=master_card_index)
+        return MockSpectrumDigitiserStarHub(
+            device_number=0, child_cards=mock_child_cards, master_card_index=master_card_index
+        )
 
 
 if __name__ == "__main__":

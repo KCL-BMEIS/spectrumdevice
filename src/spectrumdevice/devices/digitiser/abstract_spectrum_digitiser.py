@@ -7,12 +7,13 @@
 from abc import ABC
 from typing import List, cast
 
+from spectrumdevice.devices.measurement import Measurement
 from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
 from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserInterface
+from spectrumdevice.devices.digitiser.digitiser_channel import SpectrumDigitiserChannel
 from spectrumdevice.exceptions import SpectrumWrongAcquisitionMode
 from spectrumdevice.settings import AcquisitionMode, AcquisitionSettings
 from spectrum_gmbh.regs import M2CMD_CARD_WRITESETUP, SPC_M2CMD
-from spectrumdevice import Measurement, SpectrumDigitiserChannel
 
 
 class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevice, ABC):

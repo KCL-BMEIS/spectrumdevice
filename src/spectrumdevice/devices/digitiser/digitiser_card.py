@@ -26,7 +26,7 @@ from spectrum_gmbh.regs import (
 from spectrumdevice.devices.abstract_device.abstract_spectrum_card import AbstractSpectrumCard
 from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
 from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserChannelInterface
-from spectrumdevice import SpectrumDigitiserChannel
+from spectrumdevice.devices.digitiser.digitiser_channel import SpectrumDigitiserChannel
 from spectrumdevice.devices.spectrum_timestamper import Timestamper
 from spectrumdevice.exceptions import (
     SpectrumNoTransferBufferDefined,

@@ -1,3 +1,4 @@
+from abc import ABC
 from functools import reduce
 from operator import or_
 from typing import List, Sequence, Tuple
@@ -22,7 +23,7 @@ from spectrumdevice.settings import (
 from spectrumdevice.spectrum_wrapper import destroy_handle
 
 
-class AbstractSpectrumStarHub(AbstractSpectrumDevice):
+class AbstractSpectrumStarHub(AbstractSpectrumDevice, ABC):
     """Composite class of `AbstractSpectrumCard` for controlling a StarHub, for example the Spectrum NetBox. StarHub
     devices are composites of more than one Spectrum card. Acquisition and generation from the child cards of a StarHub
     is synchronised, aggregating the channels of all child cards. This class enables the control of a StarHub as if

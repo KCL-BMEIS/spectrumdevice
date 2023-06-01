@@ -1,6 +1,6 @@
 from spectrumdevice import SpectrumDigitiserStarHub
 from spectrumdevice.devices.digitiser.digitiser_card import SpectrumDigitiserCard
-from spectrumdevice.devices.mocks import MockSpectrumDigitiserCard, MockSpectrumStarHub
+from spectrumdevice.devices.mocks import MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub
 from spectrumdevice.settings import CardType
 from tests.configuration import (
     MOCK_DEVICE_TEST_FRAME_RATE_HZ,
@@ -53,6 +53,6 @@ def create_spectrum_star_hub_for_testing() -> SpectrumDigitiserStarHub:
                     num_channels_per_module=NUM_CHANNELS_PER_MODULE,
                 )
             )
-        return MockSpectrumStarHub(
+        return MockSpectrumDigitiserStarHub(
             device_number=0, child_cards=mock_child_cards, master_card_index=STAR_HUB_MASTER_CARD_INDEX
         )

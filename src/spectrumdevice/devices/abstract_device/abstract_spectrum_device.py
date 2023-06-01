@@ -141,7 +141,7 @@ class AbstractSpectrumDevice(SpectrumDeviceInterface, ABC):
         if not SPECTRUM_DRIVERS_FOUND:
             raise SpectrumDriversNotFound(
                 "Cannot communicate with hardware. For testing on a system without drivers or connected hardware, use"
-                " a MockSpectrumDevice instead (i.e. MockSpectrumDigitiserCard or MockSpectrumStarHub)."
+                " a MockAbstractSpectrumDigitiser instead (i.e. MockSpectrumDigitiserCard or MockSpectrumStarHub)."
             )
         if self.connected:
             if length == SpectrumRegisterLength.THIRTY_TWO:

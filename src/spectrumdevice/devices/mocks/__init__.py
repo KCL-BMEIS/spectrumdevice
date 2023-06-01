@@ -7,52 +7,39 @@
 import logging
 from abc import ABC, abstractmethod
 from threading import Event, Lock, Thread
-from time import sleep, monotonic
-from typing import Optional, Sequence, List
+from time import monotonic, sleep
+from typing import List, Optional, Sequence
 
 from numpy import ndarray, zeros
 from numpy.random import uniform
 
-from spectrumdevice.devices.mocks.timestamps import MockTimestamper
-from spectrumdevice.devices.digitiser.digitiser_card import SpectrumDigitiserCard
+from spectrum_gmbh.regs import (
+    SPC_CARDMODE,
+    SPC_MIINST_CHPERMODULE,
+    SPC_MIINST_MAXADCVALUE,
+    SPC_MIINST_MODULES,
+    SPC_PCITYP,
+)
 from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
+from spectrumdevice.devices.digitiser.digitiser_card import SpectrumDigitiserCard
+from spectrumdevice.devices.digitiser.digitiser_star_hub import SpectrumDigitiserStarHub
+from spectrumdevice.devices.mocks.mock_abstract_spectrum_device import MockAbstractSpectrumDevice
+from spectrumdevice.devices.mocks.timestamps import MockTimestamper
 from spectrumdevice.exceptions import (
-    SpectrumDeviceNotConnected,
     SpectrumNoTransferBufferDefined,
     SpectrumSettingsMismatchError,
 )
-from spectrumdevice.settings import SpectrumRegisterLength
 from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.device_modes import AcquisitionMode
 from spectrumdevice.settings.transfer_buffer import CardToPCDataTransferBuffer
-from spectrumdevice.devices.spectrum_star_hub import SpectrumStarHub
-from spectrum_gmbh.regs import (
-    SPC_MIINST_MODULES,
-    SPC_MIINST_CHPERMODULE,
-    SPC_PCIFEATURES,
-    SPCM_X0_AVAILMODES,
-    SPCM_X1_AVAILMODES,
-    SPCM_X2_AVAILMODES,
-    SPCM_X3_AVAILMODES,
-    SPCM_XMODE_DISABLE,
-    SPCM_FEAT_MULTI,
-    SPC_PCIEXTFEATURES,
-    SPCM_FEAT_EXTFW_SEGSTAT,
-    SPC_TIMEOUT,
-    SPC_SEGMENTSIZE,
-    SPC_MEMSIZE,
-    SPC_CARDMODE,
-    SPC_PCITYP,
-    SPC_MIINST_MAXADCVALUE,
-)
 
 logger = logging.getLogger(__name__)
 
 
-class MockSpectrumDevice(AbstractSpectrumDigitiser, ABC):
+class MockAbstractSpectrumDigitiser(MockAbstractSpectrumDevice, AbstractSpectrumDigitiser, ABC):
     """Overrides methods of `AbstractSpectrumDigitiser` that communicate with hardware with mocked implementations, allowing
     software to be tested without Spectrum hardware connected or drivers installed, e.g. during CI. Instances of this
-    class cannot be constructed directly - instantiate `MockSpectrumDevice` and `MockSpectrumStarHub` objects instead,
+    class cannot be constructed directly - instantiate `MockAbstractSpectrumDigitiser` and `MockSpectrumStarHub` objects instead,
     which inherit from this class."""
 
     def __init__(self, source_frame_rate_hz: float = 10.0) -> None:
@@ -60,20 +47,10 @@ class MockSpectrumDevice(AbstractSpectrumDigitiser, ABC):
         Args:
             source_frame_rate_hz (float): Frame rate at which a mock waveform source will generate waveforms.
         """
+        MockAbstractSpectrumDevice.__init__(self)
         self._source_frame_rate_hz = source_frame_rate_hz
-        self._param_dict = {
-            SPC_PCIFEATURES: SPCM_FEAT_MULTI,
-            SPC_PCIEXTFEATURES: SPCM_FEAT_EXTFW_SEGSTAT,
-            SPCM_X0_AVAILMODES: SPCM_XMODE_DISABLE,
-            SPCM_X1_AVAILMODES: SPCM_XMODE_DISABLE,
-            SPCM_X2_AVAILMODES: SPCM_XMODE_DISABLE,
-            SPCM_X3_AVAILMODES: SPCM_XMODE_DISABLE,
-            SPC_TIMEOUT: 1000,
-            SPC_SEGMENTSIZE: 1000,
-            SPC_MEMSIZE: 1000,
-            SPC_CARDMODE: AcquisitionMode.SPC_REC_STD_SINGLE.value,
-            SPC_MIINST_MAXADCVALUE: 128,
-        }
+        self._param_dict[SPC_CARDMODE] = AcquisitionMode.SPC_REC_STD_SINGLE.value
+        self._param_dict[SPC_MIINST_MAXADCVALUE] = 128
 
         self._buffer_lock = Lock()
         self._acquisition_stop_event = Event()
@@ -107,59 +84,8 @@ class MockSpectrumDevice(AbstractSpectrumDigitiser, ABC):
         """Stops the mock waveform source and timestamp threads."""
         self._acquisition_stop_event.set()
 
-    def write_to_spectrum_device_register(
-        self, spectrum_register: int, value: int, length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO
-    ) -> None:
-        """Simulates the setting of a parameter or command (register) on Spectrum hardware by storing its value
-        internally.
 
-        Args:
-            spectrum_register (int): Mock Spectrum abstract_device register to set. Should be imported from regs.py, which is
-                part of the spectrum_gmbh package written by Spectrum.
-            value (int): Value to set the register to. Should be imported from regs.py, which is
-                part of the spectrum_gmbh package written by Spectrum, or taken from one of the Enums provided by
-                the settings package.
-            length (`SpectrumRegisterLength`): Length in bits of the register being set. Either
-                `SpectrumRegisterLength.THIRTY_TWO or `SpectrumRegisterLength.SIXTY_FOUR`. Check the Spectrum
-                documentation for the register being set to determine the length to use. Default is 32 bit which is
-                correct for the majority of cases.
-        """
-        if self.connected:
-            self._param_dict[spectrum_register] = value
-        else:
-            raise SpectrumDeviceNotConnected("Mock abstract_device has been disconnected.")
-
-    def read_spectrum_device_register(
-        self, spectrum_register: int, length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO
-    ) -> int:
-        """Read the current value of a mock Spectrum register. Registers that are not set to the internal
-         parameter store during __init__() will need to be set using set_spectrum_api_param() before they can be
-        read.
-
-        Args:
-            spectrum_register (int): Mock spectrum abstract_device register to read. Should be imported from regs.py, which is
-                part of the spectrum_gmbh package written by Spectrum, or taken from one of the Enums provided by
-                the settings package.
-            length (`SpectrumRegisterLength`): Length in bits of the register being read. Either
-                `SpectrumRegisterLength.THIRTY_TWO` or `SpectrumRegisterLength.SIXTY_FOUR`. Check the Spectrum
-                documentation for the register to determine the length to use. Default is 32 bit which is correct for
-                the majority of cases.
-
-        Returns:
-            value (int): The value of the requested register.
-
-        """
-        if self.connected:
-            if spectrum_register in self._param_dict:
-                return self._param_dict[spectrum_register]
-            else:
-                self._param_dict[spectrum_register] = -1
-                return -1
-        else:
-            raise SpectrumDeviceNotConnected("Mock abstract_device has been disconnected.")
-
-
-class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockSpectrumDevice):
+class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigitiser):
     """A mock spectrum card, for testing software written to use the `SpectrumDigitiserCard` class.
 
     This class overrides methods of `SpectrumDigitiserCard` that communicate with hardware with mocked implementations, allowing
@@ -189,7 +115,7 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockSpectrumDevice):
             num_channels_per_module (int): The number of channels per module. Default 4 (so 8 channels in total). On
                 real hardware, this is read from the abstract_device so does not need to be set.
         """
-        MockSpectrumDevice.__init__(self, mock_source_frame_rate_hz)
+        MockAbstractSpectrumDigitiser.__init__(self, mock_source_frame_rate_hz)
         self._param_dict[SPC_MIINST_MODULES] = num_modules
         self._param_dict[SPC_MIINST_CHPERMODULE] = num_channels_per_module
         self._param_dict[SPC_PCITYP] = card_type.value
@@ -295,7 +221,7 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockSpectrumDevice):
             logger.warning("No acquisition in progress. Wait for acquisition to complete has no effect")
 
 
-class MockSpectrumStarHub(SpectrumStarHub, MockSpectrumDevice):
+class MockSpectrumDigitiserStarHub(SpectrumDigitiserStarHub, MockAbstractSpectrumDigitiser):
     """A mock spectrum StarHub, for testing software written to use the `SpectrumStarHub` class.
 
     Overrides methods of `SpectrumStarHub` and `AbstractSpectrumDigitiser` that communicate with hardware with mocked
@@ -315,8 +241,8 @@ class MockSpectrumStarHub(SpectrumStarHub, MockSpectrumDevice):
             master_card_index (int): The position within child_cards where the master card (the card which controls the
                 clock) is located.
         """
-        MockSpectrumDevice.__init__(self)
-        SpectrumStarHub.__init__(self, device_number, child_cards, master_card_index)
+        MockAbstractSpectrumDigitiser.__init__(self)
+        SpectrumDigitiserStarHub.__init__(self, device_number, child_cards, master_card_index)
         self._visa_string = f"MockHub{device_number}"
         self._connect(self._visa_string)
         self._acquisition_mode = self.acquisition_mode
