@@ -7,7 +7,7 @@
 from numpy import ndarray
 
 from spectrum_gmbh.regs import SPC_MIINST_MAXADCVALUE
-from spectrumdevice.devices.abstract_device.abstract_spectrum_card import AbstractSpectrumCard
+from spectrumdevice.devices.abstract_device import AbstractSpectrumCard
 from spectrumdevice.devices.digitiser.digitiser_interface import (
     SpectrumDigitiserChannelInterface,
 )

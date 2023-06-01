@@ -9,12 +9,12 @@ from typing import List, Optional, Sequence, cast
 from numpy import float_
 from numpy.typing import NDArray
 
-from spectrumdevice.devices.abstract_device.abstract_spectrum_hub import (
+from spectrumdevice.devices.abstract_device import (
     AbstractSpectrumStarHub,
-    check_settings_constant_across_devices,
 )
-from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
+from spectrumdevice.devices.abstract_device.abstract_spectrum_hub import check_settings_constant_across_devices
 from spectrumdevice.devices.digitiser.digitiser_card import SpectrumDigitiserCard
+from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
 from spectrumdevice.settings.device_modes import AcquisitionMode
 from spectrumdevice.settings.transfer_buffer import CardToPCDataTransferBuffer
 

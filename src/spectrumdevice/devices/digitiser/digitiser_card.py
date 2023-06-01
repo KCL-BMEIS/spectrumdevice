@@ -23,7 +23,7 @@ from spectrum_gmbh.regs import (
     SPC_POSTTRIGGER,
     SPC_SEGMENTSIZE,
 )
-from spectrumdevice.devices.abstract_device.abstract_spectrum_card import AbstractSpectrumCard
+from spectrumdevice.devices.abstract_device import AbstractSpectrumCard
 from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
 from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserChannelInterface
 from spectrumdevice.devices.digitiser.digitiser_channel import SpectrumDigitiserChannel

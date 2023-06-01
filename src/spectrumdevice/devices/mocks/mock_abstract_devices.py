@@ -1,8 +1,8 @@
 from abc import ABC
-from threading import Lock
-from typing import Dict
+from threading import Event, Lock, Thread
+from typing import Dict, Optional
 
-from numpy import float_, zeros
+from numpy import float_, ndarray, zeros
 from numpy.typing import NDArray
 
 from spectrum_gmbh.regs import (
@@ -13,15 +13,19 @@ from spectrum_gmbh.regs import (
     SPCM_X2_AVAILMODES,
     SPCM_X3_AVAILMODES,
     SPCM_XMODE_DISABLE,
+    SPC_CARDMODE,
     SPC_MEMSIZE,
+    SPC_MIINST_MAXADCVALUE,
     SPC_PCIEXTFEATURES,
     SPC_PCIFEATURES,
     SPC_SEGMENTSIZE,
     SPC_TIMEOUT,
 )
-from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
+from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice
+from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
+from spectrumdevice.devices.mocks.mock_waveform_source import mock_waveform_source_factory
 from spectrumdevice.exceptions import SpectrumDeviceNotConnected
-from spectrumdevice.settings import SpectrumRegisterLength
+from spectrumdevice.settings import AcquisitionMode, SpectrumRegisterLength
 
 
 class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
@@ -97,3 +101,52 @@ class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
                 return -1
         else:
             raise SpectrumDeviceNotConnected("Mock abstract_device has been disconnected.")
+
+
+class MockAbstractSpectrumDigitiser(MockAbstractSpectrumDevice, AbstractSpectrumDigitiser, ABC):
+    """Overrides methods of `AbstractSpectrumDigitiser` that communicate with hardware with mocked implementations, allowing
+    software to be tested without Spectrum hardware connected or drivers installed, e.g. during CI. Instances of this
+    class cannot be constructed directly - instantiate `MockAbstractSpectrumDigitiser` and `MockSpectrumStarHub` objects instead,
+    which inherit from this class."""
+
+    def __init__(self, source_frame_rate_hz: float = 10.0) -> None:
+        """
+        Args:
+            source_frame_rate_hz (float): Frame rate at which a mock waveform source will generate waveforms.
+        """
+        MockAbstractSpectrumDevice.__init__(self)
+        self._source_frame_rate_hz = source_frame_rate_hz
+        self._param_dict[SPC_CARDMODE] = AcquisitionMode.SPC_REC_STD_SINGLE.value
+        self._param_dict[SPC_MIINST_MAXADCVALUE] = 128
+
+        self._buffer_lock = Lock()
+        self._acquisition_stop_event = Event()
+        self._acquisition_thread: Optional[Thread] = None
+        self._timestamp_thread: Optional[Thread] = None
+        self._enabled_channels = [0]
+        self._on_device_buffer: ndarray = zeros(1000)
+        self._previous_data = self._on_device_buffer.copy()
+
+    def start(self) -> None:
+        """Starts a mock waveform source in a separate thread. The source generates noise samples according to the
+        number of currently enabled channels and the acquisition length, and places them in the virtual on abstract_device buffer
+        (the _on_device_buffer attribute).
+        """
+        waveform_source = mock_waveform_source_factory(self.acquisition_mode)
+        amplitude = self.read_spectrum_device_register(SPC_MIINST_MAXADCVALUE)
+        self._acquisition_stop_event.clear()
+        self._acquisition_thread = Thread(
+            target=waveform_source,
+            args=(
+                self._acquisition_stop_event,
+                self._source_frame_rate_hz,
+                amplitude,
+                self._on_device_buffer,
+                self._buffer_lock,
+            ),
+        )
+        self._acquisition_thread.start()
+
+    def stop(self) -> None:
+        """Stops the mock waveform source and timestamp threads."""
+        self._acquisition_stop_event.set()

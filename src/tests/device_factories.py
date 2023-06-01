@@ -1,5 +1,5 @@
 from spectrumdevice import SpectrumDigitiserStarHub
-from spectrumdevice.devices.digitiser.digitiser_card import SpectrumDigitiserCard
+from spectrumdevice.devices.digitiser import SpectrumDigitiserCard
 from spectrumdevice.devices.mocks import MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub
 from spectrumdevice.settings import CardType
 from tests.configuration import (

@@ -11,7 +11,7 @@ from typing import List, Optional
 from numpy import float_, ndarray
 from numpy.typing import NDArray
 
-from spectrumdevice.devices.abstract_device.device_interface import SpectrumChannelInterface, SpectrumDeviceInterface
+from spectrumdevice.devices.abstract_device import SpectrumChannelInterface, SpectrumDeviceInterface
 from spectrumdevice.settings import AcquisitionMode, AcquisitionSettings
 from spectrumdevice import Measurement
 

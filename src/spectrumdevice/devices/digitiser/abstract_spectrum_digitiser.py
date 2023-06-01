@@ -7,8 +7,8 @@
 from abc import ABC
 from typing import List, cast
 
-from spectrumdevice.devices.measurement import Measurement
-from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
+from spectrumdevice.measurement import Measurement
+from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice
 from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserInterface
 from spectrumdevice.devices.digitiser.digitiser_channel import SpectrumDigitiserChannel
 from spectrumdevice.exceptions import SpectrumWrongAcquisitionMode

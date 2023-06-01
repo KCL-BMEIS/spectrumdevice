@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from spectrum_gmbh.regs import SPC_CHENABLE
 from spectrumdevice import SpectrumDigitiserCard, SpectrumDigitiserChannel
-from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserInterface
+from spectrumdevice.devices.digitiser import SpectrumDigitiserInterface
 from spectrumdevice.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumExternalTriggerNotEnabled,

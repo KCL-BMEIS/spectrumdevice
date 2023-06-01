@@ -5,7 +5,7 @@ from time import monotonic
 from typing import List, Optional
 
 from spectrumdevice import MockSpectrumDigitiserCard, SpectrumDigitiserCard
-from spectrumdevice.devices.measurement import Measurement
+from spectrumdevice.measurement import Measurement
 from spectrumdevice.settings import (
     AcquisitionMode,
     CardType,
