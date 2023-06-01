@@ -1,28 +1,25 @@
+from typing import cast
 from unittest import TestCase
 
-from spectrumdevice.devices.spectrum_channel import SpectrumChannel
-from spectrumdevice.devices.spectrum_device import SpectrumDevice
-from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
-from spectrumdevice.settings.channel import SpectrumChannelName
-from spectrumdevice.settings.triggering import TriggerSource, ExternalTriggerMode
-from spectrumdevice.settings.transfer_buffer import CardToPCDataTransferBuffer
+from spectrum_gmbh.regs import SPC_CHENABLE
+from spectrumdevice import SpectrumDigitiserCard, SpectrumDigitiserChannel
+from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserInterface
 from spectrumdevice.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumExternalTriggerNotEnabled,
     SpectrumTriggerOperationNotImplemented,
 )
-from tests.configuration import (
-    NUM_CHANNELS_PER_MODULE,
-    NUM_MODULES_PER_CARD,
-    ACQUISITION_LENGTH,
-)
-from spectrum_gmbh.regs import SPC_CHENABLE
+from spectrumdevice.settings.channel import SpectrumChannelName
+from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
+from spectrumdevice.settings.transfer_buffer import CardToPCDataTransferBuffer
+from spectrumdevice.settings.triggering import ExternalTriggerMode, TriggerSource
+from tests.configuration import ACQUISITION_LENGTH, NUM_CHANNELS_PER_MODULE, NUM_MODULES_PER_CARD
 from tests.device_factories import create_spectrum_card_for_testing
 
 
 class SingleCardTest(TestCase):
     def setUp(self) -> None:
-        self._device: SpectrumDevice = create_spectrum_card_for_testing()
+        self._device: SpectrumDigitiserInterface = create_spectrum_card_for_testing()
         self._all_spectrum_channel_identifiers = [c.value for c in SpectrumChannelName]
         self._all_spectrum_channel_identifiers.sort()  # Enums are unordered so ensure channels are in ascending order
         self._expected_num_channels = NUM_CHANNELS_PER_MODULE * NUM_MODULES_PER_CARD
@@ -37,7 +34,12 @@ class SingleCardTest(TestCase):
     def test_get_channels(self) -> None:
         channels = self._device.channels
 
-        expected_channels = tuple([SpectrumChannel(i, self._device) for i in range(self._expected_num_channels)])
+        expected_channels = tuple(
+            [
+                SpectrumDigitiserChannel(i, cast(SpectrumDigitiserCard, self._device))
+                for i in range(self._expected_num_channels)
+            ]
+        )
         self.assertEqual(expected_channels, channels)
 
     def test_enable_one_channel(self) -> None:

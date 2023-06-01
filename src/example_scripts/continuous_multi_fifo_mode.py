@@ -4,7 +4,7 @@ import datetime
 from time import monotonic
 from typing import List, Optional
 
-from spectrumdevice import MockSpectrumCard, SpectrumCard
+from spectrumdevice import MockSpectrumDigitiserCard, SpectrumDigitiserCard
 from spectrumdevice.devices.measurement import Measurement
 from spectrumdevice.settings import (
     AcquisitionMode,
@@ -25,11 +25,11 @@ def continuous_multi_fifo_example(
 ) -> List[Measurement]:
 
     if not mock_mode:
-        # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
-        card = SpectrumCard(device_number=device_number, ip_address=ip_address)
+        # Connect to a networked abstract_device. To connect to a local (PCIe) abstract_device, do not provide an ip_address.
+        card = SpectrumDigitiserCard(device_number=device_number, ip_address=ip_address)
     else:
-        # Set up a mock device
-        card = MockSpectrumCard(
+        # Set up a mock abstract_device
+        card = MockSpectrumDigitiserCard(
             device_number=device_number,
             card_type=CardType.TYP_M2P5966_X4,
             mock_source_frame_rate_hz=1.0,
@@ -76,7 +76,7 @@ def continuous_multi_fifo_example(
             )
 
     # Stop the acquisition (and streaming)
-    card.stop_acquisition()
+    card.stop()
 
     card.reset()
     card.disconnect()

@@ -1,4 +1,4 @@
-"""Provides an Enum defining the possible acquisition statuses of a Spectrum device, and Type variables annotating
+"""Provides an Enum defining the possible acquisition statuses of a Spectrum abstract_device, and Type variables annotating
 the list of statuses returned by a card, and the list of lists of statuses returned by a StarHub. Also provides a
 function for decoding the integer value received by a card when queried about its status."""
 
@@ -28,7 +28,7 @@ from spectrum_gmbh.regs import (
 
 
 class StatusCode(Enum):
-    """An Enum representing the possible status codes that can be returned by a SpectrumCard. See the Spectrum
+    """An Enum representing the possible status codes that can be returned by a SpectrumDigitiserCard. See the Spectrum
     documentation for a description of each status."""
 
     M2STAT_NONE = M2STAT_NONE

@@ -1,4 +1,4 @@
-"""Provides Mock spectrum device classes for testing software when no drivers or hardware are present."""
+"""Provides Mock spectrum abstract_device classes for testing software when no drivers or hardware are present."""
 
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
@@ -14,8 +14,8 @@ from numpy import ndarray, zeros
 from numpy.random import uniform
 
 from spectrumdevice.devices.mocks.timestamps import MockTimestamper
-from spectrumdevice.devices.spectrum_card import SpectrumCard
-from spectrumdevice.devices.spectrum_device import SpectrumDevice
+from spectrumdevice.devices.digitiser.digitiser_card import SpectrumDigitiserCard
+from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
 from spectrumdevice.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumNoTransferBufferDefined,
@@ -49,8 +49,8 @@ from spectrum_gmbh.regs import (
 logger = logging.getLogger(__name__)
 
 
-class MockSpectrumDevice(SpectrumDevice, ABC):
-    """Overrides methods of `SpectrumDevice` that communicate with hardware with mocked implementations, allowing
+class MockSpectrumDevice(AbstractSpectrumDigitiser, ABC):
+    """Overrides methods of `AbstractSpectrumDigitiser` that communicate with hardware with mocked implementations, allowing
     software to be tested without Spectrum hardware connected or drivers installed, e.g. during CI. Instances of this
     class cannot be constructed directly - instantiate `MockSpectrumDevice` and `MockSpectrumStarHub` objects instead,
     which inherit from this class."""
@@ -83,9 +83,9 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
         self._on_device_buffer: ndarray = zeros(1000)
         self._previous_data = self._on_device_buffer.copy()
 
-    def start_acquisition(self) -> None:
+    def start(self) -> None:
         """Starts a mock waveform source in a separate thread. The source generates noise samples according to the
-        number of currently enabled channels and the acquisition length, and places them in the virtual on device buffer
+        number of currently enabled channels and the acquisition length, and places them in the virtual on abstract_device buffer
         (the _on_device_buffer attribute).
         """
         waveform_source = mock_waveform_source_factory(self.acquisition_mode)
@@ -103,7 +103,7 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
         )
         self._acquisition_thread.start()
 
-    def stop_acquisition(self) -> None:
+    def stop(self) -> None:
         """Stops the mock waveform source and timestamp threads."""
         self._acquisition_stop_event.set()
 
@@ -114,7 +114,7 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
         internally.
 
         Args:
-            spectrum_register (int): Mock Spectrum device register to set. Should be imported from regs.py, which is
+            spectrum_register (int): Mock Spectrum abstract_device register to set. Should be imported from regs.py, which is
                 part of the spectrum_gmbh package written by Spectrum.
             value (int): Value to set the register to. Should be imported from regs.py, which is
                 part of the spectrum_gmbh package written by Spectrum, or taken from one of the Enums provided by
@@ -127,7 +127,7 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
         if self.connected:
             self._param_dict[spectrum_register] = value
         else:
-            raise SpectrumDeviceNotConnected("Mock device has been disconnected.")
+            raise SpectrumDeviceNotConnected("Mock abstract_device has been disconnected.")
 
     def read_spectrum_device_register(
         self, spectrum_register: int, length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO
@@ -137,7 +137,7 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
         read.
 
         Args:
-            spectrum_register (int): Mock spectrum device register to read. Should be imported from regs.py, which is
+            spectrum_register (int): Mock spectrum abstract_device register to read. Should be imported from regs.py, which is
                 part of the spectrum_gmbh package written by Spectrum, or taken from one of the Enums provided by
                 the settings package.
             length (`SpectrumRegisterLength`): Length in bits of the register being read. Either
@@ -156,15 +156,15 @@ class MockSpectrumDevice(SpectrumDevice, ABC):
                 self._param_dict[spectrum_register] = -1
                 return -1
         else:
-            raise SpectrumDeviceNotConnected("Mock device has been disconnected.")
+            raise SpectrumDeviceNotConnected("Mock abstract_device has been disconnected.")
 
 
-class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
-    """A mock spectrum card, for testing software written to use the `SpectrumCard` class.
+class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockSpectrumDevice):
+    """A mock spectrum card, for testing software written to use the `SpectrumDigitiserCard` class.
 
-    This class overrides methods of `SpectrumCard` that communicate with hardware with mocked implementations, allowing
+    This class overrides methods of `SpectrumDigitiserCard` that communicate with hardware with mocked implementations, allowing
     software to be tested without Spectrum hardware connected or drivers installed, e.g. during CI. It overrides
-    methods to use to set up a mock 'on device buffer' attribute into which a mock waveform source will write
+    methods to use to set up a mock 'on abstract_device buffer' attribute into which a mock waveform source will write
     samples. It also uses a MockTimestamper to generated timestamps for mock waveforms.
     """
 
@@ -178,22 +178,22 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
     ):
         """
         Args:
-            device_number (int): The index of the mock device to create. Used to create a name for the device which is
+            device_number (int): The index of the mock abstract_device to create. Used to create a name for the abstract_device which is
                 used internally.
             card_type (CardType): The model of card to mock. Affects the allowed acquisition and post-trigger lengths.
             mock_source_frame_rate_hz (float): Rate at which waveforms will be generated by the mock source providing
                 data to the mock spectrum card.
             num_modules (int): The number of internal modules to assign the mock card. Default 2. On real hardware, this
-                is read from the device so does not need to be set. See the Spectrum documentation to work out how many
+                is read from the abstract_device so does not need to be set. See the Spectrum documentation to work out how many
                 modules your hardware has.
             num_channels_per_module (int): The number of channels per module. Default 4 (so 8 channels in total). On
-                real hardware, this is read from the device so does not need to be set.
+                real hardware, this is read from the abstract_device so does not need to be set.
         """
         MockSpectrumDevice.__init__(self, mock_source_frame_rate_hz)
         self._param_dict[SPC_MIINST_MODULES] = num_modules
         self._param_dict[SPC_MIINST_CHPERMODULE] = num_channels_per_module
         self._param_dict[SPC_PCITYP] = card_type.value
-        SpectrumCard.__init__(self, device_number=device_number)
+        SpectrumDigitiserCard.__init__(self, device_number=device_number)
         self._visa_string = f"MockCard{device_number}"
         self._connect(self._visa_string)
         self._acquisition_mode = self.acquisition_mode
@@ -213,8 +213,8 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
 
     def set_acquisition_length_in_samples(self, length_in_samples: int) -> None:
         """Set length of mock recording (per channel). In FIFO mode, this will be quantised to the nearest 8 samples.
-        See `SpectrumCard` for more information. This method is overridden here only so that the internal attributes
-        related to the mock on-device buffer can be set.
+        See `SpectrumDigitiserCard` for more information. This method is overridden here only so that the internal attributes
+        related to the mock on-abstract_device buffer can be set.
 
         Args:
             length_in_samples (int): Number of samples in each generated mock waveform
@@ -224,8 +224,8 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
         super().set_acquisition_length_in_samples(length_in_samples)
 
     def set_enabled_channels(self, channels_nums: List[int]) -> None:
-        """Set the channels to enable for the mock acquisition. See `SpectrumCard` for more information. This method is
-        overridden here only so that the internal attributes related to the mock on-device buffer can be set.
+        """Set the channels to enable for the mock acquisition. See `SpectrumDigitiserCard` for more information. This method is
+        overridden here only so that the internal attributes related to the mock on-abstract_device buffer can be set.
 
         Args:
             channels_nums (List[int]): List of mock channel indices to enable, e.g. [0, 1, 2].
@@ -236,10 +236,10 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
             self._previous_data = zeros(self.acquisition_length_in_samples * len(channels_nums))
             super().set_enabled_channels(channels_nums)
         else:
-            raise SpectrumSettingsMismatchError("Not enough channels in mock device configuration.")
+            raise SpectrumSettingsMismatchError("Not enough channels in mock abstract_device configuration.")
 
     def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
-        """Create or provide a `CardToPCDataTransferBuffer` object into which samples from the mock 'on device buffer'
+        """Create or provide a `CardToPCDataTransferBuffer` object into which samples from the mock 'on abstract_device buffer'
         will be transferred. If none is provided, a buffer will be instantiated using the currently set acquisition
         length and the number of enabled channels.
 
@@ -255,17 +255,17 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
             )
 
     def start_transfer(self) -> None:
-        """See `SpectrumCard.start_transfer()`. This mock implementation simulates the continuous transfer of samples
-        from the mock 'on device buffer' to the transfer buffer by pointing the transfer buffer's data buffer attribute
-        to the mock on-device buffer."""
+        """See `SpectrumDigitiserCard.start_transfer()`. This mock implementation simulates the continuous transfer of samples
+        from the mock 'on abstract_device buffer' to the transfer buffer by pointing the transfer buffer's data buffer attribute
+        to the mock on-abstract_device buffer."""
         if self._transfer_buffer:
             self._transfer_buffer.data_array = self._on_device_buffer
         else:
             raise SpectrumNoTransferBufferDefined("Call define_transfer_buffer method.")
 
     def stop_transfer(self) -> None:
-        """See `SpectrumCard.stop_transfer()`. This mock implementation simulates the end of the continuous transfer of
-        samples from the mock 'on device buffer' to the transfer buffer by assigning the transfer bugger to an array of
+        """See `SpectrumDigitiserCard.stop_transfer()`. This mock implementation simulates the end of the continuous transfer of
+        samples from the mock 'on abstract_device buffer' to the transfer buffer by assigning the transfer bugger to an array of
         zeros."""
         if self._transfer_buffer:
             self._transfer_buffer.data_array = zeros(self._transfer_buffer.data_array.shape)
@@ -273,7 +273,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
             raise SpectrumNoTransferBufferDefined("Call define_transfer_buffer method.")
 
     def wait_for_transfer_to_complete(self) -> None:
-        """See `SpectrumCard.wait_for_transfer_to_complete()`. This mock implementation blocks until a new mock transfer
+        """See `SpectrumDigitiserCard.wait_for_transfer_to_complete()`. This mock implementation blocks until a new mock transfer
         has been completed (i.e. the contents of the transfer buffer has changed since __init__() or since the last call
         to `wait_for_transfer_to_complete()`)."""
         if self._transfer_buffer:
@@ -284,7 +284,7 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
             raise SpectrumNoTransferBufferDefined("No transfer in progress.")
 
     def wait_for_acquisition_to_complete(self) -> None:
-        """See `SpectrumCard.wait_for_acquisition_to_complete()`. This mock implementation blocks until a mock
+        """See `SpectrumDigitiserCard.wait_for_acquisition_to_complete()`. This mock implementation blocks until a mock
         acquisition has been completed (i.e. the acquisition thread has shut down) or the request has timed out
         according to the `self.timeout_ms attribute`."""
         if self._acquisition_thread is not None:
@@ -298,19 +298,19 @@ class MockSpectrumCard(SpectrumCard, MockSpectrumDevice):
 class MockSpectrumStarHub(SpectrumStarHub, MockSpectrumDevice):
     """A mock spectrum StarHub, for testing software written to use the `SpectrumStarHub` class.
 
-    Overrides methods of `SpectrumStarHub` and `SpectrumDevice` that communicate with hardware with mocked
+    Overrides methods of `SpectrumStarHub` and `AbstractSpectrumDigitiser` that communicate with hardware with mocked
     implementations allowing software to be tested without Spectrum hardware connected or drivers installed, e.g. during
     CI."""
 
     def __init__(
         self,
         device_number: int,
-        child_cards: Sequence[MockSpectrumCard],
+        child_cards: Sequence[MockSpectrumDigitiserCard],
         master_card_index: int,
     ):
         """
         Args:
-            child_cards (Sequence[`MockSpectrumCard`]): A list of `MockSpectrumCard` objects defining the properties of
+            child_cards (Sequence[`MockSpectrumDigitiserCard`]): A list of `MockSpectrumCard` objects defining the properties of
             the child cards located within the mock hub.
             master_card_index (int): The position within child_cards where the master card (the card which controls the
                 clock) is located.
@@ -321,30 +321,30 @@ class MockSpectrumStarHub(SpectrumStarHub, MockSpectrumDevice):
         self._connect(self._visa_string)
         self._acquisition_mode = self.acquisition_mode
 
-    def start_acquisition(self) -> None:
+    def start(self) -> None:
         """Start a mock acquisition
 
-        See `SpectrumStarHub.start_acquisition()`. With a hardware device, StarHub's only need to be sent a single
+        See `SpectrumStarHub.start_acquisition()`. With a hardware abstract_device, StarHub's only need to be sent a single
         instruction to start acquisition, which they automatically relay to their child cards - hence why
-        `start_acquisition` is implemented in SpectrumDevice (base class to both `SpectrumCard` and `SpectrumStarHub`)
+        `start_acquisition` is implemented in AbstractSpectrumDigitiser (base class to both `SpectrumDigitiserCard` and `SpectrumStarHub`)
         rather than in `SpectrumStarHub`. In this mock `implementation`, each card's acquisition is started
         individually.
 
         """
         for card in self._child_cards:
-            card.start_acquisition()
+            card.start()
 
-    def stop_acquisition(self) -> None:
+    def stop(self) -> None:
         """Stop a mock acquisition
 
-        See `SpectrumDevice.stop_acquisition`. With a hardware device, StarHub's only need to be sent a single
+        See `AbstractSpectrumDigitiser.stop_acquisition`. With a hardware abstract_device, StarHub's only need to be sent a single
         instruction to stop acquisition, which they automatically relay to their child cards - hence why
-        `stop_acquisition()` is implemented in SpectrumDevice (base class to both `SpectrumCard` and `SpectrumStarHub`)
+        `stop_acquisition()` is implemented in AbstractSpectrumDigitiser (base class to both `SpectrumDigitiserCard` and `SpectrumStarHub`)
         rather than in `SpectrumStarHub`. In this mock implementation, each card's acquisition is stopped individually.
 
         """
         for card in self._child_cards:
-            card.stop_acquisition()
+            card.stop()
 
 
 class MockWaveformSource(ABC):

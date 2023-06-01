@@ -3,18 +3,22 @@
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
+
 from numpy import ndarray
 
 from spectrum_gmbh.regs import SPC_MIINST_MAXADCVALUE
-from spectrumdevice.settings.channel import VERTICAL_RANGE_COMMANDS, VERTICAL_OFFSET_COMMANDS, SpectrumChannelName
-from spectrumdevice.devices.spectrum_interface import SpectrumChannelInterface, SpectrumDeviceInterface
+from spectrumdevice.devices.abstract_device.abstract_spectrum_card import AbstractSpectrumCard
+from spectrumdevice.devices.digitiser.digitiser_interface import (
+    SpectrumDigitiserChannelInterface,
+)
+from spectrumdevice.settings.channel import SpectrumChannelName, VERTICAL_OFFSET_COMMANDS, VERTICAL_RANGE_COMMANDS
 
 
-class SpectrumChannel(SpectrumChannelInterface):
+class SpectrumDigitiserChannel(SpectrumDigitiserChannelInterface):
     """Class for controlling an individual channel of a spectrum digitiser. Channels are constructed automatically when
-    a SpectrumDevice is instantiated, and accessed via the `SpectrumDevice.channels` property."""
+    a AbstractSpectrumDigitiser is instantiated, and accessed via the `AbstractSpectrumDigitiser.channels` property."""
 
-    def __init__(self, channel_number: int, parent_device: SpectrumDeviceInterface):
+    def __init__(self, channel_number: int, parent_device: AbstractSpectrumCard):
         self._name = SpectrumChannelName[f"CHANNEL{channel_number}"]
         self._parent_device = parent_device
         self._enabled = True
@@ -85,7 +89,7 @@ class SpectrumChannel(SpectrumChannelInterface):
         self._vertical_offset_in_percent = offset
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, SpectrumChannel):
+        if isinstance(other, SpectrumDigitiserChannel):
             return (self.name == other.name) and (self._parent_device == other._parent_device)
         else:
             raise NotImplementedError()

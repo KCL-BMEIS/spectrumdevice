@@ -54,7 +54,7 @@ class BufferDirection(Enum):
 
 @dataclass
 class TransferBuffer:
-    """A buffer for transferring samples between spectrumdevice software and a hardware device. See the 'Definition of the
+    """A buffer for transferring samples between spectrumdevice software and a hardware abstract_device. See the 'Definition of the
     transfer buffer' section of the Spectrum documentation for more information. This implementation of the buffer
     sets the notify size equal to the acquisition length."""
 
@@ -82,7 +82,7 @@ class TransferBuffer:
 
     @property
     def notify_size_in_bytes(self) -> int:
-        """The number of transferred bytes after which a notification of transfer is sent from the device. This is
+        """The number of transferred bytes after which a notification of transfer is sent from the abstract_device. This is
         currently always set to the length of the data array, meaning that a notification will be received once the
         transfer is complete. See the Spectrum documentation for more information."""
         return self.data_array_length_in_bytes

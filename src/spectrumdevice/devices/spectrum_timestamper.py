@@ -14,7 +14,7 @@ from spectrum_gmbh.regs import (
     SPC_TS_AVAIL_USER_POS,
     M2CMD_CARD_WRITESETUP,
 )
-from spectrumdevice.devices.spectrum_interface import SpectrumDeviceInterface
+from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserInterface
 from spectrumdevice.exceptions import (
     SpectrumTimestampsPollingTimeout,
 )
@@ -31,7 +31,7 @@ REF_TIME_PRECISION_IN_SEC = 10e-3
 class Timestamper(ABC):
     def __init__(
         self,
-        parent_device: SpectrumDeviceInterface,
+        parent_device: SpectrumDigitiserInterface,
         parent_device_handle: DEVICE_HANDLE_TYPE,
     ):
         self._parent_device = parent_device

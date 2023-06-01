@@ -1,5 +1,5 @@
-"""Provides an Enum defining the possible modes of the IO lines of a Spectrum device, and a dataclass used to store
-the modes supported by each channel of a device. Also provides a function for decoding the value received from a device
+"""Provides an Enum defining the possible modes of the IO lines of a Spectrum abstract_device, and a dataclass used to store
+the modes supported by each channel of a abstract_device. Also provides a function for decoding the value received from a abstract_device
 when queried about its supported IO line modes."""
 
 # Christian Baker, King's College London
@@ -27,7 +27,7 @@ from spectrum_gmbh.regs import (
 
 class IOLineMode(Enum):
     """Enum representing the possible modes that a devices multi-purpose I/O line can support. A list of available
-    modes for each I/O line on a device is provided by the devices available_io_modes property. See the Spectrum
+    modes for each I/O line on a abstract_device is provided by the devices available_io_modes property. See the Spectrum
     documentation for a description of each of the modes."""
 
     SPCM_XMODE_DISABLE = SPCM_XMODE_DISABLE
@@ -43,7 +43,7 @@ class IOLineMode(Enum):
 
 
 def decode_available_io_modes(value: int) -> List[IOLineMode]:
-    """Converts the integer value received from a Spectrum device when queried about its IO line modes into a list
+    """Converts the integer value received from a Spectrum abstract_device when queried about its IO line modes into a list
     of IOLineModes."""
     possible_values = [mode.value for mode in IOLineMode]
     return [IOLineMode(found_value) for found_value in decode_bitmap_using_list_of_ints(value, possible_values)]
@@ -52,7 +52,7 @@ def decode_available_io_modes(value: int) -> List[IOLineMode]:
 @dataclass
 class AvailableIOModes:
     """Stores a list of the available IOLineMode settings on each of the four I/O lines (X0, X1, X2 and X3) on a
-    device. Returned by the available_io_modes() method of a device."""
+    abstract_device. Returned by the available_io_modes() method of a abstract_device."""
 
     X0: List[IOLineMode]
     """IO modes available to the XO IO line."""

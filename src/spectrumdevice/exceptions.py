@@ -1,4 +1,4 @@
-"""Defines exceptions raised by spectrumdevice device classes."""
+"""Defines exceptions raised by spectrumdevice abstract_device classes."""
 
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
@@ -17,7 +17,7 @@ class SpectrumSettingsMismatchError(IOError):
 
 class SpectrumDeviceNotConnected(IOError):
     def __init__(self, msg: str) -> None:
-        super().__init__(f"Spectrum device not connected: {msg}")
+        super().__init__(f"Spectrum abstract_device not connected: {msg}")
 
 
 class SpectrumExternalTriggerNotEnabled(IOError):

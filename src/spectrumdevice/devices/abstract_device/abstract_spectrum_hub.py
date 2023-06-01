@@ -1,51 +1,48 @@
-"""Provides a concrete class for controlling Spectrum digitiser StarHubs."""
-
-# Christian Baker, King's College London
-# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
-# Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
-import datetime
 from functools import reduce
 from operator import or_
-from typing import List, Optional, Sequence, Tuple
+from typing import List, Sequence, Tuple
 
-from numpy import arange, float_
-from numpy.typing import NDArray
+from numpy import arange
 
-from spectrumdevice.devices.spectrum_channel import SpectrumChannel
-from spectrumdevice.devices.spectrum_device import SpectrumDevice
-from spectrumdevice.devices.spectrum_card import SpectrumCard
-from spectrumdevice.exceptions import SpectrumSettingsMismatchError
-from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
-from spectrumdevice.spectrum_wrapper import destroy_handle
-from spectrumdevice.settings.status import STAR_HUB_STATUS_TYPE
-from spectrumdevice.settings.io_lines import AvailableIOModes
-from spectrumdevice.settings.triggering import TriggerSource, ExternalTriggerMode
-from spectrumdevice.settings.card_features import CardFeature, AdvancedCardFeature
-from spectrumdevice.settings.transfer_buffer import TransferBuffer, CardToPCDataTransferBuffer
 from spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK
+from spectrumdevice.devices.abstract_device.abstract_spectrum_card import AbstractSpectrumCard
+from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
+from spectrumdevice.devices.abstract_device.device_interface import SpectrumChannelInterface
+from spectrumdevice.exceptions import SpectrumSettingsMismatchError
+from spectrumdevice.settings import (
+    AdvancedCardFeature,
+    AvailableIOModes,
+    CardFeature,
+    ClockMode,
+    ExternalTriggerMode,
+    STAR_HUB_STATUS_TYPE,
+    TransferBuffer,
+    TriggerSource,
+)
+from spectrumdevice.spectrum_wrapper import destroy_handle
 
 
-class SpectrumStarHub(SpectrumDevice):
-    """Composite class of `SpectrumCards` for controlling a StarHub device, for example the Spectrum NetBox. StarHub
-    devices are composites of more than one Spectrum card. Acquisition from the child cards of a StarHub is
-    synchronised, aggregating the channels of all child cards. This class enables the control of a StarHub device as if
+class AbstractSpectrumStarHub(AbstractSpectrumDevice):
+    """Composite class of `AbstractSpectrumCard` for controlling a StarHub, for example the Spectrum NetBox. StarHub
+    devices are composites of more than one Spectrum card. Acquisition and generation from the child cards of a StarHub
+    is synchronised, aggregating the channels of all child cards. This class enables the control of a StarHub as if
     it were a single Spectrum card."""
 
     def __init__(
         self,
         device_number: int,
-        child_cards: Sequence[SpectrumCard],
+        child_cards: Sequence[AbstractSpectrumCard],
         master_card_index: int,
     ):
         """
         Args:
             device_number (int): The index of the StarHub to connect to. If only one StarHub is present, set to 0.
-            child_cards (Sequence[`SpectrumCard`]): A list of `SpectrumCard` objects defining the child cards located
-                within the StarHub, including their IP addresses and/or device numbers.
+            child_cards (Sequence[`SpectrumDigitiserCard`]): A list of `SpectrumCard` objects defining the child cards located
+                within the StarHub, including their IP addresses and/or abstract_device numbers.
             master_card_index (int): The position within child_cards where the master card (the card which controls the
                 clock) is located.
         """
-        self._child_cards = child_cards
+        self._child_cards: Sequence[AbstractSpectrumCard] = child_cards
         self._master_card = child_cards[master_card_index]
         self._triggering_card = child_cards[master_card_index]
         child_card_logical_indices = (2**n for n in range(len(self._child_cards)))
@@ -53,7 +50,6 @@ class SpectrumStarHub(SpectrumDevice):
         self._connect(self._visa_string)
         all_cards_binary_mask = reduce(or_, child_card_logical_indices)
         self.write_to_spectrum_device_register(SPC_SYNC_ENABLEMASK, all_cards_binary_mask)
-        self._acquisition_mode = self.acquisition_mode
 
     def disconnect(self) -> None:
         """Disconnects from each child card and terminates connection to the hub itself."""
@@ -71,27 +67,27 @@ class SpectrumStarHub(SpectrumDevice):
 
     @property
     def status(self) -> STAR_HUB_STATUS_TYPE:
-        """The statuses of each child card, in a list. See `SpectrumCard.status` for more information.
+        """The statuses of each child card, in a list. See `SpectrumDigitiserCard.status` for more information.
         Returns:
             statuses (List[List[`CardStatus`]]): A list of lists of `CardStatus`.
         """
         return STAR_HUB_STATUS_TYPE([card.status for card in self._child_cards])
 
     def start_transfer(self) -> None:
-        """Start the transfer of samples from the on-device buffer of each child card to its `TransferBuffer`. See
-        `SpectrumCard.start_transfer()` for more information."""
+        """Start the transfer of samples from the on-abstract_device buffer of each child card to its `TransferBuffer`. See
+        `SpectrumDigitiserCard.start_transfer()` for more information."""
         for card in self._child_cards:
             card.start_transfer()
 
     def stop_transfer(self) -> None:
-        """Stop the transfer of samples from each card to its `TransferBuffer`. See `SpectrumCard.stop_transfer()` for
+        """Stop the transfer of samples from each card to its `TransferBuffer`. See `SpectrumDigitiserCard.stop_transfer()` for
         more information."""
         for card in self._child_cards:
             card.stop_transfer()
 
     def wait_for_transfer_to_complete(self) -> None:
         """Wait for all cards to stop transferring samples to their `TransferBuffers`. See
-        `SpectrumCard.wait_for_transfer_to_complete()` for more information."""
+        `SpectrumDigitiserCard.wait_for_transfer_to_complete()` for more information."""
         for card in self._child_cards:
             card.wait_for_transfer_to_complete()
 
@@ -145,7 +141,7 @@ class SpectrumStarHub(SpectrumDevice):
     @property
     def trigger_sources(self) -> List[TriggerSource]:
         """The trigger sources configured on the triggering card, which by default is the master card. See
-        `SpectrumCard.trigger_sources()` for more information.
+        `SpectrumDigitiserCard.trigger_sources()` for more information.
 
         Returns:
             sources (List[`TriggerSource`]): A list of the currently enabled trigger sources."""
@@ -153,7 +149,7 @@ class SpectrumStarHub(SpectrumDevice):
 
     def set_trigger_sources(self, sources: List[TriggerSource]) -> None:
         """Change the trigger sources configured on the triggering card, which by default is the master card. See
-        `SpectrumCard.trigger_sources()` for more information.
+        `SpectrumDigitiserCard.trigger_sources()` for more information.
 
         Args:
             sources (List[`TriggerSource`]): The trigger sources to enable, in a list."""
@@ -165,7 +161,7 @@ class SpectrumStarHub(SpectrumDevice):
     @property
     def external_trigger_mode(self) -> ExternalTriggerMode:
         """The trigger mode configured on the triggering card, which by default is the master card. See
-        `SpectrumCard.external_trigger_mode()` for more information.
+        `SpectrumDigitiserCard.external_trigger_mode()` for more information.
 
         Returns:
             mode (`ExternalTriggerMode`): The currently set external trigger mode.
@@ -174,7 +170,7 @@ class SpectrumStarHub(SpectrumDevice):
 
     def set_external_trigger_mode(self, mode: ExternalTriggerMode) -> None:
         """Change the trigger mode configured on the triggering card, which by default is the master card. See
-        `SpectrumCard.set_external_trigger_mode()` for more information.
+        `SpectrumDigitiserCard.set_external_trigger_mode()` for more information.
 
         Args:
             mode (`ExternalTriggerMode`): The desired external trigger mode."""
@@ -183,7 +179,7 @@ class SpectrumStarHub(SpectrumDevice):
     @property
     def external_trigger_level_in_mv(self) -> int:
         """The external trigger level configured on the triggering card, which by default is the master card. See
-        `SpectrumCard.external_trigger_level_mv()` for more information.
+        `SpectrumDigitiserCard.external_trigger_level_mv()` for more information.
 
         Returns:
             level (int): The external trigger level in mV.
@@ -192,7 +188,7 @@ class SpectrumStarHub(SpectrumDevice):
 
     def set_external_trigger_level_in_mv(self, level: int) -> None:
         """Change the external trigger level configured on the triggering card, which by default is the master card.
-        See `SpectrumCard.set_external_trigger_level_mv()` for more information.
+        See `SpectrumDigitiserCard.set_external_trigger_level_mv()` for more information.
 
         Args:
             level (int): The desired external trigger level in mV.
@@ -202,7 +198,7 @@ class SpectrumStarHub(SpectrumDevice):
     @property
     def external_trigger_pulse_width_in_samples(self) -> int:
         """The trigger pulse width (samples) configured on the triggering card, which by default is the master card.
-        See `SpectrumCard.external_trigger_pulse_width_in_samples()` for more information.
+        See `SpectrumDigitiserCard.external_trigger_pulse_width_in_samples()` for more information.
 
         Returns:
             width (int): The current trigger pulse width in samples.
@@ -211,7 +207,7 @@ class SpectrumStarHub(SpectrumDevice):
 
     def set_external_trigger_pulse_width_in_samples(self, width: int) -> None:
         """Change the trigger pulse width (samples) configured on the triggering card, which by default is the master
-        card. See `SpectrumCard.set_external_trigger_pulse_width_in_samples()` for more information.
+        card. See `SpectrumDigitiserCard.set_external_trigger_pulse_width_in_samples()` for more information.
 
         Args:
             width (int): The desired trigger pulse width in samples.
@@ -260,137 +256,25 @@ class SpectrumStarHub(SpectrumDevice):
 
     @property
     def transfer_buffers(self) -> List[TransferBuffer]:
-        """The `TransferBuffer`s of all of the child cards of the hub. See `SpectrumCard.transfer_buffers` for more
+        """The `TransferBuffer`s of all of the child cards of the hub. See `SpectrumDigitiserCard.transfer_buffers` for more
         information.
 
         Returns:
             buffers (List[`TransferBuffer`]): A list of the transfer buffers for each child card."""
         return [card.transfer_buffers[0] for card in self._child_cards]
 
-    def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
-        """Create or provide `CardToPCDataTransferBuffer` objects for receiving acquired samples from the child cards. If
-        no buffers are provided, they will be created with the correct size and a board_memory_offset_bytes of 0. See
-        `SpectrumCard.define_transfer_buffer()` for more information
-
-        Args:
-            buffer (Optional[`CardToPCDataTransferBuffer`]): A list containing pre-constructed
-            `CardToPCDataTransferBuffer` objects, one for each child card. The size of the buffers should be chosen
-            according to the current number of active channels in each card and the acquisition length.
-        """
-        if buffer:
-            for card, buff in zip(self._child_cards, buffer):
-                card.define_transfer_buffer([buff])
-        else:
-            for card in self._child_cards:
-                card.define_transfer_buffer()
-
-    def wait_for_acquisition_to_complete(self) -> None:
-        """Wait for each card to finish its acquisition. See `SpectrumCard.wait_for_acquisition_to_complete()` for more
-        information."""
-        for card in self._child_cards:
-            card.wait_for_acquisition_to_complete()
-
-    def get_waveforms(self) -> List[NDArray[float_]]:
-        """Get a list of of the most recently transferred waveforms.
-
-        This method gets the waveforms from each child card and joins them into a new list, ordered by channel number.
-        See `SpectrumCard.get_waveforms()` for more information.
-
-        Returns:
-            waveforms (List[NDArray[float_]]): A list of 1D numpy arrays, one per enabled channel, in channel order.
-        """
-        waveforms_all_cards = []
-        for card in self._child_cards:
-            waveforms_all_cards += card.get_waveforms()
-
-        return waveforms_all_cards
-
-    def get_timestamp(self) -> Optional[datetime.datetime]:
-        """Get timestamp for the last acquisition"""
-        return self._triggering_card.get_timestamp()
-
-    def enable_timestamping(self) -> None:
-        self._triggering_card.enable_timestamping()
-
     @property
-    def channels(self) -> Sequence[SpectrumChannel]:
-        """A tuple containing of all the channels of the child cards of the hub. See `SpectrumCard.channels` for more
+    def channels(self) -> Sequence[SpectrumChannelInterface]:
+        """A tuple containing of all the channels of the child cards of the hub. See `SpectrumDigitiserCard.channels` for more
         information.
 
         Returns:
-            channels (List[`SpectrumChannel`]): A list of `SpectrumChannel` objects.
+            channels (List[`SpectrumDigitiserChannel`]): A list of `SpectrumDigitiserChannel` objects.
         """
-        channels: List[SpectrumChannel] = []
+        channels: List[SpectrumChannelInterface] = []
         for device in self._child_cards:
             channels += device.channels
         return tuple(channels)
-
-    @property
-    def acquisition_length_in_samples(self) -> int:
-        """The currently set recording length, which should be the same for all child cards. If different recording
-        lengths are set, an exception is raised. See `SpectrumCard.acquisition_length_in_samples` for more information.
-
-        Returns:
-            length_in_samples: The currently set acquisition length in samples."""
-        lengths = []
-        for d in self._child_cards:
-            lengths.append(d.acquisition_length_in_samples)
-        return _check_settings_constant_across_devices(lengths, __name__)
-
-    def set_acquisition_length_in_samples(self, length_in_samples: int) -> None:
-        """Set a new recording length for all child cards. See `SpectrumCard.set_acquisition_length_in_samples()` for
-        more information.
-
-        Args:
-            length_in_samples (int): The desired acquisition length in samples."""
-        for d in self._child_cards:
-            d.set_acquisition_length_in_samples(length_in_samples)
-
-    @property
-    def post_trigger_length_in_samples(self) -> int:
-        """The number of samples recorded after a trigger is receive. This should be consistent across all child
-        cards. If different values are found across the child cards, an exception is raised. See
-        `SpectrumCard.post_trigger_length_in_samples` for more information.
-
-        Returns:
-            length_in_samples (int): The current post trigger length in samples.
-        """
-        lengths = []
-        for d in self._child_cards:
-            lengths.append(d.post_trigger_length_in_samples)
-        return _check_settings_constant_across_devices(lengths, __name__)
-
-    def set_post_trigger_length_in_samples(self, length_in_samples: int) -> None:
-        """Set a new post trigger length for all child cards. See `SpectrumCard.set_post_trigger_length_in_samples()`
-        for more information.
-
-        Args:
-            length_in_samples (int): The desired post trigger length in samples.
-        """
-        for d in self._child_cards:
-            d.set_post_trigger_length_in_samples(length_in_samples)
-
-    @property
-    def acquisition_mode(self) -> AcquisitionMode:
-        """The acquisition mode, which should be the same for all child cards. If it's not, an exception is raised.
-        See `SpectrumCard.acquisition_mode` for more information.
-
-        Returns:
-            mode (`AcquisitionMode`): The currently enabled acquisition mode.
-        """
-        modes = []
-        for d in self._child_cards:
-            modes.append(d.acquisition_mode)
-        return AcquisitionMode(_check_settings_constant_across_devices([m.value for m in modes], __name__))
-
-    def set_acquisition_mode(self, mode: AcquisitionMode) -> None:
-        """Change the acquisition mode for all child cards. See `SpectrumCard.set_acquisition_mode()` for more
-        information.
-
-        Args:
-            mode (`AcquisitionMode`): The desired acquisition mode."""
-        for d in self._child_cards:
-            d.set_acquisition_mode(mode)
 
     @property
     def timeout_in_ms(self) -> int:
@@ -403,7 +287,7 @@ class SpectrumStarHub(SpectrumDevice):
         timeouts = []
         for d in self._child_cards:
             timeouts.append(d.timeout_in_ms)
-        return _check_settings_constant_across_devices(timeouts, __name__)
+        return check_settings_constant_across_devices(timeouts, __name__)
 
     def set_timeout_in_ms(self, timeout_ms: int) -> None:
         """Change the acquisition timeout value for all child cards.
@@ -442,7 +326,7 @@ def _are_all_values_equal(values: List[int]) -> bool:
     return len(set(values)) == 1
 
 
-def _check_settings_constant_across_devices(values: List[int], setting_name: str) -> int:
+def check_settings_constant_across_devices(values: List[int], setting_name: str) -> int:
     if _are_all_values_equal(values):
         return values[0]
     else:

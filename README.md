@@ -63,25 +63,25 @@ the issue tracker. It's likely possible to add support with minimal effort.
 Connect to local (PCIe) cards:
 
 ```python
-from spectrumdevice import SpectrumCard
+from spectrumdevice import SpectrumDigitiserCard
 
-card_0 = SpectrumCard(device_number=0)
-card_1 = SpectrumCard(device_number=1)
+card_0 = SpectrumDigitiserCard(device_number=0)
+card_1 = SpectrumDigitiserCard(device_number=1)
 ```
 Connect to networked cards (you can find a card's IP using the
 [Spectrum Control Centre](https://spectrum-instrumentation.com/en/spectrum-control-center) software):
 
 ```python
-from spectrumdevice import SpectrumCard
+from spectrumdevice import SpectrumDigitiserCard
 
-card_0 = SpectrumCard(device_number=0, ip_address="192.168.0.2")
-card_1 = SpectrumCard(device_number=1, ip_address="192.168.0.3")
+card_0 = SpectrumDigitiserCard(device_number=0, ip_address="192.168.0.2")
+card_1 = SpectrumDigitiserCard(device_number=1, ip_address="192.168.0.3")
 ```
 
 Connect to a networked StarHub (e.g. a NetBox).
 
 ```python
-from spectrumdevice import SpectrumCard, SpectrumStarHub
+from spectrumdevice import SpectrumDigitiserCard, SpectrumStarHub
 
 NUM_CARDS_IN_STAR_HUB = 2
 STAR_HUB_MASTER_CARD_INDEX = 1  # The card controlling the clock
@@ -90,7 +90,7 @@ HUB_IP_ADDRESS = "192.168.0.2"
 # Connect to each card in the hub.
 child_cards = []
 for n in range(NUM_CARDS_IN_STAR_HUB):
-  child_cards.append(SpectrumCard(device_number=n, ip_address=HUB_IP_ADDRESS))
+  child_cards.append(SpectrumDigitiserCard(device_number=n, ip_address=HUB_IP_ADDRESS))
 
 # Connect to the hub itself
 hub = SpectrumStarHub(device_number=0, child_cards=child_cards,
@@ -109,11 +109,12 @@ modules in a hardware device using the
 of the mock data source must also be set on construction.
 
 ```python
-from spectrumdevice import MockSpectrumCard, MockSpectrumStarHub
+from spectrumdevice import MockSpectrumDigitiserCard, MockSpectrumStarHub
 from spectrumdevice.settings import CardType
 
-mock_card = MockSpectrumCard(device_number=0, card_type=CardType.TYP_M2P5966_X4, mock_source_frame_rate_hz=10.0, 
-                             num_modules=2, num_channels_per_module=4)
+mock_card = MockSpectrumDigitiserCard(device_number=0, card_type=CardType.TYP_M2P5966_X4,
+                                      mock_source_frame_rate_hz=10.0,
+                                      num_modules=2, num_channels_per_module=4)
 mock_hub = MockSpectrumStarHub(device_number=0, child_cards=[mock_card], master_card_index=0)
 ```
 After construction, `MockSpectrumCard` and `MockSpectrumStarHub` can be used identically to `SpectrumCard` 
@@ -125,10 +126,10 @@ on-device registers. Some settings must be set using Enums imported from the `se
 integers. For example, to put a card in 'Standard Single' acquisition mode and set the sample rate to 10 MHz:
 
 ```python
-from spectrumdevice import SpectrumCard
+from spectrumdevice import SpectrumDigitiserCard
 from spectrumdevice.settings import AcquisitionMode
 
-card = SpectrumCard(device_number=0)
+card = SpectrumDigitiserCard(device_number=0)
 card.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
 card.set_sample_rate_in_hz(10000000)
 ```
@@ -222,8 +223,9 @@ while True:
 ```
 Each call to `get_waveforms()` will wait until the next set of waveform data is available. When ready, you'll need 
 to stop the acquisition:
+
 ```python
-card.stop_acquisition()
+card.stop()
 ```
 and execute some logic to exit the `while` loop.
 

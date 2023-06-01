@@ -5,7 +5,7 @@ It can connect to individual digitisers or
 [StarHubs](https://spectrum-instrumentation.com/en/m4i-star-hub) (e.g. the
 [NetBox](https://spectrum-instrumentation.com/en/digitizernetbox)).
 
-The main module `spectrumdevice` provides two classes `SpectrumCard` and `SpectrumStarHub` for controlling and receiving
+The main module `spectrumdevice` provides two classes `SpectrumDigitiserCard` and `SpectrumStarHub` for controlling and receiving
 data from individual digitisers and StarHubs respectively. Mock classes are also provided for testing software without
 drivers installed or hardware connected.
 
@@ -24,18 +24,16 @@ Spectrum API, to be used for configuring hardware and interpreting responses rec
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
 from .devices.measurement import Measurement
-from .devices.spectrum_device import SpectrumDevice
-from .devices.spectrum_card import SpectrumCard
-from .devices.spectrum_channel import SpectrumChannel
-from .devices.spectrum_star_hub import SpectrumStarHub
-from spectrumdevice.devices.mocks import MockSpectrumCard, MockSpectrumStarHub
+from .devices.digitiser.digitiser_card import SpectrumDigitiserCard
+from .devices.digitiser.digitiser_channel import SpectrumDigitiserChannel
+from .devices.digitiser.digitiser_star_hub import SpectrumDigitiserStarHub
+from .devices.mocks import MockSpectrumDigitiserCard, MockSpectrumStarHub
 
 __all__ = [
-    "SpectrumDevice",
-    "SpectrumCard",
-    "SpectrumStarHub",
-    "SpectrumChannel",
-    "MockSpectrumCard",
+    "SpectrumDigitiserChannel",
+    "SpectrumDigitiserCard",
+    "SpectrumDigitiserStarHub",
+    "MockSpectrumDigitiserCard",
     "MockSpectrumStarHub",
     "settings",
     "Measurement",
