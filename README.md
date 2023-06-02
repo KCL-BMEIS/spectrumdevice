@@ -1,16 +1,29 @@
 # spectrumdevice
-A high-level, object-oriented Python library for controlling Spectrum Instrumentation digitisers.
+A high-level, object-oriented Python library for controlling Spectrum Instrumentation devices.
 
-`spectrumdevice` can connect to individual digitisers or 
+`spectrumdevice` can connect to individual cards or 
 [StarHubs](https://spectrum-instrumentation.com/en/m4i-star-hub) (e.g. the
-[NetBox](https://spectrum-instrumentation.com/en/digitizernetbox)). `spectrumdevice` provides two classes 
-`SpectrumCard` and `SpectrumStarHub` for controlling and receiving data from individual digitisers and StarHubs 
-respectively.
+[NetBox](https://spectrum-instrumentation.com/en/digitizernetbox)). `spectrumdevice` provides the following classes 
+for controlling devices:
 
-`spectrumdevice` currently supports 'Standard Single' and 'Multi FIFO' acquisition modes. See the Limitations section for 
-more information.
+| Name                       | Purpose                                                 |
+|----------------------------|---------------------------------------------------------|
+| `SpectrumDigitiserCard`    | Controlling individual digitiser cards                  |
+| `SpectrumDigitiserStarHub` | Controlling digitiser cards aggregated with a StarHub   |
+| `SpectrumAWGCard`          | Controlling individual AWG cards                        |
+| `SpectrumAWGStarHub`       | Controlling AWG cards aggregated with a StarHub         |
 
-`spectrumdevice` includes mock classes for testing software without drivers installed or hardware connected.
+`spectrumdevice` also includes mock classes for testing software without drivers installed or hardware connected:
+
+| Name                           | Purpose                                             |
+|--------------------------------|-----------------------------------------------------|
+| `MockSpectrumDigitiserCard`    | Mocking individual digitiser cards                  |
+| `MockSpectrumDigitiserStarHub` | Mocking digitiser cards aggregated with a StarHub   |
+| `MockSpectrumAWGCard`          | Mocking individual AWG cards                        |
+| `MockSpectrumAWGStarHub`       | Mocking AWG cards aggregated with a StarHub         |
+
+For digitisers, `spectrumdevice` currently only supports 'Standard Single' and 'Multi FIFO' acquisition modes. See the 
+Limitations section for more information.
 
 * [Examples](https://github.com/KCL-BMEIS/spectrumdevice/tree/main/example_scripts)
 * [API reference documentation](https://kcl-bmeis.github.io/spectrumdevice/)
@@ -44,11 +57,11 @@ pip install https://github.com/KCL-BMEIS/spectrumdevice/tarball/main.
 files taken from the `spcm_examples` directory, provided with Spectrum hardware. The files in this module were written by Spectrum GMBH and are included with their permission. The files provide `spectrumdevice` with a low-level Python interface to the Spectrum driver and define global constants which are used throughout `spectrumdevice`.
 
 ## Limitations
-* Currently, `spectrumdevice` only supports Standard Single and Multi FIFO acquisition modes. See the 
+* Currently, `spectrumdevice` only supports Standard Single and Multi FIFO digitiser acquisition modes. See the 
   Spectrum documentation for more information.
-* When defining a transfer buffer - the software buffer into which samples are transferred from a hardware device - 
-  the notify-size is automatically set equal to the buffer length. This works fine for most situations. See the 
-  Spectrum documentation for more information.
+* When defining a transfer buffer - the software buffer into which samples are transferred between a hardware device - 
+  and Python - the notify-size is automatically set equal to the buffer length. This works fine for most situations. 
+  See the Spectrum documentation for more information.
 * If timestamping is enabled, timestamps are acquired using Spectrum's 'polling' mode. This seems to add around
   5 to 10 ms of latency to the acquisition.
 * Only current digitisers from the [59xx](https://spectrum-instrumentation.com/de/59xx-16-bit-digitizer-125-mss),
@@ -57,6 +70,7 @@ files taken from the `spcm_examples` directory, provided with Spectrum hardware.
 `spectrumdevice` has only been tested on 59xx devices. However, `spectrumdevice` may work fine on older devices. If 
 you've tried `spectrumdevice` on an older device, please let us know if it works and raise any issues you encounter in
 the issue tracker. It's likely possible to add support with minimal effort.
+# todo: add supported AWG devices
 
 ## Usage
 ### Connect to devices
@@ -75,13 +89,13 @@ Connect to networked cards (you can find a card's IP using the
 from spectrumdevice import SpectrumDigitiserCard
 
 card_0 = SpectrumDigitiserCard(device_number=0, ip_address="192.168.0.2")
-card_1 = SpectrumDigitiserCard(device_number=1, ip_address="192.168.0.3")
+card_1 = SpectrumDigitiserCard(device_number=0, ip_address="192.168.0.3")
 ```
 
 Connect to a networked StarHub (e.g. a NetBox).
 
 ```python
-from spectrumdevice import SpectrumDigitiserCard, SpectrumStarHub
+from spectrumdevice import SpectrumDigitiserCard, SpectrumDigitiserStarHub
 
 NUM_CARDS_IN_STAR_HUB = 2
 STAR_HUB_MASTER_CARD_INDEX = 1  # The card controlling the clock
@@ -93,37 +107,37 @@ for n in range(NUM_CARDS_IN_STAR_HUB):
   child_cards.append(SpectrumDigitiserCard(device_number=n, ip_address=HUB_IP_ADDRESS))
 
 # Connect to the hub itself
-hub = SpectrumStarHub(device_number=0, child_cards=child_cards,
-                      master_card_index=STAR_HUB_MASTER_CARD_INDEX)
+hub = SpectrumDigitiserStarHub(device_number=0, child_cards=child_cards,
+                               master_card_index=STAR_HUB_MASTER_CARD_INDEX)
 ```
 Once connected, a `SpectrumStarHub` object can be configured and used in exactly the same way as a `SpectrumCard` 
 object — commands will be sent to the child cards automatically.
 
 ### Using Mock Devices
 You can use mock devices to test your software without hardware connected or drivers installed. 
-After construction, Mock devices have the same interface as real devices. They provide random waveforms generated 
-by an internal mock data source. The number of channels and modules in a mock card must be provided on 
+After construction, Mock devices have the same interface as real devices. Mock digitisers provide random waveforms 
+generated by an internal mock data source. The number of channels and modules in a mock card must be provided on 
 construction as shown below. You can match these values to your hardware by inspecting the number of channels and 
 modules in a hardware device using the
 [Spectrum Control Centre](https://spectrum-instrumentation.com/en/spectrum-control-center) software. The frame rate 
 of the mock data source must also be set on construction.
 
 ```python
-from spectrumdevice import MockSpectrumDigitiserCard, MockSpectrumStarHub
+from spectrumdevice import MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub
 from spectrumdevice.settings import CardType
 
 mock_card = MockSpectrumDigitiserCard(device_number=0, card_type=CardType.TYP_M2P5966_X4,
                                       mock_source_frame_rate_hz=10.0,
                                       num_modules=2, num_channels_per_module=4)
-mock_hub = MockSpectrumStarHub(device_number=0, child_cards=[mock_card], master_card_index=0)
+mock_hub = MockSpectrumDigitiserStarHub(device_number=0, child_cards=[mock_card], master_card_index=0)
 ```
-After construction, `MockSpectrumCard` and `MockSpectrumStarHub` can be used identically to `SpectrumCard` 
-and `SpectrumStarHub`.
+After construction, mock devices can be used identically to real devices.
 
 ### Configuring device settings
-`SpectrumCard` and `SpectrumStarHub` provide methods for reading and writing device settings located within 
-on-device registers. Some settings must be set using Enums imported from the `settings` module. Others are set using 
-integers. For example, to put a card in 'Standard Single' acquisition mode and set the sample rate to 10 MHz:
+`SpectrumDigitiserCard` and `SpectrumDigitiserStarHub` provide methods for reading and writing device settings located 
+within on-device registers. Some settings must be set using Enums imported from the `settings` module. Others are set
+using integer values. For example, to put a card in 'Standard Single' acquisition mode and set the sample rate to 10 
+MHz:
 
 ```python
 from spectrumdevice import SpectrumDigitiserCard
@@ -141,8 +155,9 @@ print(card.sample_rate_in_hz)
 
 ### Configuring channel settings
 The channels available to a spectrum device (card or StarHub) can be accessed via the `channels` property. This 
-property contains a list of `SpectrumChannel` objects which provide methods for independently configuring each channel. 
-For example, to change the vertical range of channel 2 of a card to 1V:
+property contains a list of `SpectrumDigitiserChannel` or `SpectrumAWGChannel` objects which provide methods for 
+independently configuring each channel. 
+For example, to change the vertical range of channel 2 of a digitiser card to 1V:
 
 ```python
 card.channels[2].set_vertical_range_in_mv(1000)
@@ -157,8 +172,8 @@ You can set multiple settings at once using the `TriggerSettings` and `Acquisiti
 `configure_trigger()` and `configure_acquisition()` methods:
 
 ```python
-from spectrumdevice.settings import TriggerSettings, AcquisitionSettings, TriggerSource, ExternalTriggerMode,
-  AcquisitionMode
+from spectrumdevice.settings import TriggerSettings, AcquisitionSettings, TriggerSource, ExternalTriggerMode, \
+AcquisitionMode
 
 trigger_settings = TriggerSettings(
   trigger_sources=[TriggerSource.SPC_TMASK_EXT0],
@@ -182,7 +197,7 @@ card.configure_trigger(trigger_settings)
 card.configure_acquisition(acquisition_settings)
 ```
 
-### Acquiring waveforms (standard single mode)
+### Acquiring waveforms from a digitiser (standard single mode)
 To acquire data in standard single mode, place the device into the correct mode using `configure_acquisition()` or `
 card.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)` and then execute the acquisition:
 ```python
@@ -195,7 +210,7 @@ waveforms = measurement.waveforms  # A list of 1D numpy arrays
 timestamp = measurement.timestamp  # A datetime.datetime object
 ```
 
-### Acquiring waveforms (FIFO mode)
+### Acquiring waveforms from a digitiser (FIFO mode)
 To acquire data in FIFO mode, place the device into the correct mode using `configure_acquisition()` or `
 card.set_acquisition_mode(AcquisitionMode.SPC_REC_FIFO_MULTI)`.
 
