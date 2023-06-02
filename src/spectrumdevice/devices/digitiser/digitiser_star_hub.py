@@ -23,7 +23,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
     """Composite class of `SpectrumCards` for controlling a StarHub digitiser device, for example the Spectrum NetBox.
     StarHub digitiser devices are composites of more than one Spectrum digitiser card. Acquisition from the child cards
     of a StarHub is synchronised, aggregating the channels of all child cards. This class enables the control of a
-    StarHub abstract_device as if it were a single Spectrum card."""
+    StarHub device as if it were a single Spectrum card."""
 
     def __init__(
         self,

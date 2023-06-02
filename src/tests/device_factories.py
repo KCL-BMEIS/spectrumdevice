@@ -17,7 +17,7 @@ from tests.configuration import (
 
 
 def create_spectrum_card_for_testing() -> SpectrumDigitiserCard:
-    """Configure a real or mock abstract_device for unit testing using the glabal constant values defined in
+    """Configure a real or mock device for unit testing using the glabal constant values defined in
     tests/configuration.py"""
     if SINGLE_CARD_TEST_MODE == SpectrumTestMode.REAL_HARDWARE:
         return SpectrumDigitiserCard(device_number=TEST_DEVICE_NUMBER, ip_address=TEST_DEVICE_IP)
@@ -32,7 +32,7 @@ def create_spectrum_card_for_testing() -> SpectrumDigitiserCard:
 
 
 def create_spectrum_star_hub_for_testing() -> SpectrumDigitiserStarHub:
-    """Configure a real or mock abstract_device for unit testing using the glabal constant values defined in
+    """Configure a real or mock device for unit testing using the glabal constant values defined in
     tests/configuration.py"""
     if STAR_HUB_TEST_MODE == SpectrumTestMode.REAL_HARDWARE:
         child_cards = []

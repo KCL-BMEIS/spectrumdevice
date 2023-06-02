@@ -17,7 +17,7 @@ def star_hub_example(mock_mode: bool, num_cards: int, master_card_index: int) ->
     else:
         mock_child_cards = []
         for n in range(num_cards):
-            # Create a mock abstract_device for each card in the hub
+            # Create a mock device for each card in the hub
             mock_child_cards.append(
                 MockSpectrumDigitiserCard(
                     device_number=n,

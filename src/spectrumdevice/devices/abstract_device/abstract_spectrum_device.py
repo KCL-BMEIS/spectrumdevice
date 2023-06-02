@@ -120,7 +120,7 @@ class AbstractSpectrumDevice(SpectrumDeviceInterface, ABC):
             else:
                 raise ValueError("Spectrum integer length not recognised.")
         else:
-            raise SpectrumDeviceNotConnected("The abstract_device has been disconnected.")
+            raise SpectrumDeviceNotConnected("The device has been disconnected.")
 
     def read_spectrum_device_register(
         self,
@@ -156,7 +156,7 @@ class AbstractSpectrumDevice(SpectrumDeviceInterface, ABC):
             else:
                 raise ValueError("Spectrum integer length not recognised.")
         else:
-            raise SpectrumDeviceNotConnected("The abstract_device has been disconnected.")
+            raise SpectrumDeviceNotConnected("The device has been disconnected.")
 
     def __repr__(self) -> str:
         return str(self)

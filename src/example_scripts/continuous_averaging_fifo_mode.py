@@ -26,10 +26,10 @@ def continuous_averaging_multi_fifo_example(
 ) -> List[Measurement]:
 
     if not mock_mode:
-        # Connect to a networked abstract_device. To connect to a local (PCIe) abstract_device, do not provide an ip_address.
+        # Connect to a networked device. To connect to a local (PCIe) device, do not provide an ip_address.
         card = SpectrumDigitiserCard(device_number=device_number, ip_address=ip_address)
     else:
-        # Set up a mock abstract_device
+        # Set up a mock device
         card = MockSpectrumDigitiserCard(
             device_number=device_number,
             card_type=CardType.TYP_M2P5966_X4,

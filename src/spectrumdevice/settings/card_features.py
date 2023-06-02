@@ -1,4 +1,4 @@
-"""Provides Enums defining the possible values a abstract_device will return when queried about its features, and functions for
+"""Provides Enums defining the possible values a device will return when queried about its features, and functions for
 decoding the received values into lists of features."""
 
 # Christian Baker, King's College London
@@ -42,7 +42,7 @@ SPCM_FEAT_STARHUB_8_16_16EXTM = SPCM_FEAT_STARHUB8
 
 
 class CardFeature(Enum):
-    """Enum representing the possible features of all Spectrum devices. A list of features can be read from a abstract_device
+    """Enum representing the possible features of all Spectrum devices. A list of features can be read from a device
     using the feature_list property. See the Spectrum documentation for descriptions of each of the features."""
 
     SPCM_FEAT_MULTI = SPCM_FEAT_MULTI
@@ -66,7 +66,7 @@ class CardFeature(Enum):
 
 
 def decode_card_features(value: int) -> List[CardFeature]:
-    """Converts the integer value received by a Spectrum abstract_device when queried about its features into a list of
+    """Converts the integer value received by a Spectrum device when queried about its features into a list of
     CardFeatures."""
     possibe_values = [feature.value for feature in CardFeature]
     return [CardFeature(found_value) for found_value in decode_bitmap_using_list_of_ints(value, possibe_values)]
@@ -74,7 +74,7 @@ def decode_card_features(value: int) -> List[CardFeature]:
 
 class AdvancedCardFeature(Enum):
     """Enum representing the possible advanced features of all Spectrum devices. A list of features can be read from a
-    abstract_device using the feature_list property. See the Spectrum documentation for descriptions of each of the features.
+    device using the feature_list property. See the Spectrum documentation for descriptions of each of the features.
     """
 
     SPCM_FEAT_EXTFW_SEGSTAT = SPCM_FEAT_EXTFW_SEGSTAT
@@ -83,7 +83,7 @@ class AdvancedCardFeature(Enum):
 
 
 def decode_advanced_card_features(value: int) -> List[AdvancedCardFeature]:
-    """Converts the integer value received by a Spectrum abstract_device when queried about its advanced features into a list of
+    """Converts the integer value received by a Spectrum device when queried about its advanced features into a list of
     AdvancedCardFeatures."""
     possible_values = [feature.value for feature in AdvancedCardFeature]
     return [

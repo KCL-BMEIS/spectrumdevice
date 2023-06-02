@@ -69,7 +69,7 @@ from spectrum_gmbh.regs import (
 
 
 class CardType(Enum):
-    """An Enum representing the integer values returned by a abstract_device when its type identifier is queried by reading the
+    """An Enum representing the integer values returned by a device when its type identifier is queried by reading the
     SPC_PCITYP register. Only the supported card types are listed: 22xx, 44xx and 59xx family devices."""
 
     TYP_M4I2210_X8 = TYP_M4I2210_X8

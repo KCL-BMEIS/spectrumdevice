@@ -1,3 +1,9 @@
+"""Provides mock abstracts classes containing code common to all mock classes."""
+
+# Christian Baker, King's College London
+# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
+# Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
+
 from abc import ABC
 from threading import Event, Lock, Thread
 from typing import Dict, Optional
@@ -58,7 +64,7 @@ class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
         internally.
 
         Args:
-            spectrum_register (int): Mock Spectrum abstract_device register to set. Should be imported from regs.py, which is
+            spectrum_register (int): Mock Spectrum device register to set. Should be imported from regs.py, which is
                 part of the spectrum_gmbh package written by Spectrum.
             value (int): Value to set the register to. Should be imported from regs.py, which is
                 part of the spectrum_gmbh package written by Spectrum, or taken from one of the Enums provided by
@@ -71,7 +77,7 @@ class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
         if self.connected:
             self._param_dict[spectrum_register] = value
         else:
-            raise SpectrumDeviceNotConnected("Mock abstract_device has been disconnected.")
+            raise SpectrumDeviceNotConnected("Mock device has been disconnected.")
 
     def read_spectrum_device_register(
         self, spectrum_register: int, length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO
@@ -81,7 +87,7 @@ class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
         read.
 
         Args:
-            spectrum_register (int): Mock spectrum abstract_device register to read. Should be imported from regs.py, which is
+            spectrum_register (int): Mock spectrum device register to read. Should be imported from regs.py, which is
                 part of the spectrum_gmbh package written by Spectrum, or taken from one of the Enums provided by
                 the settings package.
             length (`SpectrumRegisterLength`): Length in bits of the register being read. Either
@@ -100,7 +106,7 @@ class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
                 self._param_dict[spectrum_register] = -1
                 return -1
         else:
-            raise SpectrumDeviceNotConnected("Mock abstract_device has been disconnected.")
+            raise SpectrumDeviceNotConnected("Mock device has been disconnected.")
 
 
 class MockAbstractSpectrumDigitiser(MockAbstractSpectrumDevice, AbstractSpectrumDigitiser, ABC):
@@ -129,7 +135,7 @@ class MockAbstractSpectrumDigitiser(MockAbstractSpectrumDevice, AbstractSpectrum
 
     def start(self) -> None:
         """Starts a mock waveform source in a separate thread. The source generates noise samples according to the
-        number of currently enabled channels and the acquisition length, and places them in the virtual on abstract_device buffer
+        number of currently enabled channels and the acquisition length, and places them in the virtual on device buffer
         (the _on_device_buffer attribute).
         """
         waveform_source = mock_waveform_source_factory(self.acquisition_mode)

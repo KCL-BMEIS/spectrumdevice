@@ -17,7 +17,7 @@ from spectrumdevice import Measurement
 
 
 class SpectrumDigitiserChannelInterface(SpectrumChannelInterface, ABC):
-    """Defines the public interface for control of the channels of Spectrum digitiser abstract_device. All properties are read-
+    """Defines the public interface for control of the channels of Spectrum digitiser device. All properties are read-
     only and must be set with their respective setter methods."""
 
     @property

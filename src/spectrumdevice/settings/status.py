@@ -1,4 +1,4 @@
-"""Provides an Enum defining the possible acquisition statuses of a Spectrum abstract_device, and Type variables annotating
+"""Provides an Enum defining the possible acquisition statuses of a Spectrum device, and Type variables annotating
 the list of statuses returned by a card, and the list of lists of statuses returned by a StarHub. Also provides a
 function for decoding the integer value received by a card when queried about its status."""
 
