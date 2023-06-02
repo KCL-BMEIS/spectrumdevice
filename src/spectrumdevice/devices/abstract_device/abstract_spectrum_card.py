@@ -4,6 +4,7 @@ Hubs, which are aggregates of multiple cards)."""
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
+
 import logging
 from abc import ABC, abstractmethod
 from functools import reduce
@@ -41,9 +42,9 @@ from spectrumdevice.exceptions import (
 from spectrumdevice.settings import (
     AdvancedCardFeature,
     AvailableIOModes,
-    CARD_STATUS_TYPE,
     CardFeature,
     CardType,
+    DEVICE_STATUS_TYPE,
     ExternalTriggerMode,
     SpectrumRegisterLength,
     TransferBuffer,
@@ -91,14 +92,14 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         self._connect(self._visa_string)
 
     @property
-    def status(self) -> CARD_STATUS_TYPE:
+    def status(self) -> DEVICE_STATUS_TYPE:
         """Read the current status of the card.
         Returns:
-            Statuses (`List[StatusCode]`): A list of `StatusCode` Enums describing the current acquisition status of the
-                card. See `StatusCode` (and the Spectrum documentation) for the list off possible acquisition
-                statuses.
+            Statuses (`List[List[StatusCode]]`): A length-1 list containing a list of `StatusCode` Enums describing the
+            current acquisition status of the card. See `StatusCode` (and the Spectrum documentation) for the list off
+            possible acquisition statuses.
         """
-        return decode_status(self.read_spectrum_device_register(SPC_M2STATUS))
+        return [decode_status(self.read_spectrum_device_register(SPC_M2STATUS))]
 
     def start_transfer(self) -> None:
         """Transfer between the on-device buffer and the `TransferBuffer`.

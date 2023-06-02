@@ -5,17 +5,16 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
 from abc import ABC, abstractmethod
-from typing import List, Optional, Sequence, Tuple, Union
+from typing import List, Optional, Sequence, Tuple
 
 from spectrumdevice.settings import (
     AdvancedCardFeature,
     AvailableIOModes,
-    CARD_STATUS_TYPE,
     CardFeature,
     CardToPCDataTransferBuffer,
     ClockMode,
     ExternalTriggerMode,
-    STAR_HUB_STATUS_TYPE,
+    DEVICE_STATUS_TYPE,
     SpectrumRegisterLength,
     TransferBuffer,
     TriggerSettings,
@@ -53,7 +52,7 @@ class SpectrumDeviceInterface(ABC):
         raise NotImplementedError()
 
     @property
-    def status(self) -> Union[CARD_STATUS_TYPE, STAR_HUB_STATUS_TYPE]:
+    def status(self) -> DEVICE_STATUS_TYPE:
         raise NotImplementedError()
 
     @abstractmethod
