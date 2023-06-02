@@ -20,10 +20,10 @@ from spectrumdevice.settings.transfer_buffer import CardToPCDataTransferBuffer
 
 
 class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitiser):
-    """Composite class of `SpectrumCards` for controlling a StarHub abstract_device, for example the Spectrum NetBox. StarHub
-    devices are composites of more than one Spectrum card. Acquisition from the child cards of a StarHub is
-    synchronised, aggregating the channels of all child cards. This class enables the control of a StarHub abstract_device as if
-    it were a single Spectrum card."""
+    """Composite class of `SpectrumCards` for controlling a StarHub digitiser device, for example the Spectrum NetBox.
+    StarHub digitiser devices are composites of more than one Spectrum digitiser card. Acquisition from the child cards
+    of a StarHub is synchronised, aggregating the channels of all child cards. This class enables the control of a
+    StarHub abstract_device as if it were a single Spectrum card."""
 
     def __init__(
         self,
@@ -34,8 +34,8 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
         """
         Args:
             device_number (int): The index of the StarHub to connect to. If only one StarHub is present, set to 0.
-            child_cards (Sequence[`SpectrumDigitiserCard`]): A list of `SpectrumCard` objects defining the child cards located
-                within the StarHub, including their IP addresses and/or abstract_device numbers.
+            child_cards (Sequence[`SpectrumDigitiserCard`]): A list of `SpectrumCard` objects defining the child cards
+                located within the StarHub, correctly constructed with their IP addresses and/or device numbers.
             master_card_index (int): The position within child_cards where the master card (the card which controls the
                 clock) is located.
         """
@@ -43,8 +43,8 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
         self._acquisition_mode = self.acquisition_mode
 
     def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
-        """Create or provide `CardToPCDataTransferBuffer` objects for receiving acquired samples from the child cards. If
-        no buffers are provided, they will be created with the correct size and a board_memory_offset_bytes of 0. See
+        """Create or provide `CardToPCDataTransferBuffer` objects for receiving acquired samples from the child cards.
+        If no buffers are provided, they will be created with the correct size and a board_memory_offset_bytes of 0. See
         `SpectrumDigitiserCard.define_transfer_buffer()` for more information
 
         Args:
@@ -60,13 +60,13 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
                 card.define_transfer_buffer()
 
     def wait_for_acquisition_to_complete(self) -> None:
-        """Wait for each card to finish its acquisition. See `SpectrumDigitiserCard.wait_for_acquisition_to_complete()` for more
-        information."""
+        """Wait for each card to finish its acquisition. See `SpectrumDigitiserCard.wait_for_acquisition_to_complete()`
+        for more information."""
         for card in self._child_cards:
             cast(SpectrumDigitiserCard, card).wait_for_acquisition_to_complete()
 
     def get_waveforms(self) -> List[NDArray[float_]]:
-        """Get a list of of the most recently transferred waveforms.
+        """Get a list of the most recently transferred waveforms.
 
         This method gets the waveforms from each child card and joins them into a new list, ordered by channel number.
         See `SpectrumDigitiserCard.get_waveforms()` for more information.
@@ -90,7 +90,8 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
     @property
     def acquisition_length_in_samples(self) -> int:
         """The currently set recording length, which should be the same for all child cards. If different recording
-        lengths are set, an exception is raised. See `SpectrumDigitiserCard.acquisition_length_in_samples` for more information.
+        lengths are set, an exception is raised. See `SpectrumDigitiserCard.acquisition_length_in_samples` for more
+        information.
 
         Returns:
             length_in_samples: The currently set acquisition length in samples."""
@@ -100,8 +101,8 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
         return check_settings_constant_across_devices(lengths, __name__)
 
     def set_acquisition_length_in_samples(self, length_in_samples: int) -> None:
-        """Set a new recording length for all child cards. See `SpectrumDigitiserCard.set_acquisition_length_in_samples()` for
-        more information.
+        """Set a new recording length for all child cards. See `SpectrumDigitiserCard.set_acquisition_length_in_samples()`
+        for more information.
 
         Args:
             length_in_samples (int): The desired acquisition length in samples."""
@@ -110,7 +111,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
 
     @property
     def post_trigger_length_in_samples(self) -> int:
-        """The number of samples recorded after a trigger is receive. This should be consistent across all child
+        """The number of samples recorded after a trigger is received. This should be consistent across all child
         cards. If different values are found across the child cards, an exception is raised. See
         `SpectrumDigitiserCard.post_trigger_length_in_samples` for more information.
 

@@ -1,4 +1,4 @@
-"""Provides a concrete class for controlling an individual Spectrum digitiser abstract_device."""
+"""Provides a concrete class for controlling an individual Spectrum digitiser card."""
 
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
@@ -209,7 +209,7 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
         self.write_to_spectrum_device_register(SPC_CARDMODE, mode.value)
 
     def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
-        """Create or provide a `CardToPCDataTransferBuffer` object for receiving acquired samples from the abstract_device.
+        """Create or provide a `CardToPCDataTransferBuffer` object for receiving acquired samples from the device.
 
         If no buffer is provided, one will be created with the correct size and a board_memory_offset_bytes of 0. A
         seperate buffer for transfering Timestamps will also be created using the Timestamper class.
@@ -229,7 +229,3 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
 
     def __str__(self) -> str:
         return f"Card {self._visa_string}"
-
-
-def _create_visa_string_from_ip(ip_address: str, instrument_number: int) -> str:
-    return f"TCPIP[0]::{ip_address}::inst{instrument_number}::INSTR"

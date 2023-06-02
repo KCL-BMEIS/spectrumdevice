@@ -17,13 +17,13 @@ from spectrum_gmbh.regs import M2CMD_CARD_WRITESETUP, SPC_M2CMD
 
 
 class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevice, ABC):
-    """Abstract base class which implements methods common to all Spectrum digitiser devices. Instances of this class
-    cannot be constructed directly. Instead, construct instances of the concrete classes `SpectrumDigitiserCard`,
-    `SpectrumStarHub`, `MockSpectrumDigitiserCard` or `MockSpectrumStarHub`, which inherit the methods defined here. Note that
+    """Abstract superclass which implements methods common to all Spectrum digitiser devices. Instances of this class
+    cannot be constructed directly. Instead, construct instances of the concrete classes (`SpectrumDigitiserCard`,
+    `SpectrumDigitiserStarHub` or their mock equivalents) which inherit the methods defined here. Note that
     the mock devices override several of the methods defined here."""
 
     def configure_acquisition(self, settings: AcquisitionSettings) -> None:
-        """Apply all the settings contained in an `AcquisitionSettings` dataclass to the abstract_device.
+        """Apply all the settings contained in an `AcquisitionSettings` dataclass to the device.
 
         Args:
             settings (`AcquisitionSettings`): An `AcquisitionSettings` dataclass containing the setting values to apply.
@@ -55,7 +55,7 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
         This method automatically carries out a standard single mode acquisition, including handling the creation
         of a `TransferBuffer` and the retrieval of the acquired waveforms. After being called, it will wait until a
         trigger event is received before carrying out the acquisition and then transferring and returning the acquired
-        waveforms. The abstract_device must be configured in SPC_REC_STD_SINGLE acquisition mode.
+        waveforms. The device must be configured in SPC_REC_STD_SINGLE acquisition mode.
 
         Returns:
             measurement (Measurement): A Measurement object. The `.waveforms` attribute of `measurement` will be a list
@@ -75,7 +75,7 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
         self.start_transfer()
         self.wait_for_transfer_to_complete()
         waveforms = self.get_waveforms()
-        self.stop()  # Only strictly required for Mock devices. Should have not effect on hardware.
+        self.stop()  # Only strictly required for Mock devices. Should not affect hardware.
         return Measurement(waveforms=waveforms, timestamp=self.get_timestamp())
 
     def execute_finite_fifo_acquisition(self, num_measurements: int) -> List[Measurement]:
@@ -86,7 +86,7 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
         returning the acquired waveforms. After being called, it will wait for the requested number of triggers to be
         received, generating the correct number of measurements. It retrieves each measurement's waveforms from the
         `TransferBuffer` as they arrive. Once the requested number of measurements have been received, the acquisition
-        is terminated and the waveforms are returned. The abstract_device must be configured in SPC_REC_FIFO_MULTI or
+        is terminated and the waveforms are returned. The device must be configured in SPC_REC_FIFO_MULTI or
         SPC_REC_FIFO_AVERAGE acquisition mode.
 
         Args:
@@ -113,7 +113,7 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
         creation of a `TransferBuffer` and streaming the acquired waveforms to the PC. It will return almost
         instantaneously. The acquired waveforms must then be read out of the transfer buffer in a loop using the
         `get_waveforms()` method. Waveforms must be read at least as fast as they are being acquired.
-        The FIFO acquisition and streaming will continue until `stop_acquisition()` is called. The abstract_device
+        The FIFO acquisition and streaming will continue until `stop_acquisition()` is called. The device
         must be configured in SPC_REC_FIFO_MULTI or SPC_REC_FIFO_AVERAGE acquisition mode."""
         if self._acquisition_mode not in (AcquisitionMode.SPC_REC_FIFO_MULTI, AcquisitionMode.SPC_REC_FIFO_AVERAGE):
             raise SpectrumWrongAcquisitionMode(

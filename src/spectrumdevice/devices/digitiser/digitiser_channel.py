@@ -7,23 +7,24 @@
 from numpy import ndarray
 
 from spectrum_gmbh.regs import SPC_MIINST_MAXADCVALUE
-from spectrumdevice.devices.abstract_device import AbstractSpectrumCard
+from spectrumdevice.devices.abstract_device import AbstractSpectrumCard, AbstractSpectrumChannel
 from spectrumdevice.devices.digitiser.digitiser_interface import (
     SpectrumDigitiserChannelInterface,
 )
-from spectrumdevice.settings.channel import SpectrumChannelName, VERTICAL_OFFSET_COMMANDS, VERTICAL_RANGE_COMMANDS
+from spectrumdevice.settings.channel import VERTICAL_OFFSET_COMMANDS, VERTICAL_RANGE_COMMANDS
 
 
-class SpectrumDigitiserChannel(SpectrumDigitiserChannelInterface):
+class SpectrumDigitiserChannel(AbstractSpectrumChannel, SpectrumDigitiserChannelInterface):
     """Class for controlling an individual channel of a spectrum digitiser. Channels are constructed automatically when
-    a AbstractSpectrumDigitiser is instantiated, and accessed via the `AbstractSpectrumDigitiser.channels` property."""
+    a `SpectrumDigitiserCard` or `SpectrumDigitiserStarHub` is instantiated, and can then be accessed via the
+    `.channels` property."""
 
     def __init__(self, channel_number: int, parent_device: AbstractSpectrumCard):
-        self._name = SpectrumChannelName[f"CHANNEL{channel_number}"]
-        self._parent_device = parent_device
-        self._enabled = True
+
+        AbstractSpectrumChannel.__init__(self, channel_number, parent_device)
 
         self._full_scale_value = self._parent_device.read_spectrum_device_register(SPC_MIINST_MAXADCVALUE)
+        # used frequently so store locally instead of reading from device each time:
         self._vertical_range_mv = self.vertical_range_in_mv
         self._vertical_offset_in_percent = self.vertical_offset_in_percent
 
@@ -32,18 +33,6 @@ class SpectrumDigitiserChannel(SpectrumDigitiserChannelInterface):
         return 1e-3 * (
             float(self._vertical_range_mv) * raw_waveform / float(self._full_scale_value) + vertical_offset_mv
         )
-
-    @property
-    def name(self) -> SpectrumChannelName:
-        """The identifier assigned by the spectrum driver, formatted as an Enum by the settings package.
-
-        Returns:
-            name (`SpectrumChannelName`): The name of the channel, as assigned by the driver."""
-        return self._name
-
-    @property
-    def _number(self) -> int:
-        return int(self.name.name.split("CHANNEL")[-1])
 
     @property
     def vertical_range_in_mv(self) -> int:
@@ -87,15 +76,3 @@ class SpectrumDigitiserChannel(SpectrumDigitiserChannelInterface):
         """
         self._parent_device.write_to_spectrum_device_register(VERTICAL_OFFSET_COMMANDS[self._number], offset)
         self._vertical_offset_in_percent = offset
-
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, SpectrumDigitiserChannel):
-            return (self.name == other.name) and (self._parent_device == other._parent_device)
-        else:
-            raise NotImplementedError()
-
-    def __str__(self) -> str:
-        return f"{self._name.name} of {self._parent_device}"
-
-    def __repr__(self) -> str:
-        return str(self)
