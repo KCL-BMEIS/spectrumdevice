@@ -1,4 +1,6 @@
 """Defines exceptions raised by spectrumdevice device classes."""
+from spectrumdevice.settings.card_dependent_properties import CARD_TYPE_DESCRIPTIONS, CardType
+
 
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
@@ -77,4 +79,19 @@ class SpectrumNoTimestampsAvailableError(IOError):
 
 
 class SpectrumTimestampsPollingTimeout(IOError):
+    pass
+
+
+class SpectrumWrongCardType(IOError):
+    def __init__(self, detected_card_type: CardType) -> None:
+        super().__init__(
+            f"The connected card is a(n) {detected_card_type.name} ({CARD_TYPE_DESCRIPTIONS[detected_card_type]})."
+        )
+
+
+class SpectrumCardIsNotADigitiser(SpectrumWrongCardType):
+    pass
+
+
+class SpectrumCardIsNotAnAWG(SpectrumWrongCardType):
     pass

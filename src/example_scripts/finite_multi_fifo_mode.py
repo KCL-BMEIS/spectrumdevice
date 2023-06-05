@@ -6,7 +6,7 @@ from spectrumdevice import MockSpectrumDigitiserCard, SpectrumDigitiserCard
 from spectrumdevice.measurement import Measurement
 from spectrumdevice.settings import (
     AcquisitionMode,
-    CardType,
+    ModelNumber,
     TriggerSource,
     ExternalTriggerMode,
     TriggerSettings,
@@ -29,7 +29,7 @@ def finite_multi_fifo_example(
         # Set up a mock device
         card = MockSpectrumDigitiserCard(
             device_number=device_number,
-            card_type=CardType.TYP_M2P5966_X4,
+            model=ModelNumber.TYP_M2P5966_X4,
             mock_source_frame_rate_hz=10.0,
             num_modules=2,
             num_channels_per_module=4,

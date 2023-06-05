@@ -124,9 +124,9 @@ of the mock data source must also be set on construction.
 
 ```python
 from spectrumdevice import MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub
-from spectrumdevice.settings import CardType
+from spectrumdevice.settings import ModelNumber
 
-mock_card = MockSpectrumDigitiserCard(device_number=0, card_type=CardType.TYP_M2P5966_X4,
+mock_card = MockSpectrumDigitiserCard(device_number=0, model=ModelNumber.TYP_M2P5966_X4,
                                       mock_source_frame_rate_hz=10.0,
                                       num_modules=2, num_channels_per_module=4)
 mock_hub = MockSpectrumDigitiserStarHub(device_number=0, child_cards=[mock_card], master_card_index=0)

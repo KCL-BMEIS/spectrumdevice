@@ -11,6 +11,8 @@ from spectrumdevice.devices.abstract_device import AbstractSpectrumCard, Abstrac
 from spectrumdevice.devices.digitiser.digitiser_interface import (
     SpectrumDigitiserChannelInterface,
 )
+from spectrumdevice.exceptions import SpectrumCardIsNotADigitiser, SpectrumWrongCardType
+from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.channel import VERTICAL_OFFSET_COMMANDS, VERTICAL_RANGE_COMMANDS
 
 
@@ -21,8 +23,9 @@ class SpectrumDigitiserChannel(AbstractSpectrumChannel, SpectrumDigitiserChannel
 
     def __init__(self, channel_number: int, parent_device: AbstractSpectrumCard):
 
+        if parent_device.type != CardType.SPCM_TYPE_AI:
+            raise SpectrumCardIsNotADigitiser(parent_device.type)
         AbstractSpectrumChannel.__init__(self, channel_number, parent_device)
-
         self._full_scale_value = self._parent_device.read_spectrum_device_register(SPC_MIINST_MAXADCVALUE)
         # used frequently so store locally instead of reading from device each time:
         self._vertical_range_mv = self.vertical_range_in_mv

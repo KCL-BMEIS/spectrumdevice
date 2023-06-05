@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import List, Optional
 
-from spectrumdevice.settings.card_dependent_properties import CardType
+from spectrumdevice.settings.card_dependent_properties import ModelNumber
 from spectrumdevice.settings.card_features import CardFeature, AdvancedCardFeature
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
 from spectrumdevice.settings.io_lines import IOLineMode, AvailableIOModes
@@ -35,7 +35,7 @@ __all__ = [
     "DEVICE_STATUS_TYPE",
     "StatusCode",
     "SpectrumRegisterLength",
-    "CardType",
+    "ModelNumber",
 ]
 
 

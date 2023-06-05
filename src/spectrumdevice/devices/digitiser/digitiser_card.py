@@ -29,10 +29,10 @@ from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitis
 from spectrumdevice.devices.digitiser.digitiser_channel import SpectrumDigitiserChannel
 from spectrumdevice.devices.spectrum_timestamper import Timestamper
 from spectrumdevice.exceptions import (
-    SpectrumNoTransferBufferDefined,
+    SpectrumCardIsNotADigitiser, SpectrumNoTransferBufferDefined,
 )
 from spectrumdevice.settings import CardToPCDataTransferBuffer
-from spectrumdevice.settings.card_dependent_properties import get_memsize_step_size
+from spectrumdevice.settings.card_dependent_properties import CardType, get_memsize_step_size
 from spectrumdevice.settings.device_modes import AcquisitionMode
 from spectrumdevice.settings.transfer_buffer import set_transfer_buffer
 
@@ -50,6 +50,8 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
 
         """
         AbstractSpectrumCard.__init__(self, device_number, ip_address)
+        if self.type != CardType.SPCM_TYPE_AI:
+            raise SpectrumCardIsNotADigitiser(self.type)
         self._acquisition_mode = self.acquisition_mode
         self._timestamper: Optional[Timestamper] = None
 
@@ -65,12 +67,12 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
     def wait_for_acquisition_to_complete(self) -> None:
         """Blocks until the current acquisition has finished, or the timeout is reached.
 
-        In Standard Single mode (SPC_REC_STD_SINGLE), this should be called after `start_acquisition()`. Once the call
+        In Standard Single mode (SPC_REC_STD_SINGLE), this should be called after `start()`. Once the call
             to `wait_for_acquisition_to_complete()` returns, the newly acquired samples are in the on_device buffer and
             ready for transfer to the `TransferBuffer` using `start_transfer()`.
 
         In FIFO mode (SPC_REC_FIFO_MULTI), the card will continue to acquire samples until
-            `stop_acquisition()` is called, so `wait_for_acquisition_to_complete()` should not be used.
+            `stop()` is called, so `wait_for_acquisition_to_complete()` should not be used.
 
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_WAITREADY)
@@ -212,7 +214,7 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
         """Create or provide a `CardToPCDataTransferBuffer` object for receiving acquired samples from the device.
 
         If no buffer is provided, one will be created with the correct size and a board_memory_offset_bytes of 0. A
-        seperate buffer for transfering Timestamps will also be created using the Timestamper class.
+        separate buffer for transferring Timestamps will also be created using the Timestamper class.
 
         Args:
             buffer (Optional[List[`CardToPCDataTransferBuffer`]]): A length-1 list containing a pre-constructed

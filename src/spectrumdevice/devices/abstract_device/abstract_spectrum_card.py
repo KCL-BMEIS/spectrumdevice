@@ -21,7 +21,7 @@ from spectrum_gmbh.regs import (
     SPCM_X3_AVAILMODES,
     SPC_CHENABLE,
     SPC_CLOCKMODE,
-    SPC_M2CMD,
+    SPC_FNCTYPE, SPC_M2CMD,
     SPC_M2STATUS,
     SPC_PCIEXTFEATURES,
     SPC_PCIFEATURES,
@@ -43,13 +43,14 @@ from spectrumdevice.settings import (
     AdvancedCardFeature,
     AvailableIOModes,
     CardFeature,
-    CardType,
+    ModelNumber,
     DEVICE_STATUS_TYPE,
     ExternalTriggerMode,
     SpectrumRegisterLength,
     TransferBuffer,
     TriggerSource,
 )
+from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.card_features import decode_advanced_card_features, decode_card_features
 from spectrumdevice.settings.device_modes import ClockMode
 from spectrumdevice.settings.io_lines import decode_available_io_modes
@@ -80,7 +81,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         else:
             self._visa_string = f"/dev/spcm{device_number}"
         self._connect(self._visa_string)
-        self._card_type = CardType(self.read_spectrum_device_register(SPC_PCITYP))
+        self._card_type = ModelNumber(self.read_spectrum_device_register(SPC_PCITYP))
         self._trigger_sources: List[TriggerSource] = []
         self._channels = self._init_channels()
         self._enabled_channels: List[int] = [0]
@@ -447,7 +448,11 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         self.write_to_spectrum_device_register(SPC_SAMPLERATE, rate, SpectrumRegisterLength.SIXTY_FOUR)
 
     def __str__(self) -> str:
-        return f"Card {self._visa_string}"
+        return f"Card {self._visa_string} (model {self.model_number.name})."
+
+    @property
+    def type(self) -> CardType:
+        return CardType(self.read_spectrum_device_register(SPC_FNCTYPE))
 
 
 def _create_visa_string_from_ip(ip_address: str, instrument_number: int) -> str:
