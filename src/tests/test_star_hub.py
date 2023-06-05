@@ -1,8 +1,10 @@
+from typing import cast
+
 import pytest
 from numpy import array
 
 from spectrum_gmbh.regs import SPC_CHENABLE
-from spectrumdevice import SpectrumDigitiserChannel, SpectrumDigitiserStarHub
+from spectrumdevice import AbstractSpectrumCard, SpectrumDigitiserChannel, SpectrumDigitiserStarHub
 from spectrumdevice.exceptions import SpectrumInvalidNumberOfEnabledChannels
 from spectrumdevice.settings.channel import SpectrumChannelName
 from spectrumdevice.settings.transfer_buffer import CardToPCDataTransferBuffer
@@ -51,7 +53,7 @@ class StarHubTest(SingleCardTest):
         expected_channels = []
         for n in range(NUM_CARDS_IN_STAR_HUB):
             expected_channels += [
-                SpectrumDigitiserChannel(i, self._device._child_cards[n])
+                SpectrumDigitiserChannel(i, cast(AbstractSpectrumCard, self._device._child_cards[n]))
                 for i in range(self._expected_num_channels_each_card)
             ]
         expected_channels_tuple = tuple(expected_channels)
