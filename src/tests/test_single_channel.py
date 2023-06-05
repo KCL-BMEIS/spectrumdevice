@@ -1,13 +1,13 @@
 from unittest import TestCase
 
-from spectrumdevice.devices.spectrum_channel import SpectrumChannel
+from spectrumdevice import SpectrumDigitiserChannel
 from tests.device_factories import create_spectrum_card_for_testing
 
 
 class SingleChannelTest(TestCase):
     def setUp(self) -> None:
         self._device = create_spectrum_card_for_testing()
-        self._channel = SpectrumChannel(0, self._device)
+        self._channel = SpectrumDigitiserChannel(0, self._device)
 
     def tearDown(self) -> None:
         self._channel._parent_device.disconnect()

@@ -10,7 +10,7 @@ from example_scripts.continuous_averaging_fifo_mode import continuous_averaging_
 from example_scripts.continuous_multi_fifo_mode import continuous_multi_fifo_example
 from example_scripts.finite_multi_fifo_mode import finite_multi_fifo_example
 from example_scripts.standard_single_mode import standard_single_mode_example
-from spectrumdevice.devices.measurement import Measurement
+from spectrumdevice.measurement import Measurement
 from spectrumdevice.exceptions import SpectrumDriversNotFound
 from tests.configuration import (
     INTEGRATION_TEST_TRIGGER_SOURCE,

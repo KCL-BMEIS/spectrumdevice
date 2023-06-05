@@ -28,7 +28,7 @@ from spectrum_gmbh.regs import (
 
 
 class StatusCode(Enum):
-    """An Enum representing the possible status codes that can be returned by a SpectrumCard. See the Spectrum
+    """An Enum representing the possible status codes that can be returned by a SpectrumDigitiserCard. See the Spectrum
     documentation for a description of each status."""
 
     M2STAT_NONE = M2STAT_NONE
@@ -47,14 +47,15 @@ class StatusCode(Enum):
 
 
 CARD_STATUS_TYPE = List[StatusCode]
-"""A list of StatusCodes that is returned when the status of an individual card is queried."""
+"""A list of StatusCodes that is returned when decode_status() decodes the status of an individual card."""
 
-STAR_HUB_STATUS_TYPE = List[CARD_STATUS_TYPE]
-"""A list of CARD_STATUS_TYPE that is returned when the status of a StarHub is queried."""
+DEVICE_STATUS_TYPE = List[CARD_STATUS_TYPE]
+"""A list of CARD_STATUS_TYPE that is returned when the status of a device is queried (because the device might be a
+hub and therefore contain multiple cards)."""
 
 
 def decode_status(code: int) -> CARD_STATUS_TYPE:
-    """Converts the integer value received by a card when quereied about its status to a list of StatusCodes."""
+    """Converts the integer value received by a card when queried about its status to a list of StatusCodes."""
     possible_codes = [code.value for code in StatusCode]
     return CARD_STATUS_TYPE(
         [StatusCode(found_code) for found_code in decode_bitmap_using_list_of_ints(code, possible_codes)]

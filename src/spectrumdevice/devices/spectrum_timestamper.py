@@ -1,3 +1,9 @@
+"""Provides a class for controlling the timestamping functionality of a Spectrum device."""
+
+# Christian Baker, King's College London
+# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
+# Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
+
 import struct
 from abc import ABC
 from copy import copy
@@ -14,7 +20,7 @@ from spectrum_gmbh.regs import (
     SPC_TS_AVAIL_USER_POS,
     M2CMD_CARD_WRITESETUP,
 )
-from spectrumdevice.devices.spectrum_interface import SpectrumDeviceInterface
+from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserInterface
 from spectrumdevice.exceptions import (
     SpectrumTimestampsPollingTimeout,
 )
@@ -31,7 +37,7 @@ REF_TIME_PRECISION_IN_SEC = 10e-3
 class Timestamper(ABC):
     def __init__(
         self,
-        parent_device: SpectrumDeviceInterface,
+        parent_device: SpectrumDigitiserInterface,
         parent_device_handle: DEVICE_HANDLE_TYPE,
     ):
         self._parent_device = parent_device

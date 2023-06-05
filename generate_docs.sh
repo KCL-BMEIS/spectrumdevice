@@ -1,5 +1,5 @@
 echo 'Generating documentation with pdoc...'
-pdoc -t . --docformat google -o ./docs spectrumdevice
+pdoc -t . --docformat google -o ./docs src/spectrumdevice
 sed -i 's/index.html/contents.html/g' docs/spectrumdevice.html
 sed -i 's/index.html/contents.html/g' docs/spectrumdevice/settings.html
 mv docs/index.html docs/contents.html
