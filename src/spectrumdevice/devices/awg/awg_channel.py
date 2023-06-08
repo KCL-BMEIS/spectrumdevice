@@ -9,7 +9,9 @@ from spectrumdevice.settings.channel import (
     OUTPUT_CHANNEL_ON_OFF_COMMANDS,
     OUTPUT_DC_OFFSET_COMMANDS,
     OUTPUT_FILTER_COMMANDS,
-    OUTPUT_STOP_LEVEL_CUSTOM_VALUE_COMMANDS, OUTPUT_STOP_LEVEL_MODE_COMMANDS, OutputChannelFilter,
+    OUTPUT_STOP_LEVEL_CUSTOM_VALUE_COMMANDS,
+    OUTPUT_STOP_LEVEL_MODE_COMMANDS,
+    OutputChannelFilter,
     OutputChannelStopLevelMode,
 )
 
@@ -41,11 +43,11 @@ class AWGChannel(AbstractSpectrumChannel, SpectrumAWGChannelInterface):
         """
         return self._parent_device.read_spectrum_device_register(OUTPUT_DC_OFFSET_COMMANDS[self._number])
 
-    def set_dc_offset_in_mv(self, dc_offset: int):
-        if dc_offset > OUTPUT_AMPLITUDE_LIMITS_IN_MV[self._parent_device.type]:
+    def set_dc_offset_in_mv(self, dc_offset: int) -> None:
+        if dc_offset > OUTPUT_AMPLITUDE_LIMITS_IN_MV[self._parent_device.model_number]:
             raise ValueError(
-                f"Max allowed signal DC offset for card {self._parent_device.type} is "
-                f"{OUTPUT_AMPLITUDE_LIMITS_IN_MV[self._parent_device.type]} mV, "
+                f"Max allowed signal DC offset for card {self._parent_device.model_number} is "
+                f"{OUTPUT_AMPLITUDE_LIMITS_IN_MV[self._parent_device.model_number]} mV, "
                 f"so {dc_offset} mV is too high."
             )
         self._parent_device.write_to_spectrum_device_register(OUTPUT_DC_OFFSET_COMMANDS[self._number], dc_offset)
@@ -59,11 +61,11 @@ class AWGChannel(AbstractSpectrumChannel, SpectrumAWGChannelInterface):
         """
         return self._parent_device.read_spectrum_device_register(OUTPUT_AMPLITUDE_COMMANDS[self._number])
 
-    def set_signal_amplitude_in_mv(self, amplitude: int):
-        if amplitude > OUTPUT_AMPLITUDE_LIMITS_IN_MV[self._parent_device.type]:
+    def set_signal_amplitude_in_mv(self, amplitude: int) -> None:
+        if amplitude > OUTPUT_AMPLITUDE_LIMITS_IN_MV[self._parent_device.model_number]:
             raise ValueError(
-                f"Max allowed signal amplitude for card {self._parent_device.type} is "
-                f"{OUTPUT_AMPLITUDE_LIMITS_IN_MV[self._parent_device.type]} mV, "
+                f"Max allowed signal amplitude for card {self._parent_device.model_number} is "
+                f"{OUTPUT_AMPLITUDE_LIMITS_IN_MV[self._parent_device.model_number]} mV, "
                 f"so {amplitude} mV is too high."
             )
         self._parent_device.write_to_spectrum_device_register(OUTPUT_AMPLITUDE_COMMANDS[self._number], amplitude)
@@ -84,7 +86,7 @@ class AWGChannel(AbstractSpectrumChannel, SpectrumAWGChannelInterface):
 
     @property
     def stop_level_mode(self) -> OutputChannelStopLevelMode:
-        """ Sets the behavior of the channel when the output is stopped or playback finished."""
+        """Sets the behavior of the channel when the output is stopped or playback finished."""
         return OutputChannelStopLevelMode(
             self._parent_device.read_spectrum_device_register(OUTPUT_STOP_LEVEL_MODE_COMMANDS[self._number])
         )
@@ -94,11 +96,11 @@ class AWGChannel(AbstractSpectrumChannel, SpectrumAWGChannelInterface):
 
     @property
     def stop_level_custom_value(self) -> int16:
-        """ Sets the level to which the output will be set when the output is stopped or playback finished and
+        """Sets the level to which the output will be set when the output is stopped or playback finished and
         stop_level_mode is set to `OutputChannelStopLevelMode.SPCM_STOPLVL_CUSTOM`."""
         return int16(
             self._parent_device.read_spectrum_device_register(OUTPUT_STOP_LEVEL_CUSTOM_VALUE_COMMANDS[self._number])
         )
 
     def set_stop_level_custom_value(self, value: int16) -> None:
-        self._parent_device.write_to_spectrum_device_register(OUTPUT_STOP_LEVEL_MODE_COMMANDS[self._number], value)
+        self._parent_device.write_to_spectrum_device_register(OUTPUT_STOP_LEVEL_MODE_COMMANDS[self._number], int(value))

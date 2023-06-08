@@ -4,19 +4,19 @@ from spectrum_gmbh.regs import SPC_DIFF0, SPC_DIFF2, SPC_DIFF4, SPC_DIFF6, SPC_D
 
 
 class ChannelPairingMode:
-    SINGLE: 0
+    SINGLE = 0
     """No channel pairing"""
-    DOUBLE: 1
+    DOUBLE = 1
     """Odd-numbered channel's output is identical to even-numbered channel's output. """
-    DIFFERENTIAL: 2
+    DIFFERENTIAL = 2
     """Odd-numbered channel's output is inverse of even-numbered channel's output. """
 
 
 class ChannelPair(Enum):
-    CHANNEL_0_AND_1: 0
-    CHANNEL_2_AND_3: 2
-    CHANNEL_4_AND_5: 4
-    CHANNEL_6_AND_7: 6
+    CHANNEL_0_AND_1 = 0
+    CHANNEL_2_AND_3 = 2
+    CHANNEL_4_AND_5 = 4
+    CHANNEL_6_AND_7 = 6
 
 
 DIFFERENTIAL_CHANNEL_PAIR_COMMANDS = {

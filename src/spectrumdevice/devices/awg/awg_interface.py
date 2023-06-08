@@ -4,6 +4,7 @@ from numpy import int16
 
 from spectrumdevice.devices.abstract_device import SpectrumChannelInterface, SpectrumDeviceInterface
 from spectrumdevice.settings.channel import OutputChannelFilter, OutputChannelStopLevelMode
+from spectrumdevice.settings.device_modes import GenerationMode
 from spectrumdevice.settings.output_channel_pairing import ChannelPair, ChannelPairingMode
 
 
@@ -28,7 +29,7 @@ class SpectrumAWGChannelInterface(SpectrumChannelInterface, ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def set_dc_offset_in_mv(self, amplitude: int):
+    def set_dc_offset_in_mv(self, amplitude: int) -> None:
         raise NotImplementedError()
 
     @property
@@ -38,7 +39,7 @@ class SpectrumAWGChannelInterface(SpectrumChannelInterface, ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def set_signal_amplitude_in_mv(self, amplitude: int):
+    def set_signal_amplitude_in_mv(self, amplitude: int) -> None:
         raise NotImplementedError()
 
     @property
@@ -74,6 +75,15 @@ class SpectrumAWGInterface(SpectrumDeviceInterface, ABC):
     (e.g. the NetBox) or individual AWG cards. All properties are read-only and must be set with their respective
     setter methods."""
 
+    @property
     @abstractmethod
-    def configure_channel_pairing(self, channel_pair: ChannelPair, mode: ChannelPairingMode):
+    def generation_mode(self) -> GenerationMode:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_generation_mode(self, mode: GenerationMode) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def configure_channel_pairing(self, channel_pair: ChannelPair, mode: ChannelPairingMode) -> None:
         raise NotImplementedError()

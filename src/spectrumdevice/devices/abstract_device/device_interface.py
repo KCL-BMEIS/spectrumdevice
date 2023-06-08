@@ -15,13 +15,11 @@ from spectrumdevice.settings import (
     ClockMode,
     ExternalTriggerMode,
     DEVICE_STATUS_TYPE,
-    ModelNumber,
     SpectrumRegisterLength,
     TransferBuffer,
     TriggerSettings,
     TriggerSource,
 )
-from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.channel import SpectrumChannelName
 
 
@@ -200,9 +198,4 @@ class SpectrumDeviceInterface(ABC):
 
     @abstractmethod
     def set_timeout_in_ms(self, timeout_in_ms: int) -> None:
-        raise NotImplementedError()
-
-    @property
-    @abstractmethod
-    def model_number(self) -> ModelNumber:
         raise NotImplementedError()

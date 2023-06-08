@@ -11,7 +11,7 @@ from spectrumdevice.devices.abstract_device import AbstractSpectrumCard, Abstrac
 from spectrumdevice.devices.digitiser.digitiser_interface import (
     SpectrumDigitiserChannelInterface,
 )
-from spectrumdevice.exceptions import SpectrumCardIsNotADigitiser, SpectrumWrongCardType
+from spectrumdevice.exceptions import SpectrumCardIsNotADigitiser
 from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.channel import VERTICAL_OFFSET_COMMANDS, VERTICAL_RANGE_COMMANDS
 

@@ -8,7 +8,12 @@ accessing the commands used to set vertical range and offset of each channel of 
 from enum import Enum
 
 from spectrum_gmbh.regs import (
-    SPCM_STOPLVL_CUSTOM, SPCM_STOPLVL_HIGH, SPCM_STOPLVL_HOLDLAST, SPCM_STOPLVL_LOW, SPCM_STOPLVL_ZERO, SPC_AMP0,
+    SPCM_STOPLVL_CUSTOM,
+    SPCM_STOPLVL_HIGH,
+    SPCM_STOPLVL_HOLDLAST,
+    SPCM_STOPLVL_LOW,
+    SPCM_STOPLVL_ZERO,
+    SPC_AMP0,
     SPC_AMP1,
     SPC_AMP2,
     SPC_AMP3,
@@ -24,12 +29,22 @@ from spectrum_gmbh.regs import (
     SPC_AMP13,
     SPC_AMP14,
     SPC_AMP15,
-    SPC_CH0_CUSTOM_STOP, SPC_CH0_STOPLEVEL, SPC_CH1_CUSTOM_STOP, SPC_CH1_STOPLEVEL, SPC_CH2_CUSTOM_STOP,
+    SPC_CH0_CUSTOM_STOP,
+    SPC_CH0_STOPLEVEL,
+    SPC_CH1_CUSTOM_STOP,
+    SPC_CH1_STOPLEVEL,
+    SPC_CH2_CUSTOM_STOP,
     SPC_CH2_STOPLEVEL,
-    SPC_CH3_CUSTOM_STOP, SPC_CH3_STOPLEVEL, SPC_CH4_CUSTOM_STOP, SPC_CH4_STOPLEVEL,
-    SPC_CH5_CUSTOM_STOP, SPC_CH5_STOPLEVEL,
-    SPC_CH6_CUSTOM_STOP, SPC_CH6_STOPLEVEL,
-    SPC_CH7_CUSTOM_STOP, SPC_CH7_STOPLEVEL,
+    SPC_CH3_CUSTOM_STOP,
+    SPC_CH3_STOPLEVEL,
+    SPC_CH4_CUSTOM_STOP,
+    SPC_CH4_STOPLEVEL,
+    SPC_CH5_CUSTOM_STOP,
+    SPC_CH5_STOPLEVEL,
+    SPC_CH6_CUSTOM_STOP,
+    SPC_CH6_STOPLEVEL,
+    SPC_CH7_CUSTOM_STOP,
+    SPC_CH7_STOPLEVEL,
     SPC_ENABLEOUT0,
     SPC_ENABLEOUT1,
     SPC_ENABLEOUT2,
@@ -143,10 +158,10 @@ OUTPUT_FILTER_COMMANDS = (
 
 
 class OutputChannelFilter(Enum):
-    LOW_PASS_70_MHZ: 0
-    LOW_PASS_20_MHZ: 1
-    LOW_PASS_5_MHZ: 2
-    LOW_PASS_1_MHZ: 3
+    LOW_PASS_70_MHZ = 0
+    LOW_PASS_20_MHZ = 1
+    LOW_PASS_5_MHZ = 2
+    LOW_PASS_1_MHZ = 3
 
 
 OUTPUT_STOP_LEVEL_MODE_COMMANDS = (
@@ -173,16 +188,17 @@ OUTPUT_STOP_LEVEL_CUSTOM_VALUE_COMMANDS = (
 
 
 class OutputChannelStopLevelMode(Enum):
-    """ Behavior of output channel when output is stopped or playback completes."""
-    SPCM_STOPLVL_ZERO: SPCM_STOPLVL_ZERO
+    """Behavior of output channel when output is stopped or playback completes."""
+
+    SPCM_STOPLVL_ZERO = SPCM_STOPLVL_ZERO
     """ Output level will go to zero."""
-    SPCM_STOPLVL_LOW: SPCM_STOPLVL_LOW
+    SPCM_STOPLVL_LOW = SPCM_STOPLVL_LOW
     """ Output level will go to minimum possible negative value."""
-    SPCM_STOPLVL_HIGH: SPCM_STOPLVL_HIGH
+    SPCM_STOPLVL_HIGH = SPCM_STOPLVL_HIGH
     """ Output level will go to maximum possible positive value."""
-    SPCM_STOPLVL_HOLDLAST: SPCM_STOPLVL_HOLDLAST
+    SPCM_STOPLVL_HOLDLAST = SPCM_STOPLVL_HOLDLAST
     """ Output level will stay at the level of the last played sample."""
-    SPCM_STOPLVL_CUSTOM: SPCM_STOPLVL_CUSTOM
+    SPCM_STOPLVL_CUSTOM = SPCM_STOPLVL_CUSTOM
     """ Output level will go to the value defined using AWGChannel.set_stop_level_custom_value()"""
 
 

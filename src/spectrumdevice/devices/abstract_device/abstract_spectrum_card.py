@@ -82,12 +82,16 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         else:
             self._visa_string = f"/dev/spcm{device_number}"
         self._connect(self._visa_string)
-        self._card_type = ModelNumber(self.read_spectrum_device_register(SPC_PCITYP))
+        self._model_number = ModelNumber(self.read_spectrum_device_register(SPC_PCITYP))
         self._trigger_sources: List[TriggerSource] = []
         self._channels = self._init_channels()
         self._enabled_channels: List[int] = [0]
         self._transfer_buffer: Optional[TransferBuffer] = None
         self.apply_channel_enabling()
+
+    @property
+    def model_number(self) -> ModelNumber:
+        return self._model_number
 
     def reconnect(self) -> None:
         """Reconnect to the card after disconnect() has been called."""

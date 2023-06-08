@@ -167,21 +167,21 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
             length_in_samples (int): The desired post trigger length in samples."""
         length_in_samples = self._coerce_num_samples_if_fifo(length_in_samples)
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
-            if (self.acquisition_length_in_samples - length_in_samples) < get_memsize_step_size(self._card_type):
+            if (self.acquisition_length_in_samples - length_in_samples) < get_memsize_step_size(self._model_number):
                 logger.warning(
                     "FIFO mode: coercing post trigger length to maximum allowed value (step-size samples less than "
                     "the acquisition length)."
                 )
-                length_in_samples = self.acquisition_length_in_samples - get_memsize_step_size(self._card_type)
+                length_in_samples = self.acquisition_length_in_samples - get_memsize_step_size(self._model_number)
         self.write_to_spectrum_device_register(SPC_POSTTRIGGER, length_in_samples)
 
     def _coerce_num_samples_if_fifo(self, value: int) -> int:
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
-            if value != mod(value, get_memsize_step_size(self._card_type)):
+            if value != mod(value, get_memsize_step_size(self._model_number)):
                 logger.warning(
-                    f"FIFO mode: coercing length to nearest {get_memsize_step_size(self._card_type)}" f" samples"
+                    f"FIFO mode: coercing length to nearest {get_memsize_step_size(self._model_number)}" f" samples"
                 )
-                value = int(value - mod(value, get_memsize_step_size(self._card_type)))
+                value = int(value - mod(value, get_memsize_step_size(self._model_number)))
         return value
 
     @property

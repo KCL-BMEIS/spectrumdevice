@@ -14,12 +14,13 @@ from spectrum_gmbh.regs import (
     SPC_CM_INTPLL,
     SPC_CM_EXTERNAL,
     SPC_CM_EXTREFCLOCK,
+    SPC_REP_STD_SINGLE,
 )
 
 
 class AcquisitionMode(Enum):
-    """Enum representing the acquisition modes currently support by spectrumdevice. See Spectrum documentation for more
-    information about each mode."""
+    """Enum representing the digitise acquisition modes currently support by spectrumdevice. See Spectrum documentation
+    for more information about each mode."""
 
     SPC_REC_STD_SINGLE = SPC_REC_STD_SINGLE
     """Data acquisition to on-board memory for one single trigger event."""
@@ -29,6 +30,15 @@ class AcquisitionMode(Enum):
     """Data acquisition to on-board memory for the average of multiple trigger events."""
     SPC_REC_FIFO_AVERAGE = SPC_REC_FIFO_AVERAGE
     """Continuous data acquisition for multiple trigger events, with on-board averaging."""
+
+
+class GenerationMode(Enum):
+    """Enum representing the AWG generation modes currently supported by spectrumdevice. See Spectrum documentation for
+    more information about each mode."""
+
+    SPC_REP_STD_SINGLE = SPC_REP_STD_SINGLE
+    """Data generation from on-board memory repeating the complete programmed memory either once, infinite or for a
+    defined number of times after one single trigger event."""
 
 
 class ClockMode(Enum):
