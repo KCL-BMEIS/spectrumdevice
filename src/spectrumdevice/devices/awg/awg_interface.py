@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 
+from numpy import int16
+
 from spectrumdevice.devices.abstract_device import SpectrumChannelInterface, SpectrumDeviceInterface
-from spectrumdevice.settings.channel import OutputChannelFilter
+from spectrumdevice.settings.channel import OutputChannelFilter, OutputChannelStopLevelMode
 from spectrumdevice.settings.output_channel_pairing import ChannelPair, ChannelPairingMode
 
 
@@ -12,7 +14,7 @@ class SpectrumAWGChannelInterface(SpectrumChannelInterface, ABC):
     @property
     @abstractmethod
     def is_switched_on(self) -> bool:
-        """ SPC_ENABLEOUT0, SPC_ENABLEOUT01 etc """
+        """SPC_ENABLEOUT0, SPC_ENABLEOUT01 etc"""
         raise NotImplementedError()
 
     @abstractmethod
@@ -22,7 +24,7 @@ class SpectrumAWGChannelInterface(SpectrumChannelInterface, ABC):
     @property
     @abstractmethod
     def dc_offset_in_mv(self) -> int:
-        """ SPC_OFFS0 """
+        """SPC_OFFS0"""
         raise NotImplementedError()
 
     @abstractmethod
@@ -32,7 +34,7 @@ class SpectrumAWGChannelInterface(SpectrumChannelInterface, ABC):
     @property
     @abstractmethod
     def signal_amplitude_in_mv(self) -> int:
-        """ SPC_AMP0 """
+        """SPC_AMP0"""
         raise NotImplementedError()
 
     @abstractmethod
@@ -48,6 +50,24 @@ class SpectrumAWGChannelInterface(SpectrumChannelInterface, ABC):
     def set_output_filter(self, filter: OutputChannelFilter) -> None:
         raise NotImplementedError()
 
+    @property
+    @abstractmethod
+    def stop_level_mode(self) -> OutputChannelStopLevelMode:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_stop_level_mode(self, mode: OutputChannelStopLevelMode) -> None:
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def stop_level_custom_value(self) -> int16:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_stop_level_custom_value(self, value: int16) -> None:
+        raise NotImplementedError()
+
 
 class SpectrumAWGInterface(SpectrumDeviceInterface, ABC):
     """Defines the public interface for control of all Spectrum AWG devices, be they StarHub composite devices
@@ -57,5 +77,3 @@ class SpectrumAWGInterface(SpectrumDeviceInterface, ABC):
     @abstractmethod
     def configure_channel_pairing(self, channel_pair: ChannelPair, mode: ChannelPairingMode):
         raise NotImplementedError()
-
-

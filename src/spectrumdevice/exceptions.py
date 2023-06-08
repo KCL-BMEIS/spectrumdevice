@@ -95,3 +95,7 @@ class SpectrumCardIsNotADigitiser(SpectrumWrongCardType):
 
 class SpectrumCardIsNotAnAWG(SpectrumWrongCardType):
     pass
+
+
+class SpectrumFeatureNotSupportedByCard(IOError):
+    pass

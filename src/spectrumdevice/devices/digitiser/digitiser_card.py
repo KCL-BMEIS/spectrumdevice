@@ -29,7 +29,8 @@ from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitis
 from spectrumdevice.devices.digitiser.digitiser_channel import SpectrumDigitiserChannel
 from spectrumdevice.devices.spectrum_timestamper import Timestamper
 from spectrumdevice.exceptions import (
-    SpectrumCardIsNotADigitiser, SpectrumNoTransferBufferDefined,
+    SpectrumCardIsNotADigitiser,
+    SpectrumNoTransferBufferDefined,
 )
 from spectrumdevice.settings import CardToPCDataTransferBuffer
 from spectrumdevice.settings.card_dependent_properties import CardType, get_memsize_step_size

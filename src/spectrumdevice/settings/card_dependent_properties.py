@@ -1,11 +1,30 @@
 from enum import Enum
 
 from spectrum_gmbh.regs import (
-    SPCM_TYPE_AI, SPCM_TYPE_AO, SPCM_TYPE_DI, SPCM_TYPE_DIO, SPCM_TYPE_DO, TYP_M2P59XX_X4,
+    SPCM_TYPE_AI,
+    SPCM_TYPE_AO,
+    SPCM_TYPE_DI,
+    SPCM_TYPE_DIO,
+    SPCM_TYPE_DO,
+    TYP_M2P59XX_X4,
     TYP_FAMILYMASK,
-    TYP_M2P6530_X4, TYP_M2P6531_X4, TYP_M2P6532_X4, TYP_M2P6533_X4, TYP_M2P6536_X4, TYP_M2P6540_X4, TYP_M2P6541_X4,
-    TYP_M2P6546_X4, TYP_M2P6560_X4, TYP_M2P6561_X4, TYP_M2P6562_X4, TYP_M2P6566_X4, TYP_M2P6568_X4, TYP_M2P6570_X4,
-    TYP_M2P6571_X4, TYP_M2P6576_X4, TYP_M4I22XX_X8,
+    TYP_M2P6530_X4,
+    TYP_M2P6531_X4,
+    TYP_M2P6532_X4,
+    TYP_M2P6533_X4,
+    TYP_M2P6536_X4,
+    TYP_M2P6540_X4,
+    TYP_M2P6541_X4,
+    TYP_M2P6546_X4,
+    TYP_M2P6560_X4,
+    TYP_M2P6561_X4,
+    TYP_M2P6562_X4,
+    TYP_M2P6566_X4,
+    TYP_M2P6568_X4,
+    TYP_M2P6570_X4,
+    TYP_M2P6571_X4,
+    TYP_M2P6576_X4,
+    TYP_M4I22XX_X8,
     TYP_M4I44XX_X8,
     TYP_M4I2210_X8,
     TYP_M4I2211_X8,
@@ -83,7 +102,7 @@ CARD_TYPE_DESCRIPTIONS = {
     CardType.SPCM_TYPE_AO: "Analog output card (arbitrary waveform generators)",
     CardType.SPCM_TYPE_DI: "Digital input card (logic analyser)",
     CardType.SPCM_TYPE_DO: "Digital output card (pattern generators)",
-    CardType.SPCM_TYPE_DIO: "Digital I/O (input/output) card, where the direction is software selectable."
+    CardType.SPCM_TYPE_DIO: "Digital I/O (input/output) card, where the direction is software selectable.",
 }
 
 
