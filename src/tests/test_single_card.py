@@ -11,7 +11,7 @@ from spectrumdevice.exceptions import (
 )
 from spectrumdevice.settings.channel import SpectrumChannelName
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
-from spectrumdevice.settings.transfer_buffer import CardToPCDataTransferBuffer
+from spectrumdevice.settings.transfer_buffer import create_samples_acquisition_transfer_buffer
 from spectrumdevice.settings.triggering import ExternalTriggerMode, TriggerSource
 from tests.configuration import ACQUISITION_LENGTH, NUM_CHANNELS_PER_MODULE, NUM_MODULES_PER_CARD
 from tests.device_factories import create_spectrum_card_for_testing
@@ -131,7 +131,7 @@ class SingleCardTest(TestCase):
             self.assertTrue(False, f"raised an exception {e}")
 
     def test_transfer_buffer(self) -> None:
-        buffer = CardToPCDataTransferBuffer(ACQUISITION_LENGTH)
+        buffer = create_samples_acquisition_transfer_buffer(ACQUISITION_LENGTH)
         self._device.define_transfer_buffer([buffer])
         self.assertEqual(buffer, self._device.transfer_buffers[0])
 

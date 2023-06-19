@@ -13,7 +13,9 @@ from spectrumdevice.settings.card_dependent_properties import ModelNumber
 from spectrumdevice.settings.card_features import CardFeature, AdvancedCardFeature
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
 from spectrumdevice.settings.io_lines import IOLineMode, AvailableIOModes
-from spectrumdevice.settings.transfer_buffer import TransferBuffer, CardToPCDataTransferBuffer
+from spectrumdevice.settings.transfer_buffer import (
+    TransferBuffer,
+)
 from spectrumdevice.settings.triggering import TriggerSource, ExternalTriggerMode
 from spectrumdevice.settings.status import CARD_STATUS_TYPE, DEVICE_STATUS_TYPE, StatusCode
 
@@ -29,6 +31,7 @@ __all__ = [
     "AvailableIOModes",
     "TransferBuffer",
     "CardToPCDataTransferBuffer",
+    "PCToCardDataTransferBuffer",
     "TriggerSource",
     "ExternalTriggerMode",
     "CARD_STATUS_TYPE",

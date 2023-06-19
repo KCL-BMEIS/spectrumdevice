@@ -32,10 +32,15 @@ from spectrumdevice.exceptions import (
     SpectrumCardIsNotADigitiser,
     SpectrumNoTransferBufferDefined,
 )
-from spectrumdevice.settings import CardToPCDataTransferBuffer
+from spectrumdevice.settings import TransferBuffer
 from spectrumdevice.settings.card_dependent_properties import CardType, get_memsize_step_size
 from spectrumdevice.settings.device_modes import AcquisitionMode
-from spectrumdevice.settings.transfer_buffer import set_transfer_buffer
+from spectrumdevice.settings.transfer_buffer import (
+    BufferDirection,
+    BufferType,
+    create_samples_acquisition_transfer_buffer,
+    set_transfer_buffer,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -211,21 +216,25 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
             mode (`AcquisitionMode`): The desired acquisition mode."""
         self.write_to_spectrum_device_register(SPC_CARDMODE, mode.value)
 
-    def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
-        """Create or provide a `CardToPCDataTransferBuffer` object for receiving acquired samples from the device.
+    def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
+        """Create or provide a `TransferBuffer` object for receiving acquired samples from the device.
 
         If no buffer is provided, one will be created with the correct size and a board_memory_offset_bytes of 0. A
         separate buffer for transferring Timestamps will also be created using the Timestamper class.
 
         Args:
-            buffer (Optional[List[`CardToPCDataTransferBuffer`]]): A length-1 list containing a pre-constructed
-                `CardToPCDataTransferBuffer`  The size of the buffer should be chosen according to the current number of
-                active channels and the acquisition length.
+            buffer (Optional[List[`TransferBuffer`]]): A length-1 list containing a pre-constructed
+                `TransferBuffer` set up for card-to-PC transfer of samples ("data"). The size of the buffer should be
+                chosen according to the current number of active channels and the acquisition length.
         """
         if buffer:
             self._transfer_buffer = buffer[0]
+            if self._transfer_buffer.direction != BufferDirection.SPCM_DIR_CARDTOPC:
+                raise ValueError("Digitisers need a transfer buffer with direction BufferDirection.SPCM_DIR_CARDTOPC")
+            if self._transfer_buffer.type != BufferType.SPCM_BUF_DATA:
+                raise ValueError("Digitisers need a transfer buffer with type BufferDirection.SPCM_BUF_DATA")
         else:
-            self._transfer_buffer = CardToPCDataTransferBuffer(
+            self._transfer_buffer = create_samples_acquisition_transfer_buffer(
                 self.acquisition_length_in_samples * len(self.enabled_channels)
             )
         set_transfer_buffer(self._handle, self._transfer_buffer)

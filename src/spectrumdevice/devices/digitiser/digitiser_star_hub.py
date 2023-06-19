@@ -15,8 +15,8 @@ from spectrumdevice.devices.abstract_device import (
 from spectrumdevice.devices.abstract_device.abstract_spectrum_hub import check_settings_constant_across_devices
 from spectrumdevice.devices.digitiser.digitiser_card import SpectrumDigitiserCard
 from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
+from spectrumdevice.settings import TransferBuffer
 from spectrumdevice.settings.device_modes import AcquisitionMode
-from spectrumdevice.settings.transfer_buffer import CardToPCDataTransferBuffer
 
 
 class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitiser):
@@ -42,7 +42,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
         AbstractSpectrumStarHub.__init__(self, device_number, child_cards, master_card_index)
         self._acquisition_mode = self.acquisition_mode
 
-    def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
+    def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
         """Create or provide `CardToPCDataTransferBuffer` objects for receiving acquired samples from the child cards.
         If no buffers are provided, they will be created with the correct size and a board_memory_offset_bytes of 0. See
         `SpectrumDigitiserCard.define_transfer_buffer()` for more information

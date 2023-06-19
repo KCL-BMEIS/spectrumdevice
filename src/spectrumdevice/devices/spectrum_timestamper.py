@@ -26,7 +26,12 @@ from spectrumdevice.exceptions import (
 )
 from spectrumdevice.settings import TriggerSource
 from spectrumdevice.settings.timestamps import TimestampMode
-from spectrumdevice.settings.transfer_buffer import CardToPCTimestampTransferBuffer, set_transfer_buffer
+from spectrumdevice.settings.transfer_buffer import (
+    BufferDirection,
+    BufferType,
+    set_transfer_buffer,
+    transfer_buffer_factory,
+)
 from spectrumdevice.spectrum_wrapper import DEVICE_HANDLE_TYPE
 
 MAX_POLL_COUNT = 50
@@ -41,7 +46,9 @@ class Timestamper(ABC):
         parent_device_handle: DEVICE_HANDLE_TYPE,
     ):
         self._parent_device = parent_device
-        self._transfer_buffer = CardToPCTimestampTransferBuffer()
+        self._transfer_buffer = transfer_buffer_factory(
+            buffer_type=BufferType.SPCM_BUF_TIMESTAMP, direction=BufferDirection.SPCM_DIR_CARDTOPC
+        )
         self._expected_timestamp_bytes_per_frame = BYTES_PER_TIMESTAMP
 
         self._ref_time: Optional[datetime] = None

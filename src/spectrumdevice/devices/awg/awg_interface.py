@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from numpy import int16
+from numpy.typing import NDArray
 
 from spectrumdevice.devices.abstract_device import SpectrumChannelInterface, SpectrumDeviceInterface
 from spectrumdevice.settings.channel import OutputChannelFilter, OutputChannelStopLevelMode
@@ -86,4 +87,8 @@ class SpectrumAWGInterface(SpectrumDeviceInterface, ABC):
 
     @abstractmethod
     def configure_channel_pairing(self, channel_pair: ChannelPair, mode: ChannelPairingMode) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def transfer_waveform(self, waveform: NDArray[int16]) -> None:
         raise NotImplementedError()

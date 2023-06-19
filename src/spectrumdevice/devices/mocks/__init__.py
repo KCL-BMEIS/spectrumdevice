@@ -11,7 +11,7 @@ from typing import List, Optional, Sequence
 from numpy import zeros
 
 from spectrum_gmbh.regs import (
-    SPC_MIINST_CHPERMODULE,
+    SPC_FNCTYPE, SPC_MIINST_CHPERMODULE,
     SPC_MIINST_MODULES,
     SPC_PCITYP,
 )
@@ -23,9 +23,14 @@ from spectrumdevice.exceptions import (
     SpectrumNoTransferBufferDefined,
     SpectrumSettingsMismatchError,
 )
-from spectrumdevice.settings.card_dependent_properties import ModelNumber
+from spectrumdevice.settings import TransferBuffer
+from spectrumdevice.settings.card_dependent_properties import CardType, ModelNumber
 from spectrumdevice.settings.device_modes import AcquisitionMode
-from spectrumdevice.settings.transfer_buffer import CardToPCDataTransferBuffer
+from spectrumdevice.settings.transfer_buffer import (
+    BufferDirection,
+    BufferType,
+    transfer_buffer_factory,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +69,7 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
         self._param_dict[SPC_MIINST_MODULES] = num_modules
         self._param_dict[SPC_MIINST_CHPERMODULE] = num_channels_per_module
         self._param_dict[SPC_PCITYP] = model.value
+        self._param_dict[SPC_FNCTYPE] = CardType.SPCM_TYPE_AI.value
         SpectrumDigitiserCard.__init__(self, device_number=device_number)
         self._visa_string = f"MockCard{device_number}"
         self._connect(self._visa_string)
@@ -110,7 +116,7 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
         else:
             raise SpectrumSettingsMismatchError("Not enough channels in mock device configuration.")
 
-    def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
+    def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
         """Create or provide a `CardToPCDataTransferBuffer` object into which samples from the mock 'on-device buffer'
         will be transferred. If none is provided, a buffer will be instantiated using the currently set acquisition
         length and the number of enabled channels.
@@ -121,9 +127,15 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
         """
         if buffer:
             self._transfer_buffer = buffer[0]
+            if self._transfer_buffer.direction != BufferDirection.SPCM_DIR_CARDTOPC:
+                raise ValueError("Digitisers need a transfer buffer with direction BufferDirection.SPCM_DIR_CARDTOPC")
+            if self._transfer_buffer.type != BufferType.SPCM_BUF_DATA:
+                raise ValueError("Digitisers need a transfer buffer with type BufferDirection.SPCM_BUF_DATA")
         else:
-            self._transfer_buffer = CardToPCDataTransferBuffer(
-                self.acquisition_length_in_samples * len(self.enabled_channels)
+            self._transfer_buffer = transfer_buffer_factory(
+                buffer_type=BufferType.SPCM_BUF_DATA,
+                direction=BufferDirection.SPCM_DIR_CARDTOPC,
+                size_in_samples=self.acquisition_length_in_samples * len(self.enabled_channels),
             )
 
     def start_transfer(self) -> None:
