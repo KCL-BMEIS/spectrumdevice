@@ -11,7 +11,8 @@ from typing import List, Optional, Sequence
 from numpy import zeros
 
 from spectrum_gmbh.regs import (
-    SPC_FNCTYPE, SPC_MIINST_CHPERMODULE,
+    SPC_FNCTYPE,
+    SPC_MIINST_CHPERMODULE,
     SPC_MIINST_MODULES,
     SPC_PCITYP,
 )
