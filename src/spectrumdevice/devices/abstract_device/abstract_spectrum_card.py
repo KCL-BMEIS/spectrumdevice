@@ -141,17 +141,17 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_STOPDMA)
 
-    def wait_for_transfer_to_complete(self) -> None:
-        """Blocks until the currently active transfer of between the on-device buffer and the TransferBuffer is
-        complete.
+    def wait_for_transfer_chunk_to_complete(self) -> None:
+        """Blocks until the currently active transfer between the on-device buffer and the TransferBuffer is
+        complete. This will be when there at least TransferBuffer.notify_size_in_bytes bytes available in the buffer.
 
         For digitisers in Standard Single mode (SPC_REC_STD_SINGLE), use after starting a transfer. Once the method
         returns, all acquired waveforms have been transferred from the on-device buffer to the `TransferBuffer` and can
         be read using the `get_waveforms()` method.
 
-        For digitisers in FIFO mode (SPC_REC_FIFO_MULTI) this method is not required because samples are continuously
-        streamed until `stop()` is called.
+        For digitisers in FIFO mode (SPC_REC_FIFO_MULTI) this method is internally used by get_waveforms().
 
+        # todo: update the above docstring to take into account cases where notify size < data lemgth
         # todo: docstring for AWG
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_WAITDMA)

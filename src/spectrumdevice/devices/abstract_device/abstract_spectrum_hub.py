@@ -91,11 +91,11 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, ABC):
         for card in self._child_cards:
             card.stop_transfer()
 
-    def wait_for_transfer_to_complete(self) -> None:
+    def wait_for_transfer_chunk_to_complete(self) -> None:
         """Wait for all cards to stop transferring data to/from their `TransferBuffers`. See
         `AbstractSpectrumCard.wait_for_transfer_to_complete()` for more information."""
         for card in self._child_cards:
-            card.wait_for_transfer_to_complete()
+            card.wait_for_transfer_chunk_to_complete()
 
     @property
     def connected(self) -> bool:

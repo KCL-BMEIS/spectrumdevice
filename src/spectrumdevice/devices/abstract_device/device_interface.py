@@ -71,7 +71,7 @@ class SpectrumDeviceInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def wait_for_transfer_to_complete(self) -> None:
+    def wait_for_transfer_chunk_to_complete(self) -> None:
         raise NotImplementedError()
 
     @abstractmethod

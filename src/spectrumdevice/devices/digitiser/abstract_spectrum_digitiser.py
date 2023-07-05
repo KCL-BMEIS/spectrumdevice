@@ -73,7 +73,7 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
         self.wait_for_acquisition_to_complete()
         self.define_transfer_buffer()
         self.start_transfer()
-        self.wait_for_transfer_to_complete()
+        self.wait_for_transfer_chunk_to_complete()
         waveforms = self.get_waveforms()
         self.stop()  # Only strictly required for Mock devices. Should not affect hardware.
         return Measurement(waveforms=waveforms, timestamp=self.get_timestamp())

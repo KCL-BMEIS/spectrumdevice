@@ -157,7 +157,7 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
         else:
             raise SpectrumNoTransferBufferDefined("Call define_transfer_buffer method.")
 
-    def wait_for_transfer_to_complete(self) -> None:
+    def wait_for_transfer_chunk_to_complete(self) -> None:
         """See `SpectrumDigitiserCard.wait_for_transfer_to_complete()`. This mock implementation blocks until a new mock
         transfer has been completed (i.e. the contents of the transfer buffer has changed since __init__() or since the
         last call to `wait_for_transfer_to_complete()`)."""

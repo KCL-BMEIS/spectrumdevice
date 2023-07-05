@@ -7,7 +7,7 @@ import datetime
 import logging
 from typing import List, Optional, Sequence, cast
 
-from numpy import float_, mod
+from numpy import float_, mod, zeros
 from numpy.typing import NDArray
 
 from spectrum_gmbh.regs import (
@@ -16,6 +16,7 @@ from spectrum_gmbh.regs import (
     SPC_CARDMODE,
     SPC_DATA_AVAIL_CARD_LEN,
     SPC_DATA_AVAIL_USER_LEN,
+    SPC_DATA_AVAIL_USER_POS,
     SPC_M2CMD,
     SPC_MEMSIZE,
     SPC_MIINST_CHPERMODULE,
@@ -102,25 +103,45 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
                 acquisition, ordered by channel number.
 
         """
-        num_available_bytes = 0
+        num_read_bytes = 0
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
-            self.wait_for_transfer_to_complete()
-            num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
+            self.wait_for_transfer_chunk_to_complete()
 
-        if self._transfer_buffer is not None:
-            num_expected_bytes_per_frame = self._transfer_buffer.data_array_length_in_bytes
-            if num_available_bytes > num_expected_bytes_per_frame:
-                num_available_bytes = num_expected_bytes_per_frame
-        else:
+        if self._transfer_buffer is None:
             raise SpectrumNoTransferBufferDefined("Cannot find a samples transfer buffer")
 
-        waveforms_in_columns = (
-            self.transfer_buffers[0]
-            .copy_contents()
-            .reshape((self.acquisition_length_in_samples, len(self.enabled_channels)))
-        )
-        if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
-            self.write_to_spectrum_device_register(SPC_DATA_AVAIL_CARD_LEN, num_available_bytes)
+        num_expected_bytes_per_frame = self._transfer_buffer.data_array_length_in_bytes
+        raw_samples = zeros(self.acquisition_length_in_samples, dtype=self._transfer_buffer.data_array.dtype)
+
+        # reading whole data array at once
+        num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
+        if num_available_bytes > num_expected_bytes_per_frame:
+            raw_samples = self.transfer_buffers[0].copy_contents()
+            num_read_bytes = num_expected_bytes_per_frame
+            if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
+                # tell the device that these bytes are now free to be written to again
+                self.write_to_spectrum_device_register(SPC_DATA_AVAIL_CARD_LEN, num_read_bytes)
+
+        # reading it chunk by chunk while the acquisition is still happening
+        else:
+            while num_read_bytes < num_expected_bytes_per_frame:
+                num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
+                position_of_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_POS)
+                # Don't allow reading over the end of the buffer
+                if position_of_available_bytes + num_available_bytes > self._transfer_buffer.data_array_length_in_bytes:
+                    num_available_bytes = self._transfer_buffer.data_array_length_in_bytes - position_of_available_bytes
+
+                num_available_samples = num_available_bytes // self._transfer_buffer.data_array.itemsize
+                num_read_samples = num_read_bytes // self._transfer_buffer.data_array.itemsize
+                raw_samples[
+                    num_read_samples : num_read_samples + num_available_samples
+                ] = self._transfer_buffer.read_chunk(position_of_available_bytes, num_available_bytes)
+                if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
+                    # tell the device that these bytes are now free to be written to again
+                    self.write_to_spectrum_device_register(SPC_DATA_AVAIL_CARD_LEN, num_read_bytes)
+                num_read_bytes += num_available_bytes
+
+        waveforms_in_columns = raw_samples.reshape((self.acquisition_length_in_samples, len(self.enabled_channels)))
 
         voltage_waveforms = [
             cast(SpectrumDigitiserChannel, ch).convert_raw_waveform_to_voltage_waveform(waveform)
