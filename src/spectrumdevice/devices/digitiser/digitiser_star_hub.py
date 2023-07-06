@@ -67,7 +67,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
         for card in self._child_cards:
             cast(SpectrumDigitiserCard, card).wait_for_acquisition_to_complete()
 
-    def get_waveforms(self) -> List[NDArray[float_]]:
+    def get_waveforms(self, num_acquisitions: int) -> List[List[NDArray[float_]]]:
         """Get a list of the most recently transferred waveforms.
 
         This method gets the waveforms from each child card and joins them into a new list, ordered by channel number.
@@ -77,7 +77,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
             waveforms (List[NDArray[float_]]): A list of 1D numpy arrays, one per enabled channel, in channel order.
         """
         lock = threading.Lock()
-        card_ids_and_waveform_sets: dict[str, list[NDArray[float_]]] = {}
+        card_ids_and_waveform_sets: dict[str, list[list[[NDArray[float_]]]]] = {}
 
         def _get_waveforms(digitiser_card: SpectrumDigitiserCard) -> None:
             this_cards_waveforms = digitiser_card.get_waveforms()
@@ -96,8 +96,9 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
             thread.join()
 
         waveforms_all_cards_ordered = []
-        for card in self._child_cards:
-            waveforms_all_cards_ordered += card_ids_and_waveform_sets[str(card)]
+        for n in range(num_acquisitions):
+            for card in self._child_cards:
+                waveforms_all_cards_ordered += card_ids_and_waveform_sets[str(card)][n]
 
         return waveforms_all_cards_ordered
 

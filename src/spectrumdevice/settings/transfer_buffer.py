@@ -69,6 +69,12 @@ class TransferBuffer(ABC):
     """Sets the offset for transfer in board memory. Typically 0. See Spectrum documentation for more information."""
     data_array: ndarray
     """1D numpy array into which samples will be written during transfer."""
+    notify_size_in_bytes: int
+    """The number of transferred bytes after which a notification of transfer is sent from the device."""
+
+    @abstractmethod
+    def read_chunk(self, chunk_position_in_bytes: int, chunk_size_in_bytes: int) -> ndarray:
+        raise NotImplementedError()
 
     @abstractmethod
     def copy_contents(self) -> ndarray:
@@ -83,11 +89,6 @@ class TransferBuffer(ABC):
     def data_array_length_in_bytes(self) -> int:
         """The length of the array into which sample will be written, in bytes."""
         return self.data_array.size * self.data_array.itemsize
-
-    @property
-    @abstractmethod
-    def notify_size_in_bytes(self) -> int:
-        raise NotImplementedError()
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, TransferBuffer):
@@ -117,29 +118,24 @@ class SamplesTransferBuffer(TransferBuffer):
     def read_chunk(self, chunk_position_in_bytes: int, chunk_size_in_bytes: int) -> ndarray:
         chunk_position_in_samples = chunk_position_in_bytes // self.data_array.itemsize
         chunk_size_in_samples = chunk_size_in_bytes // self.data_array.itemsize
-        return self.data_array[chunk_position_in_samples:chunk_size_in_samples]
+        return self.data_array[chunk_position_in_samples : chunk_position_in_samples + chunk_size_in_samples]
 
     def copy_contents(self) -> ndarray:
         return copy(self.data_array)
 
-    @property
-    def notify_size_in_bytes(self) -> int:
-        """The number of transferred bytes after which a notification of transfer is sent from the device. This is
-        currently always set to the length of the data array, meaning that a notification will be received once the
-        transfer is complete. See the Spectrum documentation for more information."""
-        return self.data_array_length_in_bytes
-
 
 class TimestampsTransferBuffer(TransferBuffer):
     def __init__(self, direction: BufferDirection, board_memory_offset_bytes: int) -> None:
-        super().__init__(BufferType.SPCM_BUF_TIMESTAMP, direction, board_memory_offset_bytes, zeros(4096, dtype=uint8))
+        # Timestamp buffer uses polling mode which requires the (ignored) notify size to be set to 4096
+        super().__init__(
+            BufferType.SPCM_BUF_TIMESTAMP, direction, board_memory_offset_bytes, zeros(4096, dtype=uint8), 4096
+        )
+
+    def read_chunk(self, chunk_position_in_bytes: int, chunk_size_in_bytes: int) -> ndarray:
+        raise NotImplementedError("Reading a chunk is not implemented for TimestampsTransferBuffers.")
 
     def copy_contents(self) -> ndarray:
         return copy(self.data_array[0::2])  # only every other item in the array has a timestamp written to it
-
-    @property
-    def notify_size_in_bytes(self) -> int:
-        return 4096  # Timestamp buffer uses polling mode which requires the (ignored) notify size to be set to 4096
 
 
 def transfer_buffer_factory(
@@ -147,6 +143,7 @@ def transfer_buffer_factory(
     direction: BufferDirection,
     size_in_samples: Optional[int] = None,
     board_memory_offset_bytes: int = 0,
+    notify_size_in_bytes: Optional[int] = None,
 ) -> "TransferBuffer":
     """
     Args:
@@ -157,10 +154,16 @@ def transfer_buffer_factory(
             required for BufferType.SPCM_BUF_DATA as SPCM_BUF_TIMESTAMP buffers are always 4096 uint8 long.
         board_memory_offset_bytes (int): Sets the offset for transfer in board memory. Default 0. See Spectrum
             documentation for more information.
+        notify_size_in_bytes (int): For BufferType.SPCM_BUF_DATA. The number of transferred bytes after which a
+        notification of transfer is sent from the device, and therefore a chunk of samples is downloaded. If no notify
+        size is provided, it will be set to the length of the data array, meaning that a notification will be received
+        once the transfer is complete. See the Spectrum documentation for more information.
     """
     if buffer_type == BufferType.SPCM_BUF_DATA:
         if size_in_samples is not None:
-            return SamplesTransferBuffer(direction, board_memory_offset_bytes, zeros(size_in_samples, int16))
+            return SamplesTransferBuffer(
+                direction, board_memory_offset_bytes, zeros(size_in_samples, int16), notify_size_in_bytes
+            )
         else:
             raise ValueError("You must provide a buffer size_in_samples to create a BufferType.SPCM_BUF_DATA buffer.")
     elif buffer_type == BufferType.SPCM_BUF_TIMESTAMP:

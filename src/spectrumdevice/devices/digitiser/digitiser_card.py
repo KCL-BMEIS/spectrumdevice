@@ -84,11 +84,11 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_WAITREADY)
 
-    def get_waveforms(self) -> List[NDArray[float_]]:
+    def get_waveforms(self, num_acquisitions: int) -> List[List[NDArray[float_]]]:
         """Get a list of the most recently transferred waveforms, in channel order.
 
-        This method copies and reshapes the samples in the `TransferBuffer` into a list of 1D NumPy arrays (waveforms)
-        and returns the list.
+        This method copies and reshapes the samples in the `TransferBuffer` into a list of lists of 1D NumPy arrays
+        (waveforms) and returns the list.
 
         In Standard Single mode (SPC_REC_STD_SINGLE), `get_waveforms()` should be called after
         `wait_for_transfer_to_complete()` has returned.
@@ -98,9 +98,12 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
         received, so the loop will run at the same rate as the acquisition (in SPC_REC_FIFO_MULTI mode, for example,
         this would the rate at which your trigger source was running).
 
+        Args:
+            num_acquisitions (int): The number of acquisitions (i.e. trigger events) to wait for and copy.
+
         Returns:
-            waveforms (List[NDArray[float_]]): A list of 1D NumPy arrays, one for each channel enabled for the
-                acquisition, ordered by channel number.
+            waveforms (List[List[NDArray[float_]]]): A list of lists of 1D NumPy arrays, one outer list for each
+            acquisition, and one inner list for each channel enabled for the acquisition, ordered by channel number.
 
         """
         num_read_bytes = 0
@@ -110,45 +113,48 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
         if self._transfer_buffer is None:
             raise SpectrumNoTransferBufferDefined("Cannot find a samples transfer buffer")
 
-        num_expected_bytes_per_frame = self._transfer_buffer.data_array_length_in_bytes
-        raw_samples = zeros(self.acquisition_length_in_samples, dtype=self._transfer_buffer.data_array.dtype)
+        num_samples_per_frame = self.acquisition_length_in_samples * len(self.enabled_channels)
+        num_expected_bytes_per_frame = num_samples_per_frame * self._transfer_buffer.data_array.itemsize
+        raw_samples = zeros(num_samples_per_frame * num_acquisitions, dtype=self._transfer_buffer.data_array.dtype)
 
-        # reading whole data array at once
-        num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
-        if num_available_bytes > num_expected_bytes_per_frame:
-            raw_samples = self.transfer_buffers[0].copy_contents()
-            num_read_bytes = num_expected_bytes_per_frame
+        while num_read_bytes < (num_expected_bytes_per_frame * num_acquisitions):
+            num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
+            position_of_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_POS)
+
+            # Don't allow reading over the end of the transfer buffer
+            if (position_of_available_bytes + num_available_bytes) > self._transfer_buffer.data_array_length_in_bytes:
+                num_available_bytes = self._transfer_buffer.data_array_length_in_bytes - position_of_available_bytes
+
+            # Don't allow reading over the end of the current acquisition:
+            if (num_read_bytes + num_available_bytes) > (num_expected_bytes_per_frame * num_acquisitions):
+                num_available_bytes = (num_expected_bytes_per_frame * num_acquisitions) - num_read_bytes
+
+            num_available_samples = num_available_bytes // self._transfer_buffer.data_array.itemsize
+            num_read_samples = num_read_bytes // self._transfer_buffer.data_array.itemsize
+
+            raw_samples[num_read_samples : num_read_samples + num_available_samples] = self._transfer_buffer.read_chunk(
+                position_of_available_bytes, num_available_bytes
+            )
+
             if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
                 # tell the device that these bytes are now free to be written to again
-                self.write_to_spectrum_device_register(SPC_DATA_AVAIL_CARD_LEN, num_read_bytes)
+                self.write_to_spectrum_device_register(SPC_DATA_AVAIL_CARD_LEN, num_available_bytes)
+            num_read_bytes += num_available_bytes
 
-        # reading it chunk by chunk while the acquisition is still happening
-        else:
-            while num_read_bytes < num_expected_bytes_per_frame:
-                num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
-                position_of_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_POS)
-                # Don't allow reading over the end of the buffer
-                if position_of_available_bytes + num_available_bytes > self._transfer_buffer.data_array_length_in_bytes:
-                    num_available_bytes = self._transfer_buffer.data_array_length_in_bytes - position_of_available_bytes
+        waveforms_in_columns = raw_samples.reshape(
+            (num_acquisitions, self.acquisition_length_in_samples, len(self.enabled_channels))
+        )
 
-                num_available_samples = num_available_bytes // self._transfer_buffer.data_array.itemsize
-                num_read_samples = num_read_bytes // self._transfer_buffer.data_array.itemsize
-                raw_samples[
-                    num_read_samples : num_read_samples + num_available_samples
-                ] = self._transfer_buffer.read_chunk(position_of_available_bytes, num_available_bytes)
-                if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
-                    # tell the device that these bytes are now free to be written to again
-                    self.write_to_spectrum_device_register(SPC_DATA_AVAIL_CARD_LEN, num_read_bytes)
-                num_read_bytes += num_available_bytes
+        repeat_acquisitions = []
+        for n in range(num_acquisitions):
+            repeat_acquisitions.append(
+                [
+                    cast(SpectrumDigitiserChannel, ch).convert_raw_waveform_to_voltage_waveform(waveform)
+                    for ch, waveform in zip(self.channels, waveforms_in_columns[n, :, :].T)
+                ]
+            )
 
-        waveforms_in_columns = raw_samples.reshape((self.acquisition_length_in_samples, len(self.enabled_channels)))
-
-        voltage_waveforms = [
-            cast(SpectrumDigitiserChannel, ch).convert_raw_waveform_to_voltage_waveform(waveform)
-            for ch, waveform in zip(self.channels, waveforms_in_columns.T)
-        ]
-
-        return voltage_waveforms
+        return repeat_acquisitions
 
     def get_timestamp(self) -> Optional[datetime.datetime]:
         """Get timestamp for the last acquisition"""

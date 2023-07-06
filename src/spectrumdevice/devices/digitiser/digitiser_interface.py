@@ -69,7 +69,7 @@ class SpectrumDigitiserInterface(SpectrumDeviceInterface, ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_waveforms(self) -> List[NDArray[float_]]:
+    def get_waveforms(self, num_acquisitions: int) -> List[List[NDArray[float_]]]:
         raise NotImplementedError()
 
     @abstractmethod
