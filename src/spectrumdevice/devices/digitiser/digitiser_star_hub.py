@@ -4,6 +4,8 @@
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 import datetime
+import threading
+from threading import Thread
 from typing import List, Optional, Sequence, cast
 
 from numpy import float_
@@ -74,11 +76,30 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
         Returns:
             waveforms (List[NDArray[float_]]): A list of 1D numpy arrays, one per enabled channel, in channel order.
         """
-        waveforms_all_cards = []
-        for card in self._child_cards:
-            waveforms_all_cards += cast(SpectrumDigitiserCard, card).get_waveforms()
+        lock = threading.Lock()
+        card_ids_and_waveform_sets: dict[str, list[NDArray[float_]]] = {}
 
-        return waveforms_all_cards
+        def _get_waveforms(digitiser_card: SpectrumDigitiserCard) -> None:
+            this_cards_waveforms = digitiser_card.get_waveforms()
+            lock.acquire()
+            try:
+                card_ids_and_waveform_sets[str(digitiser_card)] = this_cards_waveforms
+            finally:
+                lock.release()
+
+        threads = [
+            Thread(target=_get_waveforms, args=(cast(SpectrumDigitiserCard, card),)) for card in self._child_cards
+        ]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+
+        waveforms_all_cards_ordered = []
+        for card in self._child_cards:
+            waveforms_all_cards_ordered += card_ids_and_waveform_sets[str(card)]
+
+        return waveforms_all_cards_ordered
 
     def get_timestamp(self) -> Optional[datetime.datetime]:
         """Get timestamp for the last acquisition"""
