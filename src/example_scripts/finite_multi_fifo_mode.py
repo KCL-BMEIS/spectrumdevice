@@ -60,7 +60,7 @@ def finite_multi_fifo_example(
     card.configure_acquisition(acquisition_settings)
 
     # Execute acquisition
-    measurements = card.execute_finite_fifo_acquisition(num_measurements)
+    measurements = card.execute_finite_fifo_acquisition(num_measurements, num_averages_per_measurement=4)
     card.reset()
     card.disconnect()
     return measurements

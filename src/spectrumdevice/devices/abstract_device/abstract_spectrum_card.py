@@ -143,7 +143,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
 
     def wait_for_transfer_chunk_to_complete(self) -> None:
         """Blocks until the currently active transfer between the on-device buffer and the TransferBuffer is
-        complete. This will be when there at least TransferBuffer.notify_size_in_bytes bytes available in the buffer.
+        complete. This will be when there at least TransferBuffer.notify_size_in_pages pages available in the buffer.
 
         For digitisers in Standard Single mode (SPC_REC_STD_SINGLE), use after starting a transfer. Once the method
         returns, all acquired waveforms have been transferred from the on-device buffer to the `TransferBuffer` and can

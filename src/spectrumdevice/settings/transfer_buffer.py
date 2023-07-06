@@ -69,8 +69,8 @@ class TransferBuffer(ABC):
     """Sets the offset for transfer in board memory. Typically 0. See Spectrum documentation for more information."""
     data_array: ndarray
     """1D numpy array into which samples will be written during transfer."""
-    notify_size_in_bytes: int
-    """The number of transferred bytes after which a notification of transfer is sent from the device."""
+    notify_size_in_pages: int
+    """The number of transferred pages (4096 bytes) after which a notification of transfer is sent from the device."""
 
     @abstractmethod
     def read_chunk(self, chunk_position_in_bytes: int, chunk_size_in_bytes: int) -> ndarray:
@@ -108,12 +108,11 @@ class SamplesTransferBuffer(TransferBuffer):
         direction: BufferDirection,
         board_memory_offset_bytes: int,
         data_array: ndarray,
-        notify_size_in_bytes: Optional[int] = None,
+        notify_size_in_pages: int = 1,
     ) -> None:
-        """If no notify size is provided, it will be se to the length of the data array, meaning that a notification
-        will be received once the transfer is complete. See the Spectrum documentation for more information."""
-        notify_size = notify_size_in_bytes if notify_size_in_bytes else data_array.size * data_array.itemsize
-        super().__init__(BufferType.SPCM_BUF_DATA, direction, board_memory_offset_bytes, data_array, notify_size)
+        super().__init__(
+            BufferType.SPCM_BUF_DATA, direction, board_memory_offset_bytes, data_array, notify_size_in_pages
+        )
 
     def read_chunk(self, chunk_position_in_bytes: int, chunk_size_in_bytes: int) -> ndarray:
         chunk_position_in_samples = chunk_position_in_bytes // self.data_array.itemsize
@@ -126,9 +125,13 @@ class SamplesTransferBuffer(TransferBuffer):
 
 class TimestampsTransferBuffer(TransferBuffer):
     def __init__(self, direction: BufferDirection, board_memory_offset_bytes: int) -> None:
-        # Timestamp buffer uses polling mode which requires the (ignored) notify size to be set to 4096
+        # Timestamp buffer uses polling mode which requires the (ignored) notify size to be set to the page size
         super().__init__(
-            BufferType.SPCM_BUF_TIMESTAMP, direction, board_memory_offset_bytes, zeros(4096, dtype=uint8), 4096
+            BufferType.SPCM_BUF_TIMESTAMP,
+            direction,
+            board_memory_offset_bytes,
+            zeros(NOTIFY_SIZE_PAGE_SIZE_IN_BYTES, dtype=uint8),
+            NOTIFY_SIZE_PAGE_SIZE_IN_BYTES,
         )
 
     def read_chunk(self, chunk_position_in_bytes: int, chunk_size_in_bytes: int) -> ndarray:
@@ -143,7 +146,7 @@ def transfer_buffer_factory(
     direction: BufferDirection,
     size_in_samples: Optional[int] = None,
     board_memory_offset_bytes: int = 0,
-    notify_size_in_bytes: Optional[int] = None,
+    notify_size_in_pages: int = 1,
 ) -> "TransferBuffer":
     """
     Args:
@@ -154,15 +157,14 @@ def transfer_buffer_factory(
             required for BufferType.SPCM_BUF_DATA as SPCM_BUF_TIMESTAMP buffers are always 4096 uint8 long.
         board_memory_offset_bytes (int): Sets the offset for transfer in board memory. Default 0. See Spectrum
             documentation for more information.
-        notify_size_in_bytes (int): For BufferType.SPCM_BUF_DATA. The number of transferred bytes after which a
-        notification of transfer is sent from the device, and therefore a chunk of samples is downloaded. If no notify
-        size is provided, it will be set to the length of the data array, meaning that a notification will be received
-        once the transfer is complete. See the Spectrum documentation for more information.
+        notify_size_in_pages (int): For BufferType.SPCM_BUF_DATA. The number of transferred pages (i.e. 4096 bytes)
+        after which a notification of transfer is sent from the device, and therefore a chunk of samples is downloaded.
+        See the Spectrum documentation for more information. Ignored for BufferType.SPCM_BUF_TIMESTAMP.
     """
     if buffer_type == BufferType.SPCM_BUF_DATA:
         if size_in_samples is not None:
             return SamplesTransferBuffer(
-                direction, board_memory_offset_bytes, zeros(size_in_samples, int16), notify_size_in_bytes
+                direction, board_memory_offset_bytes, zeros(size_in_samples, int16), notify_size_in_pages
             )
         else:
             raise ValueError("You must provide a buffer size_in_samples to create a BufferType.SPCM_BUF_DATA buffer.")
@@ -182,12 +184,16 @@ create_timestamp_acquisition_transfer_buffer = partial(
 
 
 def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffer) -> None:
+    print(f"Settings notify size to {buffer.notify_size_in_pages * NOTIFY_SIZE_PAGE_SIZE_IN_BYTES} bytes")
     error_handler(spcm_dwDefTransfer_i64)(
         device_handle,
         buffer.type.value,
         buffer.direction.value,
-        buffer.notify_size_in_bytes,
+        buffer.notify_size_in_pages * NOTIFY_SIZE_PAGE_SIZE_IN_BYTES,
         buffer.data_array_pointer,
         buffer.board_memory_offset_bytes,
         buffer.data_array_length_in_bytes,
     )
+
+
+NOTIFY_SIZE_PAGE_SIZE_IN_BYTES = 4096

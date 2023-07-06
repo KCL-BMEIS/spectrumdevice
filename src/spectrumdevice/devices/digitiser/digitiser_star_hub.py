@@ -4,9 +4,7 @@
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 import datetime
-import threading
 from threading import Thread
-from time import perf_counter
 from typing import List, Optional, Sequence, cast
 
 from numpy import float_
@@ -74,8 +72,13 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
         This method gets the waveforms from each child card and joins them into a new list, ordered by channel number.
         See `SpectrumDigitiserCard.get_waveforms()` for more information.
 
+        Args:
+            num_acquisitions (int): For FIFO mode:  the number of acquisitions (i.e. trigger events) to wait for and
+            copy. Acquiring in batches (num_acquisitions > 1) can improve performance.
+
         Returns:
-            waveforms (List[NDArray[float_]]): A list of 1D numpy arrays, one per enabled channel, in channel order.
+            waveforms (List[List[NDArray[float_]]]): A list lists of 1D numpy arrays, one inner list per acquisition,
+              and one array per enabled channel, in channel order.
         """
         card_ids_and_waveform_sets: dict[str, list[list[NDArray[float_]]]] = {}
 
@@ -83,7 +86,6 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
             this_cards_waveforms = digitiser_card.get_waveforms(num_acquisitions)
             card_ids_and_waveform_sets[str(digitiser_card)] = this_cards_waveforms
 
-        t = perf_counter()
         threads = [
             Thread(target=_get_waveforms, args=(cast(SpectrumDigitiserCard, card),)) for card in self._child_cards
         ]

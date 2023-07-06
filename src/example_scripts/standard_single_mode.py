@@ -43,14 +43,14 @@ def standard_single_mode_example(
     # Acquisition settings
     acquisition_settings = AcquisitionSettings(
         acquisition_mode=AcquisitionMode.SPC_REC_STD_SINGLE,
-        sample_rate_in_hz=40000000,
-        acquisition_length_in_samples=400,
+        sample_rate_in_hz=int(4e6),
+        acquisition_length_in_samples=8800,
         pre_trigger_length_in_samples=0,
         timeout_in_ms=1000,
         enabled_channels=[0],
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
-        timestamping_enabled=True,
+        timestamping_enabled=False,
     )
 
     # Apply settings
@@ -69,9 +69,7 @@ if __name__ == "__main__":
     from matplotlib.pyplot import plot, show, xlabel, tight_layout, ylabel
 
     meas = standard_single_mode_example(
-        mock_mode=False,
-        trigger_source=TriggerSource.SPC_TMASK_EXT0,
-        device_number=0,
+        mock_mode=False, trigger_source=TriggerSource.SPC_TMASK_EXT0, device_number=1, ip_address="169.254.142.75"
     )
 
     # Plot waveforms
