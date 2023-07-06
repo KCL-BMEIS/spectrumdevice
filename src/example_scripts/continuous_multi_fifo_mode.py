@@ -68,7 +68,7 @@ def continuous_multi_fifo_example(
     # Retrieve streamed waveform data until desired time has elapsed
     measurements_list = []
     while (monotonic() - start_time) < acquisition_duration_in_seconds:
-        measurements_list.append(Measurement(waveforms=card.get_waveforms(), timestamp=card.get_timestamp()))
+        measurements_list.append(Measurement(waveforms=card.get_waveforms(1)[0], timestamp=card.get_timestamp()))
         if measurements_list[-1].timestamp is not None:
             print(
                 f"Got measurement triggered at {measurements_list[-1].timestamp.time()} (acquisition latency of"

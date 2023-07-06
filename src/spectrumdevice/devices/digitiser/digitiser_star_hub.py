@@ -77,10 +77,10 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
             waveforms (List[NDArray[float_]]): A list of 1D numpy arrays, one per enabled channel, in channel order.
         """
         lock = threading.Lock()
-        card_ids_and_waveform_sets: dict[str, list[list[[NDArray[float_]]]]] = {}
+        card_ids_and_waveform_sets: dict[str, list[list[NDArray[float_]]]] = {}
 
         def _get_waveforms(digitiser_card: SpectrumDigitiserCard) -> None:
-            this_cards_waveforms = digitiser_card.get_waveforms()
+            this_cards_waveforms = digitiser_card.get_waveforms(num_acquisitions)
             lock.acquire()
             try:
                 card_ids_and_waveform_sets[str(digitiser_card)] = this_cards_waveforms
@@ -95,12 +95,14 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
         for thread in threads:
             thread.join()
 
-        waveforms_all_cards_ordered = []
+        waveform_sets_all_cards_ordered = []
         for n in range(num_acquisitions):
+            waveforms_in_this_set = []
             for card in self._child_cards:
-                waveforms_all_cards_ordered += card_ids_and_waveform_sets[str(card)][n]
+                waveforms_in_this_set += card_ids_and_waveform_sets[str(card)][n]
+            waveform_sets_all_cards_ordered.append(waveforms_in_this_set)
 
-        return waveforms_all_cards_ordered
+        return waveform_sets_all_cards_ordered
 
     def get_timestamp(self) -> Optional[datetime.datetime]:
         """Get timestamp for the last acquisition"""

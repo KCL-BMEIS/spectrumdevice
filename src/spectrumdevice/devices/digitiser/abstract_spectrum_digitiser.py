@@ -74,7 +74,7 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
         self.define_transfer_buffer()
         self.start_transfer()
         self.wait_for_transfer_chunk_to_complete()
-        waveforms = self.get_waveforms()
+        waveforms = self.get_waveforms(1)[0]  # only one repeat acquisition
         self.stop()  # Only strictly required for Mock devices. Should not affect hardware.
         return Measurement(waveforms=waveforms, timestamp=self.get_timestamp())
 
@@ -102,7 +102,7 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
         self.execute_continuous_fifo_acquisition()
         measurements = []
         for _ in range(num_measurements):
-            measurements.append(Measurement(waveforms=self.get_waveforms(), timestamp=self.get_timestamp()))
+            measurements.append(Measurement(waveforms=self.get_waveforms(1)[0], timestamp=self.get_timestamp()))
         self.stop()
         return measurements
 
