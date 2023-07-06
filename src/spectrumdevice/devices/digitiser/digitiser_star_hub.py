@@ -6,6 +6,7 @@
 import datetime
 import threading
 from threading import Thread
+from time import perf_counter
 from typing import List, Optional, Sequence, cast
 
 from numpy import float_
@@ -76,20 +77,17 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
         Returns:
             waveforms (List[NDArray[float_]]): A list of 1D numpy arrays, one per enabled channel, in channel order.
         """
-        lock = threading.Lock()
         card_ids_and_waveform_sets: dict[str, list[list[NDArray[float_]]]] = {}
 
         def _get_waveforms(digitiser_card: SpectrumDigitiserCard) -> None:
             this_cards_waveforms = digitiser_card.get_waveforms(num_acquisitions)
-            lock.acquire()
-            try:
-                card_ids_and_waveform_sets[str(digitiser_card)] = this_cards_waveforms
-            finally:
-                lock.release()
+            card_ids_and_waveform_sets[str(digitiser_card)] = this_cards_waveforms
 
+        t = perf_counter()
         threads = [
             Thread(target=_get_waveforms, args=(cast(SpectrumDigitiserCard, card),)) for card in self._child_cards
         ]
+
         for thread in threads:
             thread.start()
         for thread in threads:
