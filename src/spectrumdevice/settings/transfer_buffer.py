@@ -184,7 +184,6 @@ create_timestamp_acquisition_transfer_buffer = partial(
 
 
 def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffer) -> None:
-    print(f"Settings notify size to {buffer.notify_size_in_pages * NOTIFY_SIZE_PAGE_SIZE_IN_BYTES} bytes")
     error_handler(spcm_dwDefTransfer_i64)(
         device_handle,
         buffer.type.value,

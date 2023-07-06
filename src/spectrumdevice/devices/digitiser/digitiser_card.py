@@ -125,7 +125,6 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
 
             while num_read_bytes < (num_expected_bytes_per_frame * num_acquisitions):
                 num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
-                print(f"There are {num_available_bytes} bytes available")
                 position_of_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_POS)
 
                 # Don't allow reading over the end of the transfer buffer
@@ -140,8 +139,6 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
 
                 num_available_samples = num_available_bytes // self._transfer_buffer.data_array.itemsize
                 num_read_samples = num_read_bytes // self._transfer_buffer.data_array.itemsize
-
-                print(f"There are {num_available_samples} samples ({num_available_bytes} bytes) available")
 
                 raw_samples[
                     num_read_samples : num_read_samples + num_available_samples
