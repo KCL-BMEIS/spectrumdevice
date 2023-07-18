@@ -118,8 +118,6 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         For digitisers in FIFO mode (SPC_REC_FIFO_MULTI), `start_transfer()` should be called immediately after
         `start()` has been called, so that the waveform data can be continuously streamed into the transfer buffer as it
         is acquired.
-
-        # todo: docstring for AWG transfers
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_STARTDMA)
 
@@ -136,8 +134,6 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         For digitisers in FIFO mode (SPC_REC_FIFO_MULTI), samples are transferred continuously during acquisition,
         and transfer will automatically stop when `stop()` is called as there will be no more
         samples to transfer, so `stop_transfer()` should not be used.
-
-        # todo: docstring for AWG
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_STOPDMA)
 
@@ -150,9 +146,6 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         be read using the `get_waveforms()` method.
 
         For digitisers in FIFO mode (SPC_REC_FIFO_MULTI) this method is internally used by get_waveforms().
-
-        # todo: update the above docstring to take into account cases where notify size < data lemgth
-        # todo: docstring for AWG
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_WAITDMA)
 
