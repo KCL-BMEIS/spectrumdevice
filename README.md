@@ -1,4 +1,4 @@
-# spectrumdevice
+from spectrumdevice.settings.transfer_buffer import BufferTypefrom spectrumdevice.settings.transfer_buffer import transfer_buffer_factoryfrom spectrumdevice.settings.transfer_buffer import transfer_buffer_factory# spectrumdevice
 A high-level, object-oriented Python library for controlling Spectrum Instrumentation devices.
 
 `spectrumdevice` can connect to individual cards or 
@@ -208,7 +208,33 @@ timestamp = measurement.timestamp  # A datetime.datetime object
 
 ### Acquiring waveforms from a digitiser (FIFO mode)
 To acquire data in FIFO mode, place the device into the correct mode using `configure_acquisition()` or `
-card.set_acquisition_mode(AcquisitionMode.SPC_REC_FIFO_MULTI)`.
+card.set_acquisition_mode(AcquisitionMode.SPC_REC_FIFO_MULTI)`. You can then also construct your own 
+`TransferBuffer` object and provide it to card using the `define_transfer_buffer()` method:
+
+```python
+from spectrumdevice.settings.transfer_buffer import (
+    BufferDirection,
+    BufferType,
+    transfer_buffer_factory,
+)
+
+size_in_samples = 100
+board_memory_offset_bytes = 0
+notify_size_in_pages = 10
+
+buffer = transfer_buffer_factory(
+  buffer_type=BufferType.SPCM_BUF_DATA,  # must be SPCM_BUF_DATA to transfer samples from digitiser
+  direction=BufferDirection.SPCM_DIR_CARDTOPC,  # must be SPCM_DIR_CARDTOPC to transfer samples from digitiser
+  size_in_samples=size_in_samples,
+  board_memory_offset_bytes=board_memory_offset_bytes,
+  notify_size_in_pages=notify_size_in_pages
+)
+  
+card.define_transfer_buffer(buffer)
+```
+this allows you to set your own transfer buffer size and notify size. If you do not call `define_transfer_buffer()` yourself,
+then a default transfer buffer will be used, which will have a notify size of 10 pages (40 kB) and will be large
+enough to hold 1000 repeat acquisitions without overflowing.
 
 You can then carry out a predefined number of Multi FIFO measurements like this:
 
