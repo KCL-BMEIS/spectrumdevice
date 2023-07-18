@@ -103,8 +103,9 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
             copy. Acquiring in batches (num_acquisitions > 1) can improve performance.
 
         Returns:
-             waveforms (List[List[NDArray[float_]]]): A list lists of 1D numpy arrays, one inner list per acquisition,
-             and one array per enabled channel, in channel order.
+             waveforms (List[List[NDArray[float_]]]): A list of lists of 1D numpy arrays, one inner list per acquisition
+             and one array per enabled channel, in channel order. To average the acquisitions:
+                `np.array(waveforms).mean(axis=0)`
 
         """
         if self._transfer_buffer is None:
@@ -252,10 +253,10 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
     def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
         """Create or provide a `TransferBuffer` object for receiving acquired samples from the device.
 
-        If no buffer is provided, in FIFO mode one will be created with a size large enough to hold 1000 repeat
-         measurements before overflowing, and a notify size of 10 pages. In Standard Signle mode one will be created
-         with the correct length and no notify size. A separate buffer for transferring Timestamps
-         will also be created using the Timestamper class.
+        If no buffer is provided, and no buffer has previously been defined, then one will be created: in FIFO mode,
+         with a size large enough to hold 1000 repeat measurements before overflowing, and a notify size of 10 pages; in
+         Standard Single mode, one with the correct length and no notify size. A separate buffer for transferring
+         Timestamps will also be created using the Timestamper class.
 
         Args:
             buffer (Optional[List[`TransferBuffer`]]): A length-1 list containing a pre-constructed
@@ -269,7 +270,7 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
                 raise ValueError("Digitisers need a transfer buffer with direction BufferDirection.SPCM_DIR_CARDTOPC")
             if self._transfer_buffer.type != BufferType.SPCM_BUF_DATA:
                 raise ValueError("Digitisers need a transfer buffer with type BufferDirection.SPCM_BUF_DATA")
-        else:
+        elif self._transfer_buffer is None:
             if self.acquisition_mode in (AcquisitionMode.SPC_REC_FIFO_MULTI, AcquisitionMode.SPC_REC_FIFO_AVERAGE):
                 self._transfer_buffer = create_samples_acquisition_transfer_buffer(
                     self.acquisition_length_in_samples * len(self.enabled_channels) * 1000, notify_size_in_pages=10
@@ -280,6 +281,7 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
                 )
             else:
                 raise ValueError("AcquisitionMode not recognised")
+
         set_transfer_buffer(self._handle, self._transfer_buffer)
 
     def __str__(self) -> str:

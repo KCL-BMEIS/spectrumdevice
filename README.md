@@ -6,21 +6,21 @@ A high-level, object-oriented Python library for controlling Spectrum Instrument
 [NetBox](https://spectrum-instrumentation.com/en/digitizernetbox)). `spectrumdevice` provides the following classes 
 for controlling devices:
 
-| Name                       | Purpose                                                 |
-|----------------------------|---------------------------------------------------------|
-| `SpectrumDigitiserCard`    | Controlling individual digitiser cards                  |
-| `SpectrumDigitiserStarHub` | Controlling digitiser cards aggregated with a StarHub   |
-| `SpectrumAWGCard`          | Controlling individual AWG cards                        |
-| `SpectrumAWGStarHub`       | Controlling AWG cards aggregated with a StarHub         |
+| Name                       | Purpose                                                               |
+|----------------------------|-----------------------------------------------------------------------|
+| `SpectrumDigitiserCard`    | Controlling individual digitiser cards                                |
+| `SpectrumDigitiserStarHub` | Controlling digitiser cards aggregated with a StarHub                 |
+| `SpectrumAWGCard`          | Controlling individual AWG cards (Not yet implemented)                |
+| `SpectrumAWGStarHub`       | Controlling AWG cards aggregated with a StarHub (Not yet implemented) |
 
 `spectrumdevice` also includes mock classes for testing software without drivers installed or hardware connected:
 
-| Name                           | Purpose                                             |
-|--------------------------------|-----------------------------------------------------|
-| `MockSpectrumDigitiserCard`    | Mocking individual digitiser cards                  |
-| `MockSpectrumDigitiserStarHub` | Mocking digitiser cards aggregated with a StarHub   |
-| `MockSpectrumAWGCard`          | Mocking individual AWG cards                        |
-| `MockSpectrumAWGStarHub`       | Mocking AWG cards aggregated with a StarHub         |
+| Name                           | Purpose                                                           |
+|--------------------------------|-------------------------------------------------------------------|
+| `MockSpectrumDigitiserCard`    | Mocking individual digitiser cards                                |
+| `MockSpectrumDigitiserStarHub` | Mocking digitiser cards aggregated with a StarHub                 |
+| `MockSpectrumAWGCard`          | Mocking individual AWG cards (Not yet implemented)                |
+| `MockSpectrumAWGStarHub`       | Mocking AWG cards aggregated with a StarHub (Not yet implemented) |
 
 For digitisers, `spectrumdevice` currently only supports 'Standard Single' and 'Multi FIFO' acquisition modes. See the 
 Limitations section for more information.
@@ -59,9 +59,6 @@ files taken from the `spcm_examples` directory, provided with Spectrum hardware.
 ## Limitations
 * Currently, `spectrumdevice` only supports Standard Single and Multi FIFO digitiser acquisition modes. See the 
   Spectrum documentation for more information.
-* When defining a transfer buffer - the software buffer into which samples are transferred between a hardware device - 
-  and Python - the notify-size is automatically set equal to the buffer length. This works fine for most situations. 
-  See the Spectrum documentation for more information.
 * If timestamping is enabled, timestamps are acquired using Spectrum's 'polling' mode. This seems to add around
   5 to 10 ms of latency to the acquisition.
 * Only current digitisers from the [59xx](https://spectrum-instrumentation.com/de/59xx-16-bit-digitizer-125-mss),
@@ -70,7 +67,6 @@ files taken from the `spcm_examples` directory, provided with Spectrum hardware.
 `spectrumdevice` has only been tested on 59xx devices. However, `spectrumdevice` may work fine on older devices. If 
 you've tried `spectrumdevice` on an older device, please let us know if it works and raise any issues you encounter in
 the issue tracker. It's likely possible to add support with minimal effort.
-# todo: add supported AWG devices
 
 ## Usage
 ### Connect to devices
