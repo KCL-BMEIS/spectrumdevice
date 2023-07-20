@@ -8,9 +8,6 @@ from abc import ABC
 from threading import Event, Lock, Thread
 from typing import Dict, Optional
 
-from numpy import float_, ndarray, zeros
-from numpy.typing import NDArray
-
 from spectrum_gmbh.regs import (
     SPCM_FEAT_EXTFW_SEGSTAT,
     SPCM_FEAT_MULTI,
@@ -30,7 +27,7 @@ from spectrum_gmbh.regs import (
 from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice
 from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
 from spectrumdevice.devices.mocks.mock_waveform_source import mock_waveform_source_factory
-from spectrumdevice.exceptions import SpectrumDeviceNotConnected, SpectrumNoTransferBufferDefined
+from spectrumdevice.exceptions import SpectrumDeviceNotConnected
 from spectrumdevice.settings import AcquisitionMode, SpectrumRegisterLength
 
 
@@ -135,9 +132,7 @@ class MockAbstractSpectrumDigitiser(MockAbstractSpectrumDevice, AbstractSpectrum
         """
         self.define_transfer_buffer()
         notify_size = self.transfer_buffers[0].notify_size_in_pages  # this will be 0 in STD_SINGLE_MODE
-        waveform_source = mock_waveform_source_factory(self.acquisition_mode,
-                                                       self._param_dict,
-                                                       notify_size)
+        waveform_source = mock_waveform_source_factory(self.acquisition_mode, self._param_dict, notify_size)
         amplitude = self.read_spectrum_device_register(SPC_MIINST_MAXADCVALUE)
         self._acquisition_stop_event.clear()
         self._acquisition_thread = Thread(

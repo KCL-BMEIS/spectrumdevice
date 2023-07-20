@@ -20,7 +20,7 @@ def finite_multi_fifo_example(
     trigger_source: TriggerSource,
     device_number: int,
     ip_address: Optional[str] = None,
-    acquisition_length=400,
+    acquisition_length: int = 400,
 ) -> List[Measurement]:
 
     if not mock_mode:

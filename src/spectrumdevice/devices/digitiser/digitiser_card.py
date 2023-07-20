@@ -158,8 +158,9 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
         for n in range(num_acquisitions):
             repeat_acquisitions.append(
                 [
-                    cast(SpectrumDigitiserChannel,
-                         self.channels[ch_num]).convert_raw_waveform_to_voltage_waveform(squeeze(waveform))
+                    cast(SpectrumDigitiserChannel, self.channels[ch_num]).convert_raw_waveform_to_voltage_waveform(
+                        squeeze(waveform)
+                    )
                     for ch_num, waveform in zip(self.enabled_channels, waveforms_in_columns[n, :, :].T)
                 ]
             )

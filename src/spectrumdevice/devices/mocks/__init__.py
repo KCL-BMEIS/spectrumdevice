@@ -6,12 +6,10 @@
 
 import logging
 from time import perf_counter, sleep
-from typing import List, Optional, Sequence
-
-from numpy import zeros
+from typing import List, Sequence
 
 from spectrum_gmbh.regs import (
-    SPC_DATA_AVAIL_USER_LEN, SPC_DATA_AVAIL_USER_POS, SPC_FNCTYPE,
+    SPC_FNCTYPE,
     SPC_MIINST_CHPERMODULE,
     SPC_MIINST_MODULES,
     SPC_PCITYP,
@@ -25,14 +23,8 @@ from spectrumdevice.exceptions import (
     SpectrumNoTransferBufferDefined,
     SpectrumSettingsMismatchError,
 )
-from spectrumdevice.settings import TransferBuffer
 from spectrumdevice.settings.card_dependent_properties import CardType, ModelNumber
 from spectrumdevice.settings.device_modes import AcquisitionMode
-from spectrumdevice.settings.transfer_buffer import (
-    BufferDirection,
-    BufferType,
-    NOTIFY_SIZE_PAGE_SIZE_IN_BYTES, transfer_buffer_factory,
-)
 
 logger = logging.getLogger(__name__)
 MOCK_TRANSFER_TIMEOUT_IN_S = 10
@@ -130,10 +122,10 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
         new mock transfer has been completed by waiting for a change to TRANSFER_CHUNK_COUNTER."""
         if self._transfer_buffer:
             t0 = perf_counter()
-            t_elapsed = 0
-            while (self._previous_transfer_chunk_count ==
-                   self._param_dict[TRANSFER_CHUNK_COUNTER])\
-                    and t_elapsed < MOCK_TRANSFER_TIMEOUT_IN_S:
+            t_elapsed = 0.0
+            while (
+                self._previous_transfer_chunk_count == self._param_dict[TRANSFER_CHUNK_COUNTER]
+            ) and t_elapsed < MOCK_TRANSFER_TIMEOUT_IN_S:
                 sleep(0.1)
                 t_elapsed = perf_counter() - t0
             self._previous_transfer_chunk_count = self._param_dict[TRANSFER_CHUNK_COUNTER]

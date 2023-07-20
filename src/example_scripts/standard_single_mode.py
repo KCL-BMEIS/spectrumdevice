@@ -17,8 +17,11 @@ from spectrumdevice.settings import (
 
 
 def standard_single_mode_example(
-    mock_mode: bool, trigger_source: TriggerSource, device_number: int, ip_address: Optional[str] = None,
-        acquisition_length: int = 400
+    mock_mode: bool,
+    trigger_source: TriggerSource,
+    device_number: int,
+    ip_address: Optional[str] = None,
+    acquisition_length: int = 400,
 ) -> Measurement:
 
     if not mock_mode:

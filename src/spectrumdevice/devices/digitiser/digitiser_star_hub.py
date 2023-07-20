@@ -5,7 +5,7 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 import datetime
 from threading import Thread
-from typing import List, Optional, Sequence, cast
+from typing import Dict, List, Optional, Sequence, cast
 
 from numpy import float_
 from numpy.typing import NDArray
@@ -80,7 +80,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
             waveforms (List[List[NDArray[float_]]]): A list lists of 1D numpy arrays, one inner list per acquisition,
               and one array per enabled channel, in channel order.
         """
-        card_ids_and_waveform_sets: dict[str, list[list[NDArray[float_]]]] = {}
+        card_ids_and_waveform_sets: Dict[str, list[list[NDArray[float_]]]] = {}
 
         def _get_waveforms(digitiser_card: SpectrumDigitiserCard) -> None:
             this_cards_waveforms = digitiser_card.get_waveforms(num_acquisitions)

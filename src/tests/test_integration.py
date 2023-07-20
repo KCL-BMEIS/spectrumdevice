@@ -13,7 +13,8 @@ from example_scripts.standard_single_mode import standard_single_mode_example
 from spectrumdevice.measurement import Measurement
 from spectrumdevice.exceptions import SpectrumDriversNotFound
 from tests.configuration import (
-    ACQUISITION_LENGTH, INTEGRATION_TEST_TRIGGER_SOURCE,
+    ACQUISITION_LENGTH,
+    INTEGRATION_TEST_TRIGGER_SOURCE,
     NUM_CARDS_IN_STAR_HUB,
     NUM_CHANNELS_PER_MODULE,
     NUM_MODULES_PER_CARD,
@@ -37,7 +38,7 @@ class SingleCardIntegrationTests(TestCase):
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
             device_number=TEST_DEVICE_NUMBER,
             ip_address=TEST_DEVICE_IP,
-            acquisition_length=ACQUISITION_LENGTH
+            acquisition_length=ACQUISITION_LENGTH,
         )
         self.assertEqual(len(measurement.waveforms), 1)
         self.assertEqual([wfm.shape for wfm in measurement.waveforms], [(ACQUISITION_LENGTH,)])
@@ -59,7 +60,7 @@ class SingleCardIntegrationTests(TestCase):
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
             device_number=TEST_DEVICE_NUMBER,
             ip_address=TEST_DEVICE_IP,
-            acquisition_length=ACQUISITION_LENGTH
+            acquisition_length=ACQUISITION_LENGTH,
         )
         self.assertEqual(len(measurements), 5)
         self._asserts_for_fifo_mode(measurements)
@@ -71,7 +72,7 @@ class SingleCardIntegrationTests(TestCase):
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
             device_number=TEST_DEVICE_NUMBER,
             ip_address=TEST_DEVICE_IP,
-            acquisition_length=ACQUISITION_LENGTH
+            acquisition_length=ACQUISITION_LENGTH,
         )
         self._asserts_for_fifo_mode(measurements)
 
@@ -83,7 +84,7 @@ class SingleCardIntegrationTests(TestCase):
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
             device_number=TEST_DEVICE_NUMBER,
             ip_address=TEST_DEVICE_IP,
-            acquisition_length=ACQUISITION_LENGTH
+            acquisition_length=ACQUISITION_LENGTH,
         )
         self._asserts_for_fifo_mode(measurements)
 

@@ -7,7 +7,7 @@
 from abc import ABC, abstractmethod
 from threading import Event, Lock
 from time import monotonic, sleep
-from typing import Optional
+from typing import Dict
 
 from numpy import ndarray
 from numpy.random import uniform
@@ -24,20 +24,31 @@ class MockWaveformSource(ABC):
     """Interface for a mock noise waveform source. Implementations are intended to be called in their own thread.
     When called, `MockWaveformSource` implementations will fill a provided buffer with noise samples."""
 
-    def __init__(self, param_dict: dict[int, int]):
+    def __init__(self, param_dict: Dict[int, int]):
         self._param_dict = param_dict
 
     @abstractmethod
     def __call__(
-        self, stop_flag: Event, frame_rate: float, amplitude: float, transfer_buffer_data_array: ndarray, samples_per_frame: int, buffer_lock: Lock
+        self,
+        stop_flag: Event,
+        frame_rate: float,
+        amplitude: float,
+        transfer_buffer_data_array: ndarray,
+        samples_per_frame: int,
+        buffer_lock: Lock,
     ) -> None:
         raise NotImplementedError()
 
 
 class SingleModeMockWaveformSource(MockWaveformSource):
-
     def __call__(
-        self, stop_flag: Event, frame_rate: float, amplitude: float, transfer_buffer_data_array: ndarray, samples_per_frame: int, buffer_lock: Lock
+        self,
+        stop_flag: Event,
+        frame_rate: float,
+        amplitude: float,
+        transfer_buffer_data_array: ndarray,
+        samples_per_frame: int,
+        buffer_lock: Lock,
     ) -> None:
         """When called, this MockWaveformSource simulates SPC_REC_STD_SINGLE Mode, placing a single frames worth of
         samples into a provided mock on_device_buffer.
@@ -58,19 +69,26 @@ class SingleModeMockWaveformSource(MockWaveformSource):
         if not stop_flag.is_set():
             with buffer_lock:
                 transfer_buffer_data_array[:samples_per_frame] = uniform(
-                    low=-1 * amplitude, high=amplitude, size=samples_per_frame)
+                    low=-1 * amplitude, high=amplitude, size=samples_per_frame
+                )
                 self._param_dict[SPC_DATA_AVAIL_USER_POS] = 0
                 self._param_dict[SPC_DATA_AVAIL_USER_LEN] = samples_per_frame * bytes_per_sample
             self._param_dict[TRANSFER_CHUNK_COUNTER] += 1
 
 
 class MultiFIFOModeMockWaveformSource(MockWaveformSource):
-    def __init__(self, param_dict: dict[int, int], notify_size_in_pages: int):
+    def __init__(self, param_dict: Dict[int, int], notify_size_in_pages: int):
         super().__init__(param_dict)
         self._notify_size_in_pages = notify_size_in_pages
 
     def __call__(
-        self, stop_flag: Event, frame_rate: float, amplitude: float, transfer_buffer_data_array: ndarray, samples_per_frame: int, buffer_lock: Lock
+        self,
+        stop_flag: Event,
+        frame_rate: float,
+        amplitude: float,
+        transfer_buffer_data_array: ndarray,
+        samples_per_frame: int,
+        buffer_lock: Lock,
     ) -> None:
         """When called, this `MockWaveformSource` simulates SPC_REC_FIFO_MULTI Mode, continuously replacing the contents
         of on_device_buffer with new frames of noise samples.
@@ -108,8 +126,11 @@ class MultiFIFOModeMockWaveformSource(MockWaveformSource):
             sleep(1 / notify_sizes_per_second)
 
 
-def mock_waveform_source_factory(acquisition_mode: AcquisitionMode, param_dict: dict[int, int], notify_size_in_pages: int = 0,
-                                 ) -> MockWaveformSource:
+def mock_waveform_source_factory(
+    acquisition_mode: AcquisitionMode,
+    param_dict: Dict[int, int],
+    notify_size_in_pages: int = 0,
+) -> MockWaveformSource:
     if acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
         return MultiFIFOModeMockWaveformSource(param_dict, notify_size_in_pages)
     elif AcquisitionMode.SPC_REC_STD_SINGLE:
