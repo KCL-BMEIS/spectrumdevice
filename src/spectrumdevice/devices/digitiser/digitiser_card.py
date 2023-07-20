@@ -7,7 +7,7 @@ import datetime
 import logging
 from typing import List, Optional, Sequence, cast
 
-from numpy import float_, mod, zeros
+from numpy import float_, mod, squeeze, zeros
 from numpy.typing import NDArray
 
 from spectrum_gmbh.regs import (
@@ -128,6 +128,8 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
                 num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
                 position_of_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_POS)
 
+                print(f"get waveforms: {num_available_bytes}, {position_of_available_bytes}")
+
                 # Don't allow reading over the end of the transfer buffer
                 if (
                     position_of_available_bytes + num_available_bytes
@@ -156,8 +158,9 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
         for n in range(num_acquisitions):
             repeat_acquisitions.append(
                 [
-                    cast(SpectrumDigitiserChannel, ch).convert_raw_waveform_to_voltage_waveform(waveform)
-                    for ch, waveform in zip(self.channels, waveforms_in_columns[n, :, :].T)
+                    cast(SpectrumDigitiserChannel,
+                         self.channels[ch_num]).convert_raw_waveform_to_voltage_waveform(squeeze(waveform))
+                    for ch_num, waveform in zip(self.enabled_channels, waveforms_in_columns[n, :, :].T)
                 ]
             )
 

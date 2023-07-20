@@ -17,7 +17,8 @@ from spectrumdevice.settings import (
 
 
 def standard_single_mode_example(
-    mock_mode: bool, trigger_source: TriggerSource, device_number: int, ip_address: Optional[str] = None
+    mock_mode: bool, trigger_source: TriggerSource, device_number: int, ip_address: Optional[str] = None,
+        acquisition_length: int = 400
 ) -> Measurement:
 
     if not mock_mode:
@@ -44,7 +45,7 @@ def standard_single_mode_example(
     acquisition_settings = AcquisitionSettings(
         acquisition_mode=AcquisitionMode.SPC_REC_STD_SINGLE,
         sample_rate_in_hz=int(4e6),
-        acquisition_length_in_samples=8800,
+        acquisition_length_in_samples=acquisition_length,
         pre_trigger_length_in_samples=0,
         timeout_in_ms=1000,
         enabled_channels=[0],

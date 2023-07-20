@@ -5,13 +5,13 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
 import logging
-from time import sleep
+from time import perf_counter, sleep
 from typing import List, Optional, Sequence
 
 from numpy import zeros
 
 from spectrum_gmbh.regs import (
-    SPC_FNCTYPE,
+    SPC_DATA_AVAIL_USER_LEN, SPC_DATA_AVAIL_USER_POS, SPC_FNCTYPE,
     SPC_MIINST_CHPERMODULE,
     SPC_MIINST_MODULES,
     SPC_PCITYP,
@@ -19,6 +19,7 @@ from spectrum_gmbh.regs import (
 from spectrumdevice.devices.digitiser import SpectrumDigitiserCard
 from spectrumdevice.devices.digitiser import SpectrumDigitiserStarHub
 from spectrumdevice.devices.mocks.mock_abstract_devices import MockAbstractSpectrumDigitiser
+from spectrumdevice.devices.mocks.mock_waveform_source import TRANSFER_CHUNK_COUNTER
 from spectrumdevice.devices.mocks.timestamps import MockTimestamper
 from spectrumdevice.exceptions import (
     SpectrumNoTransferBufferDefined,
@@ -30,10 +31,11 @@ from spectrumdevice.settings.device_modes import AcquisitionMode
 from spectrumdevice.settings.transfer_buffer import (
     BufferDirection,
     BufferType,
-    transfer_buffer_factory,
+    NOTIFY_SIZE_PAGE_SIZE_IN_BYTES, transfer_buffer_factory,
 )
 
 logger = logging.getLogger(__name__)
+MOCK_TRANSFER_TIMEOUT_IN_S = 10
 
 
 class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigitiser):
@@ -71,10 +73,12 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
         self._param_dict[SPC_MIINST_CHPERMODULE] = num_channels_per_module
         self._param_dict[SPC_PCITYP] = model.value
         self._param_dict[SPC_FNCTYPE] = CardType.SPCM_TYPE_AI.value
+        self._param_dict[TRANSFER_CHUNK_COUNTER] = 0
         SpectrumDigitiserCard.__init__(self, device_number=device_number)
         self._visa_string = f"MockCard{device_number}"
         self._connect(self._visa_string)
         self._acquisition_mode = self.acquisition_mode
+        self._previous_transfer_chunk_count = 0
 
     def enable_timestamping(self) -> None:
         self._timestamper: MockTimestamper = MockTimestamper(self, self._handle)
@@ -97,8 +101,6 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
         Args:
             length_in_samples (int): Number of samples in each generated mock waveform
         """
-        self._on_device_buffer = zeros(length_in_samples * len(self.enabled_channels))
-        self._previous_data = zeros(length_in_samples * len(self.enabled_channels))
         super().set_acquisition_length_in_samples(length_in_samples)
 
     def set_enabled_channels(self, channels_nums: List[int]) -> None:
@@ -111,60 +113,30 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
 
         """
         if len(list(filter(lambda x: 0 <= x < len(self.channels), channels_nums))) == len(channels_nums):
-            self._on_device_buffer = zeros(self.acquisition_length_in_samples * len(channels_nums))
-            self._previous_data = zeros(self.acquisition_length_in_samples * len(channels_nums))
             super().set_enabled_channels(channels_nums)
         else:
             raise SpectrumSettingsMismatchError("Not enough channels in mock device configuration.")
 
-    def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
-        """Create or provide a `CardToPCDataTransferBuffer` object into which samples from the mock 'on-device buffer'
-        will be transferred. If none is provided, a buffer will be instantiated using the currently set acquisition
-        length and the number of enabled channels.
-
-        Args:
-            buffer (Optional[List[`CardToPCDataTransferBuffer`]]): A length-1 list containing a
-            `CardToPCDataTransferBuffer` object.
-        """
-        if buffer:
-            self._transfer_buffer = buffer[0]
-            if self._transfer_buffer.direction != BufferDirection.SPCM_DIR_CARDTOPC:
-                raise ValueError("Digitisers need a transfer buffer with direction BufferDirection.SPCM_DIR_CARDTOPC")
-            if self._transfer_buffer.type != BufferType.SPCM_BUF_DATA:
-                raise ValueError("Digitisers need a transfer buffer with type BufferDirection.SPCM_BUF_DATA")
-        else:
-            self._transfer_buffer = transfer_buffer_factory(
-                buffer_type=BufferType.SPCM_BUF_DATA,
-                direction=BufferDirection.SPCM_DIR_CARDTOPC,
-                size_in_samples=self.acquisition_length_in_samples * len(self.enabled_channels),
-            )
-
     def start_transfer(self) -> None:
-        """See `SpectrumDigitiserCard.start_transfer()`. This mock implementation simulates the continuous transfer of
-        samples from the mock 'on-device buffer' to the transfer buffer by pointing the transfer buffer's data buffer
-        attribute to the mock on-device buffer."""
-        if self._transfer_buffer:
-            self._transfer_buffer.data_array = self._on_device_buffer
-        else:
-            raise SpectrumNoTransferBufferDefined("Call define_transfer_buffer method.")
+        """See `SpectrumDigitiserCard.start_transfer()`."""
+        pass
 
     def stop_transfer(self) -> None:
-        """See `SpectrumDigitiserCard.stop_transfer()`. This mock implementation simulates the end of the continuous
-        transfer of samples from the mock 'on-device buffer' to the transfer buffer by assigning the transfer buffer
-        to an array of zeros."""
-        if self._transfer_buffer:
-            self._transfer_buffer.data_array = zeros(self._transfer_buffer.data_array.shape)
-        else:
-            raise SpectrumNoTransferBufferDefined("Call define_transfer_buffer method.")
+        """See `SpectrumDigitiserCard.stop_transfer()`."""
+        pass
 
     def wait_for_transfer_chunk_to_complete(self) -> None:
-        """See `SpectrumDigitiserCard.wait_for_transfer_to_complete()`. This mock implementation blocks until a new mock
-        transfer has been completed (i.e. the contents of the transfer buffer has changed since __init__() or since the
-        last call to `wait_for_transfer_to_complete()`)."""
+        """See `SpectrumDigitiserCard.wait_for_transfer_chunk_to_complete()`. This mock implementation blocks until a
+        new mock transfer has been completed by waiting for a change to TRANSFER_CHUNK_COUNTER."""
         if self._transfer_buffer:
-            while (self._previous_data == self._transfer_buffer.data_array).all():
-                sleep(0.01)
-            self._previous_data = self._transfer_buffer.data_array.copy()
+            t0 = perf_counter()
+            t_elapsed = 0
+            while (self._previous_transfer_chunk_count ==
+                   self._param_dict[TRANSFER_CHUNK_COUNTER])\
+                    and t_elapsed < MOCK_TRANSFER_TIMEOUT_IN_S:
+                sleep(0.1)
+                t_elapsed = perf_counter() - t0
+            self._previous_transfer_chunk_count = self._param_dict[TRANSFER_CHUNK_COUNTER]
         else:
             raise SpectrumNoTransferBufferDefined("No transfer in progress.")
 

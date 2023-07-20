@@ -30,7 +30,7 @@ NUM_CARDS_IN_STAR_HUB = 2
 STAR_HUB_MASTER_CARD_INDEX = 1
 
 # Number of samples to acquire per channel during unit testing (on both mock and real devices)
-ACQUISITION_LENGTH = 4096
+ACQUISITION_LENGTH = 400
 
 # Rate at which mock frames (sets of waveforms) will be generated in SpectrumTestMode.MOCK_HARDWARE
 MOCK_DEVICE_TEST_FRAME_RATE_HZ = 10.0

@@ -30,7 +30,7 @@ from spectrum_gmbh.regs import (
 from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice
 from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
 from spectrumdevice.devices.mocks.mock_waveform_source import mock_waveform_source_factory
-from spectrumdevice.exceptions import SpectrumDeviceNotConnected
+from spectrumdevice.exceptions import SpectrumDeviceNotConnected, SpectrumNoTransferBufferDefined
 from spectrumdevice.settings import AcquisitionMode, SpectrumRegisterLength
 
 
@@ -54,8 +54,6 @@ class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
         }
         self._buffer_lock = Lock()
         self._enabled_channels = [0]
-        self._on_device_buffer: NDArray[float_] = zeros(1000)
-        self._previous_data = self._on_device_buffer.copy()
 
     def write_to_spectrum_device_register(
         self, spectrum_register: int, value: int, length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO
@@ -130,15 +128,16 @@ class MockAbstractSpectrumDigitiser(MockAbstractSpectrumDevice, AbstractSpectrum
         self._acquisition_thread: Optional[Thread] = None
         self._timestamp_thread: Optional[Thread] = None
         self._enabled_channels = [0]
-        self._on_device_buffer: ndarray = zeros(1000)
-        self._previous_data = self._on_device_buffer.copy()
 
     def start(self) -> None:
         """Starts a mock waveform source in a separate thread. The source generates noise samples according to the
-        number of currently enabled channels and the acquisition length, and places them in the virtual on device buffer
-        (the _on_device_buffer attribute).
+        number of currently enabled channels and the acquisition length, and places them in the transfer buffer.
         """
-        waveform_source = mock_waveform_source_factory(self.acquisition_mode)
+        self.define_transfer_buffer()
+        notify_size = self.transfer_buffers[0].notify_size_in_pages  # this will be 0 in STD_SINGLE_MODE
+        waveform_source = mock_waveform_source_factory(self.acquisition_mode,
+                                                       self._param_dict,
+                                                       notify_size)
         amplitude = self.read_spectrum_device_register(SPC_MIINST_MAXADCVALUE)
         self._acquisition_stop_event.clear()
         self._acquisition_thread = Thread(
@@ -147,7 +146,8 @@ class MockAbstractSpectrumDigitiser(MockAbstractSpectrumDevice, AbstractSpectrum
                 self._acquisition_stop_event,
                 self._source_frame_rate_hz,
                 amplitude,
-                self._on_device_buffer,
+                self.transfer_buffers[0].data_array,
+                self.acquisition_length_in_samples * len(self.enabled_channels),
                 self._buffer_lock,
             ),
         )

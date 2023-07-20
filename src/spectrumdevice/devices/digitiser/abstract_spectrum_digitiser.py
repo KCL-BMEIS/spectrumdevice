@@ -107,7 +107,11 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
         self.execute_continuous_fifo_acquisition()
         measurements = []
         for _ in range(num_measurements):
-            average_waveforms = [wfm for wfm in array(self.get_waveforms(num_averages_per_measurement)).mean(axis=0).T]
+            all_waveforms = self.get_waveforms(num_averages_per_measurement)
+            if num_averages_per_measurement > 1:
+                average_waveforms = [wfm for wfm in array(all_waveforms).mean(axis=0).T]
+            else:
+                average_waveforms = all_waveforms[0]
             measurements.append(Measurement(waveforms=average_waveforms, timestamp=self.get_timestamp()))
         self.stop()
         return measurements

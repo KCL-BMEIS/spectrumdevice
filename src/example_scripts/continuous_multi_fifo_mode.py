@@ -22,6 +22,7 @@ def continuous_multi_fifo_example(
     trigger_source: TriggerSource,
     device_number: int,
     ip_address: Optional[str] = None,
+    acquisition_length=400
 ) -> List[Measurement]:
 
     if not mock_mode:
@@ -48,7 +49,7 @@ def continuous_multi_fifo_example(
     acquisition_settings = AcquisitionSettings(
         acquisition_mode=AcquisitionMode.SPC_REC_FIFO_MULTI,
         sample_rate_in_hz=40000000,
-        acquisition_length_in_samples=400,
+        acquisition_length_in_samples=acquisition_length,
         pre_trigger_length_in_samples=0,
         timeout_in_ms=1000,
         enabled_channels=[0],
