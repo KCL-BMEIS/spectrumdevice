@@ -6,7 +6,7 @@
 
 import logging
 from time import perf_counter, sleep
-from typing import List, Sequence
+from typing import List, Optional, Sequence
 
 from spectrum_gmbh.regs import (
     SPC_FNCTYPE,
@@ -23,6 +23,7 @@ from spectrumdevice.exceptions import (
     SpectrumNoTransferBufferDefined,
     SpectrumSettingsMismatchError,
 )
+from spectrumdevice.settings import TransferBuffer
 from spectrumdevice.settings.card_dependent_properties import CardType, ModelNumber
 from spectrumdevice.settings.device_modes import AcquisitionMode
 
@@ -108,6 +109,13 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
             super().set_enabled_channels(channels_nums)
         else:
             raise SpectrumSettingsMismatchError("Not enough channels in mock device configuration.")
+
+    def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
+        """Create or provide a `TransferBuffer` object for receiving acquired samples from the device.
+
+        See SpectrumDigitiserCard.define_transfer_buffer(). This mock implementation is identical apart from that it
+        does not write to any hardware device."""
+        self._set_or_update_transfer_buffer_attribute(buffer)
 
     def start_transfer(self) -> None:
         """See `SpectrumDigitiserCard.start_transfer()`."""

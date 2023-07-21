@@ -268,6 +268,11 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
                 chosen according to the current number of active channels, the acquisition length and the number
                 of acquisitions which you intend to download at a time using get_waveforms().
         """
+        self._set_or_update_transfer_buffer_attribute(buffer)
+        if self._transfer_buffer is not None:
+            set_transfer_buffer(self._handle, self._transfer_buffer)
+
+    def _set_or_update_transfer_buffer_attribute(self, buffer: Optional[Sequence[TransferBuffer]]) -> None:
         if buffer:
             self._transfer_buffer = buffer[0]
             if self._transfer_buffer.direction != BufferDirection.SPCM_DIR_CARDTOPC:
@@ -285,8 +290,6 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
                 )
             else:
                 raise ValueError("AcquisitionMode not recognised")
-
-        set_transfer_buffer(self._handle, self._transfer_buffer)
 
     def __str__(self) -> str:
         return f"Card {self._visa_string}"
