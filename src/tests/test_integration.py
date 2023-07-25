@@ -79,8 +79,8 @@ class SingleCardIntegrationTests(TestCase):
     def test_averaging_continuous_multi_fifo_example(self) -> None:
         measurements = continuous_averaging_multi_fifo_example(
             mock_mode=self._single_card_mock_mode,
-            acquisition_duration_in_seconds=0.1,
-            num_averages=3,
+            acquisition_duration_in_seconds=0.5,
+            num_averages=2,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
             device_number=TEST_DEVICE_NUMBER,
             ip_address=TEST_DEVICE_IP,
@@ -112,6 +112,7 @@ class StarHubIntegrationTests(TestCase):
             mock_mode=self._star_hub_mock_mode,
             num_cards=NUM_CARDS_IN_STAR_HUB,
             master_card_index=STAR_HUB_MASTER_CARD_INDEX,
+            ip_address="169.254.45.181",
         )
         self.assertEqual(len(hub.channels), NUM_CHANNELS_PER_MODULE * NUM_MODULES_PER_CARD * NUM_CARDS_IN_STAR_HUB)
         self.assertEqual(len(hub._child_cards), NUM_CARDS_IN_STAR_HUB)

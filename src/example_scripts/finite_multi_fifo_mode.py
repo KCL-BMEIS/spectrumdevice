@@ -54,6 +54,7 @@ def finite_multi_fifo_example(
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
         timestamping_enabled=True,
+        batch_size=5,
     )
 
     # Apply settings
@@ -61,7 +62,7 @@ def finite_multi_fifo_example(
     card.configure_acquisition(acquisition_settings)
 
     # Execute acquisition
-    measurements = card.execute_finite_fifo_acquisition(num_measurements, num_averages_per_measurement=1)
+    measurements = card.execute_finite_fifo_acquisition(num_measurements)
     card.reset()
     card.disconnect()
     return measurements
@@ -72,10 +73,11 @@ if __name__ == "__main__":
     from matplotlib.pyplot import plot, show, figure, title
 
     measurements = finite_multi_fifo_example(
-        mock_mode=True,
+        mock_mode=False,
         num_measurements=5,
         trigger_source=TriggerSource.SPC_TMASK_EXT0,
-        device_number=0,
+        device_number=1,
+        ip_address="169.254.45.181",
     )
 
     # Plot waveforms

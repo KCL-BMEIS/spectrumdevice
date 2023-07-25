@@ -38,6 +38,9 @@ except OSError:
     )
 
 
+SAMPLE_DATA_TYPE = int16
+
+
 class BufferType(Enum):
     """An Enum representing the three different types of transfer buffer. See the Spectrum documentation for more
     information."""
@@ -69,7 +72,7 @@ class TransferBuffer(ABC):
     """Sets the offset for transfer in board memory. Typically 0. See Spectrum documentation for more information."""
     data_array: ndarray
     """1D numpy array into which samples will be written during transfer."""
-    notify_size_in_pages: int
+    notify_size_in_pages: float
     """The number of transferred pages (4096 bytes) after which a notification of transfer is sent from the device."""
 
     @abstractmethod
@@ -108,7 +111,7 @@ class SamplesTransferBuffer(TransferBuffer):
         direction: BufferDirection,
         board_memory_offset_bytes: int,
         data_array: ndarray,
-        notify_size_in_pages: int = 1,
+        notify_size_in_pages: float = 1,
     ) -> None:
         super().__init__(
             BufferType.SPCM_BUF_DATA, direction, board_memory_offset_bytes, data_array, notify_size_in_pages
@@ -146,7 +149,7 @@ def transfer_buffer_factory(
     direction: BufferDirection,
     size_in_samples: Optional[int] = None,
     board_memory_offset_bytes: int = 0,
-    notify_size_in_pages: int = 1,
+    notify_size_in_pages: float = 1,
 ) -> "TransferBuffer":
     """
     Args:
@@ -161,10 +164,13 @@ def transfer_buffer_factory(
         after which a notification of transfer is sent from the device, and therefore a chunk of samples is downloaded.
         See the Spectrum documentation for more information. Ignored for BufferType.SPCM_BUF_TIMESTAMP.
     """
+
+    # _check_notify_size_validity(notify_size_in_pages)
+
     if buffer_type == BufferType.SPCM_BUF_DATA:
         if size_in_samples is not None:
             return SamplesTransferBuffer(
-                direction, board_memory_offset_bytes, zeros(size_in_samples, int16), notify_size_in_pages
+                direction, board_memory_offset_bytes, zeros(size_in_samples, SAMPLE_DATA_TYPE), notify_size_in_pages
             )
         else:
             raise ValueError("You must provide a buffer size_in_samples to create a BufferType.SPCM_BUF_DATA buffer.")
@@ -172,6 +178,26 @@ def transfer_buffer_factory(
         return TimestampsTransferBuffer(direction, board_memory_offset_bytes)
     else:
         raise NotImplementedError(f"TransferBuffer type {buffer_type} not yet supported.")
+
+
+def _check_notify_size_validity(notify_size_in_pages: float) -> None:
+
+    if notify_size_in_pages == 0:
+        return
+
+    notify_size_is_an_invalid_fraction_less_than_1 = (notify_size_in_pages < 1) and (
+        notify_size_in_pages not in ALLOWED_FRACTIONAL_NOTIFY_SIZES_IN_PAGES
+    )
+    notify_size_greater_than_1_and_not_int = (notify_size_in_pages > 1) and (
+        notify_size_in_pages != round(notify_size_in_pages)
+    )
+    notify_size_is_invalid = notify_size_is_an_invalid_fraction_less_than_1 or notify_size_greater_than_1_and_not_int
+
+    if notify_size_is_invalid:
+        raise ValueError(
+            f"notify_size_in_pages must be an integer or one of the following fractional values "
+            f"{ALLOWED_FRACTIONAL_NOTIFY_SIZES_IN_PAGES}"
+        )
 
 
 create_samples_acquisition_transfer_buffer = partial(
@@ -188,11 +214,13 @@ def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffe
         device_handle,
         buffer.type.value,
         buffer.direction.value,
-        buffer.notify_size_in_pages * NOTIFY_SIZE_PAGE_SIZE_IN_BYTES,
+        int(buffer.notify_size_in_pages * NOTIFY_SIZE_PAGE_SIZE_IN_BYTES),
         buffer.data_array_pointer,
         buffer.board_memory_offset_bytes,
         buffer.data_array_length_in_bytes,
     )
 
 
+DEFAULT_NOTIFY_SIZE_IN_PAGES = 10
 NOTIFY_SIZE_PAGE_SIZE_IN_BYTES = 4096
+ALLOWED_FRACTIONAL_NOTIFY_SIZES_IN_PAGES = [1 / 2, 1 / 4, 1 / 8, 1 / 16, 1 / 32, 1 / 64, 1 / 128, 1 / 256]

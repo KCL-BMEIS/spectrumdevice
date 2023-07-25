@@ -7,8 +7,6 @@
 from abc import ABC
 from typing import List, cast
 
-from numpy import array
-
 from spectrumdevice.measurement import Measurement
 from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice
 from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserInterface
@@ -30,7 +28,10 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
         Args:
             settings (`AcquisitionSettings`): An `AcquisitionSettings` dataclass containing the setting values to apply.
         """
+        if settings.batch_size > 1 and settings.acquisition_mode == AcquisitionMode.SPC_REC_STD_SINGLE:
+            raise ValueError("In standard single mode, only 1 acquisition can be downloaded at a time.")
         self._acquisition_mode = settings.acquisition_mode
+        self._batch_size = settings.batch_size
         self.set_acquisition_mode(settings.acquisition_mode)
         self.set_sample_rate_in_hz(settings.sample_rate_in_hz)
         self.set_acquisition_length_in_samples(settings.acquisition_length_in_samples)
@@ -76,13 +77,11 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
         self.define_transfer_buffer()
         self.start_transfer()
         self.wait_for_transfer_chunk_to_complete()
-        waveforms = self.get_waveforms(1)[0]  # only one repeat acquisition
+        waveforms = self.get_waveforms()[0]
         self.stop()  # Only strictly required for Mock devices. Should not affect hardware.
         return Measurement(waveforms=waveforms, timestamp=self.get_timestamp())
 
-    def execute_finite_fifo_acquisition(
-        self, num_measurements: int, num_averages_per_measurement: int
-    ) -> List[Measurement]:
+    def execute_finite_fifo_acquisition(self, num_measurements: int) -> List[Measurement]:
         """Carry out a finite number of FIFO mode measurements and then stop the acquisitions.
 
         This method automatically carries out a defined number of measurement in Multi FIFO mode, including handling the
@@ -95,8 +94,6 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
 
         Args:
             num_measurements (int): The number of measurements to carry out.
-            num_averages_per_measurement (int): The number of signals (each triggered by a subsequent trigger event) to
-                average for each measurement.
         Returns:
             measurements (List[Measurement]): A list of Measurement objects with length `num_measurements`. Each
                 Measurement object has a `waveforms` attribute containing a list of 1D NumPy arrays. Each array is a
@@ -104,15 +101,17 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
                 timestamp attribute, which (if timestamping was enabled in acquisition settings) contains the time at
                 which the acquisition was triggered.
         """
+        if (num_measurements % self._batch_size) != 0:
+            raise ValueError(
+                "Number of measurements in a finite FIFO acquisition must be a multiple of the "
+                " batch size configured using AbstractSpectrumDigitiser.configure_acquisition()."
+            )
         self.execute_continuous_fifo_acquisition()
         measurements = []
-        for _ in range(num_measurements):
-            all_waveforms = self.get_waveforms(num_averages_per_measurement)
-            if num_averages_per_measurement > 1:
-                average_waveforms = [wfm for wfm in array(all_waveforms).mean(axis=0).T]
-            else:
-                average_waveforms = all_waveforms[0]
-            measurements.append(Measurement(waveforms=average_waveforms, timestamp=self.get_timestamp()))
+        for _ in range(num_measurements // self._batch_size):
+            measurements += [
+                Measurement(waveforms=frame, timestamp=self.get_timestamp()) for frame in self.get_waveforms()
+            ]
         self.stop()
         return measurements
 

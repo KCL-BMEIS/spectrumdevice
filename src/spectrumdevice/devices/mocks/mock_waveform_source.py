@@ -77,7 +77,7 @@ class SingleModeMockWaveformSource(MockWaveformSource):
 
 
 class MultiFIFOModeMockWaveformSource(MockWaveformSource):
-    def __init__(self, param_dict: Dict[int, int], notify_size_in_pages: int):
+    def __init__(self, param_dict: Dict[int, int], notify_size_in_pages: float):
         super().__init__(param_dict)
         self._notify_size_in_pages = notify_size_in_pages
 
@@ -104,7 +104,7 @@ class MultiFIFOModeMockWaveformSource(MockWaveformSource):
 
         """
         bytes_per_sample = transfer_buffer_data_array.itemsize
-        notify_size_in_samples = self._notify_size_in_pages * NOTIFY_SIZE_PAGE_SIZE_IN_BYTES // bytes_per_sample
+        notify_size_in_samples = int(self._notify_size_in_pages * NOTIFY_SIZE_PAGE_SIZE_IN_BYTES / bytes_per_sample)
         notify_size_in_samples = min((samples_per_frame, notify_size_in_samples))
         samples_per_second = frame_rate * samples_per_frame
         notify_sizes_per_second = samples_per_second / notify_size_in_samples
@@ -112,6 +112,7 @@ class MultiFIFOModeMockWaveformSource(MockWaveformSource):
         while not stop_flag.is_set():
 
             start_sample = sample_count % samples_per_frame
+            start_sample = 0 if start_sample == 256 else start_sample
             stop_sample = (sample_count + notify_size_in_samples) % samples_per_frame
             stop_sample = stop_sample if stop_sample else samples_per_frame
             with buffer_lock:
@@ -129,7 +130,7 @@ class MultiFIFOModeMockWaveformSource(MockWaveformSource):
 def mock_waveform_source_factory(
     acquisition_mode: AcquisitionMode,
     param_dict: Dict[int, int],
-    notify_size_in_pages: int = 0,
+    notify_size_in_pages: float = 0,
 ) -> MockWaveformSource:
     if acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
         return MultiFIFOModeMockWaveformSource(param_dict, notify_size_in_pages)

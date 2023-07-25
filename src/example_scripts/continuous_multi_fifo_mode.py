@@ -51,36 +51,41 @@ def continuous_multi_fifo_example(
         sample_rate_in_hz=40000000,
         acquisition_length_in_samples=acquisition_length,
         pre_trigger_length_in_samples=0,
-        timeout_in_ms=1000,
+        timeout_in_ms=5000,
         enabled_channels=[0],
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
         timestamping_enabled=True,
     )
 
-    # Apply settings
-    card.configure_trigger(trigger_settings)
-    card.configure_acquisition(acquisition_settings)
+    try:
+        # Apply settings
+        card.configure_trigger(trigger_settings)
+        card.configure_acquisition(acquisition_settings)
 
-    # Execute acquisition
-    start_time = monotonic()
-    card.execute_continuous_fifo_acquisition()
+        # Execute acquisition
+        start_time = monotonic()
+        card.execute_continuous_fifo_acquisition()
 
-    # Retrieve streamed waveform data until desired time has elapsed
-    measurements_list = []
-    while (monotonic() - start_time) < acquisition_duration_in_seconds:
-        measurements_list.append(Measurement(waveforms=card.get_waveforms(1)[0], timestamp=card.get_timestamp()))
-        if measurements_list[-1].timestamp is not None:
-            print(
-                f"Got measurement triggered at {measurements_list[-1].timestamp.time()} (acquisition latency of"
-                f" {(datetime.datetime.now() - measurements_list[-1].timestamp).microseconds * 1e-3} ms)"
-            )
+        # Retrieve streamed waveform data until desired time has elapsed
+        measurements_list = []
+        while (monotonic() - start_time) < acquisition_duration_in_seconds:
 
-    # Stop the acquisition (and streaming)
-    card.stop()
+            measurements_list += [
+                Measurement(waveforms=frame, timestamp=card.get_timestamp()) for frame in card.get_waveforms()
+            ]
 
-    card.reset()
-    card.disconnect()
+            if measurements_list[-1].timestamp is not None:
+                print(
+                    f"Got measurement triggered at {measurements_list[-1].timestamp.time()} (acquisition latency of"
+                    f" {(datetime.datetime.now() - measurements_list[-1].timestamp).microseconds * 1e-3} ms)"
+                )
+    finally:
+        # Stop the acquisition (and streaming)
+        card.stop()
+
+        card.reset()
+        card.disconnect()
     return measurements_list
 
 
@@ -89,10 +94,11 @@ if __name__ == "__main__":
     from matplotlib.pyplot import plot, show, figure, title, xlabel, ylabel, tight_layout
 
     measurements = continuous_multi_fifo_example(
-        mock_mode=True,
-        acquisition_duration_in_seconds=1.0,
+        mock_mode=False,
+        acquisition_duration_in_seconds=0.5,
         trigger_source=TriggerSource.SPC_TMASK_EXT0,
-        device_number=0,
+        device_number=1,
+        ip_address="169.254.45.181",
     )
 
     # Plot waveforms
@@ -104,8 +110,5 @@ if __name__ == "__main__":
             xlabel("Time (samples)")
             ylabel("Amplitude (Volts)")
             tight_layout()
-
-    print(f"Completed {len(measurements)} measurements each containing {len(measurements[0].waveforms)} waveforms.")
-    print(f"Waveforms had the following shape: {measurements[0].waveforms[0].shape}")
 
     show()

@@ -79,6 +79,9 @@ class AcquisitionSettings:
     timestamping_enabled: bool
     """If True, Measurements will include the time at which the acquisition was triggered. Increases latency by ~10 ms.
     """
+    batch_size: int = 1
+    """The number of acquisitions to transfer to the PC before the resulting waveforms are returned by
+      SpectrumDigitiserCard.get_waveforms()."""
     number_of_averages: int = 1
     """If an averaging AcquisitionMode is selected, this defines the number of averages."""
 

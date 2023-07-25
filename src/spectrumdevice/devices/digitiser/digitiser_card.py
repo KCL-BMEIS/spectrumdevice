@@ -41,6 +41,9 @@ from spectrumdevice.settings.transfer_buffer import (
     BufferType,
     create_samples_acquisition_transfer_buffer,
     set_transfer_buffer,
+    SAMPLE_DATA_TYPE,
+    NOTIFY_SIZE_PAGE_SIZE_IN_BYTES,
+    DEFAULT_NOTIFY_SIZE_IN_PAGES,
 )
 
 logger = logging.getLogger(__name__)
@@ -84,7 +87,7 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_WAITREADY)
 
-    def get_waveforms(self, num_acquisitions: int) -> List[List[NDArray[float_]]]:
+    def get_waveforms(self) -> List[List[NDArray[float_]]]:
         """Get a list of the most recently transferred waveforms, in channel order.
 
         This method copies and reshapes the samples in the `TransferBuffer` into a list of lists of 1D NumPy arrays
@@ -98,10 +101,6 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
         received, so the loop will run at the same rate as the acquisition (in SPC_REC_FIFO_MULTI mode, for example,
         this would the rate at which your trigger source was running).
 
-        Args:
-            num_acquisitions (int): For FIFO mode:  the number of acquisitions (i.e. trigger events) to wait for and
-            copy. Acquiring in batches (num_acquisitions > 1) can improve performance.
-
         Returns:
              waveforms (List[List[NDArray[float_]]]): A list of lists of 1D numpy arrays, one inner list per acquisition
              and one array per enabled channel, in channel order. To average the acquisitions:
@@ -114,21 +113,17 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
         num_read_bytes = 0
         num_samples_per_frame = self.acquisition_length_in_samples * len(self.enabled_channels)
         num_expected_bytes_per_frame = num_samples_per_frame * self._transfer_buffer.data_array.itemsize
-        raw_samples = zeros(num_samples_per_frame * num_acquisitions, dtype=self._transfer_buffer.data_array.dtype)
+        raw_samples = zeros(num_samples_per_frame * self._batch_size, dtype=self._transfer_buffer.data_array.dtype)
 
         if self.acquisition_mode in (AcquisitionMode.SPC_REC_STD_SINGLE, AcquisitionMode.SPC_REC_STD_AVERAGE):
-            if num_acquisitions > 1:
-                raise ValueError("In standard single mode, only 1 acquisition can be downloaded at a time.")
             raw_samples = self._transfer_buffer.copy_contents()
 
         elif self.acquisition_mode in (AcquisitionMode.SPC_REC_FIFO_MULTI, AcquisitionMode.SPC_REC_FIFO_AVERAGE):
             self.wait_for_transfer_chunk_to_complete()
 
-            while num_read_bytes < (num_expected_bytes_per_frame * num_acquisitions):
+            while num_read_bytes < (num_expected_bytes_per_frame * self._batch_size):
                 num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
                 position_of_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_POS)
-
-                print(f"get waveforms: {num_available_bytes}, {position_of_available_bytes}")
 
                 # Don't allow reading over the end of the transfer buffer
                 if (
@@ -137,8 +132,8 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
                     num_available_bytes = self._transfer_buffer.data_array_length_in_bytes - position_of_available_bytes
 
                 # Don't allow reading over the end of the current acquisition:
-                if (num_read_bytes + num_available_bytes) > (num_expected_bytes_per_frame * num_acquisitions):
-                    num_available_bytes = (num_expected_bytes_per_frame * num_acquisitions) - num_read_bytes
+                if (num_read_bytes + num_available_bytes) > (num_expected_bytes_per_frame * self._batch_size):
+                    num_available_bytes = (num_expected_bytes_per_frame * self._batch_size) - num_read_bytes
 
                 num_available_samples = num_available_bytes // self._transfer_buffer.data_array.itemsize
                 num_read_samples = num_read_bytes // self._transfer_buffer.data_array.itemsize
@@ -151,11 +146,11 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
                 num_read_bytes += num_available_bytes
 
         waveforms_in_columns = raw_samples.reshape(
-            (num_acquisitions, self.acquisition_length_in_samples, len(self.enabled_channels))
+            (self._batch_size, self.acquisition_length_in_samples, len(self.enabled_channels))
         )
 
         repeat_acquisitions = []
-        for n in range(num_acquisitions):
+        for n in range(self._batch_size):
             repeat_acquisitions.append(
                 [
                     cast(SpectrumDigitiserChannel, self.channels[ch_num]).convert_raw_waveform_to_voltage_waveform(
@@ -258,9 +253,9 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
         """Create or provide a `TransferBuffer` object for receiving acquired samples from the device.
 
         If no buffer is provided, and no buffer has previously been defined, then one will be created: in FIFO mode,
-         with a size large enough to hold 1000 repeat measurements before overflowing, and a notify size of 10 pages; in
-         Standard Single mode, one with the correct length and no notify size. A separate buffer for transferring
-         Timestamps will also be created using the Timestamper class.
+         with a notify size of 10 pages or the size of the acquisition, whichever is smaller; in Standard Single mode,
+         one with the correct length and no notify size. A separate buffer for transferring Timestamps will also be
+         created using the Timestamper class.
 
         Args:
             buffer (Optional[List[`TransferBuffer`]]): A length-1 list containing a pre-constructed
@@ -281,8 +276,18 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
                 raise ValueError("Digitisers need a transfer buffer with type BufferDirection.SPCM_BUF_DATA")
         elif self._transfer_buffer is None:
             if self.acquisition_mode in (AcquisitionMode.SPC_REC_FIFO_MULTI, AcquisitionMode.SPC_REC_FIFO_AVERAGE):
+                bytes_per_sample = SAMPLE_DATA_TYPE().itemsize
+                samples_per_batch = self.acquisition_length_in_samples * len(self.enabled_channels) * self._batch_size
+                pages_per_batch = samples_per_batch * bytes_per_sample / NOTIFY_SIZE_PAGE_SIZE_IN_BYTES
+
+                if pages_per_batch < DEFAULT_NOTIFY_SIZE_IN_PAGES:
+                    notify_size = pages_per_batch
+                else:
+                    notify_size = DEFAULT_NOTIFY_SIZE_IN_PAGES
+
+                # Make transfer buffer big enough to hold all samples in the batch
                 self._transfer_buffer = create_samples_acquisition_transfer_buffer(
-                    self.acquisition_length_in_samples * len(self.enabled_channels) * 1000, notify_size_in_pages=10
+                    samples_per_batch, notify_size_in_pages=notify_size
                 )
             elif self.acquisition_mode in (AcquisitionMode.SPC_REC_STD_SINGLE, AcquisitionMode.SPC_REC_STD_AVERAGE):
                 self._transfer_buffer = create_samples_acquisition_transfer_buffer(
