@@ -6,7 +6,7 @@ from spectrumdevice import MockSpectrumDigitiserCard, SpectrumDigitiserCard
 from spectrumdevice.measurement import Measurement
 from spectrumdevice.settings import (
     AcquisitionMode,
-    CardType,
+    ModelNumber,
     TriggerSource,
     ExternalTriggerMode,
     TriggerSettings,
@@ -20,6 +20,7 @@ def finite_multi_fifo_example(
     trigger_source: TriggerSource,
     device_number: int,
     ip_address: Optional[str] = None,
+    acquisition_length: int = 400,
 ) -> List[Measurement]:
 
     if not mock_mode:
@@ -29,7 +30,7 @@ def finite_multi_fifo_example(
         # Set up a mock device
         card = MockSpectrumDigitiserCard(
             device_number=device_number,
-            card_type=CardType.TYP_M2P5966_X4,
+            model=ModelNumber.TYP_M2P5966_X4,
             mock_source_frame_rate_hz=10.0,
             num_modules=2,
             num_channels_per_module=4,
@@ -46,13 +47,14 @@ def finite_multi_fifo_example(
     acquisition_settings = AcquisitionSettings(
         acquisition_mode=AcquisitionMode.SPC_REC_FIFO_MULTI,
         sample_rate_in_hz=40000000,
-        acquisition_length_in_samples=400,
+        acquisition_length_in_samples=acquisition_length,
         pre_trigger_length_in_samples=0,
         timeout_in_ms=1000,
         enabled_channels=[0],
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
         timestamping_enabled=True,
+        batch_size=5,
     )
 
     # Apply settings
@@ -71,10 +73,11 @@ if __name__ == "__main__":
     from matplotlib.pyplot import plot, show, figure, title
 
     measurements = finite_multi_fifo_example(
-        mock_mode=True,
+        mock_mode=False,
         num_measurements=5,
         trigger_source=TriggerSource.SPC_TMASK_EXT0,
-        device_number=0,
+        device_number=1,
+        ip_address="169.254.45.181",
     )
 
     # Plot waveforms

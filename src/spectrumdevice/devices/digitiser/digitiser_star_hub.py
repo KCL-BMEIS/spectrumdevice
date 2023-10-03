@@ -4,7 +4,8 @@
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 import datetime
-from typing import List, Optional, Sequence, cast
+from threading import Thread
+from typing import Dict, List, Optional, Sequence, cast
 
 from numpy import float_
 from numpy.typing import NDArray
@@ -15,8 +16,8 @@ from spectrumdevice.devices.abstract_device import (
 from spectrumdevice.devices.abstract_device.abstract_spectrum_hub import check_settings_constant_across_devices
 from spectrumdevice.devices.digitiser.digitiser_card import SpectrumDigitiserCard
 from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
+from spectrumdevice.settings import TransferBuffer
 from spectrumdevice.settings.device_modes import AcquisitionMode
-from spectrumdevice.settings.transfer_buffer import CardToPCDataTransferBuffer
 
 
 class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitiser):
@@ -42,7 +43,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
         AbstractSpectrumStarHub.__init__(self, device_number, child_cards, master_card_index)
         self._acquisition_mode = self.acquisition_mode
 
-    def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
+    def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
         """Create or provide `CardToPCDataTransferBuffer` objects for receiving acquired samples from the child cards.
         If no buffers are provided, they will be created with the correct size and a board_memory_offset_bytes of 0. See
         `SpectrumDigitiserCard.define_transfer_buffer()` for more information
@@ -65,20 +66,43 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
         for card in self._child_cards:
             cast(SpectrumDigitiserCard, card).wait_for_acquisition_to_complete()
 
-    def get_waveforms(self) -> List[NDArray[float_]]:
+    def get_waveforms(self) -> List[List[NDArray[float_]]]:
         """Get a list of the most recently transferred waveforms.
 
         This method gets the waveforms from each child card and joins them into a new list, ordered by channel number.
         See `SpectrumDigitiserCard.get_waveforms()` for more information.
 
-        Returns:
-            waveforms (List[NDArray[float_]]): A list of 1D numpy arrays, one per enabled channel, in channel order.
-        """
-        waveforms_all_cards = []
-        for card in self._child_cards:
-            waveforms_all_cards += cast(SpectrumDigitiserCard, card).get_waveforms()
+        Args:
+            num_acquisitions (int): For FIFO mode:  the number of acquisitions (i.e. trigger events) to wait for and
+            copy. Acquiring in batches (num_acquisitions > 1) can improve performance.
 
-        return waveforms_all_cards
+        Returns:
+            waveforms (List[List[NDArray[float_]]]): A list lists of 1D numpy arrays, one inner list per acquisition,
+              and one array per enabled channel, in channel order.
+        """
+        card_ids_and_waveform_sets: Dict[str, list[list[NDArray[float_]]]] = {}
+
+        def _get_waveforms(digitiser_card: SpectrumDigitiserCard) -> None:
+            this_cards_waveforms = digitiser_card.get_waveforms()
+            card_ids_and_waveform_sets[str(digitiser_card)] = this_cards_waveforms
+
+        threads = [
+            Thread(target=_get_waveforms, args=(cast(SpectrumDigitiserCard, card),)) for card in self._child_cards
+        ]
+
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+
+        waveform_sets_all_cards_ordered = []
+        for n in range(self._batch_size):
+            waveforms_in_this_batch = []
+            for card in self._child_cards:
+                waveforms_in_this_batch += card_ids_and_waveform_sets[str(card)][n]
+            waveform_sets_all_cards_ordered.append(waveforms_in_this_batch)
+
+        return waveform_sets_all_cards_ordered
 
     def get_timestamp(self) -> Optional[datetime.datetime]:
         """Get timestamp for the last acquisition"""

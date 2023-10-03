@@ -11,7 +11,6 @@ from spectrumdevice.settings import (
     AdvancedCardFeature,
     AvailableIOModes,
     CardFeature,
-    CardToPCDataTransferBuffer,
     ClockMode,
     ExternalTriggerMode,
     DEVICE_STATUS_TYPE,
@@ -72,7 +71,7 @@ class SpectrumDeviceInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def wait_for_transfer_to_complete(self) -> None:
+    def wait_for_transfer_chunk_to_complete(self) -> None:
         raise NotImplementedError()
 
     @abstractmethod
@@ -85,7 +84,7 @@ class SpectrumDeviceInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def define_transfer_buffer(self, buffer: Optional[List[CardToPCDataTransferBuffer]] = None) -> None:
+    def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
         raise NotImplementedError()
 
     @property

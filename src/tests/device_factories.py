@@ -1,7 +1,7 @@
 from spectrumdevice import SpectrumDigitiserStarHub
 from spectrumdevice.devices.digitiser import SpectrumDigitiserCard
 from spectrumdevice.devices.mocks import MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub
-from spectrumdevice.settings import CardType
+from spectrumdevice.settings import ModelNumber
 from tests.configuration import (
     MOCK_DEVICE_TEST_FRAME_RATE_HZ,
     NUM_CARDS_IN_STAR_HUB,
@@ -24,7 +24,7 @@ def create_spectrum_card_for_testing() -> SpectrumDigitiserCard:
     else:
         return MockSpectrumDigitiserCard(
             device_number=TEST_DEVICE_NUMBER,
-            card_type=CardType.TYP_M2P5966_X4,
+            model=ModelNumber.TYP_M2P5966_X4,
             mock_source_frame_rate_hz=MOCK_DEVICE_TEST_FRAME_RATE_HZ,
             num_modules=NUM_MODULES_PER_CARD,
             num_channels_per_module=NUM_CHANNELS_PER_MODULE,
@@ -47,7 +47,7 @@ def create_spectrum_star_hub_for_testing() -> SpectrumDigitiserStarHub:
             mock_child_cards.append(
                 MockSpectrumDigitiserCard(
                     device_number=0,
-                    card_type=CardType.TYP_M2P5966_X4,
+                    model=ModelNumber.TYP_M2P5966_X4,
                     mock_source_frame_rate_hz=MOCK_DEVICE_TEST_FRAME_RATE_HZ,
                     num_modules=NUM_MODULES_PER_CARD,
                     num_channels_per_module=NUM_CHANNELS_PER_MODULE,

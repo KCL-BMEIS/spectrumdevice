@@ -21,6 +21,7 @@ from spectrum_gmbh.regs import (
     SPCM_X3_AVAILMODES,
     SPC_CHENABLE,
     SPC_CLOCKMODE,
+    SPC_FNCTYPE,
     SPC_M2CMD,
     SPC_M2STATUS,
     SPC_PCIEXTFEATURES,
@@ -43,13 +44,14 @@ from spectrumdevice.settings import (
     AdvancedCardFeature,
     AvailableIOModes,
     CardFeature,
-    CardType,
+    ModelNumber,
     DEVICE_STATUS_TYPE,
     ExternalTriggerMode,
     SpectrumRegisterLength,
     TransferBuffer,
     TriggerSource,
 )
+from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.card_features import decode_advanced_card_features, decode_card_features
 from spectrumdevice.settings.device_modes import ClockMode
 from spectrumdevice.settings.io_lines import decode_available_io_modes
@@ -80,12 +82,16 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         else:
             self._visa_string = f"/dev/spcm{device_number}"
         self._connect(self._visa_string)
-        self._card_type = CardType(self.read_spectrum_device_register(SPC_PCITYP))
+        self._model_number = ModelNumber(self.read_spectrum_device_register(SPC_PCITYP))
         self._trigger_sources: List[TriggerSource] = []
         self._channels = self._init_channels()
         self._enabled_channels: List[int] = [0]
         self._transfer_buffer: Optional[TransferBuffer] = None
         self.apply_channel_enabling()
+
+    @property
+    def model_number(self) -> ModelNumber:
+        return self._model_number
 
     def reconnect(self) -> None:
         """Reconnect to the card after disconnect() has been called."""
@@ -112,8 +118,6 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         For digitisers in FIFO mode (SPC_REC_FIFO_MULTI), `start_transfer()` should be called immediately after
         `start()` has been called, so that the waveform data can be continuously streamed into the transfer buffer as it
         is acquired.
-
-        # todo: docstring for AWG transfers
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_STARTDMA)
 
@@ -130,23 +134,18 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         For digitisers in FIFO mode (SPC_REC_FIFO_MULTI), samples are transferred continuously during acquisition,
         and transfer will automatically stop when `stop()` is called as there will be no more
         samples to transfer, so `stop_transfer()` should not be used.
-
-        # todo: docstring for AWG
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_STOPDMA)
 
-    def wait_for_transfer_to_complete(self) -> None:
-        """Blocks until the currently active transfer of between the on-device buffer and the TransferBuffer is
-        complete.
+    def wait_for_transfer_chunk_to_complete(self) -> None:
+        """Blocks until the currently active transfer between the on-device buffer and the TransferBuffer is
+        complete. This will be when there at least TransferBuffer.notify_size_in_pages pages available in the buffer.
 
         For digitisers in Standard Single mode (SPC_REC_STD_SINGLE), use after starting a transfer. Once the method
         returns, all acquired waveforms have been transferred from the on-device buffer to the `TransferBuffer` and can
         be read using the `get_waveforms()` method.
 
-        For digitisers in FIFO mode (SPC_REC_FIFO_MULTI) this method is not required because samples are continuously
-        streamed until `stop()` is called.
-
-        # todo: docstring for AWG
+        For digitisers in FIFO mode (SPC_REC_FIFO_MULTI) this method is internally used by get_waveforms().
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_WAITDMA)
 
@@ -447,7 +446,11 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         self.write_to_spectrum_device_register(SPC_SAMPLERATE, rate, SpectrumRegisterLength.SIXTY_FOUR)
 
     def __str__(self) -> str:
-        return f"Card {self._visa_string}"
+        return f"Card {self._visa_string} (model {self.model_number.name})."
+
+    @property
+    def type(self) -> CardType:
+        return CardType(self.read_spectrum_device_register(SPC_FNCTYPE))
 
 
 def _create_visa_string_from_ip(ip_address: str, instrument_number: int) -> str:

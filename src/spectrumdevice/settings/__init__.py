@@ -9,11 +9,13 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import List, Optional
 
-from spectrumdevice.settings.card_dependent_properties import CardType
+from spectrumdevice.settings.card_dependent_properties import ModelNumber
 from spectrumdevice.settings.card_features import CardFeature, AdvancedCardFeature
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
 from spectrumdevice.settings.io_lines import IOLineMode, AvailableIOModes
-from spectrumdevice.settings.transfer_buffer import TransferBuffer, CardToPCDataTransferBuffer
+from spectrumdevice.settings.transfer_buffer import (
+    TransferBuffer,
+)
 from spectrumdevice.settings.triggering import TriggerSource, ExternalTriggerMode
 from spectrumdevice.settings.status import CARD_STATUS_TYPE, DEVICE_STATUS_TYPE, StatusCode
 
@@ -29,13 +31,14 @@ __all__ = [
     "AvailableIOModes",
     "TransferBuffer",
     "CardToPCDataTransferBuffer",
+    "PCToCardDataTransferBuffer",
     "TriggerSource",
     "ExternalTriggerMode",
     "CARD_STATUS_TYPE",
     "DEVICE_STATUS_TYPE",
     "StatusCode",
     "SpectrumRegisterLength",
-    "CardType",
+    "ModelNumber",
 ]
 
 
@@ -76,6 +79,9 @@ class AcquisitionSettings:
     timestamping_enabled: bool
     """If True, Measurements will include the time at which the acquisition was triggered. Increases latency by ~10 ms.
     """
+    batch_size: int = 1
+    """The number of acquisitions to transfer to the PC before the resulting waveforms are returned by
+      SpectrumDigitiserCard.get_waveforms()."""
     number_of_averages: int = 1
     """If an averaging AcquisitionMode is selected, this defines the number of averages."""
 

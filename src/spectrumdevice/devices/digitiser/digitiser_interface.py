@@ -61,7 +61,7 @@ class SpectrumDigitiserInterface(SpectrumDeviceInterface, ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def execute_finite_fifo_acquisition(self, num_iterations: int) -> List[Measurement]:
+    def execute_finite_fifo_acquisition(self, num_measurements: int) -> List[Measurement]:
         raise NotImplementedError()
 
     @abstractmethod
@@ -69,7 +69,7 @@ class SpectrumDigitiserInterface(SpectrumDeviceInterface, ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_waveforms(self) -> List[NDArray[float_]]:
+    def get_waveforms(self) -> List[List[NDArray[float_]]]:
         raise NotImplementedError()
 
     @abstractmethod

@@ -1,4 +1,4 @@
-# spectrumdevice
+from spectrumdevice.settings.transfer_buffer import BufferTypefrom spectrumdevice.settings.transfer_buffer import transfer_buffer_factoryfrom spectrumdevice.settings.transfer_buffer import transfer_buffer_factory# spectrumdevice
 A high-level, object-oriented Python library for controlling Spectrum Instrumentation devices.
 
 `spectrumdevice` can connect to individual cards or 
@@ -6,21 +6,21 @@ A high-level, object-oriented Python library for controlling Spectrum Instrument
 [NetBox](https://spectrum-instrumentation.com/en/digitizernetbox)). `spectrumdevice` provides the following classes 
 for controlling devices:
 
-| Name                       | Purpose                                                 |
-|----------------------------|---------------------------------------------------------|
-| `SpectrumDigitiserCard`    | Controlling individual digitiser cards                  |
-| `SpectrumDigitiserStarHub` | Controlling digitiser cards aggregated with a StarHub   |
-| `SpectrumAWGCard`          | Controlling individual AWG cards                        |
-| `SpectrumAWGStarHub`       | Controlling AWG cards aggregated with a StarHub         |
+| Name                       | Purpose                                                               |
+|----------------------------|-----------------------------------------------------------------------|
+| `SpectrumDigitiserCard`    | Controlling individual digitiser cards                                |
+| `SpectrumDigitiserStarHub` | Controlling digitiser cards aggregated with a StarHub                 |
+| `SpectrumAWGCard`          | Controlling individual AWG cards (Not yet implemented)                |
+| `SpectrumAWGStarHub`       | Controlling AWG cards aggregated with a StarHub (Not yet implemented) |
 
 `spectrumdevice` also includes mock classes for testing software without drivers installed or hardware connected:
 
-| Name                           | Purpose                                             |
-|--------------------------------|-----------------------------------------------------|
-| `MockSpectrumDigitiserCard`    | Mocking individual digitiser cards                  |
-| `MockSpectrumDigitiserStarHub` | Mocking digitiser cards aggregated with a StarHub   |
-| `MockSpectrumAWGCard`          | Mocking individual AWG cards                        |
-| `MockSpectrumAWGStarHub`       | Mocking AWG cards aggregated with a StarHub         |
+| Name                           | Purpose                                                           |
+|--------------------------------|-------------------------------------------------------------------|
+| `MockSpectrumDigitiserCard`    | Mocking individual digitiser cards                                |
+| `MockSpectrumDigitiserStarHub` | Mocking digitiser cards aggregated with a StarHub                 |
+| `MockSpectrumAWGCard`          | Mocking individual AWG cards (Not yet implemented)                |
+| `MockSpectrumAWGStarHub`       | Mocking AWG cards aggregated with a StarHub (Not yet implemented) |
 
 For digitisers, `spectrumdevice` currently only supports 'Standard Single' and 'Multi FIFO' acquisition modes. See the 
 Limitations section for more information.
@@ -59,9 +59,6 @@ files taken from the `spcm_examples` directory, provided with Spectrum hardware.
 ## Limitations
 * Currently, `spectrumdevice` only supports Standard Single and Multi FIFO digitiser acquisition modes. See the 
   Spectrum documentation for more information.
-* When defining a transfer buffer - the software buffer into which samples are transferred between a hardware device - 
-  and Python - the notify-size is automatically set equal to the buffer length. This works fine for most situations. 
-  See the Spectrum documentation for more information.
 * If timestamping is enabled, timestamps are acquired using Spectrum's 'polling' mode. This seems to add around
   5 to 10 ms of latency to the acquisition.
 * Only current digitisers from the [59xx](https://spectrum-instrumentation.com/de/59xx-16-bit-digitizer-125-mss),
@@ -70,7 +67,6 @@ files taken from the `spcm_examples` directory, provided with Spectrum hardware.
 `spectrumdevice` has only been tested on 59xx devices. However, `spectrumdevice` may work fine on older devices. If 
 you've tried `spectrumdevice` on an older device, please let us know if it works and raise any issues you encounter in
 the issue tracker. It's likely possible to add support with minimal effort.
-# todo: add supported AWG devices
 
 ## Usage
 ### Connect to devices
@@ -124,9 +120,9 @@ of the mock data source must also be set on construction.
 
 ```python
 from spectrumdevice import MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub
-from spectrumdevice.settings import CardType
+from spectrumdevice.settings import ModelNumber
 
-mock_card = MockSpectrumDigitiserCard(device_number=0, card_type=CardType.TYP_M2P5966_X4,
+mock_card = MockSpectrumDigitiserCard(device_number=0, model=ModelNumber.TYP_M2P5966_X4,
                                       mock_source_frame_rate_hz=10.0,
                                       num_modules=2, num_channels_per_module=4)
 mock_hub = MockSpectrumDigitiserStarHub(device_number=0, child_cards=[mock_card], master_card_index=0)
@@ -212,7 +208,33 @@ timestamp = measurement.timestamp  # A datetime.datetime object
 
 ### Acquiring waveforms from a digitiser (FIFO mode)
 To acquire data in FIFO mode, place the device into the correct mode using `configure_acquisition()` or `
-card.set_acquisition_mode(AcquisitionMode.SPC_REC_FIFO_MULTI)`.
+card.set_acquisition_mode(AcquisitionMode.SPC_REC_FIFO_MULTI)`. You can then also construct your own 
+`TransferBuffer` object and provide it to card using the `define_transfer_buffer()` method:
+
+```python
+from spectrumdevice.settings.transfer_buffer import (
+    BufferDirection,
+    BufferType,
+    transfer_buffer_factory,
+)
+
+size_in_samples = 100
+board_memory_offset_bytes = 0
+notify_size_in_pages = 10
+
+buffer = transfer_buffer_factory(
+  buffer_type=BufferType.SPCM_BUF_DATA,  # must be SPCM_BUF_DATA to transfer samples from digitiser
+  direction=BufferDirection.SPCM_DIR_CARDTOPC,  # must be SPCM_DIR_CARDTOPC to transfer samples from digitiser
+  size_in_samples=size_in_samples,
+  board_memory_offset_bytes=board_memory_offset_bytes,
+  notify_size_in_pages=notify_size_in_pages
+)
+  
+card.define_transfer_buffer(buffer)
+```
+this allows you to set your own transfer buffer size and notify size. If you do not call `define_transfer_buffer()` yourself,
+then a default transfer buffer will be used, which will have a notify size of 10 pages (40 kB) and will be large
+enough to hold 1000 repeat acquisitions without overflowing.
 
 You can then carry out a predefined number of Multi FIFO measurements like this:
 

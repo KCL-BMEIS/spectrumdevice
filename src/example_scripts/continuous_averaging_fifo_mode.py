@@ -8,7 +8,7 @@ from spectrumdevice import MockSpectrumDigitiserCard, SpectrumDigitiserCard
 from spectrumdevice.measurement import Measurement
 from spectrumdevice.settings import (
     AcquisitionMode,
-    CardType,
+    ModelNumber,
     TriggerSource,
     ExternalTriggerMode,
     TriggerSettings,
@@ -23,6 +23,7 @@ def continuous_averaging_multi_fifo_example(
     trigger_source: TriggerSource,
     device_number: int,
     ip_address: Optional[str] = None,
+    acquisition_length: int = 400,
 ) -> List[Measurement]:
 
     if not mock_mode:
@@ -32,7 +33,7 @@ def continuous_averaging_multi_fifo_example(
         # Set up a mock device
         card = MockSpectrumDigitiserCard(
             device_number=device_number,
-            card_type=CardType.TYP_M2P5966_X4,
+            model=ModelNumber.TYP_M2P5966_X4,
             mock_source_frame_rate_hz=1.0,
             num_modules=2,
             num_channels_per_module=4,
@@ -49,7 +50,7 @@ def continuous_averaging_multi_fifo_example(
     acquisition_settings = AcquisitionSettings(
         acquisition_mode=AcquisitionMode.SPC_REC_FIFO_AVERAGE,
         sample_rate_in_hz=40000000,
-        acquisition_length_in_samples=400,
+        acquisition_length_in_samples=acquisition_length,
         pre_trigger_length_in_samples=0,
         timeout_in_ms=1000,
         enabled_channels=[0],
@@ -59,29 +60,34 @@ def continuous_averaging_multi_fifo_example(
         number_of_averages=num_averages,
     )
 
-    # Apply settings
-    card.configure_trigger(trigger_settings)
-    card.configure_acquisition(acquisition_settings)
+    try:
+        # Apply settings
+        card.configure_trigger(trigger_settings)
+        card.configure_acquisition(acquisition_settings)
 
-    # Execute acquisition
-    start_time = monotonic()
-    card.execute_continuous_fifo_acquisition()
+        # Execute acquisition
+        card.execute_continuous_fifo_acquisition()
+        start_time = monotonic()
+        # Retrieve streamed waveform data until desired time has elapsed
+        measurements_list = []
+        while (monotonic() - start_time) < acquisition_duration_in_seconds:
+            measurements_list += [
+                Measurement(waveforms=frame, timestamp=card.get_timestamp()) for frame in card.get_waveforms()
+            ]
+            print(f"got {measurements_list} measurements")
+            if measurements_list[-1].timestamp is not None:
+                print(
+                    f"Got measurement triggered at {measurements_list[-1].timestamp.time()} (acquisition latency of"
+                    f" {(datetime.datetime.now() - measurements_list[-1].timestamp).microseconds * 1e-3} ms)"
+                )
 
-    # Retrieve streamed waveform data until desired time has elapsed
-    measurements_list = []
-    while (monotonic() - start_time) < acquisition_duration_in_seconds:
-        measurements_list.append(Measurement(waveforms=card.get_waveforms(), timestamp=card.get_timestamp()))
-        if measurements_list[-1].timestamp is not None:
-            print(
-                f"Got measurement triggered at {measurements_list[-1].timestamp.time()} (acquisition latency of"
-                f" {(datetime.datetime.now() - measurements_list[-1].timestamp).microseconds * 1e-3} ms)"
-            )
+    finally:
+        # Stop the acquisition (and streaming)
+        card.stop()
 
-    # Stop the acquisition (and streaming)
-    card.stop()
+        card.reset()
+        card.disconnect()
 
-    card.reset()
-    card.disconnect()
     return measurements_list
 
 

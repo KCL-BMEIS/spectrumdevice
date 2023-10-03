@@ -1,8 +1,29 @@
 from enum import Enum
 
 from spectrum_gmbh.regs import (
+    SPCM_TYPE_AI,
+    SPCM_TYPE_AO,
+    SPCM_TYPE_DI,
+    SPCM_TYPE_DIO,
+    SPCM_TYPE_DO,
     TYP_M2P59XX_X4,
     TYP_FAMILYMASK,
+    TYP_M2P6530_X4,
+    TYP_M2P6531_X4,
+    TYP_M2P6532_X4,
+    TYP_M2P6533_X4,
+    TYP_M2P6536_X4,
+    TYP_M2P6540_X4,
+    TYP_M2P6541_X4,
+    TYP_M2P6546_X4,
+    TYP_M2P6560_X4,
+    TYP_M2P6561_X4,
+    TYP_M2P6562_X4,
+    TYP_M2P6566_X4,
+    TYP_M2P6568_X4,
+    TYP_M2P6570_X4,
+    TYP_M2P6571_X4,
+    TYP_M2P6576_X4,
     TYP_M4I22XX_X8,
     TYP_M4I44XX_X8,
     TYP_M4I2210_X8,
@@ -69,8 +90,26 @@ from spectrum_gmbh.regs import (
 
 
 class CardType(Enum):
+    SPCM_TYPE_AI = SPCM_TYPE_AI  # Digitiser
+    SPCM_TYPE_AO = SPCM_TYPE_AO  # AWG
+    SPCM_TYPE_DI = SPCM_TYPE_DI
+    SPCM_TYPE_DO = SPCM_TYPE_DO
+    SPCM_TYPE_DIO = SPCM_TYPE_DIO
+
+
+CARD_TYPE_DESCRIPTIONS = {
+    CardType.SPCM_TYPE_AI: "Analog input card (analog acquisition; the M2i.4028 and M2i.4038 also return this value)",
+    CardType.SPCM_TYPE_AO: "Analog output card (arbitrary waveform generators)",
+    CardType.SPCM_TYPE_DI: "Digital input card (logic analyser)",
+    CardType.SPCM_TYPE_DO: "Digital output card (pattern generators)",
+    CardType.SPCM_TYPE_DIO: "Digital I/O (input/output) card, where the direction is software selectable.",
+}
+
+
+class ModelNumber(Enum):
     """An Enum representing the integer values returned by a device when its type identifier is queried by reading the
-    SPC_PCITYP register. Only the supported card types are listed: 22xx, 44xx and 59xx family devices."""
+    SPC_PCITYP register. Only the supported card types are listed (Digitisers: 22xx, 44xx and 59xx family devices; AWGs:
+     M2P 65xx devices)."""
 
     TYP_M4I2210_X8 = TYP_M4I2210_X8
     TYP_M4I2211_X8 = TYP_M4I2211_X8
@@ -132,6 +171,22 @@ class CardType(Enum):
     TYP_M2P5962_X4 = TYP_M2P5962_X4
     TYP_M2P5966_X4 = TYP_M2P5966_X4
     TYP_M2P5968_X4 = TYP_M2P5968_X4
+    TYP_M2P6530_X4 = TYP_M2P6530_X4
+    TYP_M2P6531_X4 = TYP_M2P6531_X4
+    TYP_M2P6532_X4 = TYP_M2P6532_X4
+    TYP_M2P6536_X4 = TYP_M2P6536_X4
+    TYP_M2P6533_X4 = TYP_M2P6533_X4
+    TYP_M2P6540_X4 = TYP_M2P6540_X4
+    TYP_M2P6541_X4 = TYP_M2P6541_X4
+    TYP_M2P6546_X4 = TYP_M2P6546_X4
+    TYP_M2P6560_X4 = TYP_M2P6560_X4
+    TYP_M2P6561_X4 = TYP_M2P6561_X4
+    TYP_M2P6562_X4 = TYP_M2P6562_X4
+    TYP_M2P6566_X4 = TYP_M2P6566_X4
+    TYP_M2P6568_X4 = TYP_M2P6568_X4
+    TYP_M2P6570_X4 = TYP_M2P6570_X4
+    TYP_M2P6571_X4 = TYP_M2P6571_X4
+    TYP_M2P6576_X4 = TYP_M2P6576_X4
 
 
 MEMSIZE_STEP_SIZES = {
@@ -141,6 +196,30 @@ MEMSIZE_STEP_SIZES = {
 }
 
 
-def get_memsize_step_size(card_type: CardType) -> int:
-    """Get the step size for FIFO mode acquisition length (MEMSIZE) and post trigger length for a card its CardType."""
-    return MEMSIZE_STEP_SIZES[card_type.value & TYP_FAMILYMASK]
+OUTPUT_AMPLITUDE_LIMITS_IN_MV = {
+    ModelNumber.TYP_M2P6530_X4: 3000,
+    ModelNumber.TYP_M2P6531_X4: 3000,
+    ModelNumber.TYP_M2P6532_X4: 3000,
+    ModelNumber.TYP_M2P6533_X4: 3000,
+    ModelNumber.TYP_M2P6536_X4: 3000,
+    ModelNumber.TYP_M2P6560_X4: 3000,
+    ModelNumber.TYP_M2P6561_X4: 3000,
+    ModelNumber.TYP_M2P6562_X4: 3000,
+    ModelNumber.TYP_M2P6566_X4: 3000,
+    ModelNumber.TYP_M2P6568_X4: 3000,
+    ModelNumber.TYP_M2P6540_X4: 6000,
+    ModelNumber.TYP_M2P6541_X4: 6000,
+    ModelNumber.TYP_M2P6546_X4: 6000,
+    ModelNumber.TYP_M2P6570_X4: 6000,
+    ModelNumber.TYP_M2P6571_X4: 6000,
+    ModelNumber.TYP_M2P6576_X4: 6000,
+}
+
+
+def get_memsize_step_size(model: ModelNumber) -> int:
+    """Get the step size for FIFO mode acquisition length (MEMSIZE) and post trigger length for a digitiser card using
+    its ModelNumber."""
+    try:
+        return MEMSIZE_STEP_SIZES[model.value & TYP_FAMILYMASK]
+    except KeyError:
+        raise ValueError(f"Cannot determined MEMSIZE for device model {ModelNumber}. Perhaps it is not a digitiser.")
