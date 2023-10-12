@@ -98,7 +98,7 @@ if __name__ == "__main__":
         acquisition_duration_in_seconds=0.5,
         trigger_source=TriggerSource.SPC_TMASK_EXT0,
         device_number=1,
-        ip_address="169.254.45.181",
+        ip_address="169.254.13.35",
     )
 
     # Plot waveforms
