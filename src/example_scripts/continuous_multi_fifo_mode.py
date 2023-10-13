@@ -100,7 +100,7 @@ if __name__ == "__main__":
         time_to_keep_acquiring_for_in_seconds=2,  # continuous acquisition will stop after this many seconds  (after
         # waiting for the final batch to be acquired and transferred). Make sure you expect to receive (and finish
         # transferring) at least 1 batch in this time! otherwise you will likely receive a timeout error
-        batch_size=5,  # number of measurements to acquire onto the acquisition card before transferring to the PC
+        batch_size=5,  # number of measurements to acquire before they are returned by get_waveforms()
         trigger_source=TriggerSource.SPC_TMASK_EXT0,
         device_number=1,
         ip_address="169.254.13.35",

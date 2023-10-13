@@ -77,7 +77,7 @@ if __name__ == "__main__":
     measurements = finite_multi_fifo_example(
         mock_mode=False,
         num_measurements=10,  # number of waveforms to acquire from each enabled channel
-        batch_size=5,  # number of measurements to acquire onto the acquisition card before transferring to the PC
+        batch_size=5,  # number of measurements to acquire before they are returned by get_waveforms()
         trigger_source=TriggerSource.SPC_TMASK_EXT0,
         device_number=1,
         ip_address="169.254.13.35",
