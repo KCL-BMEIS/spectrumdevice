@@ -14,6 +14,7 @@ from numpy.typing import NDArray
 from spectrumdevice.devices.abstract_device import SpectrumChannelInterface, SpectrumDeviceInterface
 from spectrumdevice.settings import AcquisitionMode, AcquisitionSettings
 from spectrumdevice import Measurement
+from spectrumdevice.settings.channel import InputImpedance
 
 
 class SpectrumDigitiserChannelInterface(SpectrumChannelInterface, ABC):
@@ -40,6 +41,15 @@ class SpectrumDigitiserChannelInterface(SpectrumChannelInterface, ABC):
 
     @abstractmethod
     def convert_raw_waveform_to_voltage_waveform(self, raw_waveform: ndarray) -> ndarray:
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def input_impedance(self) -> InputImpedance:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_input_impedance(self, input_impedance: InputImpedance) -> None:
         raise NotImplementedError()
 
 

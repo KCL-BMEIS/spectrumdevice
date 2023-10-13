@@ -11,6 +11,7 @@ from typing import List, Optional
 
 from spectrumdevice.settings.card_dependent_properties import ModelNumber
 from spectrumdevice.settings.card_features import CardFeature, AdvancedCardFeature
+from spectrumdevice.settings.channel import InputImpedance
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
 from spectrumdevice.settings.io_lines import IOLineMode, AvailableIOModes
 from spectrumdevice.settings.transfer_buffer import (
@@ -76,6 +77,8 @@ class AcquisitionSettings:
     """The voltage range to apply to each enabled channel in mW."""
     vertical_offsets_in_percent: List[int]
     """The DC offset to apply to each enabled channel as percentages of their vertical ranges."""
+    input_impedances: List[InputImpedance]
+    """The input impedance settings to apply to each channel"""
     timestamping_enabled: bool
     """If True, Measurements will include the time at which the acquisition was triggered. Increases latency by ~10 ms.
     """
