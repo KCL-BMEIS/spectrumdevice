@@ -13,8 +13,14 @@ from spectrumdevice.devices.digitiser.digitiser_interface import (
 )
 from spectrumdevice.exceptions import SpectrumCardIsNotADigitiser
 from spectrumdevice.settings.card_dependent_properties import CardType
-from spectrumdevice.settings.channel import INPUT_IMPEDANCE_COMMANDS, InputImpedance, VERTICAL_OFFSET_COMMANDS, \
-    VERTICAL_RANGE_COMMANDS
+from spectrumdevice.settings.channel import (
+    INPUT_IMPEDANCE_COMMANDS,
+    InputImpedance,
+    VERTICAL_OFFSET_COMMANDS,
+    VERTICAL_RANGE_COMMANDS,
+    InputCoupling,
+    INPUT_COUPLING_COMMANDS,
+)
 
 
 class SpectrumDigitiserChannel(AbstractSpectrumChannel, SpectrumDigitiserChannelInterface):
@@ -90,5 +96,17 @@ class SpectrumDigitiserChannel(AbstractSpectrumChannel, SpectrumDigitiserChannel
         return InputImpedance(impedance_binary_value)
 
     def set_input_impedance(self, input_impedance: InputImpedance) -> None:
-        self._parent_device.write_to_spectrum_device_register(INPUT_IMPEDANCE_COMMANDS[self._number],
-                                                              input_impedance.value)
+        self._parent_device.write_to_spectrum_device_register(
+            INPUT_IMPEDANCE_COMMANDS[self._number], input_impedance.value
+        )
+
+    @property
+    def input_coupling(self) -> InputCoupling:
+        """The current input impedance setting of the channel (50 Ohm or 1 MOhm)"""
+        coupling_binary_value = self._parent_device.read_spectrum_device_register(INPUT_COUPLING_COMMANDS[self._number])
+        return InputCoupling(coupling_binary_value)
+
+    def set_input_coupling(self, input_coupling: InputCoupling) -> None:
+        self._parent_device.write_to_spectrum_device_register(
+            INPUT_COUPLING_COMMANDS[self._number], input_coupling.value
+        )

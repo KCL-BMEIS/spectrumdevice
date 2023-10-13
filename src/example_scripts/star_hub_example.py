@@ -8,6 +8,7 @@ from spectrumdevice.settings import (
     ExternalTriggerMode,
     AcquisitionMode,
     AcquisitionSettings,
+    InputImpedance,
 )
 
 
@@ -67,8 +68,9 @@ if __name__ == "__main__":
         pre_trigger_length_in_samples=0,
         timeout_in_ms=1000,
         enabled_channels=[0, 8],  # at least 1 channel from each child card must be enabled
-        vertical_ranges_in_mv=[200],
-        vertical_offsets_in_percent=[0],
+        vertical_ranges_in_mv=[200, 200],
+        vertical_offsets_in_percent=[0, 0],
+        input_impedances=[InputImpedance.ONE_MEGA_OHM, InputImpedance.ONE_MEGA_OHM],
         timestamping_enabled=True,
         batch_size=5,
     )

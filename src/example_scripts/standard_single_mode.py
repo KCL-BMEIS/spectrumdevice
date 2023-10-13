@@ -13,6 +13,7 @@ from spectrumdevice.settings import (
     ExternalTriggerMode,
     TriggerSettings,
     AcquisitionSettings,
+    InputImpedance,
 )
 
 
@@ -54,6 +55,7 @@ def standard_single_mode_example(
         enabled_channels=[0],
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
+        input_impedances=[InputImpedance.ONE_MEGA_OHM],
         timestamping_enabled=True,
     )
 

@@ -12,8 +12,8 @@ class SpectrumTestMode(Enum):
 
 # Set to TestMode.MOCK_HARDWARE for software-only testing, even if Spectrum drivers are found on the system
 # Set to TestMode.REAL_HARDWARE to run tests on a real hardware device as configured below.
-SINGLE_CARD_TEST_MODE = SpectrumTestMode.MOCK_HARDWARE
-STAR_HUB_TEST_MODE = SpectrumTestMode.MOCK_HARDWARE
+SINGLE_CARD_TEST_MODE = SpectrumTestMode.REAL_HARDWARE
+STAR_HUB_TEST_MODE = SpectrumTestMode.REAL_HARDWARE
 
 # Set IP address of real spectrum device (for use if TestMode.REAL_HARDWARE is set above). Set to None to run tests on
 # a local (PCIe) card.
@@ -36,7 +36,7 @@ ACQUISITION_LENGTH = 400
 MOCK_DEVICE_TEST_FRAME_RATE_HZ = 10.0
 
 # Trigger source to use for integration tests. Has no effect in SpectrumTestMode.MOCK_HARDWARE
-INTEGRATION_TEST_TRIGGER_SOURCE = TriggerSource.SPC_TMASK_EXT0
+INTEGRATION_TEST_TRIGGER_SOURCE = TriggerSource.SPC_TMASK_SOFTWARE
 
 
 if SINGLE_CARD_TEST_MODE == SpectrumTestMode.REAL_HARDWARE and not SPECTRUM_DRIVERS_FOUND:

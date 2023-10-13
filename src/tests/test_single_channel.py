@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from spectrumdevice import SpectrumDigitiserChannel
+from spectrumdevice.settings import InputImpedance
 from tests.device_factories import create_spectrum_card_for_testing
 
 
@@ -21,3 +22,8 @@ class SingleChannelTest(TestCase):
         offset = 1
         self._channel.set_vertical_offset_in_percent(offset)
         self.assertEqual(offset, self._channel.vertical_offset_in_percent)
+
+    def test_input_impedance(self) -> None:
+        impedance = InputImpedance.ONE_MEGA_OHM
+        self._channel.set_input_impedance(impedance)
+        self.assertEqual(impedance, self._channel.input_impedance)
