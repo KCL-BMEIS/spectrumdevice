@@ -20,6 +20,8 @@ from spectrumdevice.settings.channel import (
     VERTICAL_RANGE_COMMANDS,
     InputCoupling,
     INPUT_COUPLING_COMMANDS,
+    InputPath,
+    INPUT_PATH_COMMANDS,
 )
 
 
@@ -102,7 +104,7 @@ class SpectrumDigitiserChannel(AbstractSpectrumChannel, SpectrumDigitiserChannel
 
     @property
     def input_coupling(self) -> InputCoupling:
-        """The current input impedance setting of the channel (50 Ohm or 1 MOhm)"""
+        """The coupling (AC or DC) setting of the channel. Only available on some hardware."""
         coupling_binary_value = self._parent_device.read_spectrum_device_register(INPUT_COUPLING_COMMANDS[self._number])
         return InputCoupling(coupling_binary_value)
 
@@ -110,3 +112,12 @@ class SpectrumDigitiserChannel(AbstractSpectrumChannel, SpectrumDigitiserChannel
         self._parent_device.write_to_spectrum_device_register(
             INPUT_COUPLING_COMMANDS[self._number], input_coupling.value
         )
+
+    @property
+    def input_path(self) -> InputPath:
+        """The input path setting of the channel. Only available on some hardware."""
+        path_binary_value = self._parent_device.read_spectrum_device_register(INPUT_PATH_COMMANDS[self._number])
+        return InputPath(path_binary_value)
+
+    def set_input_path(self, input_path: InputPath) -> None:
+        self._parent_device.write_to_spectrum_device_register(INPUT_PATH_COMMANDS[self._number], input_path.value)

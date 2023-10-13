@@ -14,7 +14,7 @@ from numpy.typing import NDArray
 from spectrumdevice.devices.abstract_device import SpectrumChannelInterface, SpectrumDeviceInterface
 from spectrumdevice.settings import AcquisitionMode, AcquisitionSettings
 from spectrumdevice import Measurement
-from spectrumdevice.settings.channel import InputImpedance, InputCoupling
+from spectrumdevice.settings.channel import InputImpedance, InputCoupling, InputPath
 
 
 class SpectrumDigitiserChannelInterface(SpectrumChannelInterface, ABC):
@@ -59,6 +59,15 @@ class SpectrumDigitiserChannelInterface(SpectrumChannelInterface, ABC):
 
     @abstractmethod
     def set_input_coupling(self, input_coupling: InputCoupling) -> None:
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def input_path(self) -> InputPath:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_input_path(self, input_path: InputPath) -> None:
         raise NotImplementedError()
 
 

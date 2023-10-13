@@ -11,7 +11,7 @@ from typing import List, Optional
 
 from spectrumdevice.settings.card_dependent_properties import ModelNumber
 from spectrumdevice.settings.card_features import CardFeature, AdvancedCardFeature
-from spectrumdevice.settings.channel import InputImpedance, InputCoupling
+from spectrumdevice.settings.channel import InputImpedance, InputCoupling, InputPath
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
 from spectrumdevice.settings.io_lines import IOLineMode, AvailableIOModes
 from spectrumdevice.settings.transfer_buffer import (
@@ -89,6 +89,8 @@ class AcquisitionSettings:
     """If an averaging AcquisitionMode is selected, this defines the number of averages."""
     input_couplings: Optional[List[InputCoupling]] = None
     """The coupling (AC or DC) to apply to each channel. Only available on some hardware, so default is None."""
+    input_paths: Optional[List[InputPath]] = None
+    """The input path (HF or Buffered) to apply to each channel. Only available on some hardware, so default is None."""
 
 
 class SpectrumRegisterLength(Enum):

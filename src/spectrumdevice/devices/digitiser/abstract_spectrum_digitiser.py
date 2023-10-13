@@ -57,6 +57,11 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
             for channel, coupling in zip(self.channels, settings.input_couplings):
                 cast(SpectrumDigitiserChannel, channel).set_input_coupling(coupling)
 
+        # Only some hardware has software programmable input paths, so it can be None
+        if settings.input_paths is not None:
+            for channel, path in zip(self.channels, settings.input_paths):
+                cast(SpectrumDigitiserChannel, channel).set_input_path(path)
+
         # Write the configuration to the card
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_WRITESETUP)
 
