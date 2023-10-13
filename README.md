@@ -170,6 +170,7 @@ You can set multiple settings at once using the `TriggerSettings` and `Acquisiti
 ```python
 from spectrumdevice.settings import TriggerSettings, AcquisitionSettings, TriggerSource, ExternalTriggerMode, \
 AcquisitionMode
+from spectrumdevice.settings.channel import InputImpedance
 
 trigger_settings = TriggerSettings(
   trigger_sources=[TriggerSource.SPC_TMASK_EXT0],
@@ -186,6 +187,7 @@ acquisition_settings = AcquisitionSettings(
   enabled_channels=[0, 1, 2, 3],
   vertical_ranges_in_mv=[200, 200, 200, 200],
   vertical_offsets_in_percent=[0, 0, 0, 0],
+  input_impedances=[InputImpedance.ONE_MEGA_OHM, InputImpedance.ONE_MEGA_OHM, InputImpedance.ONE_MEGA_OHM, InputImpedance.ONE_MEGA_OHM],
   timestamping_enabled=True,
   batch_size=1
 )
