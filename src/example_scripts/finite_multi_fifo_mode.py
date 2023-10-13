@@ -17,6 +17,7 @@ from spectrumdevice.settings import (
 def finite_multi_fifo_example(
     mock_mode: bool,
     num_measurements: int,
+    batch_size: int,
     trigger_source: TriggerSource,
     device_number: int,
     ip_address: Optional[str] = None,
@@ -54,7 +55,7 @@ def finite_multi_fifo_example(
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
         timestamping_enabled=True,
-        batch_size=5,
+        batch_size=batch_size,
     )
 
     # Apply settings
@@ -72,12 +73,14 @@ if __name__ == "__main__":
 
     from matplotlib.pyplot import plot, show, figure, title
 
+    # Only a few parameters are included as arguments here. See contents of the example function for other settings
     measurements = finite_multi_fifo_example(
         mock_mode=False,
-        num_measurements=5,
+        num_measurements=10,  # number of waveforms to acquire from each enabled channel
+        batch_size=5,  # number of measurements to acquire before they are returned by get_waveforms()
         trigger_source=TriggerSource.SPC_TMASK_EXT0,
         device_number=1,
-        ip_address="169.254.45.181",
+        ip_address="169.254.13.35",
     )
 
     # Plot waveforms

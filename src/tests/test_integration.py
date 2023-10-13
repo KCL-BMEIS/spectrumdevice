@@ -5,7 +5,7 @@ from unittest import TestCase
 import pytest
 from numpy import array, concatenate
 
-from example_scripts.connect_to_star_hub import star_hub_example
+from example_scripts.star_hub_example import connect_to_star_hub_example
 from example_scripts.continuous_averaging_fifo_mode import continuous_averaging_multi_fifo_example
 from example_scripts.continuous_multi_fifo_mode import continuous_multi_fifo_example
 from example_scripts.finite_multi_fifo_mode import finite_multi_fifo_example
@@ -57,6 +57,7 @@ class SingleCardIntegrationTests(TestCase):
         measurements = finite_multi_fifo_example(
             mock_mode=self._single_card_mock_mode,
             num_measurements=5,
+            batch_size=5,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
             device_number=TEST_DEVICE_NUMBER,
             ip_address=TEST_DEVICE_IP,
@@ -68,11 +69,12 @@ class SingleCardIntegrationTests(TestCase):
     def test_continuous_multi_fifo_mode(self) -> None:
         measurements = continuous_multi_fifo_example(
             mock_mode=self._single_card_mock_mode,
-            acquisition_duration_in_seconds=0.5,
+            time_to_keep_acquiring_for_in_seconds=0.5,
+            batch_size=1,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
             device_number=TEST_DEVICE_NUMBER,
             ip_address=TEST_DEVICE_IP,
-            acquisition_length=ACQUISITION_LENGTH,
+            single_acquisition_length_in_samples=ACQUISITION_LENGTH,
         )
         self._asserts_for_fifo_mode(measurements)
 
@@ -108,11 +110,11 @@ class StarHubIntegrationTests(TestCase):
         self._star_hub_mock_mode = STAR_HUB_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
 
     def test_star_hub(self) -> None:
-        hub = star_hub_example(
+        hub = connect_to_star_hub_example(
             mock_mode=self._star_hub_mock_mode,
             num_cards=NUM_CARDS_IN_STAR_HUB,
             master_card_index=STAR_HUB_MASTER_CARD_INDEX,
-            ip_address="169.254.45.181",
+            ip_address=TEST_DEVICE_IP,
         )
         self.assertEqual(len(hub.channels), NUM_CHANNELS_PER_MODULE * NUM_MODULES_PER_CARD * NUM_CARDS_IN_STAR_HUB)
         self.assertEqual(len(hub._child_cards), NUM_CARDS_IN_STAR_HUB)

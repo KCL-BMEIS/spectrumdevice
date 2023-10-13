@@ -17,7 +17,7 @@ STAR_HUB_TEST_MODE = SpectrumTestMode.MOCK_HARDWARE
 
 # Set IP address of real spectrum device (for use if TestMode.REAL_HARDWARE is set above). Set to None to run tests on
 # a local (PCIe) card.
-TEST_DEVICE_IP = "169.254.45.181"
+TEST_DEVICE_IP = "169.254.13.35"
 # Set the device number to connect to for real hardware tests. If using a star hub (e.g. netbox), this should be the
 # STAR_HUB_MASTER_CARD_INDEX. If you only have a single, local (PCIe) card, set to 0.
 TEST_DEVICE_NUMBER = 1

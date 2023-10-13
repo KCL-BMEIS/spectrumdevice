@@ -186,7 +186,8 @@ acquisition_settings = AcquisitionSettings(
   enabled_channels=[0, 1, 2, 3],
   vertical_ranges_in_mv=[200, 200, 200, 200],
   vertical_offsets_in_percent=[0, 0, 0, 0],
-  timestamping_enabled=True
+  timestamping_enabled=True,
+  batch_size=1
 )
 
 card.configure_trigger(trigger_settings)

@@ -18,11 +18,12 @@ from spectrumdevice.settings import (
 
 def continuous_multi_fifo_example(
     mock_mode: bool,
-    acquisition_duration_in_seconds: float,
+    time_to_keep_acquiring_for_in_seconds: float,
+    batch_size: int,
     trigger_source: TriggerSource,
     device_number: int,
     ip_address: Optional[str] = None,
-    acquisition_length: int = 400,
+    single_acquisition_length_in_samples: int = 400,
 ) -> List[Measurement]:
 
     if not mock_mode:
@@ -48,14 +49,15 @@ def continuous_multi_fifo_example(
     # Acquisition settings
     acquisition_settings = AcquisitionSettings(
         acquisition_mode=AcquisitionMode.SPC_REC_FIFO_MULTI,
-        sample_rate_in_hz=40000000,
-        acquisition_length_in_samples=acquisition_length,
+        sample_rate_in_hz=5000,
+        acquisition_length_in_samples=single_acquisition_length_in_samples,
         pre_trigger_length_in_samples=0,
         timeout_in_ms=5000,
         enabled_channels=[0],
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
         timestamping_enabled=True,
+        batch_size=batch_size,
     )
 
     try:
@@ -69,7 +71,7 @@ def continuous_multi_fifo_example(
 
         # Retrieve streamed waveform data until desired time has elapsed
         measurements_list = []
-        while (monotonic() - start_time) < acquisition_duration_in_seconds:
+        while (monotonic() - start_time) < time_to_keep_acquiring_for_in_seconds:
 
             measurements_list += [
                 Measurement(waveforms=frame, timestamp=card.get_timestamp()) for frame in card.get_waveforms()
@@ -95,10 +97,13 @@ if __name__ == "__main__":
 
     measurements = continuous_multi_fifo_example(
         mock_mode=False,
-        acquisition_duration_in_seconds=0.5,
+        time_to_keep_acquiring_for_in_seconds=2,  # continuous acquisition will stop after this many seconds  (after
+        # waiting for the final batch to be acquired and transferred). Make sure you expect to receive (and finish
+        # transferring) at least 1 batch in this time! otherwise you will likely receive a timeout error
+        batch_size=5,  # number of measurements to acquire before they are returned by get_waveforms()
         trigger_source=TriggerSource.SPC_TMASK_EXT0,
         device_number=1,
-        ip_address="169.254.45.181",
+        ip_address="169.254.13.35",
     )
 
     # Plot waveforms
