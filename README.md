@@ -1,4 +1,3 @@
-from spectrumdevice.settings.transfer_buffer import BufferTypefrom spectrumdevice.settings.transfer_buffer import transfer_buffer_factoryfrom spectrumdevice.settings.transfer_buffer import transfer_buffer_factory# spectrumdevice
 A high-level, object-oriented Python library for controlling Spectrum Instrumentation devices.
 
 `spectrumdevice` can connect to individual cards or 
