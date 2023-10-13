@@ -1,4 +1,4 @@
-name: Publish distribution to Test PyPI when a new tag is pushed
+name: Publish distribution to Test PyPI when a release is made
 
 on:
   release:
@@ -31,6 +31,6 @@ jobs:
           --wheel
           --outdir dist/
       - name: Publish distribution to PyPI
-        uses: pypa/gh-action-pypi-publish@master
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
