@@ -96,7 +96,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
             thread.join()
 
         waveform_sets_all_cards_ordered = []
-        for n in range(self._batch_size):
+        for n in range(self.batch_size):
             waveforms_in_this_batch = []
             for card in self._child_cards:
                 waveforms_in_this_batch += card_ids_and_waveform_sets[str(card)][n]
@@ -178,3 +178,14 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
             mode (`AcquisitionMode`): The desired acquisition mode."""
         for d in self._child_cards:
             cast(SpectrumDigitiserCard, d).set_acquisition_mode(mode)
+
+    @property
+    def batch_size(self) -> int:
+        batch_sizes = []
+        for d in self._child_cards:
+            batch_sizes.append(cast(SpectrumDigitiserCard, d).batch_size)
+        return check_settings_constant_across_devices(batch_sizes, __name__)
+
+    def set_batch_size(self, batch_size: int) -> None:
+        for d in self._child_cards:
+            cast(SpectrumDigitiserCard, d).set_batch_size(batch_size)

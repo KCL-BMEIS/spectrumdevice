@@ -5,7 +5,7 @@ from unittest import TestCase
 import pytest
 from numpy import array, concatenate
 
-from example_scripts.connect_to_star_hub import star_hub_example
+from example_scripts.star_hub_example import connect_to_star_hub_example
 from example_scripts.continuous_averaging_fifo_mode import continuous_averaging_multi_fifo_example
 from example_scripts.continuous_multi_fifo_mode import continuous_multi_fifo_example
 from example_scripts.finite_multi_fifo_mode import finite_multi_fifo_example
@@ -110,7 +110,7 @@ class StarHubIntegrationTests(TestCase):
         self._star_hub_mock_mode = STAR_HUB_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
 
     def test_star_hub(self) -> None:
-        hub = star_hub_example(
+        hub = connect_to_star_hub_example(
             mock_mode=self._star_hub_mock_mode,
             num_cards=NUM_CARDS_IN_STAR_HUB,
             master_card_index=STAR_HUB_MASTER_CARD_INDEX,

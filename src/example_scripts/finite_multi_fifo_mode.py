@@ -55,7 +55,7 @@ def finite_multi_fifo_example(
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
         timestamping_enabled=True,
-        batch_size=5,
+        batch_size=batch_size,
     )
 
     # Apply settings

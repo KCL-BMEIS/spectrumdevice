@@ -64,6 +64,7 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
             raise SpectrumCardIsNotADigitiser(self.type)
         self._acquisition_mode = self.acquisition_mode
         self._timestamper: Optional[Timestamper] = None
+        self._batch_size = 1
 
     def _init_channels(self) -> Sequence[SpectrumDigitiserChannelInterface]:
         num_modules = self.read_spectrum_device_register(SPC_MIINST_MODULES)
@@ -248,6 +249,13 @@ class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
         Args:
             mode (`AcquisitionMode`): The desired acquisition mode."""
         self.write_to_spectrum_device_register(SPC_CARDMODE, mode.value)
+
+    @property
+    def batch_size(self) -> int:
+        return self._batch_size
+
+    def set_batch_size(self, batch_size: int) -> None:
+        self._batch_size = batch_size
 
     def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
         """Create or provide a `TransferBuffer` object for receiving acquired samples from the device.

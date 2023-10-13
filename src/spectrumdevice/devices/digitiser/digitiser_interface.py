@@ -106,3 +106,12 @@ class SpectrumDigitiserInterface(SpectrumDeviceInterface, ABC):
     @abstractmethod
     def set_acquisition_mode(self, mode: AcquisitionMode) -> None:
         raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def batch_size(self) -> int:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_batch_size(self, batch_size: int) -> None:
+        raise NotImplementedError()

@@ -57,7 +57,7 @@ def continuous_multi_fifo_example(
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
         timestamping_enabled=True,
-        batch_size=batch_size
+        batch_size=batch_size,
     )
 
     try:

@@ -31,7 +31,7 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
         if settings.batch_size > 1 and settings.acquisition_mode == AcquisitionMode.SPC_REC_STD_SINGLE:
             raise ValueError("In standard single mode, only 1 acquisition can be downloaded at a time.")
         self._acquisition_mode = settings.acquisition_mode
-        self._batch_size = settings.batch_size
+        self.set_batch_size(settings.batch_size)
         self.set_acquisition_mode(settings.acquisition_mode)
         self.set_sample_rate_in_hz(settings.sample_rate_in_hz)
         self.set_acquisition_length_in_samples(settings.acquisition_length_in_samples)
@@ -101,14 +101,14 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
                 timestamp attribute, which (if timestamping was enabled in acquisition settings) contains the time at
                 which the acquisition was triggered.
         """
-        if (num_measurements % self._batch_size) != 0:
+        if (num_measurements % self.batch_size) != 0:
             raise ValueError(
                 "Number of measurements in a finite FIFO acquisition must be a multiple of the "
                 " batch size configured using AbstractSpectrumDigitiser.configure_acquisition()."
             )
         self.execute_continuous_fifo_acquisition()
         measurements = []
-        for _ in range(num_measurements // self._batch_size):
+        for _ in range(num_measurements // self.batch_size):
             measurements += [
                 Measurement(waveforms=frame, timestamp=self.get_timestamp()) for frame in self.get_waveforms()
             ]
