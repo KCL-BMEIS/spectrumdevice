@@ -22,7 +22,7 @@
   <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
 </svg>                            &nbsp;spectrumdevice</a>
 
-    <h2>spectrumdevice v0.3.0</h2>
+    <h2>spectrumdevice v1.0.0</h2>
 
                         <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
                                pattern=".+" required>
@@ -62,7 +62,22 @@
                                 <a class="variable" href="#AcquisitionSettings.vertical_offsets_in_percent">vertical_offsets_in_percent</a>
                         </li>
                         <li>
+                                <a class="variable" href="#AcquisitionSettings.input_impedances">input_impedances</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#AcquisitionSettings.timestamping_enabled">timestamping_enabled</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AcquisitionSettings.batch_size">batch_size</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AcquisitionSettings.number_of_averages">number_of_averages</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AcquisitionSettings.input_couplings">input_couplings</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AcquisitionSettings.input_paths">input_paths</a>
                         </li>
                 </ul>
 
@@ -96,6 +111,12 @@
                         </li>
                         <li>
                                 <a class="variable" href="#AcquisitionMode.SPC_REC_FIFO_MULTI">SPC_REC_FIFO_MULTI</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AcquisitionMode.SPC_REC_STD_AVERAGE">SPC_REC_STD_AVERAGE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AcquisitionMode.SPC_REC_FIFO_AVERAGE">SPC_REC_FIFO_AVERAGE</a>
                         </li>
                 </ul>
 
@@ -251,9 +272,6 @@
                     <a class="class" href="#TransferBuffer">TransferBuffer</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="function" href="#TransferBuffer.__init__">TransferBuffer</a>
-                        </li>
-                        <li>
                                 <a class="variable" href="#TransferBuffer.type">type</a>
                         </li>
                         <li>
@@ -266,6 +284,12 @@
                                 <a class="variable" href="#TransferBuffer.data_array">data_array</a>
                         </li>
                         <li>
+                                <a class="variable" href="#TransferBuffer.notify_size_in_pages">notify_size_in_pages</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#TransferBuffer.read_chunk">read_chunk</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#TransferBuffer.copy_contents">copy_contents</a>
                         </li>
                         <li>
@@ -274,20 +298,14 @@
                         <li>
                                 <a class="variable" href="#TransferBuffer.data_array_length_in_bytes">data_array_length_in_bytes</a>
                         </li>
-                        <li>
-                                <a class="variable" href="#TransferBuffer.notify_size_in_bytes">notify_size_in_bytes</a>
-                        </li>
                 </ul>
 
             </li>
             <li>
-                    <a class="class" href="#CardToPCDataTransferBuffer">CardToPCDataTransferBuffer</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#CardToPCDataTransferBuffer.__init__">CardToPCDataTransferBuffer</a>
-                        </li>
-                </ul>
-
+                    <a class="variable" href="#CardToPCDataTransferBuffer">CardToPCDataTransferBuffer</a>
+            </li>
+            <li>
+                    <a class="variable" href="#PCToCardDataTransferBuffer">PCToCardDataTransferBuffer</a>
             </li>
             <li>
                     <a class="class" href="#TriggerSource">TriggerSource</a>
@@ -347,7 +365,7 @@
                     <a class="variable" href="#CARD_STATUS_TYPE">CARD_STATUS_TYPE</a>
             </li>
             <li>
-                    <a class="variable" href="#STAR_HUB_STATUS_TYPE">STAR_HUB_STATUS_TYPE</a>
+                    <a class="variable" href="#DEVICE_STATUS_TYPE">DEVICE_STATUS_TYPE</a>
             </li>
             <li>
                     <a class="class" href="#StatusCode">StatusCode</a>
@@ -407,187 +425,235 @@
 
             </li>
             <li>
-                    <a class="class" href="#CardType">CardType</a>
+                    <a class="class" href="#ModelNumber">ModelNumber</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I2210_X8">TYP_M4I2210_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I2210_X8">TYP_M4I2210_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I2211_X8">TYP_M4I2211_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I2211_X8">TYP_M4I2211_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I2212_X8">TYP_M4I2212_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I2212_X8">TYP_M4I2212_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I2220_X8">TYP_M4I2220_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I2220_X8">TYP_M4I2220_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I2221_X8">TYP_M4I2221_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I2221_X8">TYP_M4I2221_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I2223_X8">TYP_M4I2223_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I2223_X8">TYP_M4I2223_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I2230_X8">TYP_M4I2230_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I2230_X8">TYP_M4I2230_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I2233_X8">TYP_M4I2233_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I2233_X8">TYP_M4I2233_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I2234_X8">TYP_M4I2234_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I2234_X8">TYP_M4I2234_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I2280_X8">TYP_M4I2280_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I2280_X8">TYP_M4I2280_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I2281_X8">TYP_M4I2281_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I2281_X8">TYP_M4I2281_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I2283_X8">TYP_M4I2283_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I2283_X8">TYP_M4I2283_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I2290_X8">TYP_M4I2290_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I2290_X8">TYP_M4I2290_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I2293_X8">TYP_M4I2293_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I2293_X8">TYP_M4I2293_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I2294_X8">TYP_M4I2294_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I2294_X8">TYP_M4I2294_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I4410_X8">TYP_M4I4410_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I4410_X8">TYP_M4I4410_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I4411_X8">TYP_M4I4411_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I4411_X8">TYP_M4I4411_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I4420_X8">TYP_M4I4420_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I4420_X8">TYP_M4I4420_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I4421_X8">TYP_M4I4421_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I4421_X8">TYP_M4I4421_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I4450_X8">TYP_M4I4450_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I4450_X8">TYP_M4I4450_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I4451_X8">TYP_M4I4451_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I4451_X8">TYP_M4I4451_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I4470_X8">TYP_M4I4470_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I4470_X8">TYP_M4I4470_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I4471_X8">TYP_M4I4471_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I4471_X8">TYP_M4I4471_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I4480_X8">TYP_M4I4480_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I4480_X8">TYP_M4I4480_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4I4481_X8">TYP_M4I4481_X8</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4I4481_X8">TYP_M4I4481_X8</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4X44XX_X4">TYP_M4X44XX_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4X44XX_X4">TYP_M4X44XX_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4X4410_X4">TYP_M4X4410_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4X4410_X4">TYP_M4X4410_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4X4411_X4">TYP_M4X4411_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4X4411_X4">TYP_M4X4411_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4X4420_X4">TYP_M4X4420_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4X4420_X4">TYP_M4X4420_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4X4421_X4">TYP_M4X4421_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4X4421_X4">TYP_M4X4421_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4X4450_X4">TYP_M4X4450_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4X4450_X4">TYP_M4X4450_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4X4451_X4">TYP_M4X4451_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4X4451_X4">TYP_M4X4451_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4X4470_X4">TYP_M4X4470_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4X4470_X4">TYP_M4X4470_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4X4471_X4">TYP_M4X4471_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4X4471_X4">TYP_M4X4471_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4X4480_X4">TYP_M4X4480_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4X4480_X4">TYP_M4X4480_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M4X4481_X4">TYP_M4X4481_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M4X4481_X4">TYP_M4X4481_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5911_X4">TYP_M2P5911_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5911_X4">TYP_M2P5911_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5912_X4">TYP_M2P5912_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5912_X4">TYP_M2P5912_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5913_X4">TYP_M2P5913_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5913_X4">TYP_M2P5913_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5916_X4">TYP_M2P5916_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5916_X4">TYP_M2P5916_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5920_X4">TYP_M2P5920_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5920_X4">TYP_M2P5920_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5921_X4">TYP_M2P5921_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5921_X4">TYP_M2P5921_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5922_X4">TYP_M2P5922_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5922_X4">TYP_M2P5922_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5923_X4">TYP_M2P5923_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5923_X4">TYP_M2P5923_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5926_X4">TYP_M2P5926_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5926_X4">TYP_M2P5926_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5930_X4">TYP_M2P5930_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5930_X4">TYP_M2P5930_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5931_X4">TYP_M2P5931_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5931_X4">TYP_M2P5931_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5932_X4">TYP_M2P5932_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5932_X4">TYP_M2P5932_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5933_X4">TYP_M2P5933_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5933_X4">TYP_M2P5933_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5936_X4">TYP_M2P5936_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5936_X4">TYP_M2P5936_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5940_X4">TYP_M2P5940_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5940_X4">TYP_M2P5940_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5941_X4">TYP_M2P5941_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5941_X4">TYP_M2P5941_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5942_X4">TYP_M2P5942_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5942_X4">TYP_M2P5942_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5943_X4">TYP_M2P5943_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5943_X4">TYP_M2P5943_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5946_X4">TYP_M2P5946_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5946_X4">TYP_M2P5946_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5960_X4">TYP_M2P5960_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5960_X4">TYP_M2P5960_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5961_X4">TYP_M2P5961_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5961_X4">TYP_M2P5961_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5962_X4">TYP_M2P5962_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5962_X4">TYP_M2P5962_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5966_X4">TYP_M2P5966_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5966_X4">TYP_M2P5966_X4</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CardType.TYP_M2P5968_X4">TYP_M2P5968_X4</a>
+                                <a class="variable" href="#ModelNumber.TYP_M2P5968_X4">TYP_M2P5968_X4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ModelNumber.TYP_M2P6530_X4">TYP_M2P6530_X4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ModelNumber.TYP_M2P6531_X4">TYP_M2P6531_X4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ModelNumber.TYP_M2P6532_X4">TYP_M2P6532_X4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ModelNumber.TYP_M2P6536_X4">TYP_M2P6536_X4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ModelNumber.TYP_M2P6533_X4">TYP_M2P6533_X4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ModelNumber.TYP_M2P6540_X4">TYP_M2P6540_X4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ModelNumber.TYP_M2P6541_X4">TYP_M2P6541_X4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ModelNumber.TYP_M2P6546_X4">TYP_M2P6546_X4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ModelNumber.TYP_M2P6560_X4">TYP_M2P6560_X4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ModelNumber.TYP_M2P6561_X4">TYP_M2P6561_X4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ModelNumber.TYP_M2P6562_X4">TYP_M2P6562_X4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ModelNumber.TYP_M2P6566_X4">TYP_M2P6566_X4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ModelNumber.TYP_M2P6568_X4">TYP_M2P6568_X4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ModelNumber.TYP_M2P6570_X4">TYP_M2P6570_X4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ModelNumber.TYP_M2P6571_X4">TYP_M2P6571_X4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ModelNumber.TYP_M2P6576_X4">TYP_M2P6576_X4</a>
                         </li>
                 </ul>
 
@@ -595,7 +661,7 @@
     </ul>
 
 
-    <footer>spectrumdevice v0.3.0</footer>
+    <footer>spectrumdevice v1.0.0</footer>
 
                     <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev">
                         built with <span class="visually-hidden">pdoc</span><img
@@ -626,13 +692,16 @@ hardware and interpreting responses received from hardware.</p>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">from</span> <span class="nn">spectrumdevice.settings.card_dependent_properties</span> <span class="kn">import</span> <span class="n">CardType</span>
+<span class="kn">from</span> <span class="nn">spectrumdevice.settings.card_dependent_properties</span> <span class="kn">import</span> <span class="n">ModelNumber</span>
 <span class="kn">from</span> <span class="nn">spectrumdevice.settings.card_features</span> <span class="kn">import</span> <span class="n">CardFeature</span><span class="p">,</span> <span class="n">AdvancedCardFeature</span>
+<span class="kn">from</span> <span class="nn">spectrumdevice.settings.channel</span> <span class="kn">import</span> <span class="n">InputImpedance</span><span class="p">,</span> <span class="n">InputCoupling</span><span class="p">,</span> <span class="n">InputPath</span>
 <span class="kn">from</span> <span class="nn">spectrumdevice.settings.device_modes</span> <span class="kn">import</span> <span class="n">AcquisitionMode</span><span class="p">,</span> <span class="n">ClockMode</span>
 <span class="kn">from</span> <span class="nn">spectrumdevice.settings.io_lines</span> <span class="kn">import</span> <span class="n">IOLineMode</span><span class="p">,</span> <span class="n">AvailableIOModes</span>
-<span class="kn">from</span> <span class="nn">spectrumdevice.settings.transfer_buffer</span> <span class="kn">import</span> <span class="n">TransferBuffer</span><span class="p">,</span> <span class="n">CardToPCDataTransferBuffer</span>
+<span class="kn">from</span> <span class="nn">spectrumdevice.settings.transfer_buffer</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TransferBuffer</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">spectrumdevice.settings.triggering</span> <span class="kn">import</span> <span class="n">TriggerSource</span><span class="p">,</span> <span class="n">ExternalTriggerMode</span>
-<span class="kn">from</span> <span class="nn">spectrumdevice.settings.status</span> <span class="kn">import</span> <span class="n">CARD_STATUS_TYPE</span><span class="p">,</span> <span class="n">STAR_HUB_STATUS_TYPE</span><span class="p">,</span> <span class="n">StatusCode</span>
+<span class="kn">from</span> <span class="nn">spectrumdevice.settings.status</span> <span class="kn">import</span> <span class="n">CARD_STATUS_TYPE</span><span class="p">,</span> <span class="n">DEVICE_STATUS_TYPE</span><span class="p">,</span> <span class="n">StatusCode</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
@@ -646,13 +715,14 @@ hardware and interpreting responses received from hardware.</p>
     <span class="s2">&quot;AvailableIOModes&quot;</span><span class="p">,</span>
     <span class="s2">&quot;TransferBuffer&quot;</span><span class="p">,</span>
     <span class="s2">&quot;CardToPCDataTransferBuffer&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PCToCardDataTransferBuffer&quot;</span><span class="p">,</span>
     <span class="s2">&quot;TriggerSource&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ExternalTriggerMode&quot;</span><span class="p">,</span>
     <span class="s2">&quot;CARD_STATUS_TYPE&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;STAR_HUB_STATUS_TYPE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DEVICE_STATUS_TYPE&quot;</span><span class="p">,</span>
     <span class="s2">&quot;StatusCode&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SpectrumRegisterLength&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;CardType&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ModelNumber&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -675,7 +745,7 @@ hardware and interpreting responses received from hardware.</p>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A dataclass collecting all settings required to configure an acquisition. See Spectrum documentation.&quot;&quot;&quot;</span>
 
     <span class="n">acquisition_mode</span><span class="p">:</span> <span class="n">AcquisitionMode</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Standard Single mode or Multi FIF mode.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Standard Single mode, Multi FIF mode or an averaging mode.&quot;&quot;&quot;</span>
     <span class="n">sample_rate_in_hz</span><span class="p">:</span> <span class="nb">int</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Acquisition rate in samples per second.&quot;&quot;&quot;</span>
     <span class="n">acquisition_length_in_samples</span><span class="p">:</span> <span class="nb">int</span>
@@ -690,9 +760,20 @@ hardware and interpreting responses received from hardware.</p>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The voltage range to apply to each enabled channel in mW.&quot;&quot;&quot;</span>
     <span class="n">vertical_offsets_in_percent</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The DC offset to apply to each enabled channel as percentages of their vertical ranges.&quot;&quot;&quot;</span>
+    <span class="n">input_impedances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">InputImpedance</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The input impedance settings to apply to each channel&quot;&quot;&quot;</span>
     <span class="n">timestamping_enabled</span><span class="p">:</span> <span class="nb">bool</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;If True, Measurements will include the time at which the acquisition was triggered. Increases latency by ~10 ms.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The number of acquisitions to transfer to the PC before the resulting waveforms are returned by</span>
+<span class="sd">      SpectrumDigitiserCard.get_waveforms().&quot;&quot;&quot;</span>
+    <span class="n">number_of_averages</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If an averaging AcquisitionMode is selected, this defines the number of averages.&quot;&quot;&quot;</span>
+    <span class="n">input_couplings</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">InputCoupling</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The coupling (AC or DC) to apply to each channel. Only available on some hardware, so default is None.&quot;&quot;&quot;</span>
+    <span class="n">input_paths</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">InputPath</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The input path (HF or Buffered) to apply to each channel. Only available on some hardware, so default is None.&quot;&quot;&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">SpectrumRegisterLength</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -727,7 +808,7 @@ hardware and interpreting responses received from hardware.</p>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A dataclass collecting all settings required to configure an acquisition. See Spectrum documentation.&quot;&quot;&quot;</span>
 
     <span class="n">acquisition_mode</span><span class="p">:</span> <span class="n">AcquisitionMode</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Standard Single mode or Multi FIF mode.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Standard Single mode, Multi FIF mode or an averaging mode.&quot;&quot;&quot;</span>
     <span class="n">sample_rate_in_hz</span><span class="p">:</span> <span class="nb">int</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Acquisition rate in samples per second.&quot;&quot;&quot;</span>
     <span class="n">acquisition_length_in_samples</span><span class="p">:</span> <span class="nb">int</span>
@@ -742,9 +823,20 @@ hardware and interpreting responses received from hardware.</p>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The voltage range to apply to each enabled channel in mW.&quot;&quot;&quot;</span>
     <span class="n">vertical_offsets_in_percent</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The DC offset to apply to each enabled channel as percentages of their vertical ranges.&quot;&quot;&quot;</span>
+    <span class="n">input_impedances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">InputImpedance</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The input impedance settings to apply to each channel&quot;&quot;&quot;</span>
     <span class="n">timestamping_enabled</span><span class="p">:</span> <span class="nb">bool</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;If True, Measurements will include the time at which the acquisition was triggered. Increases latency by ~10 ms.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The number of acquisitions to transfer to the PC before the resulting waveforms are returned by</span>
+<span class="sd">      SpectrumDigitiserCard.get_waveforms().&quot;&quot;&quot;</span>
+    <span class="n">number_of_averages</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If an averaging AcquisitionMode is selected, this defines the number of averages.&quot;&quot;&quot;</span>
+    <span class="n">input_couplings</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">InputCoupling</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The coupling (AC or DC) to apply to each channel. Only available on some hardware, so default is None.&quot;&quot;&quot;</span>
+    <span class="n">input_paths</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">InputPath</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The input path (HF or Buffered) to apply to each channel. Only available on some hardware, so default is None.&quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
@@ -766,7 +858,12 @@ hardware and interpreting responses received from hardware.</p>
     enabled_channels: List[int],
     vertical_ranges_in_mv: List[int],
     vertical_offsets_in_percent: List[int],
-    timestamping_enabled: bool
+    input_impedances: List[<a href="#channel.InputImpedance">spectrumdevice.settings.channel.InputImpedance</a>],
+    timestamping_enabled: bool,
+    batch_size: int = 1,
+    number_of_averages: int = 1,
+    input_couplings: Optional[List[<a href="#channel.InputCoupling">spectrumdevice.settings.channel.InputCoupling</a>]] = None,
+    input_paths: Optional[List[<a href="#channel.InputPath">spectrumdevice.settings.channel.InputPath</a>]] = None
 )</span>
     </div>
 
@@ -780,7 +877,7 @@ hardware and interpreting responses received from hardware.</p>
         <span class="name">acquisition_mode</span><span class="annotation">: <a href="#device_modes.AcquisitionMode">spectrumdevice.settings.device_modes.AcquisitionMode</a></span>
     </div>
 
-            <div class="docstring"><p>Standard Single mode or Multi FIF mode.</p>
+            <div class="docstring"><p>Standard Single mode, Multi FIF mode or an averaging mode.</p>
 </div>
 
 
@@ -862,6 +959,17 @@ hardware and interpreting responses received from hardware.</p>
 
 
                             </div>
+                            <div id="AcquisitionSettings.input_impedances" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionSettings.input_impedances">#&nbsp;&nbsp</a>
+
+        <span class="name">input_impedances</span><span class="annotation">: List[<a href="#channel.InputImpedance">spectrumdevice.settings.channel.InputImpedance</a>]</span>
+    </div>
+
+            <div class="docstring"><p>The input impedance settings to apply to each channel</p>
+</div>
+
+
+                            </div>
                             <div id="AcquisitionSettings.timestamping_enabled" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#AcquisitionSettings.timestamping_enabled">#&nbsp;&nbsp</a>
 
@@ -869,6 +977,51 @@ hardware and interpreting responses received from hardware.</p>
     </div>
 
             <div class="docstring"><p>If True, Measurements will include the time at which the acquisition was triggered. Increases latency by ~10 ms.</p>
+</div>
+
+
+                            </div>
+                            <div id="AcquisitionSettings.batch_size" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionSettings.batch_size">#&nbsp;&nbsp</a>
+
+        <span class="name">batch_size</span><span class="annotation">: int</span><span class="default_value"> = 1</span>
+    </div>
+
+            <div class="docstring"><p>The number of acquisitions to transfer to the PC before the resulting waveforms are returned by
+SpectrumDigitiserCard.get_waveforms().</p>
+</div>
+
+
+                            </div>
+                            <div id="AcquisitionSettings.number_of_averages" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionSettings.number_of_averages">#&nbsp;&nbsp</a>
+
+        <span class="name">number_of_averages</span><span class="annotation">: int</span><span class="default_value"> = 1</span>
+    </div>
+
+            <div class="docstring"><p>If an averaging AcquisitionMode is selected, this defines the number of averages.</p>
+</div>
+
+
+                            </div>
+                            <div id="AcquisitionSettings.input_couplings" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionSettings.input_couplings">#&nbsp;&nbsp</a>
+
+        <span class="name">input_couplings</span><span class="annotation">: Optional[List[<a href="#channel.InputCoupling">spectrumdevice.settings.channel.InputCoupling</a>]]</span><span class="default_value"> = None</span>
+    </div>
+
+            <div class="docstring"><p>The coupling (AC or DC) to apply to each channel. Only available on some hardware, so default is None.</p>
+</div>
+
+
+                            </div>
+                            <div id="AcquisitionSettings.input_paths" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionSettings.input_paths">#&nbsp;&nbsp</a>
+
+        <span class="name">input_paths</span><span class="annotation">: Optional[List[<a href="#channel.InputPath">spectrumdevice.settings.channel.InputPath</a>]]</span><span class="default_value"> = None</span>
+    </div>
+
+            <div class="docstring"><p>The input path (HF or Buffered) to apply to each channel. Only available on some hardware, so default is None.</p>
 </div>
 
 
@@ -979,19 +1132,23 @@ hardware and interpreting responses received from hardware.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">AcquisitionMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum representing the acquisition modes currently support by spectrumdevice. See Spectrum documentation for more</span>
-<span class="sd">    information about each mode.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum representing the digitise acquisition modes currently support by spectrumdevice. See Spectrum documentation</span>
+<span class="sd">    for more information about each mode.&quot;&quot;&quot;</span>
 
     <span class="n">SPC_REC_STD_SINGLE</span> <span class="o">=</span> <span class="n">SPC_REC_STD_SINGLE</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Data acquisition to on-board memory for one single trigger event.&quot;&quot;&quot;</span>
     <span class="n">SPC_REC_FIFO_MULTI</span> <span class="o">=</span> <span class="n">SPC_REC_FIFO_MULTI</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Continuous data acquisition for multiple trigger events.&quot;&quot;&quot;</span>
+    <span class="n">SPC_REC_STD_AVERAGE</span> <span class="o">=</span> <span class="n">SPC_REC_STD_AVERAGE</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data acquisition to on-board memory for the average of multiple trigger events.&quot;&quot;&quot;</span>
+    <span class="n">SPC_REC_FIFO_AVERAGE</span> <span class="o">=</span> <span class="n">SPC_REC_FIFO_AVERAGE</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Continuous data acquisition for multiple trigger events, with on-board averaging.&quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Enum representing the acquisition modes currently support by spectrumdevice. See Spectrum documentation for more
-information about each mode.</p>
+            <div class="docstring"><p>Enum representing the digitise acquisition modes currently support by spectrumdevice. See Spectrum documentation
+for more information about each mode.</p>
 </div>
 
 
@@ -1013,6 +1170,28 @@ information about each mode.</p>
     </div>
 
             <div class="docstring"><p>Continuous data acquisition for multiple trigger events.</p>
+</div>
+
+
+                            </div>
+                            <div id="AcquisitionMode.SPC_REC_STD_AVERAGE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionMode.SPC_REC_STD_AVERAGE">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_REC_STD_AVERAGE</span><span class="default_value"> = &lt;<a href="#AcquisitionMode.SPC_REC_STD_AVERAGE">AcquisitionMode.SPC_REC_STD_AVERAGE</a>: 131072&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Data acquisition to on-board memory for the average of multiple trigger events.</p>
+</div>
+
+
+                            </div>
+                            <div id="AcquisitionMode.SPC_REC_FIFO_AVERAGE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AcquisitionMode.SPC_REC_FIFO_AVERAGE">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_REC_FIFO_AVERAGE</span><span class="default_value"> = &lt;<a href="#AcquisitionMode.SPC_REC_FIFO_AVERAGE">AcquisitionMode.SPC_REC_FIFO_AVERAGE</a>: 2097152&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Continuous data acquisition for multiple trigger events, with on-board averaging.</p>
 </div>
 
 
@@ -1622,16 +1801,16 @@ device. Returned by the available_io_modes() method of a device.</p>
                 <div class="decorator">@dataclass</div>
 
         <span class="def">class</span>
-        <span class="name">TransferBuffer</span>:
+        <span class="name">TransferBuffer</span><wbr>(<span class="base">abc.ABC</span>):
     </div>
 
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">TransferBuffer</span><span class="p">:</span>
+<span class="k">class</span> <span class="nc">TransferBuffer</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A buffer for transferring samples between spectrumdevice software and a hardware device. See the &#39;Definition of the</span>
 <span class="sd">    transfer buffer&#39; section of the Spectrum documentation for more information. This implementation of the buffer</span>
-<span class="sd">    sets the notify size equal to the acquisition length.&quot;&quot;&quot;</span>
+<span class="sd">    sets the notify-size equal to the acquisition length.&quot;&quot;&quot;</span>
 
     <span class="nb">type</span><span class="p">:</span> <span class="n">BufferType</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Specifies whether the buffer is to be used to transfer samples, timestamps or A/B data.&quot;&quot;&quot;</span>
@@ -1641,9 +1820,16 @@ device. Returned by the available_io_modes() method of a device.</p>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the offset for transfer in board memory. Typically 0. See Spectrum documentation for more information.&quot;&quot;&quot;</span>
     <span class="n">data_array</span><span class="p">:</span> <span class="n">ndarray</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;1D numpy array into which samples will be written during transfer.&quot;&quot;&quot;</span>
+    <span class="n">notify_size_in_pages</span><span class="p">:</span> <span class="nb">float</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The number of transferred pages (4096 bytes) after which a notification of transfer is sent from the device.&quot;&quot;&quot;</span>
 
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">read_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk_position_in_bytes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">chunk_size_in_bytes</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">copy_contents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ndarray</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_array</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data_array_pointer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">c_void_p</span><span class="p">:</span>
@@ -1654,13 +1840,6 @@ device. Returned by the available_io_modes() method of a device.</p>
     <span class="k">def</span> <span class="nf">data_array_length_in_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The length of the array into which sample will be written, in bytes.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_array</span><span class="o">.</span><span class="n">size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_array</span><span class="o">.</span><span class="n">itemsize</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">notify_size_in_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of transferred bytes after which a notification of transfer is sent from the device. This is</span>
-<span class="sd">        currently always set to the length of the data array, meaning that a notification will be received once the</span>
-<span class="sd">        transfer is complete. See the Spectrum documentation for more information.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_array_length_in_bytes</span>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">TransferBuffer</span><span class="p">):</span>
@@ -1678,26 +1857,10 @@ device. Returned by the available_io_modes() method of a device.</p>
 
             <div class="docstring"><p>A buffer for transferring samples between spectrumdevice software and a hardware device. See the 'Definition of the
 transfer buffer' section of the Spectrum documentation for more information. This implementation of the buffer
-sets the notify size equal to the acquisition length.</p>
+sets the notify-size equal to the acquisition length.</p>
 </div>
 
 
-                            <div id="TransferBuffer.__init__" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#TransferBuffer.__init__">#&nbsp;&nbsp</a>
-
-        
-            <span class="name">TransferBuffer</span><span class="signature">(
-    type: <a href="#transfer_buffer.BufferType">spectrumdevice.settings.transfer_buffer.BufferType</a>,
-    direction: <a href="#transfer_buffer.BufferDirection">spectrumdevice.settings.transfer_buffer.BufferDirection</a>,
-    board_memory_offset_bytes: int,
-    data_array: numpy.ndarray
-)</span>
-    </div>
-
-        
-    
-
-                            </div>
                             <div id="TransferBuffer.type" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#TransferBuffer.type">#&nbsp;&nbsp</a>
 
@@ -1742,18 +1905,56 @@ sets the notify size equal to the acquisition length.</p>
 
 
                             </div>
+                            <div id="TransferBuffer.notify_size_in_pages" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#TransferBuffer.notify_size_in_pages">#&nbsp;&nbsp</a>
+
+        <span class="name">notify_size_in_pages</span><span class="annotation">: float</span>
+    </div>
+
+            <div class="docstring"><p>The number of transferred pages (4096 bytes) after which a notification of transfer is sent from the device.</p>
+</div>
+
+
+                            </div>
+                            <div id="TransferBuffer.read_chunk" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#TransferBuffer.read_chunk">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@abstractmethod</div>
+
+            <span class="def">def</span>
+            <span class="name">read_chunk</span><span class="signature">(
+    self,
+    chunk_position_in_bytes: int,
+    chunk_size_in_bytes: int
+) -&gt; numpy.ndarray</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">read_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk_position_in_bytes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">chunk_size_in_bytes</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            </div>
                             <div id="TransferBuffer.copy_contents" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#TransferBuffer.copy_contents">#&nbsp;&nbsp</a>
 
-        
+                <div class="decorator">@abstractmethod</div>
+
             <span class="def">def</span>
             <span class="name">copy_contents</span><span class="signature">(self) -&gt; numpy.ndarray</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">copy_contents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ndarray</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_array</span><span class="p">)</span>
+            <div class="codehilite"><pre><span></span>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">copy_contents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </pre></div>
 
         </details>
@@ -1783,104 +1984,24 @@ sets the notify size equal to the acquisition length.</p>
 
 
                             </div>
-                            <div id="TransferBuffer.notify_size_in_bytes" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#TransferBuffer.notify_size_in_bytes">#&nbsp;&nbsp</a>
-
-        <span class="name">notify_size_in_bytes</span><span class="annotation">: int</span>
-    </div>
-
-            <div class="docstring"><p>The number of transferred bytes after which a notification of transfer is sent from the device. This is
-currently always set to the length of the data array, meaning that a notification will be received once the
-transfer is complete. See the Spectrum documentation for more information.</p>
-</div>
-
-
-                            </div>
                 </section>
                 <section id="CardToPCDataTransferBuffer">
-                                <div class="attr class">
-        <a class="headerlink" href="#CardToPCDataTransferBuffer">#&nbsp;&nbsp</a>
+                                <div class="attr variable"><a class="headerlink" href="#CardToPCDataTransferBuffer">#&nbsp;&nbsp</a>
 
-        
-        <span class="def">class</span>
-        <span class="name">CardToPCDataTransferBuffer</span><wbr>(<span class="base"><a href="#TransferBuffer">spectrumdevice.settings.TransferBuffer</a></span>):
+        <span class="name">CardToPCDataTransferBuffer</span>
     </div>
 
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">CardToPCDataTransferBuffer</span><span class="p">(</span><span class="n">TransferBuffer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A TransferBuffer configured for card-to-pc transfer of samples (rather than timestamps or ABA data).&quot;&quot;&quot;</span>
+    
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size_in_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">board_memory_offset_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Args:</span>
-<span class="sd">            size_in_samples (int): The size of the array into which samples will be written, in samples.</span>
-<span class="sd">            board_memory_offset_bytes (int): Sets the offset for transfer in board memory. Default 0. See Spectrum</span>
-<span class="sd">                documentation for more information.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">BufferType</span><span class="o">.</span><span class="n">SPCM_BUF_DATA</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">BufferDirection</span><span class="o">.</span><span class="n">SPCM_DIR_CARDTOPC</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">board_memory_offset_bytes</span> <span class="o">=</span> <span class="n">board_memory_offset_bytes</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_array</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">size_in_samples</span><span class="p">,</span> <span class="n">int16</span><span class="p">)</span>
-</pre></div>
+                </section>
+                <section id="PCToCardDataTransferBuffer">
+                                <div class="attr variable"><a class="headerlink" href="#PCToCardDataTransferBuffer">#&nbsp;&nbsp</a>
 
-        </details>
-
-            <div class="docstring"><p>A TransferBuffer configured for card-to-pc transfer of samples (rather than timestamps or ABA data).</p>
-</div>
-
-
-                            <div id="CardToPCDataTransferBuffer.__init__" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#CardToPCDataTransferBuffer.__init__">#&nbsp;&nbsp</a>
-
-        
-            <span class="name">CardToPCDataTransferBuffer</span><span class="signature">(size_in_samples: int, board_memory_offset_bytes: int = 0)</span>
+        <span class="name">PCToCardDataTransferBuffer</span>
     </div>
 
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size_in_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">board_memory_offset_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Args:</span>
-<span class="sd">            size_in_samples (int): The size of the array into which samples will be written, in samples.</span>
-<span class="sd">            board_memory_offset_bytes (int): Sets the offset for transfer in board memory. Default 0. See Spectrum</span>
-<span class="sd">                documentation for more information.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">BufferType</span><span class="o">.</span><span class="n">SPCM_BUF_DATA</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">BufferDirection</span><span class="o">.</span><span class="n">SPCM_DIR_CARDTOPC</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">board_memory_offset_bytes</span> <span class="o">=</span> <span class="n">board_memory_offset_bytes</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_array</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">size_in_samples</span><span class="p">,</span> <span class="n">int16</span><span class="p">)</span>
-</pre></div>
+    
 
-        </details>
-
-            <div class="docstring"><h6 id="args">Args</h6>
-
-<ul>
-<li><strong>size_in_samples (int):</strong>  The size of the array into which samples will be written, in samples.</li>
-<li><strong>board_memory_offset_bytes (int):</strong>  Sets the offset for transfer in board memory. Default 0. See Spectrum
-documentation for more information.</li>
-</ul>
-</div>
-
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt><a href="#TransferBuffer">TransferBuffer</a></dt>
-                                <dd id="CardToPCDataTransferBuffer.type" class="variable"><a href="#TransferBuffer.type">type</a></dd>
-                <dd id="CardToPCDataTransferBuffer.direction" class="variable"><a href="#TransferBuffer.direction">direction</a></dd>
-                <dd id="CardToPCDataTransferBuffer.board_memory_offset_bytes" class="variable"><a href="#TransferBuffer.board_memory_offset_bytes">board_memory_offset_bytes</a></dd>
-                <dd id="CardToPCDataTransferBuffer.data_array" class="variable"><a href="#TransferBuffer.data_array">data_array</a></dd>
-                <dd id="CardToPCDataTransferBuffer.copy_contents" class="function"><a href="#TransferBuffer.copy_contents">copy_contents</a></dd>
-                <dd id="CardToPCDataTransferBuffer.data_array_pointer" class="variable"><a href="#TransferBuffer.data_array_pointer">data_array_pointer</a></dd>
-                <dd id="CardToPCDataTransferBuffer.data_array_length_in_bytes" class="variable"><a href="#TransferBuffer.data_array_length_in_bytes">data_array_length_in_bytes</a></dd>
-                <dd id="CardToPCDataTransferBuffer.notify_size_in_bytes" class="variable"><a href="#TransferBuffer.notify_size_in_bytes">notify_size_in_bytes</a></dd>
-
-            </div>
-                                </dl>
-                            </div>
                 </section>
                 <section id="TriggerSource">
                                 <div class="attr class">
@@ -2166,10 +2287,10 @@ with one of the above modes.</p>
     
 
                 </section>
-                <section id="STAR_HUB_STATUS_TYPE">
-                                <div class="attr variable"><a class="headerlink" href="#STAR_HUB_STATUS_TYPE">#&nbsp;&nbsp</a>
+                <section id="DEVICE_STATUS_TYPE">
+                                <div class="attr variable"><a class="headerlink" href="#DEVICE_STATUS_TYPE">#&nbsp;&nbsp</a>
 
-        <span class="name">STAR_HUB_STATUS_TYPE</span><span class="default_value"> = typing.List[typing.List[<a href="#status.StatusCode">spectrumdevice.settings.status.StatusCode</a>]]</span>
+        <span class="name">DEVICE_STATUS_TYPE</span><span class="default_value"> = typing.List[typing.List[<a href="#status.StatusCode">spectrumdevice.settings.status.StatusCode</a>]]</span>
     </div>
 
     
@@ -2187,7 +2308,7 @@ with one of the above modes.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">StatusCode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;An Enum representing the possible status codes that can be returned by a SpectrumCard. See the Spectrum</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An Enum representing the possible status codes that can be returned by a SpectrumDigitiserCard. See the Spectrum</span>
 <span class="sd">    documentation for a description of each status.&quot;&quot;&quot;</span>
 
     <span class="n">M2STAT_NONE</span> <span class="o">=</span> <span class="n">M2STAT_NONE</span>
@@ -2207,7 +2328,7 @@ with one of the above modes.</p>
 
         </details>
 
-            <div class="docstring"><p>An Enum representing the possible status codes that can be returned by a SpectrumCard. See the Spectrum
+            <div class="docstring"><p>An Enum representing the possible status codes that can be returned by a SpectrumDigitiserCard. See the Spectrum
 documentation for a description of each status.</p>
 </div>
 
@@ -2402,20 +2523,21 @@ documentation for a description of each status.</p>
                                 </dl>
                             </div>
                 </section>
-                <section id="CardType">
+                <section id="ModelNumber">
                                 <div class="attr class">
-        <a class="headerlink" href="#CardType">#&nbsp;&nbsp</a>
+        <a class="headerlink" href="#ModelNumber">#&nbsp;&nbsp</a>
 
         
         <span class="def">class</span>
-        <span class="name">CardType</span><wbr>(<span class="base">enum.Enum</span>):
+        <span class="name">ModelNumber</span><wbr>(<span class="base">enum.Enum</span>):
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">CardType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ModelNumber</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An Enum representing the integer values returned by a device when its type identifier is queried by reading the</span>
-<span class="sd">    SPC_PCITYP register. Only the supported card types are listed: 22xx, 44xx and 59xx family devices.&quot;&quot;&quot;</span>
+<span class="sd">    SPC_PCITYP register. Only the supported card types are listed (Digitisers: 22xx, 44xx and 59xx family devices; AWGs:</span>
+<span class="sd">     M2P 65xx devices).&quot;&quot;&quot;</span>
 
     <span class="n">TYP_M4I2210_X8</span> <span class="o">=</span> <span class="n">TYP_M4I2210_X8</span>
     <span class="n">TYP_M4I2211_X8</span> <span class="o">=</span> <span class="n">TYP_M4I2211_X8</span>
@@ -2477,550 +2599,711 @@ documentation for a description of each status.</p>
     <span class="n">TYP_M2P5962_X4</span> <span class="o">=</span> <span class="n">TYP_M2P5962_X4</span>
     <span class="n">TYP_M2P5966_X4</span> <span class="o">=</span> <span class="n">TYP_M2P5966_X4</span>
     <span class="n">TYP_M2P5968_X4</span> <span class="o">=</span> <span class="n">TYP_M2P5968_X4</span>
+    <span class="n">TYP_M2P6530_X4</span> <span class="o">=</span> <span class="n">TYP_M2P6530_X4</span>
+    <span class="n">TYP_M2P6531_X4</span> <span class="o">=</span> <span class="n">TYP_M2P6531_X4</span>
+    <span class="n">TYP_M2P6532_X4</span> <span class="o">=</span> <span class="n">TYP_M2P6532_X4</span>
+    <span class="n">TYP_M2P6536_X4</span> <span class="o">=</span> <span class="n">TYP_M2P6536_X4</span>
+    <span class="n">TYP_M2P6533_X4</span> <span class="o">=</span> <span class="n">TYP_M2P6533_X4</span>
+    <span class="n">TYP_M2P6540_X4</span> <span class="o">=</span> <span class="n">TYP_M2P6540_X4</span>
+    <span class="n">TYP_M2P6541_X4</span> <span class="o">=</span> <span class="n">TYP_M2P6541_X4</span>
+    <span class="n">TYP_M2P6546_X4</span> <span class="o">=</span> <span class="n">TYP_M2P6546_X4</span>
+    <span class="n">TYP_M2P6560_X4</span> <span class="o">=</span> <span class="n">TYP_M2P6560_X4</span>
+    <span class="n">TYP_M2P6561_X4</span> <span class="o">=</span> <span class="n">TYP_M2P6561_X4</span>
+    <span class="n">TYP_M2P6562_X4</span> <span class="o">=</span> <span class="n">TYP_M2P6562_X4</span>
+    <span class="n">TYP_M2P6566_X4</span> <span class="o">=</span> <span class="n">TYP_M2P6566_X4</span>
+    <span class="n">TYP_M2P6568_X4</span> <span class="o">=</span> <span class="n">TYP_M2P6568_X4</span>
+    <span class="n">TYP_M2P6570_X4</span> <span class="o">=</span> <span class="n">TYP_M2P6570_X4</span>
+    <span class="n">TYP_M2P6571_X4</span> <span class="o">=</span> <span class="n">TYP_M2P6571_X4</span>
+    <span class="n">TYP_M2P6576_X4</span> <span class="o">=</span> <span class="n">TYP_M2P6576_X4</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>An Enum representing the integer values returned by a device when its type identifier is queried by reading the
-SPC_PCITYP register. Only the supported card types are listed: 22xx, 44xx and 59xx family devices.</p>
+SPC_PCITYP register. Only the supported card types are listed (Digitisers: 22xx, 44xx and 59xx family devices; AWGs:
+ M2P 65xx devices).</p>
 </div>
 
 
-                            <div id="CardType.TYP_M4I2210_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I2210_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I2210_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I2210_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I2210_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I2210_X8">CardType.TYP_M4I2210_X8</a>: 467472&gt;</span>
+        <span class="name">TYP_M4I2210_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I2210_X8">ModelNumber.TYP_M4I2210_X8</a>: 467472&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I2211_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I2211_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I2211_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I2211_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I2211_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I2211_X8">CardType.TYP_M4I2211_X8</a>: 467473&gt;</span>
+        <span class="name">TYP_M4I2211_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I2211_X8">ModelNumber.TYP_M4I2211_X8</a>: 467473&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I2212_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I2212_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I2212_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I2212_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I2212_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I2212_X8">CardType.TYP_M4I2212_X8</a>: 467474&gt;</span>
+        <span class="name">TYP_M4I2212_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I2212_X8">ModelNumber.TYP_M4I2212_X8</a>: 467474&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I2220_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I2220_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I2220_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I2220_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I2220_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I2220_X8">CardType.TYP_M4I2220_X8</a>: 467488&gt;</span>
+        <span class="name">TYP_M4I2220_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I2220_X8">ModelNumber.TYP_M4I2220_X8</a>: 467488&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I2221_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I2221_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I2221_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I2221_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I2221_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I2221_X8">CardType.TYP_M4I2221_X8</a>: 467489&gt;</span>
+        <span class="name">TYP_M4I2221_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I2221_X8">ModelNumber.TYP_M4I2221_X8</a>: 467489&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I2223_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I2223_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I2223_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I2223_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I2223_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I2223_X8">CardType.TYP_M4I2223_X8</a>: 467491&gt;</span>
+        <span class="name">TYP_M4I2223_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I2223_X8">ModelNumber.TYP_M4I2223_X8</a>: 467491&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I2230_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I2230_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I2230_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I2230_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I2230_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I2230_X8">CardType.TYP_M4I2230_X8</a>: 467504&gt;</span>
+        <span class="name">TYP_M4I2230_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I2230_X8">ModelNumber.TYP_M4I2230_X8</a>: 467504&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I2233_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I2233_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I2233_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I2233_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I2233_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I2233_X8">CardType.TYP_M4I2233_X8</a>: 467507&gt;</span>
+        <span class="name">TYP_M4I2233_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I2233_X8">ModelNumber.TYP_M4I2233_X8</a>: 467507&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I2234_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I2234_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I2234_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I2234_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I2234_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I2234_X8">CardType.TYP_M4I2234_X8</a>: 467508&gt;</span>
+        <span class="name">TYP_M4I2234_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I2234_X8">ModelNumber.TYP_M4I2234_X8</a>: 467508&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I2280_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I2280_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I2280_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I2280_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I2280_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I2280_X8">CardType.TYP_M4I2280_X8</a>: 467584&gt;</span>
+        <span class="name">TYP_M4I2280_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I2280_X8">ModelNumber.TYP_M4I2280_X8</a>: 467584&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I2281_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I2281_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I2281_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I2281_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I2281_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I2281_X8">CardType.TYP_M4I2281_X8</a>: 467585&gt;</span>
+        <span class="name">TYP_M4I2281_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I2281_X8">ModelNumber.TYP_M4I2281_X8</a>: 467585&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I2283_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I2283_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I2283_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I2283_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I2283_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I2283_X8">CardType.TYP_M4I2283_X8</a>: 467587&gt;</span>
+        <span class="name">TYP_M4I2283_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I2283_X8">ModelNumber.TYP_M4I2283_X8</a>: 467587&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I2290_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I2290_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I2290_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I2290_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I2290_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I2290_X8">CardType.TYP_M4I2290_X8</a>: 467600&gt;</span>
+        <span class="name">TYP_M4I2290_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I2290_X8">ModelNumber.TYP_M4I2290_X8</a>: 467600&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I2293_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I2293_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I2293_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I2293_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I2293_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I2293_X8">CardType.TYP_M4I2293_X8</a>: 467603&gt;</span>
+        <span class="name">TYP_M4I2293_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I2293_X8">ModelNumber.TYP_M4I2293_X8</a>: 467603&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I2294_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I2294_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I2294_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I2294_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I2294_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I2294_X8">CardType.TYP_M4I2294_X8</a>: 467604&gt;</span>
+        <span class="name">TYP_M4I2294_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I2294_X8">ModelNumber.TYP_M4I2294_X8</a>: 467604&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I4410_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I4410_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I4410_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I4410_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I4410_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I4410_X8">CardType.TYP_M4I4410_X8</a>: 476176&gt;</span>
+        <span class="name">TYP_M4I4410_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I4410_X8">ModelNumber.TYP_M4I4410_X8</a>: 476176&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I4411_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I4411_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I4411_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I4411_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I4411_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I4411_X8">CardType.TYP_M4I4411_X8</a>: 476177&gt;</span>
+        <span class="name">TYP_M4I4411_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I4411_X8">ModelNumber.TYP_M4I4411_X8</a>: 476177&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I4420_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I4420_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I4420_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I4420_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I4420_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I4420_X8">CardType.TYP_M4I4420_X8</a>: 476192&gt;</span>
+        <span class="name">TYP_M4I4420_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I4420_X8">ModelNumber.TYP_M4I4420_X8</a>: 476192&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I4421_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I4421_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I4421_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I4421_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I4421_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I4421_X8">CardType.TYP_M4I4421_X8</a>: 476193&gt;</span>
+        <span class="name">TYP_M4I4421_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I4421_X8">ModelNumber.TYP_M4I4421_X8</a>: 476193&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I4450_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I4450_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I4450_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I4450_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I4450_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I4450_X8">CardType.TYP_M4I4450_X8</a>: 476240&gt;</span>
+        <span class="name">TYP_M4I4450_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I4450_X8">ModelNumber.TYP_M4I4450_X8</a>: 476240&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I4451_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I4451_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I4451_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I4451_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I4451_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I4451_X8">CardType.TYP_M4I4451_X8</a>: 476241&gt;</span>
+        <span class="name">TYP_M4I4451_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I4451_X8">ModelNumber.TYP_M4I4451_X8</a>: 476241&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I4470_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I4470_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I4470_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I4470_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I4470_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I4470_X8">CardType.TYP_M4I4470_X8</a>: 476272&gt;</span>
+        <span class="name">TYP_M4I4470_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I4470_X8">ModelNumber.TYP_M4I4470_X8</a>: 476272&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I4471_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I4471_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I4471_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I4471_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I4471_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I4471_X8">CardType.TYP_M4I4471_X8</a>: 476273&gt;</span>
+        <span class="name">TYP_M4I4471_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I4471_X8">ModelNumber.TYP_M4I4471_X8</a>: 476273&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I4480_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I4480_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I4480_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I4480_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I4480_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I4480_X8">CardType.TYP_M4I4480_X8</a>: 476288&gt;</span>
+        <span class="name">TYP_M4I4480_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I4480_X8">ModelNumber.TYP_M4I4480_X8</a>: 476288&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4I4481_X8" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4I4481_X8">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4I4481_X8" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4I4481_X8">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4I4481_X8</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4I4481_X8">CardType.TYP_M4I4481_X8</a>: 476289&gt;</span>
+        <span class="name">TYP_M4I4481_X8</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4I4481_X8">ModelNumber.TYP_M4I4481_X8</a>: 476289&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4X44XX_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4X44XX_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4X44XX_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4X44XX_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4X44XX_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4X44XX_X4">CardType.TYP_M4X44XX_X4</a>: 541696&gt;</span>
+        <span class="name">TYP_M4X44XX_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4X44XX_X4">ModelNumber.TYP_M4X44XX_X4</a>: 541696&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4X4410_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4X4410_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4X4410_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4X4410_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4X4410_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4X4410_X4">CardType.TYP_M4X4410_X4</a>: 541712&gt;</span>
+        <span class="name">TYP_M4X4410_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4X4410_X4">ModelNumber.TYP_M4X4410_X4</a>: 541712&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4X4411_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4X4411_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4X4411_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4X4411_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4X4411_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4X4411_X4">CardType.TYP_M4X4411_X4</a>: 541713&gt;</span>
+        <span class="name">TYP_M4X4411_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4X4411_X4">ModelNumber.TYP_M4X4411_X4</a>: 541713&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4X4420_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4X4420_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4X4420_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4X4420_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4X4420_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4X4420_X4">CardType.TYP_M4X4420_X4</a>: 541728&gt;</span>
+        <span class="name">TYP_M4X4420_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4X4420_X4">ModelNumber.TYP_M4X4420_X4</a>: 541728&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4X4421_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4X4421_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4X4421_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4X4421_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4X4421_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4X4421_X4">CardType.TYP_M4X4421_X4</a>: 541729&gt;</span>
+        <span class="name">TYP_M4X4421_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4X4421_X4">ModelNumber.TYP_M4X4421_X4</a>: 541729&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4X4450_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4X4450_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4X4450_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4X4450_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4X4450_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4X4450_X4">CardType.TYP_M4X4450_X4</a>: 541776&gt;</span>
+        <span class="name">TYP_M4X4450_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4X4450_X4">ModelNumber.TYP_M4X4450_X4</a>: 541776&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4X4451_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4X4451_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4X4451_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4X4451_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4X4451_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4X4451_X4">CardType.TYP_M4X4451_X4</a>: 541777&gt;</span>
+        <span class="name">TYP_M4X4451_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4X4451_X4">ModelNumber.TYP_M4X4451_X4</a>: 541777&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4X4470_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4X4470_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4X4470_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4X4470_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4X4470_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4X4470_X4">CardType.TYP_M4X4470_X4</a>: 541808&gt;</span>
+        <span class="name">TYP_M4X4470_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4X4470_X4">ModelNumber.TYP_M4X4470_X4</a>: 541808&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4X4471_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4X4471_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4X4471_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4X4471_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4X4471_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4X4471_X4">CardType.TYP_M4X4471_X4</a>: 541809&gt;</span>
+        <span class="name">TYP_M4X4471_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4X4471_X4">ModelNumber.TYP_M4X4471_X4</a>: 541809&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4X4480_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4X4480_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4X4480_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4X4480_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4X4480_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4X4480_X4">CardType.TYP_M4X4480_X4</a>: 541824&gt;</span>
+        <span class="name">TYP_M4X4480_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4X4480_X4">ModelNumber.TYP_M4X4480_X4</a>: 541824&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M4X4481_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M4X4481_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M4X4481_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M4X4481_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M4X4481_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M4X4481_X4">CardType.TYP_M4X4481_X4</a>: 541825&gt;</span>
+        <span class="name">TYP_M4X4481_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M4X4481_X4">ModelNumber.TYP_M4X4481_X4</a>: 541825&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5911_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5911_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5911_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5911_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5911_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5911_X4">CardType.TYP_M2P5911_X4</a>: 612625&gt;</span>
+        <span class="name">TYP_M2P5911_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5911_X4">ModelNumber.TYP_M2P5911_X4</a>: 612625&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5912_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5912_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5912_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5912_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5912_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5912_X4">CardType.TYP_M2P5912_X4</a>: 612626&gt;</span>
+        <span class="name">TYP_M2P5912_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5912_X4">ModelNumber.TYP_M2P5912_X4</a>: 612626&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5913_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5913_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5913_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5913_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5913_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5913_X4">CardType.TYP_M2P5913_X4</a>: 612627&gt;</span>
+        <span class="name">TYP_M2P5913_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5913_X4">ModelNumber.TYP_M2P5913_X4</a>: 612627&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5916_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5916_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5916_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5916_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5916_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5916_X4">CardType.TYP_M2P5916_X4</a>: 612630&gt;</span>
+        <span class="name">TYP_M2P5916_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5916_X4">ModelNumber.TYP_M2P5916_X4</a>: 612630&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5920_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5920_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5920_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5920_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5920_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5920_X4">CardType.TYP_M2P5920_X4</a>: 612640&gt;</span>
+        <span class="name">TYP_M2P5920_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5920_X4">ModelNumber.TYP_M2P5920_X4</a>: 612640&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5921_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5921_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5921_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5921_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5921_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5921_X4">CardType.TYP_M2P5921_X4</a>: 612641&gt;</span>
+        <span class="name">TYP_M2P5921_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5921_X4">ModelNumber.TYP_M2P5921_X4</a>: 612641&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5922_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5922_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5922_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5922_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5922_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5922_X4">CardType.TYP_M2P5922_X4</a>: 612642&gt;</span>
+        <span class="name">TYP_M2P5922_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5922_X4">ModelNumber.TYP_M2P5922_X4</a>: 612642&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5923_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5923_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5923_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5923_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5923_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5923_X4">CardType.TYP_M2P5923_X4</a>: 612643&gt;</span>
+        <span class="name">TYP_M2P5923_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5923_X4">ModelNumber.TYP_M2P5923_X4</a>: 612643&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5926_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5926_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5926_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5926_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5926_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5926_X4">CardType.TYP_M2P5926_X4</a>: 612646&gt;</span>
+        <span class="name">TYP_M2P5926_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5926_X4">ModelNumber.TYP_M2P5926_X4</a>: 612646&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5930_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5930_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5930_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5930_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5930_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5930_X4">CardType.TYP_M2P5930_X4</a>: 612656&gt;</span>
+        <span class="name">TYP_M2P5930_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5930_X4">ModelNumber.TYP_M2P5930_X4</a>: 612656&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5931_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5931_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5931_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5931_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5931_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5931_X4">CardType.TYP_M2P5931_X4</a>: 612657&gt;</span>
+        <span class="name">TYP_M2P5931_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5931_X4">ModelNumber.TYP_M2P5931_X4</a>: 612657&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5932_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5932_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5932_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5932_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5932_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5932_X4">CardType.TYP_M2P5932_X4</a>: 612658&gt;</span>
+        <span class="name">TYP_M2P5932_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5932_X4">ModelNumber.TYP_M2P5932_X4</a>: 612658&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5933_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5933_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5933_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5933_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5933_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5933_X4">CardType.TYP_M2P5933_X4</a>: 612659&gt;</span>
+        <span class="name">TYP_M2P5933_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5933_X4">ModelNumber.TYP_M2P5933_X4</a>: 612659&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5936_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5936_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5936_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5936_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5936_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5936_X4">CardType.TYP_M2P5936_X4</a>: 612662&gt;</span>
+        <span class="name">TYP_M2P5936_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5936_X4">ModelNumber.TYP_M2P5936_X4</a>: 612662&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5940_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5940_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5940_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5940_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5940_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5940_X4">CardType.TYP_M2P5940_X4</a>: 612672&gt;</span>
+        <span class="name">TYP_M2P5940_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5940_X4">ModelNumber.TYP_M2P5940_X4</a>: 612672&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5941_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5941_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5941_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5941_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5941_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5941_X4">CardType.TYP_M2P5941_X4</a>: 612673&gt;</span>
+        <span class="name">TYP_M2P5941_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5941_X4">ModelNumber.TYP_M2P5941_X4</a>: 612673&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5942_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5942_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5942_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5942_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5942_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5942_X4">CardType.TYP_M2P5942_X4</a>: 612674&gt;</span>
+        <span class="name">TYP_M2P5942_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5942_X4">ModelNumber.TYP_M2P5942_X4</a>: 612674&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5943_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5943_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5943_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5943_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5943_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5943_X4">CardType.TYP_M2P5943_X4</a>: 612675&gt;</span>
+        <span class="name">TYP_M2P5943_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5943_X4">ModelNumber.TYP_M2P5943_X4</a>: 612675&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5946_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5946_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5946_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5946_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5946_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5946_X4">CardType.TYP_M2P5946_X4</a>: 612678&gt;</span>
+        <span class="name">TYP_M2P5946_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5946_X4">ModelNumber.TYP_M2P5946_X4</a>: 612678&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5960_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5960_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5960_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5960_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5960_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5960_X4">CardType.TYP_M2P5960_X4</a>: 612704&gt;</span>
+        <span class="name">TYP_M2P5960_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5960_X4">ModelNumber.TYP_M2P5960_X4</a>: 612704&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5961_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5961_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5961_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5961_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5961_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5961_X4">CardType.TYP_M2P5961_X4</a>: 612705&gt;</span>
+        <span class="name">TYP_M2P5961_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5961_X4">ModelNumber.TYP_M2P5961_X4</a>: 612705&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5962_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5962_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5962_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5962_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5962_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5962_X4">CardType.TYP_M2P5962_X4</a>: 612706&gt;</span>
+        <span class="name">TYP_M2P5962_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5962_X4">ModelNumber.TYP_M2P5962_X4</a>: 612706&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5966_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5966_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5966_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5966_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5966_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5966_X4">CardType.TYP_M2P5966_X4</a>: 612710&gt;</span>
+        <span class="name">TYP_M2P5966_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5966_X4">ModelNumber.TYP_M2P5966_X4</a>: 612710&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="CardType.TYP_M2P5968_X4" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#CardType.TYP_M2P5968_X4">#&nbsp;&nbsp</a>
+                            <div id="ModelNumber.TYP_M2P5968_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P5968_X4">#&nbsp;&nbsp</a>
 
-        <span class="name">TYP_M2P5968_X4</span><span class="default_value"> = &lt;<a href="#CardType.TYP_M2P5968_X4">CardType.TYP_M2P5968_X4</a>: 612712&gt;</span>
+        <span class="name">TYP_M2P5968_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P5968_X4">ModelNumber.TYP_M2P5968_X4</a>: 612712&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="ModelNumber.TYP_M2P6530_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P6530_X4">#&nbsp;&nbsp</a>
+
+        <span class="name">TYP_M2P6530_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P6530_X4">ModelNumber.TYP_M2P6530_X4</a>: 615728&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="ModelNumber.TYP_M2P6531_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P6531_X4">#&nbsp;&nbsp</a>
+
+        <span class="name">TYP_M2P6531_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P6531_X4">ModelNumber.TYP_M2P6531_X4</a>: 615729&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="ModelNumber.TYP_M2P6532_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P6532_X4">#&nbsp;&nbsp</a>
+
+        <span class="name">TYP_M2P6532_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P6532_X4">ModelNumber.TYP_M2P6532_X4</a>: 615730&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="ModelNumber.TYP_M2P6536_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P6536_X4">#&nbsp;&nbsp</a>
+
+        <span class="name">TYP_M2P6536_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P6536_X4">ModelNumber.TYP_M2P6536_X4</a>: 615734&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="ModelNumber.TYP_M2P6533_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P6533_X4">#&nbsp;&nbsp</a>
+
+        <span class="name">TYP_M2P6533_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P6533_X4">ModelNumber.TYP_M2P6533_X4</a>: 615731&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="ModelNumber.TYP_M2P6540_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P6540_X4">#&nbsp;&nbsp</a>
+
+        <span class="name">TYP_M2P6540_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P6540_X4">ModelNumber.TYP_M2P6540_X4</a>: 615744&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="ModelNumber.TYP_M2P6541_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P6541_X4">#&nbsp;&nbsp</a>
+
+        <span class="name">TYP_M2P6541_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P6541_X4">ModelNumber.TYP_M2P6541_X4</a>: 615745&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="ModelNumber.TYP_M2P6546_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P6546_X4">#&nbsp;&nbsp</a>
+
+        <span class="name">TYP_M2P6546_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P6546_X4">ModelNumber.TYP_M2P6546_X4</a>: 615750&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="ModelNumber.TYP_M2P6560_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P6560_X4">#&nbsp;&nbsp</a>
+
+        <span class="name">TYP_M2P6560_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P6560_X4">ModelNumber.TYP_M2P6560_X4</a>: 615776&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="ModelNumber.TYP_M2P6561_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P6561_X4">#&nbsp;&nbsp</a>
+
+        <span class="name">TYP_M2P6561_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P6561_X4">ModelNumber.TYP_M2P6561_X4</a>: 615777&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="ModelNumber.TYP_M2P6562_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P6562_X4">#&nbsp;&nbsp</a>
+
+        <span class="name">TYP_M2P6562_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P6562_X4">ModelNumber.TYP_M2P6562_X4</a>: 615778&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="ModelNumber.TYP_M2P6566_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P6566_X4">#&nbsp;&nbsp</a>
+
+        <span class="name">TYP_M2P6566_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P6566_X4">ModelNumber.TYP_M2P6566_X4</a>: 615782&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="ModelNumber.TYP_M2P6568_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P6568_X4">#&nbsp;&nbsp</a>
+
+        <span class="name">TYP_M2P6568_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P6568_X4">ModelNumber.TYP_M2P6568_X4</a>: 615784&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="ModelNumber.TYP_M2P6570_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P6570_X4">#&nbsp;&nbsp</a>
+
+        <span class="name">TYP_M2P6570_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P6570_X4">ModelNumber.TYP_M2P6570_X4</a>: 615792&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="ModelNumber.TYP_M2P6571_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P6571_X4">#&nbsp;&nbsp</a>
+
+        <span class="name">TYP_M2P6571_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P6571_X4">ModelNumber.TYP_M2P6571_X4</a>: 615793&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="ModelNumber.TYP_M2P6576_X4" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ModelNumber.TYP_M2P6576_X4">#&nbsp;&nbsp</a>
+
+        <span class="name">TYP_M2P6576_X4</span><span class="default_value"> = &lt;<a href="#ModelNumber.TYP_M2P6576_X4">ModelNumber.TYP_M2P6576_X4</a>: 615798&gt;</span>
     </div>
 
     
@@ -3030,8 +3313,8 @@ SPC_PCITYP register. Only the supported card types are listed: 22xx, 44xx and 59
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt>enum.Enum</dt>
-                                <dd id="CardType.name" class="variable">name</dd>
-                <dd id="CardType.value" class="variable">value</dd>
+                                <dd id="ModelNumber.name" class="variable">name</dd>
+                <dd id="ModelNumber.value" class="variable">value</dd>
 
             </div>
                                 </dl>
