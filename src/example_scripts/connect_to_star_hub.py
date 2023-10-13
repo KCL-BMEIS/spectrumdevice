@@ -35,7 +35,7 @@ def star_hub_example(
 
 
 if __name__ == "__main__":
-    hub = star_hub_example(mock_mode=True, num_cards=2, master_card_index=1, ip_address="169.254.45.181")
+    hub = star_hub_example(mock_mode=False, num_cards=2, master_card_index=1, ip_address="169.254.13.35")
     print(f"{hub} contains {len(hub.channels)} channels in total:")
     for channel in hub.channels:
         print(channel)

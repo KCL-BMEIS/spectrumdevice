@@ -57,6 +57,7 @@ class SingleCardIntegrationTests(TestCase):
         measurements = finite_multi_fifo_example(
             mock_mode=self._single_card_mock_mode,
             num_measurements=5,
+            batch_size=5,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
             device_number=TEST_DEVICE_NUMBER,
             ip_address=TEST_DEVICE_IP,
@@ -68,11 +69,12 @@ class SingleCardIntegrationTests(TestCase):
     def test_continuous_multi_fifo_mode(self) -> None:
         measurements = continuous_multi_fifo_example(
             mock_mode=self._single_card_mock_mode,
-            acquisition_duration_in_seconds=0.5,
+            time_to_keep_acquiring_for_in_seconds=0.5,
+            batch_size=1,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
             device_number=TEST_DEVICE_NUMBER,
             ip_address=TEST_DEVICE_IP,
-            acquisition_length=ACQUISITION_LENGTH,
+            single_acquisition_length_in_samples=ACQUISITION_LENGTH,
         )
         self._asserts_for_fifo_mode(measurements)
 

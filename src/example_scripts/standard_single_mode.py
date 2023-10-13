@@ -73,7 +73,7 @@ if __name__ == "__main__":
     from matplotlib.pyplot import plot, show, xlabel, tight_layout, ylabel
 
     meas = standard_single_mode_example(
-        mock_mode=False, trigger_source=TriggerSource.SPC_TMASK_EXT0, device_number=1, ip_address="169.254.45.181"
+        mock_mode=False, trigger_source=TriggerSource.SPC_TMASK_EXT0, device_number=1, ip_address="169.254.13.35"
     )
 
     # Plot waveforms
