@@ -13,6 +13,22 @@ from spectrum_gmbh.regs import (
     SPCM_STOPLVL_HOLDLAST,
     SPCM_STOPLVL_LOW,
     SPCM_STOPLVL_ZERO,
+    SPC_50OHM0,
+    SPC_50OHM1,
+    SPC_50OHM10,
+    SPC_50OHM11,
+    SPC_50OHM12,
+    SPC_50OHM13,
+    SPC_50OHM14,
+    SPC_50OHM15,
+    SPC_50OHM2,
+    SPC_50OHM3,
+    SPC_50OHM4,
+    SPC_50OHM5,
+    SPC_50OHM6,
+    SPC_50OHM7,
+    SPC_50OHM8,
+    SPC_50OHM9,
     SPC_AMP0,
     SPC_AMP1,
     SPC_AMP2,
@@ -93,6 +109,38 @@ from spectrum_gmbh.regs import (
     CHANNEL13,
     CHANNEL14,
     CHANNEL15,
+    SPC_ACDC0,
+    SPC_ACDC1,
+    SPC_ACDC2,
+    SPC_ACDC3,
+    SPC_ACDC4,
+    SPC_ACDC5,
+    SPC_ACDC6,
+    SPC_ACDC7,
+    SPC_ACDC8,
+    SPC_ACDC9,
+    SPC_ACDC10,
+    SPC_ACDC11,
+    SPC_ACDC12,
+    SPC_ACDC13,
+    SPC_ACDC14,
+    SPC_ACDC15,
+    SPC_PATH0,
+    SPC_PATH1,
+    SPC_PATH2,
+    SPC_PATH3,
+    SPC_PATH4,
+    SPC_PATH5,
+    SPC_PATH6,
+    SPC_PATH7,
+    SPC_PATH8,
+    SPC_PATH9,
+    SPC_PATH10,
+    SPC_PATH11,
+    SPC_PATH12,
+    SPC_PATH13,
+    SPC_PATH14,
+    SPC_PATH15,
 )
 
 VERTICAL_RANGE_COMMANDS = (
@@ -219,3 +267,78 @@ class SpectrumChannelName(Enum):
     CHANNEL13 = CHANNEL13
     CHANNEL14 = CHANNEL14
     CHANNEL15 = CHANNEL15
+
+
+class InputImpedance(Enum):
+    FIFTY_OHM = 1
+    ONE_MEGA_OHM = 0
+
+
+INPUT_IMPEDANCE_COMMANDS = (
+    SPC_50OHM0,
+    SPC_50OHM1,
+    SPC_50OHM2,
+    SPC_50OHM3,
+    SPC_50OHM4,
+    SPC_50OHM5,
+    SPC_50OHM6,
+    SPC_50OHM7,
+    SPC_50OHM8,
+    SPC_50OHM9,
+    SPC_50OHM10,
+    SPC_50OHM11,
+    SPC_50OHM12,
+    SPC_50OHM13,
+    SPC_50OHM14,
+    SPC_50OHM15,
+)
+
+
+class InputCoupling(Enum):
+    AC = 1
+    DC = 0
+
+
+INPUT_COUPLING_COMMANDS = (
+    SPC_ACDC0,
+    SPC_ACDC1,
+    SPC_ACDC2,
+    SPC_ACDC3,
+    SPC_ACDC4,
+    SPC_ACDC5,
+    SPC_ACDC6,
+    SPC_ACDC7,
+    SPC_ACDC8,
+    SPC_ACDC9,
+    SPC_ACDC10,
+    SPC_ACDC11,
+    SPC_ACDC12,
+    SPC_ACDC13,
+    SPC_ACDC14,
+    SPC_ACDC15,
+)
+
+
+class InputPath(Enum):
+    BUFFERED_INPUTS = 0
+    HF_INPUT_WITH_FIXED_50_OHM_TERMINATION = 1
+
+
+INPUT_PATH_COMMANDS = (
+    SPC_PATH0,
+    SPC_PATH1,
+    SPC_PATH2,
+    SPC_PATH3,
+    SPC_PATH4,
+    SPC_PATH5,
+    SPC_PATH6,
+    SPC_PATH7,
+    SPC_PATH8,
+    SPC_PATH9,
+    SPC_PATH10,
+    SPC_PATH11,
+    SPC_PATH12,
+    SPC_PATH13,
+    SPC_PATH14,
+    SPC_PATH15,
+)

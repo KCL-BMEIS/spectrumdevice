@@ -13,6 +13,7 @@ from spectrumdevice.settings import (
     ExternalTriggerMode,
     TriggerSettings,
     AcquisitionSettings,
+    InputImpedance,
 )
 
 
@@ -56,6 +57,7 @@ def continuous_multi_fifo_example(
         enabled_channels=[0],
         vertical_ranges_in_mv=[200],
         vertical_offsets_in_percent=[0],
+        input_impedances=[InputImpedance.ONE_MEGA_OHM],
         timestamping_enabled=True,
         batch_size=batch_size,
     )
