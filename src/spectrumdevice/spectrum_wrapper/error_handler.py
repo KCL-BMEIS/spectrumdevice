@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 def _parse_errors_table() -> Dict[int, str]:
     errors: Dict[int, str] = {}
-    errors_file = resources.files(__name__) / 'spectrum_errors.csv'
+    errors_file = resources.files(__package__) / "spectrum_errors.csv"
     with resources.as_file(errors_file) as file_path:
         with open(file_path) as f:
             for line in f.readlines():
