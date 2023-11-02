@@ -29,6 +29,8 @@ Limitations section for more information.
 * [PyPI](https://pypi.org/project/spectrumdevice/)
 
 ## Requirements
+Python 3.9+
+
 `spectrumdevice` works with hardware on Windows and Linux. Spectrum do not currently provide a hardware driver for 
 macOS, but `spectrumdevice` provides mock classes for development and testing without hardware, which work on macOS.
 
