@@ -1,14 +1,12 @@
 """Defines an error handling wrapper function for wrapping calls to the Spectrum API."""
-
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
 import logging
 from functools import wraps
+from importlib import resources
 from typing import Callable, Dict, Any
-
-from pkg_resources import resource_filename
 
 from spectrumdevice.exceptions import SpectrumApiCallFailed, SpectrumFIFOModeHardwareBufferOverrun
 from spectrum_gmbh.spcerr import (
@@ -24,10 +22,12 @@ logger = logging.getLogger(__name__)
 
 def _parse_errors_table() -> Dict[int, str]:
     errors: Dict[int, str] = {}
-    with open(resource_filename(__name__, "spectrum_errors.csv"), "r") as f:
-        for line in f.readlines():
-            cells = line.split(",")
-            errors[int(cells[2].strip())] = cells[3].strip()
+    errors_file = resources.files(__package__) / "spectrum_errors.csv"
+    with resources.as_file(errors_file) as file_path:
+        with open(file_path) as f:
+            for line in f.readlines():
+                cells = line.split(",")
+                errors[int(cells[2].strip())] = cells[3].strip()
     return errors
 
 
