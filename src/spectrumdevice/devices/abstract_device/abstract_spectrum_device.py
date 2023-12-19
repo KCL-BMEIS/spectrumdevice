@@ -55,6 +55,8 @@ class AbstractSpectrumDevice(SpectrumDeviceInterface, ABC):
         For digitisers in Multi FIFO mode (SPC_REC_FIFO_MULTI), it needs to be called only once, immediately followed by
         a call to `start_transfer()`. Frames will then be continuously streamed to the `TransferBuffer`, which must have
         already been defined.
+
+        # todo: docstring for different AWG modes
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_START | M2CMD_CARD_ENABLETRIGGER)
 
@@ -63,6 +65,8 @@ class AbstractSpectrumDevice(SpectrumDeviceInterface, ABC):
 
         For digitisers in FIFO mode (SPC_REC_FIFO_MULTI), this stops the continuous acquisition of waveform data that
         occurs after calling `start()`. Does not need to be called in Standard Single mode (SPC_REC_STD_SINGLE).
+
+        # todo: docstring for AWG
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_STOP)
 
