@@ -4,7 +4,7 @@ from typing import cast
 
 from spectrum_gmbh.regs import SPC_CARDMODE
 from spectrumdevice import AbstractSpectrumDevice
-from spectrumdevice.devices.awg.awg_channel import AWGChannel
+from spectrumdevice.devices.awg.awg_channel import SpectrumAWGChannel
 from spectrumdevice.devices.awg.awg_interface import SpectrumAWGInterface
 from spectrumdevice.settings.device_modes import GenerationMode
 from spectrumdevice.settings.output_channel_pairing import (
@@ -60,12 +60,12 @@ class AbstractSpectrumAWG(SpectrumAWGInterface, AbstractSpectrumDevice, ABC):
             pass  # odd numbered channel was not enable, so no need to disable it.
 
     def _mirror_even_channel_settings_on_odd_channel(self, channel_pair: ChannelPair) -> None:
-        cast(AWGChannel, self.channels[channel_pair.value + 1]).set_signal_amplitude_in_mv(
-            cast(AWGChannel, self.channels[channel_pair.value]).signal_amplitude_in_mv
+        cast(SpectrumAWGChannel, self.channels[channel_pair.value + 1]).set_signal_amplitude_in_mv(
+            cast(SpectrumAWGChannel, self.channels[channel_pair.value]).signal_amplitude_in_mv
         )
-        cast(AWGChannel, self.channels[channel_pair.value + 1]).set_dc_offset_in_mv(
-            cast(AWGChannel, self.channels[channel_pair.value]).dc_offset_in_mv
+        cast(SpectrumAWGChannel, self.channels[channel_pair.value + 1]).set_dc_offset_in_mv(
+            cast(SpectrumAWGChannel, self.channels[channel_pair.value]).dc_offset_in_mv
         )
-        cast(AWGChannel, self.channels[channel_pair.value + 1]).set_output_filter(
-            cast(AWGChannel, self.channels[channel_pair.value]).output_filter
+        cast(SpectrumAWGChannel, self.channels[channel_pair.value + 1]).set_output_filter(
+            cast(SpectrumAWGChannel, self.channels[channel_pair.value]).output_filter
         )

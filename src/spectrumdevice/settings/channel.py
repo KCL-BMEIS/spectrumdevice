@@ -247,7 +247,7 @@ class OutputChannelStopLevelMode(Enum):
     SPCM_STOPLVL_HOLDLAST = SPCM_STOPLVL_HOLDLAST
     """ Output level will stay at the level of the last played sample."""
     SPCM_STOPLVL_CUSTOM = SPCM_STOPLVL_CUSTOM
-    """ Output level will go to the value defined using AWGChannel.set_stop_level_custom_value()"""
+    """ Output level will go to the value defined using SpectrumAWGChannel.set_stop_level_custom_value()"""
 
 
 class SpectrumChannelName(Enum):

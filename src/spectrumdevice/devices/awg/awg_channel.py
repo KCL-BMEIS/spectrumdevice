@@ -16,7 +16,7 @@ from spectrumdevice.settings.channel import (
 )
 
 
-class AWGChannel(AbstractSpectrumChannel, SpectrumAWGChannelInterface):
+class SpectrumAWGChannel(AbstractSpectrumChannel, SpectrumAWGChannelInterface):
     def __init__(self, channel_number: int, parent_device: AbstractSpectrumCard):
 
         if parent_device.type != CardType.SPCM_TYPE_AO:
