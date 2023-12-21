@@ -49,7 +49,7 @@ from spectrumdevice.settings.transfer_buffer import (
 logger = logging.getLogger(__name__)
 
 
-class SpectrumDigitiserCard(AbstractSpectrumCard, AbstractSpectrumDigitiser):
+class SpectrumDigitiserCard(AbstractSpectrumCard[SpectrumDigitiserChannelInterface], AbstractSpectrumDigitiser):
     """Class for controlling individual Spectrum digitiser cards."""
 
     def __init__(self, device_number: int = 0, ip_address: Optional[str] = None):

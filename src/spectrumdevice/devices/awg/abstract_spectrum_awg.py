@@ -16,6 +16,7 @@ from spectrumdevice.settings.output_channel_pairing import (
 
 
 class AbstractSpectrumAWG(SpectrumAWGInterface, AbstractSpectrumDevice, ABC):
+
     @property
     def generation_mode(self) -> GenerationMode:
         """Change the currently enabled card mode. See `GenerationMode` and the Spectrum documentation
@@ -26,7 +27,7 @@ class AbstractSpectrumAWG(SpectrumAWGInterface, AbstractSpectrumDevice, ABC):
         self.write_to_spectrum_device_register(SPC_CARDMODE, mode.value)
 
     def configure_channel_pairing(self, channel_pair: ChannelPair, mode: ChannelPairingMode) -> None:
-        """Configures a pair of consecutive channels to operate either independentally, in differential mode or
+        """Configures a pair of consecutive channels to operate either independently, in differential mode or
         in double  mode. If enabling differential or double mode, then the odd-numbered channel will be automatically
         configured to be identical to the even-numbered channel, and the odd-numbered channel will be disabled as is
         required by the Spectrum API.

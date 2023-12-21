@@ -5,7 +5,6 @@ from numpy.typing import NDArray
 
 from spectrum_gmbh.regs import SPC_MIINST_CHPERMODULE, SPC_MIINST_MODULES
 from spectrumdevice import AbstractSpectrumCard
-from spectrumdevice.devices.abstract_device import SpectrumChannelInterface
 from spectrumdevice.devices.awg.abstract_spectrum_awg import AbstractSpectrumAWG
 from spectrumdevice.devices.awg.awg_channel import SpectrumAWGChannel
 from spectrumdevice.devices.awg.awg_interface import SpectrumAWGChannelInterface
@@ -18,7 +17,7 @@ from spectrumdevice.settings.transfer_buffer import (
 )
 
 
-class SpectrumAWGCard(AbstractSpectrumCard, AbstractSpectrumAWG):
+class SpectrumAWGCard(AbstractSpectrumCard[SpectrumAWGChannelInterface], AbstractSpectrumAWG):
     def _init_channels(self) -> Sequence[SpectrumAWGChannelInterface]:
         num_modules = self.read_spectrum_device_register(SPC_MIINST_MODULES)
         num_channels_per_module = self.read_spectrum_device_register(SPC_MIINST_CHPERMODULE)
