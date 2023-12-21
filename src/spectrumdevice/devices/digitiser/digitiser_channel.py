@@ -8,8 +8,9 @@ from numpy import ndarray
 
 from spectrum_gmbh.regs import SPC_MIINST_MAXADCVALUE
 from spectrumdevice.devices.abstract_device import AbstractSpectrumCard, AbstractSpectrumChannel
+from spectrumdevice.devices.abstract_device.abstract_spectrum_channel import AbstractSpectrumAnalogChannel
 from spectrumdevice.devices.digitiser.digitiser_interface import (
-    SpectrumDigitiserChannelInterface,
+    SpectrumDigitiserAnalogChannelInterface,
 )
 from spectrumdevice.exceptions import SpectrumCardIsNotADigitiser
 from spectrumdevice.settings.card_dependent_properties import CardType
@@ -25,7 +26,7 @@ from spectrumdevice.settings.channel import (
 )
 
 
-class SpectrumDigitiserChannel(AbstractSpectrumChannel, SpectrumDigitiserChannelInterface):
+class SpectrumDigitiserAnalogChannel(AbstractSpectrumAnalogChannel, SpectrumDigitiserAnalogChannelInterface):
     """Class for controlling an individual channel of a spectrum digitiser. Channels are constructed automatically when
     a `SpectrumDigitiserCard` or `SpectrumDigitiserStarHub` is instantiated, and can then be accessed via the
     `.channels` property."""

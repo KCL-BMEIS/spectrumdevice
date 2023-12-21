@@ -5,16 +5,16 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
 from spectrumdevice.devices.digitiser.digitiser_card import SpectrumDigitiserCard
-from spectrumdevice.devices.digitiser.digitiser_channel import SpectrumDigitiserChannel
+from spectrumdevice.devices.digitiser.digitiser_channel import SpectrumDigitiserAnalogChannel
 from spectrumdevice.devices.digitiser.digitiser_interface import (
-    SpectrumDigitiserChannelInterface,
+    SpectrumDigitiserAnalogChannelInterface,
     SpectrumDigitiserInterface,
 )
 from spectrumdevice.devices.digitiser.digitiser_star_hub import SpectrumDigitiserStarHub
 
 __all__ = [
-    "SpectrumDigitiserChannelInterface",
-    "SpectrumDigitiserChannel",
+    "SpectrumDigitiserAnalogChannelInterface",
+    "SpectrumDigitiserAnalogChannel",
     "SpectrumDigitiserInterface",
     "SpectrumDigitiserCard",
     "SpectrumDigitiserStarHub",

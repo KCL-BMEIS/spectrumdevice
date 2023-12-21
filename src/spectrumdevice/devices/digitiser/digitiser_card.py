@@ -26,8 +26,8 @@ from spectrum_gmbh.regs import (
 )
 from spectrumdevice.devices.abstract_device import AbstractSpectrumCard
 from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
-from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserChannelInterface
-from spectrumdevice.devices.digitiser.digitiser_channel import SpectrumDigitiserChannel
+from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserAnalogChannelInterface
+from spectrumdevice.devices.digitiser.digitiser_channel import SpectrumDigitiserAnalogChannel
 from spectrumdevice.devices.spectrum_timestamper import Timestamper
 from spectrumdevice.exceptions import (
     SpectrumCardIsNotADigitiser,
@@ -49,7 +49,7 @@ from spectrumdevice.settings.transfer_buffer import (
 logger = logging.getLogger(__name__)
 
 
-class SpectrumDigitiserCard(AbstractSpectrumCard[SpectrumDigitiserChannelInterface], AbstractSpectrumDigitiser):
+class SpectrumDigitiserCard(AbstractSpectrumCard[SpectrumDigitiserAnalogChannelInterface], AbstractSpectrumDigitiser):
     """Class for controlling individual Spectrum digitiser cards."""
 
     def __init__(self, device_number: int = 0, ip_address: Optional[str] = None):
@@ -66,11 +66,11 @@ class SpectrumDigitiserCard(AbstractSpectrumCard[SpectrumDigitiserChannelInterfa
         self._timestamper: Optional[Timestamper] = None
         self._batch_size = 1
 
-    def _init_channels(self) -> Sequence[SpectrumDigitiserChannelInterface]:
+    def _init_channels(self) -> Sequence[SpectrumDigitiserAnalogChannelInterface]:
         num_modules = self.read_spectrum_device_register(SPC_MIINST_MODULES)
         num_channels_per_module = self.read_spectrum_device_register(SPC_MIINST_CHPERMODULE)
         total_channels = num_modules * num_channels_per_module
-        return tuple([SpectrumDigitiserChannel(n, self) for n in range(total_channels)])
+        return tuple([SpectrumDigitiserAnalogChannel(n, self) for n in range(total_channels)])
 
     def enable_timestamping(self) -> None:
         self._timestamper = Timestamper(self, self._handle)
@@ -154,9 +154,9 @@ class SpectrumDigitiserCard(AbstractSpectrumCard[SpectrumDigitiserChannelInterfa
         for n in range(self._batch_size):
             repeat_acquisitions.append(
                 [
-                    cast(SpectrumDigitiserChannel, self.channels[ch_num]).convert_raw_waveform_to_voltage_waveform(
-                        squeeze(waveform)
-                    )
+                    cast(
+                        SpectrumDigitiserAnalogChannel, self.channels[ch_num]
+                    ).convert_raw_waveform_to_voltage_waveform(squeeze(waveform))
                     for ch_num, waveform in zip(self.enabled_channels, waveforms_in_columns[n, :, :].T)
                 ]
             )

@@ -251,6 +251,10 @@ class OutputChannelStopLevelMode(Enum):
 
 
 class SpectrumChannelName(Enum):
+    pass
+
+
+class SpectrumAnalogChannelName(SpectrumChannelName):
     CHANNEL0 = CHANNEL0
     CHANNEL1 = CHANNEL1
     CHANNEL2 = CHANNEL2

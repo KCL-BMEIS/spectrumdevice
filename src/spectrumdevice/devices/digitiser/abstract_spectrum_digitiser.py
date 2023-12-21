@@ -10,7 +10,7 @@ from typing import List, cast
 from spectrumdevice.measurement import Measurement
 from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice
 from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserInterface
-from spectrumdevice.devices.digitiser.digitiser_channel import SpectrumDigitiserChannel
+from spectrumdevice.devices.digitiser.digitiser_channel import SpectrumDigitiserAnalogChannel
 from spectrumdevice.exceptions import SpectrumWrongAcquisitionMode
 from spectrumdevice.settings import AcquisitionMode, AcquisitionSettings
 from spectrum_gmbh.regs import M2CMD_CARD_WRITESETUP, SPC_M2CMD
@@ -48,19 +48,19 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
             settings.vertical_offsets_in_percent,
             settings.input_impedances,
         ):
-            cast(SpectrumDigitiserChannel, channel).set_vertical_range_in_mv(v_range)
-            cast(SpectrumDigitiserChannel, channel).set_vertical_offset_in_percent(v_offset)
-            cast(SpectrumDigitiserChannel, channel).set_input_impedance(impedance)
+            cast(SpectrumDigitiserAnalogChannel, channel).set_vertical_range_in_mv(v_range)
+            cast(SpectrumDigitiserAnalogChannel, channel).set_vertical_offset_in_percent(v_offset)
+            cast(SpectrumDigitiserAnalogChannel, channel).set_input_impedance(impedance)
 
         # Only some hardware has software programmable input coupling, so coupling can be None
         if settings.input_couplings is not None:
             for channel, coupling in zip(self.channels, settings.input_couplings):
-                cast(SpectrumDigitiserChannel, channel).set_input_coupling(coupling)
+                cast(SpectrumDigitiserAnalogChannel, channel).set_input_coupling(coupling)
 
         # Only some hardware has software programmable input paths, so it can be None
         if settings.input_paths is not None:
             for channel, path in zip(self.channels, settings.input_paths):
-                cast(SpectrumDigitiserChannel, channel).set_input_path(path)
+                cast(SpectrumDigitiserAnalogChannel, channel).set_input_path(path)
 
         # Write the configuration to the card
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_WRITESETUP)

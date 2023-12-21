@@ -5,7 +5,7 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 import datetime
 from threading import Thread
-from typing import Dict, List, Optional, Sequence, cast
+from typing import Dict, List, Optional, Sequence
 
 from numpy import float_
 from numpy.typing import NDArray
@@ -20,11 +20,11 @@ from spectrumdevice.settings import TransferBuffer
 from spectrumdevice.settings.device_modes import AcquisitionMode
 
 
-class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitiser):
-    """Composite class of `SpectrumCards` for controlling a StarHub digitiser device, for example the Spectrum NetBox.
-    StarHub digitiser devices are composites of more than one Spectrum digitiser card. Acquisition from the child cards
-    of a StarHub is synchronised, aggregating the channels of all child cards. This class enables the control of a
-    StarHub device as if it were a single Spectrum card."""
+class SpectrumDigitiserStarHub(AbstractSpectrumStarHub[SpectrumDigitiserCard], AbstractSpectrumDigitiser):
+    """Composite class of `SpectrumDigitiserCard` for controlling a StarHub digitiser device, for example the Spectrum
+    NetBox. StarHub digitiser devices are composites of more than one Spectrum digitiser card. Acquisition from the
+    child cards of a StarHub is synchronised, aggregating the channels of all child cards. This class enables the
+    control of a StarHub device as if it were a single Spectrum card."""
 
     def __init__(
         self,
@@ -64,7 +64,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
         """Wait for each card to finish its acquisition. See `SpectrumDigitiserCard.wait_for_acquisition_to_complete()`
         for more information."""
         for card in self._child_cards:
-            cast(SpectrumDigitiserCard, card).wait_for_acquisition_to_complete()
+            card.wait_for_acquisition_to_complete()
 
     def get_waveforms(self) -> List[List[NDArray[float_]]]:
         """Get a list of the most recently transferred waveforms.
@@ -86,9 +86,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
             this_cards_waveforms = digitiser_card.get_waveforms()
             card_ids_and_waveform_sets[str(digitiser_card)] = this_cards_waveforms
 
-        threads = [
-            Thread(target=_get_waveforms, args=(cast(SpectrumDigitiserCard, card),)) for card in self._child_cards
-        ]
+        threads = [Thread(target=_get_waveforms, args=(card,)) for card in self._child_cards]
 
         for thread in threads:
             thread.start()
@@ -106,10 +104,10 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
 
     def get_timestamp(self) -> Optional[datetime.datetime]:
         """Get timestamp for the last acquisition"""
-        return cast(SpectrumDigitiserCard, self._triggering_card).get_timestamp()
+        return self._triggering_card.get_timestamp()
 
     def enable_timestamping(self) -> None:
-        cast(SpectrumDigitiserCard, self._triggering_card).enable_timestamping()
+        self._triggering_card.enable_timestamping()
 
     @property
     def acquisition_length_in_samples(self) -> int:
@@ -121,7 +119,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
             length_in_samples: The currently set acquisition length in samples."""
         lengths = []
         for d in self._child_cards:
-            lengths.append(cast(SpectrumDigitiserCard, d).acquisition_length_in_samples)
+            lengths.append(d.acquisition_length_in_samples)
         return check_settings_constant_across_devices(lengths, __name__)
 
     def set_acquisition_length_in_samples(self, length_in_samples: int) -> None:
@@ -131,7 +129,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
         Args:
             length_in_samples (int): The desired acquisition length in samples."""
         for d in self._child_cards:
-            cast(SpectrumDigitiserCard, d).set_acquisition_length_in_samples(length_in_samples)
+            d.set_acquisition_length_in_samples(length_in_samples)
 
     @property
     def post_trigger_length_in_samples(self) -> int:
@@ -144,7 +142,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
         """
         lengths = []
         for d in self._child_cards:
-            lengths.append(cast(SpectrumDigitiserCard, d).post_trigger_length_in_samples)
+            lengths.append(d.post_trigger_length_in_samples)
         return check_settings_constant_across_devices(lengths, __name__)
 
     def set_post_trigger_length_in_samples(self, length_in_samples: int) -> None:
@@ -155,7 +153,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
             length_in_samples (int): The desired post trigger length in samples.
         """
         for d in self._child_cards:
-            cast(SpectrumDigitiserCard, d).set_post_trigger_length_in_samples(length_in_samples)
+            d.set_post_trigger_length_in_samples(length_in_samples)
 
     @property
     def acquisition_mode(self) -> AcquisitionMode:
@@ -167,7 +165,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
         """
         modes = []
         for d in self._child_cards:
-            modes.append(cast(SpectrumDigitiserCard, d).acquisition_mode)
+            modes.append(d.acquisition_mode)
         return AcquisitionMode(check_settings_constant_across_devices([m.value for m in modes], __name__))
 
     def set_acquisition_mode(self, mode: AcquisitionMode) -> None:
@@ -177,15 +175,19 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub, AbstractSpectrumDigitise
         Args:
             mode (`AcquisitionMode`): The desired acquisition mode."""
         for d in self._child_cards:
-            cast(SpectrumDigitiserCard, d).set_acquisition_mode(mode)
+            d.set_acquisition_mode(mode)
 
     @property
     def batch_size(self) -> int:
         batch_sizes = []
         for d in self._child_cards:
-            batch_sizes.append(cast(SpectrumDigitiserCard, d).batch_size)
+            batch_sizes.append(d.batch_size)
         return check_settings_constant_across_devices(batch_sizes, __name__)
 
     def set_batch_size(self, batch_size: int) -> None:
         for d in self._child_cards:
-            cast(SpectrumDigitiserCard, d).set_batch_size(batch_size)
+            d.set_batch_size(batch_size)
+
+    def force_trigger_event(self) -> None:
+        for d in self._child_cards:
+            d.force_trigger_event()

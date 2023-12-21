@@ -58,7 +58,7 @@ Spectrum API, to be used for configuring hardware and interpreting responses rec
 
 from spectrumdevice.measurement import Measurement
 from .devices.digitiser.digitiser_card import SpectrumDigitiserCard
-from .devices.digitiser.digitiser_channel import SpectrumDigitiserChannel
+from .devices.digitiser.digitiser_channel import SpectrumDigitiserAnalogChannel
 from .devices.digitiser.digitiser_star_hub import SpectrumDigitiserStarHub
 from .devices.mocks import MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub
 from .devices.abstract_device import (
@@ -70,7 +70,7 @@ from .devices.abstract_device import (
 from .devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
 
 __all__ = [
-    "SpectrumDigitiserChannel",
+    "SpectrumDigitiserAnalogChannel",
     "SpectrumDigitiserCard",
     "SpectrumDigitiserStarHub",
     "MockSpectrumDigitiserCard",

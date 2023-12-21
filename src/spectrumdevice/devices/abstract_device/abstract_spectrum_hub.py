@@ -8,13 +8,13 @@ Spectrum cards)."""
 from abc import ABC
 from functools import reduce
 from operator import or_
-from typing import List, Sequence, Tuple
+from typing import List, Sequence, Tuple, TypeVar, Generic
 
 from numpy import arange
 
 from spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK
 from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
-from spectrumdevice.devices.abstract_device.device_interface import SpectrumChannelInterface, SpectrumDeviceInterface
+from spectrumdevice.devices.abstract_device.interfaces import SpectrumChannelInterface, SpectrumDeviceInterface
 from spectrumdevice.exceptions import SpectrumSettingsMismatchError
 from spectrumdevice.settings import (
     AdvancedCardFeature,
@@ -29,7 +29,10 @@ from spectrumdevice.settings import (
 from spectrumdevice.spectrum_wrapper import destroy_handle
 
 
-class AbstractSpectrumStarHub(AbstractSpectrumDevice, ABC):
+CardType = TypeVar("CardType", bound=SpectrumDeviceInterface)
+
+
+class AbstractSpectrumStarHub(AbstractSpectrumDevice, Generic[CardType], ABC):
     """Composite abstract class of `AbstractSpectrumCard` implementing methods common to all StarHubs. StarHubs are
     composites of more than one Spectrum card. Acquisition and generation from the child cards of a StarHub
     is synchronised, aggregating the channels of all child cards."""
@@ -37,7 +40,7 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, ABC):
     def __init__(
         self,
         device_number: int,
-        child_cards: Sequence[SpectrumDeviceInterface],
+        child_cards: Sequence[CardType],
         master_card_index: int,
     ):
         """
@@ -48,7 +51,7 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, ABC):
             master_card_index (int): The position within child_cards where the master card (the card which controls the
                 clock) is located.
         """
-        self._child_cards: Sequence[SpectrumDeviceInterface] = child_cards
+        self._child_cards: Sequence[CardType] = child_cards
         self._master_card = child_cards[master_card_index]
         self._triggering_card = child_cards[master_card_index]
         child_card_logical_indices = (2**n for n in range(len(self._child_cards)))

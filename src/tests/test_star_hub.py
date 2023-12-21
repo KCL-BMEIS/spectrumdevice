@@ -4,9 +4,9 @@ import pytest
 from numpy import array
 
 from spectrum_gmbh.regs import SPC_CHENABLE
-from spectrumdevice import AbstractSpectrumCard, SpectrumDigitiserChannel, SpectrumDigitiserStarHub
+from spectrumdevice import AbstractSpectrumCard, SpectrumDigitiserAnalogChannel, SpectrumDigitiserStarHub
 from spectrumdevice.exceptions import SpectrumInvalidNumberOfEnabledChannels
-from spectrumdevice.settings.channel import SpectrumChannelName
+from spectrumdevice.settings.channel import SpectrumAnalogChannelName
 from spectrumdevice.settings.transfer_buffer import create_samples_acquisition_transfer_buffer
 from tests.configuration import ACQUISITION_LENGTH, NUM_CARDS_IN_STAR_HUB, NUM_CHANNELS_PER_MODULE, NUM_MODULES_PER_CARD
 from tests.device_factories import create_spectrum_star_hub_for_testing
@@ -21,7 +21,7 @@ class StarHubTest(SingleCardTest):
         self._expected_num_channels_each_card = NUM_CHANNELS_PER_MODULE * NUM_MODULES_PER_CARD
         self._expected_total_num_channels = self._expected_num_channels_each_card * NUM_CARDS_IN_STAR_HUB
 
-        self._all_spectrum_channel_identifiers = [c.value for c in SpectrumChannelName]
+        self._all_spectrum_channel_identifiers = [c.value for c in SpectrumAnalogChannelName]
         self._all_spectrum_channel_identifiers.sort()  # Enums are unordered to ensure channels are in ascending order
 
     def tearDown(self) -> None:
@@ -53,7 +53,7 @@ class StarHubTest(SingleCardTest):
         expected_channels = []
         for n in range(NUM_CARDS_IN_STAR_HUB):
             expected_channels += [
-                SpectrumDigitiserChannel(i, cast(AbstractSpectrumCard, self._device._child_cards[n]))
+                SpectrumDigitiserAnalogChannel(i, cast(AbstractSpectrumCard, self._device._child_cards[n]))
                 for i in range(self._expected_num_channels_each_card)
             ]
         expected_channels_tuple = tuple(expected_channels)

@@ -2,14 +2,14 @@ from typing import cast
 from unittest import TestCase
 
 from spectrum_gmbh.regs import SPC_CHENABLE
-from spectrumdevice import SpectrumDigitiserCard, SpectrumDigitiserChannel
+from spectrumdevice import SpectrumDigitiserCard, SpectrumDigitiserAnalogChannel
 from spectrumdevice.devices.digitiser import SpectrumDigitiserInterface
 from spectrumdevice.exceptions import (
     SpectrumDeviceNotConnected,
     SpectrumExternalTriggerNotEnabled,
     SpectrumTriggerOperationNotImplemented,
 )
-from spectrumdevice.settings.channel import SpectrumChannelName
+from spectrumdevice.settings.channel import SpectrumAnalogChannelName
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
 from spectrumdevice.settings.transfer_buffer import create_samples_acquisition_transfer_buffer
 from spectrumdevice.settings.triggering import ExternalTriggerMode, TriggerSource
@@ -20,7 +20,7 @@ from tests.device_factories import create_spectrum_card_for_testing
 class SingleCardTest(TestCase):
     def setUp(self) -> None:
         self._device: SpectrumDigitiserInterface = create_spectrum_card_for_testing()
-        self._all_spectrum_channel_identifiers = [c.value for c in SpectrumChannelName]
+        self._all_spectrum_channel_identifiers = [c.value for c in SpectrumAnalogChannelName]
         self._all_spectrum_channel_identifiers.sort()  # Enums are unordered so ensure channels are in ascending order
         self._expected_num_channels = NUM_CHANNELS_PER_MODULE * NUM_MODULES_PER_CARD
 
@@ -36,7 +36,7 @@ class SingleCardTest(TestCase):
 
         expected_channels = tuple(
             [
-                SpectrumDigitiserChannel(i, cast(SpectrumDigitiserCard, self._device))
+                SpectrumDigitiserAnalogChannel(i, cast(SpectrumDigitiserCard, self._device))
                 for i in range(self._expected_num_channels)
             ]
         )

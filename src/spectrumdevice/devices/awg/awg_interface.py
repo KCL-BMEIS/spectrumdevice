@@ -3,13 +3,18 @@ from abc import ABC, abstractmethod
 from numpy import int16
 from numpy.typing import NDArray
 
-from spectrumdevice.devices.abstract_device import SpectrumChannelInterface, SpectrumDeviceInterface
+from spectrumdevice.devices.abstract_device import SpectrumDeviceInterface
+from spectrumdevice.devices.abstract_device.interfaces import SpectrumAnalogChannelInterface, SpectrumIOLineInterface
 from spectrumdevice.settings.channel import OutputChannelFilter, OutputChannelStopLevelMode
 from spectrumdevice.settings.device_modes import GenerationMode
 from spectrumdevice.settings.output_channel_pairing import ChannelPair, ChannelPairingMode
 
 
-class SpectrumAWGChannelInterface(SpectrumChannelInterface, ABC):
+class SpectrumAWGIOLineInterface(SpectrumIOLineInterface, ABC):
+    pass
+
+
+class SpectrumAWGAnalogChannelInterface(SpectrumAnalogChannelInterface, ABC):
     """Defines the public interface for control of the channels of Spectrum AWG device. All properties are read-
     only and must be set with their respective setter methods."""
 

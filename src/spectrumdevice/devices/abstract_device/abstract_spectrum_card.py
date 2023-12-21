@@ -9,7 +9,7 @@ import logging
 from abc import ABC, abstractmethod
 from functools import reduce
 from operator import or_
-from typing import List, Optional, Sequence, Tuple
+from typing import List, Optional, Sequence, Tuple, TypeVar, Generic
 
 from spectrum_gmbh.regs import (
     M2CMD_DATA_STARTDMA,
@@ -31,9 +31,10 @@ from spectrum_gmbh.regs import (
     SPC_TIMEOUT,
     SPC_TRIG_ANDMASK,
     SPC_TRIG_ORMASK,
+    M2CMD_CARD_FORCETRIGGER,
 )
 from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
-from spectrumdevice.devices.abstract_device.device_interface import SpectrumChannelInterface
+from spectrumdevice.devices.abstract_device.interfaces import SpectrumChannelInterface
 from spectrumdevice.exceptions import (
     SpectrumExternalTriggerNotEnabled,
     SpectrumInvalidNumberOfEnabledChannels,
@@ -67,7 +68,10 @@ from spectrumdevice.spectrum_wrapper import destroy_handle
 logger = logging.getLogger(__name__)
 
 
-class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
+ChannelInterfaceType = TypeVar("ChannelInterfaceType", bound=SpectrumChannelInterface)
+
+
+class AbstractSpectrumCard(AbstractSpectrumDevice, Generic[ChannelInterfaceType], ABC):
     """Abstract superclass implementing methods common to all individual "card" devices (as opposed to "hub" devices)."""
 
     def __init__(self, device_number: int = 0, ip_address: Optional[str] = None):
@@ -189,7 +193,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
             raise NotImplementedError(f"Cannot compare {self.__class__} with {other.__class__}")
 
     @property
-    def channels(self) -> Sequence[SpectrumChannelInterface]:
+    def channels(self) -> Sequence[ChannelInterfaceType]:
         """A tuple containing the channels that belong to the card.
 
         Properties of the individual channels can be set by calling the methods of the
@@ -370,7 +374,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
             )
 
     @abstractmethod
-    def _init_channels(self) -> Sequence[SpectrumChannelInterface]:
+    def _init_channels(self) -> Sequence[ChannelInterfaceType]:
         raise NotImplementedError()
 
     @property
@@ -458,6 +462,10 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
     @property
     def type(self) -> CardType:
         return CardType(self.read_spectrum_device_register(SPC_FNCTYPE))
+
+    def force_trigger_event(self) -> None:
+        """Force a trigger event to occur"""
+        self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_FORCETRIGGER)
 
 
 def _create_visa_string_from_ip(ip_address: str, instrument_number: int) -> str:

@@ -1,8 +1,11 @@
 from numpy import int16
 
 from spectrumdevice import AbstractSpectrumCard, AbstractSpectrumChannel
-from spectrumdevice.devices.awg.awg_interface import SpectrumAWGChannelInterface
+from spectrumdevice.devices.abstract_device.abstract_spectrum_channel import AbstractSpectrumAnalogChannel
+from spectrumdevice.devices.abstract_device.abstract_spectrum_io_line import AbstractSpectrumIOLine
+from spectrumdevice.devices.awg.awg_interface import SpectrumAWGAnalogChannelInterface, SpectrumAWGIOLineInterface
 from spectrumdevice.exceptions import SpectrumCardIsNotAnAWG
+from spectrumdevice.settings import IOLineMode
 from spectrumdevice.settings.card_dependent_properties import CardType, OUTPUT_AMPLITUDE_LIMITS_IN_MV
 from spectrumdevice.settings.channel import (
     OUTPUT_AMPLITUDE_COMMANDS,
@@ -14,11 +17,45 @@ from spectrumdevice.settings.channel import (
     OutputChannelFilter,
     OutputChannelStopLevelMode,
 )
+from spectrumdevice.settings.io_lines import (
+    DigOutIOLineModeSettings,
+    DigOutSourceChannel,
+    DigOutSourceBit,
+    IO_LINE_MODE_COMMANDS,
+)
 
 
-class SpectrumAWGChannel(AbstractSpectrumChannel, SpectrumAWGChannelInterface):
+class SpectrumDigitiserIOLine(AbstractSpectrumIOLine, SpectrumAWGIOLineInterface):
     def __init__(self, channel_number: int, parent_device: AbstractSpectrumCard):
+        if parent_device.type != CardType.SPCM_TYPE_AO:
+            raise SpectrumCardIsNotAnAWG(parent_device.type)
+        AbstractSpectrumChannel.__init__(self, channel_number, parent_device)
+        self._dig_out_settings = DigOutIOLineModeSettings(
+            source_channel=DigOutSourceChannel.SPCM_XMODE_DIGOUTSRC_CH0,
+            source_bit=DigOutSourceBit.SPCM_XMODE_DIGOUTSRC_BIT15,
+        )
 
+    @property
+    def dig_out_settings(self) -> DigOutIOLineModeSettings:
+        return self._dig_out_settings
+
+    def set_dig_out_settings(self, dig_out_settings: DigOutIOLineModeSettings) -> None:
+        self._dig_out_settings = dig_out_settings
+
+    @property
+    def mode(self) -> IOLineMode:
+        # todo: this may contain dig out settings bits, so needs a decode function that ignores those bits
+        return IOLineMode(self._parent_device.read_spectrum_device_register(IO_LINE_MODE_COMMANDS[self._number]))
+
+    def set_mode(self, mode: IOLineMode) -> None:
+        or_of_settings = (
+            self.dig_out_settings.source_channel.value | self.dig_out_settings.source_bit.value | mode.value
+        )
+        self._parent_device.write_to_spectrum_device_register(IO_LINE_MODE_COMMANDS[self._number], or_of_settings)
+
+
+class SpectrumAWGAnalogChannel(AbstractSpectrumAnalogChannel, SpectrumAWGAnalogChannelInterface):
+    def __init__(self, channel_number: int, parent_device: AbstractSpectrumCard):
         if parent_device.type != CardType.SPCM_TYPE_AO:
             raise SpectrumCardIsNotAnAWG(parent_device.type)
         AbstractSpectrumChannel.__init__(self, channel_number, parent_device)

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from spectrumdevice import SpectrumDigitiserChannel
+from spectrumdevice import SpectrumDigitiserAnalogChannel
 from spectrumdevice.settings import InputImpedance
 from tests.device_factories import create_spectrum_card_for_testing
 
@@ -8,7 +8,7 @@ from tests.device_factories import create_spectrum_card_for_testing
 class SingleChannelTest(TestCase):
     def setUp(self) -> None:
         self._device = create_spectrum_card_for_testing()
-        self._channel = SpectrumDigitiserChannel(0, self._device)
+        self._channel = SpectrumDigitiserAnalogChannel(0, self._device)
 
     def tearDown(self) -> None:
         self._channel._parent_device.disconnect()
