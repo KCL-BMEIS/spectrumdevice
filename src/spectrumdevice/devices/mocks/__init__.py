@@ -96,7 +96,7 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
         """
         super().set_acquisition_length_in_samples(length_in_samples)
 
-    def set_enabled_channels(self, channels_nums: List[int]) -> None:
+    def set_enabled_analog_channels(self, channels_nums: List[int]) -> None:
         """Set the channels to enable for the mock acquisition. See `SpectrumDigitiserCard` for more information. This
         method is overridden here only so that the internal attributes related to the mock on-device buffer
         can be set.
@@ -105,8 +105,8 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
             channels_nums (List[int]): List of mock channel indices to enable, e.g. [0, 1, 2].
 
         """
-        if len(list(filter(lambda x: 0 <= x < len(self.channels), channels_nums))) == len(channels_nums):
-            super().set_enabled_channels(channels_nums)
+        if len(list(filter(lambda x: 0 <= x < len(self.analog_channels), channels_nums))) == len(channels_nums):
+            super().set_enabled_analog_channels(channels_nums)
         else:
             raise SpectrumSettingsMismatchError("Not enough channels in mock device configuration.")
 

@@ -39,11 +39,11 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
             settings.acquisition_length_in_samples - settings.pre_trigger_length_in_samples
         )
         self.set_timeout_in_ms(settings.timeout_in_ms)
-        self.set_enabled_channels(settings.enabled_channels)
+        self.set_enabled_analog_channels(settings.enabled_channels)
 
         # Apply channel dependent settings
         for channel, v_range, v_offset, impedance in zip(
-            self.channels,
+            self.analog_channels,
             settings.vertical_ranges_in_mv,
             settings.vertical_offsets_in_percent,
             settings.input_impedances,
@@ -54,12 +54,12 @@ class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevi
 
         # Only some hardware has software programmable input coupling, so coupling can be None
         if settings.input_couplings is not None:
-            for channel, coupling in zip(self.channels, settings.input_couplings):
+            for channel, coupling in zip(self.analog_channels, settings.input_couplings):
                 cast(SpectrumDigitiserAnalogChannel, channel).set_input_coupling(coupling)
 
         # Only some hardware has software programmable input paths, so it can be None
         if settings.input_paths is not None:
-            for channel, path in zip(self.channels, settings.input_paths):
+            for channel, path in zip(self.analog_channels, settings.input_paths):
                 cast(SpectrumDigitiserAnalogChannel, channel).set_input_path(path)
 
         # Write the configuration to the card

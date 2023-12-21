@@ -116,16 +116,20 @@ class SpectrumDeviceInterface(ABC):
 
     @property
     @abstractmethod
-    def channels(self) -> Sequence[SpectrumChannelInterface]:
+    def analog_channels(self) -> Sequence[SpectrumAnalogChannelInterface]:
+        raise NotImplementedError()
+
+    @property
+    def io_lines(self) -> Sequence[SpectrumIOLineInterface]:
         raise NotImplementedError()
 
     @property
     @abstractmethod
-    def enabled_channels(self) -> List[int]:
+    def enabled_analog_channels(self) -> List[int]:
         raise NotImplementedError()
 
     @abstractmethod
-    def set_enabled_channels(self, channels_nums: List[int]) -> None:
+    def set_enabled_analog_channels(self, channels_nums: List[int]) -> None:
         raise NotImplementedError()
 
     @property

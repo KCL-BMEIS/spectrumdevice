@@ -142,7 +142,7 @@ class MockAbstractSpectrumDigitiser(MockAbstractSpectrumDevice, AbstractSpectrum
                 self._source_frame_rate_hz,
                 amplitude,
                 self.transfer_buffers[0].data_array,
-                self.acquisition_length_in_samples * len(self.enabled_channels),
+                self.acquisition_length_in_samples * len(self.enabled_analog_channels),
                 self._buffer_lock,
             ),
         )

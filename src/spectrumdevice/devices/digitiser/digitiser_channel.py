@@ -9,10 +9,13 @@ from numpy import ndarray
 from spectrum_gmbh.regs import SPC_MIINST_MAXADCVALUE
 from spectrumdevice.devices.abstract_device import AbstractSpectrumCard, AbstractSpectrumChannel
 from spectrumdevice.devices.abstract_device.abstract_spectrum_channel import AbstractSpectrumAnalogChannel
+from spectrumdevice.devices.abstract_device.abstract_spectrum_io_line import AbstractSpectrumIOLine
 from spectrumdevice.devices.digitiser.digitiser_interface import (
     SpectrumDigitiserAnalogChannelInterface,
+    SpectrumDigitiserIOLineInterface,
 )
 from spectrumdevice.exceptions import SpectrumCardIsNotADigitiser
+from spectrumdevice.settings import IOLineMode
 from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.channel import (
     INPUT_IMPEDANCE_COMMANDS,
@@ -24,6 +27,16 @@ from spectrumdevice.settings.channel import (
     InputPath,
     INPUT_PATH_COMMANDS,
 )
+
+
+class SpectrumDigitiserIOLine(AbstractSpectrumIOLine, SpectrumDigitiserIOLineInterface):
+    def __init__(self, channel_number: int, parent_device: AbstractSpectrumCard):
+        if parent_device.type != CardType.SPCM_TYPE_AI:
+            raise SpectrumCardIsNotADigitiser(parent_device.type)
+        AbstractSpectrumChannel.__init__(self, channel_number, parent_device)
+
+    def _get_io_line_mode_settings_mask(self, mode: IOLineMode) -> int:
+        return 0  # no settings required for DigOut
 
 
 class SpectrumDigitiserAnalogChannel(AbstractSpectrumAnalogChannel, SpectrumDigitiserAnalogChannelInterface):

@@ -14,7 +14,11 @@ from numpy import arange
 
 from spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK
 from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
-from spectrumdevice.devices.abstract_device.interfaces import SpectrumChannelInterface, SpectrumDeviceInterface
+from spectrumdevice.devices.abstract_device.interfaces import (
+    SpectrumDeviceInterface,
+    SpectrumAnalogChannelInterface,
+    SpectrumIOLineInterface,
+)
 from spectrumdevice.exceptions import SpectrumSettingsMismatchError
 from spectrumdevice.settings import (
     AdvancedCardFeature,
@@ -230,7 +234,7 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, Generic[CardType], ABC):
             d.apply_channel_enabling()
 
     @property
-    def enabled_channels(self) -> List[int]:
+    def enabled_analog_channels(self) -> List[int]:
         """The currently enabled channel indices, indexed over the whole hub (from 0 to N-1, where N is the total
         number of channels available to the hub).
 
@@ -240,11 +244,13 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, Generic[CardType], ABC):
         enabled_channels = []
         n_channels_in_previous_card = 0
         for card in self._child_cards:
-            enabled_channels += [channel_num + n_channels_in_previous_card for channel_num in card.enabled_channels]
-            n_channels_in_previous_card = len(card.channels)
+            enabled_channels += [
+                channel_num + n_channels_in_previous_card for channel_num in card.enabled_analog_channels
+            ]
+            n_channels_in_previous_card = len(card.analog_channels)
         return enabled_channels
 
-    def set_enabled_channels(self, channels_nums: List[int]) -> None:
+    def set_enabled_analog_channels(self, channels_nums: List[int]) -> None:
         """Change the currently enabled channel indices, indexed over the whole hub (from 0 to N-1, where N is the total
         number of channels available to the hub).
 
@@ -255,10 +261,10 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, Generic[CardType], ABC):
         channels_to_enable_all_cards = channels_nums
 
         for child_card in self._child_cards:
-            n_channels_in_card = len(child_card.channels)
+            n_channels_in_card = len(child_card.analog_channels)
             channels_to_enable_this_card = list(set(arange(n_channels_in_card)) & set(channels_to_enable_all_cards))
             num_channels_to_enable_this_card = len(channels_to_enable_this_card)
-            child_card.set_enabled_channels(channels_to_enable_this_card)
+            child_card.set_enabled_analog_channels(channels_to_enable_this_card)
             channels_to_enable_all_cards = [
                 num - n_channels_in_card for num in channels_nums[num_channels_to_enable_this_card:]
             ]
@@ -273,17 +279,29 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, Generic[CardType], ABC):
         return [card.transfer_buffers[0] for card in self._child_cards]
 
     @property
-    def channels(self) -> Sequence[SpectrumChannelInterface]:
+    def analog_channels(self) -> Sequence[SpectrumAnalogChannelInterface]:
         """A tuple containing of all the channels of the child cards of the hub. See `AbstractSpectrumCard.channels` for
         more information.
 
         Returns:
             channels (Sequence[`SpectrumChannelInterface`]): A tuple of `SpectrumDigitiserChannel` objects.
         """
-        channels: List[SpectrumChannelInterface] = []
+        channels: List[SpectrumAnalogChannelInterface] = []
         for device in self._child_cards:
-            channels += device.channels
+            channels += device.analog_channels
         return tuple(channels)
+
+    @property
+    def io_lines(self) -> Sequence[SpectrumIOLineInterface]:
+        """A tuple containing of all the Multipurpose IO Lines of the child cards of the hub.
+
+        Returns:
+            channels (Sequence[`SpectrumIOLineInterface`]): A tuple of `SpectrumIOLineInterface` objects.
+        """
+        io_lines: List[SpectrumIOLineInterface] = []
+        for device in self._child_cards:
+            io_lines += device.io_lines
+        return tuple(io_lines)  # todo: this is probably wrong. I don't think both cards in a netbox have IO lines
 
     @property
     def timeout_in_ms(self) -> int:

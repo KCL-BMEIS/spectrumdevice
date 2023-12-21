@@ -28,16 +28,16 @@ class StarHubTest(SingleCardTest):
         self._device.disconnect()
 
     def test_count_channels(self) -> None:
-        channels = self._device.channels
+        channels = self._device.analog_channels
         self.assertEqual(len(channels), self._expected_total_num_channels)
 
     def test_enable_one_channel(self) -> None:
         with self.assertRaises(SpectrumInvalidNumberOfEnabledChannels):
-            self._device.set_enabled_channels([0])
+            self._device.set_enabled_analog_channels([0])
 
     def test_enable_two_channels(self) -> None:
 
-        self._device.set_enabled_channels([0, self._expected_num_channels_each_card])
+        self._device.set_enabled_analog_channels([0, self._expected_num_channels_each_card])
         card_one_expected_command = self._all_spectrum_channel_identifiers[0]
         card_two_expected_command = self._all_spectrum_channel_identifiers[0]
         self.assertEqual(
@@ -48,7 +48,7 @@ class StarHubTest(SingleCardTest):
         )
 
     def test_get_channels(self) -> None:
-        channels = self._device.channels
+        channels = self._device.analog_channels
 
         expected_channels = []
         for n in range(NUM_CARDS_IN_STAR_HUB):

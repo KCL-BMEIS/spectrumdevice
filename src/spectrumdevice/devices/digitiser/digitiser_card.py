@@ -23,11 +23,16 @@ from spectrum_gmbh.regs import (
     SPC_MIINST_MODULES,
     SPC_POSTTRIGGER,
     SPC_SEGMENTSIZE,
+    TYP_SERIESMASK,
+    TYP_M2PEXPSERIES,
 )
 from spectrumdevice.devices.abstract_device import AbstractSpectrumCard
 from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
-from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserAnalogChannelInterface
-from spectrumdevice.devices.digitiser.digitiser_channel import SpectrumDigitiserAnalogChannel
+from spectrumdevice.devices.digitiser.digitiser_interface import (
+    SpectrumDigitiserAnalogChannelInterface,
+    SpectrumDigitiserIOLineInterface,
+)
+from spectrumdevice.devices.digitiser.digitiser_channel import SpectrumDigitiserAnalogChannel, SpectrumDigitiserIOLine
 from spectrumdevice.devices.spectrum_timestamper import Timestamper
 from spectrumdevice.exceptions import (
     SpectrumCardIsNotADigitiser,
@@ -49,7 +54,10 @@ from spectrumdevice.settings.transfer_buffer import (
 logger = logging.getLogger(__name__)
 
 
-class SpectrumDigitiserCard(AbstractSpectrumCard[SpectrumDigitiserAnalogChannelInterface], AbstractSpectrumDigitiser):
+class SpectrumDigitiserCard(
+    AbstractSpectrumCard[SpectrumDigitiserAnalogChannelInterface, SpectrumDigitiserIOLineInterface],
+    AbstractSpectrumDigitiser,
+):
     """Class for controlling individual Spectrum digitiser cards."""
 
     def __init__(self, device_number: int = 0, ip_address: Optional[str] = None):
@@ -66,11 +74,17 @@ class SpectrumDigitiserCard(AbstractSpectrumCard[SpectrumDigitiserAnalogChannelI
         self._timestamper: Optional[Timestamper] = None
         self._batch_size = 1
 
-    def _init_channels(self) -> Sequence[SpectrumDigitiserAnalogChannelInterface]:
+    def _init_analog_channels(self) -> Sequence[SpectrumDigitiserAnalogChannelInterface]:
         num_modules = self.read_spectrum_device_register(SPC_MIINST_MODULES)
         num_channels_per_module = self.read_spectrum_device_register(SPC_MIINST_CHPERMODULE)
         total_channels = num_modules * num_channels_per_module
         return tuple([SpectrumDigitiserAnalogChannel(n, self) for n in range(total_channels)])
+
+    def _init_io_lines(self) -> Sequence[SpectrumDigitiserIOLineInterface]:
+        if (self.model_number.value & TYP_SERIESMASK) == TYP_M2PEXPSERIES:
+            return tuple([SpectrumDigitiserIOLine(n, self) for n in range(4)])
+        else:
+            raise NotImplementedError("Don't know how many IO lines other types of card have. Only M2P series.")
 
     def enable_timestamping(self) -> None:
         self._timestamper = Timestamper(self, self._handle)
@@ -112,7 +126,7 @@ class SpectrumDigitiserCard(AbstractSpectrumCard[SpectrumDigitiserAnalogChannelI
             raise SpectrumNoTransferBufferDefined("Cannot find a samples transfer buffer")
 
         num_read_bytes = 0
-        num_samples_per_frame = self.acquisition_length_in_samples * len(self.enabled_channels)
+        num_samples_per_frame = self.acquisition_length_in_samples * len(self.enabled_analog_channels)
         num_expected_bytes_per_frame = num_samples_per_frame * self._transfer_buffer.data_array.itemsize
         raw_samples = zeros(num_samples_per_frame * self._batch_size, dtype=self._transfer_buffer.data_array.dtype)
 
@@ -147,7 +161,7 @@ class SpectrumDigitiserCard(AbstractSpectrumCard[SpectrumDigitiserAnalogChannelI
                 num_read_bytes += num_available_bytes
 
         waveforms_in_columns = raw_samples.reshape(
-            (self._batch_size, self.acquisition_length_in_samples, len(self.enabled_channels))
+            (self._batch_size, self.acquisition_length_in_samples, len(self.enabled_analog_channels))
         )
 
         repeat_acquisitions = []
@@ -155,9 +169,9 @@ class SpectrumDigitiserCard(AbstractSpectrumCard[SpectrumDigitiserAnalogChannelI
             repeat_acquisitions.append(
                 [
                     cast(
-                        SpectrumDigitiserAnalogChannel, self.channels[ch_num]
+                        SpectrumDigitiserAnalogChannel, self.analog_channels[ch_num]
                     ).convert_raw_waveform_to_voltage_waveform(squeeze(waveform))
-                    for ch_num, waveform in zip(self.enabled_channels, waveforms_in_columns[n, :, :].T)
+                    for ch_num, waveform in zip(self.enabled_analog_channels, waveforms_in_columns[n, :, :].T)
                 ]
             )
 
@@ -285,7 +299,9 @@ class SpectrumDigitiserCard(AbstractSpectrumCard[SpectrumDigitiserAnalogChannelI
         elif self._transfer_buffer is None:
             if self.acquisition_mode in (AcquisitionMode.SPC_REC_FIFO_MULTI, AcquisitionMode.SPC_REC_FIFO_AVERAGE):
                 bytes_per_sample = SAMPLE_DATA_TYPE().itemsize
-                samples_per_batch = self.acquisition_length_in_samples * len(self.enabled_channels) * self._batch_size
+                samples_per_batch = (
+                    self.acquisition_length_in_samples * len(self.enabled_analog_channels) * self._batch_size
+                )
                 pages_per_batch = samples_per_batch * bytes_per_sample / NOTIFY_SIZE_PAGE_SIZE_IN_BYTES
 
                 if pages_per_batch < DEFAULT_NOTIFY_SIZE_IN_PAGES:
@@ -299,7 +315,7 @@ class SpectrumDigitiserCard(AbstractSpectrumCard[SpectrumDigitiserAnalogChannelI
                 )
             elif self.acquisition_mode in (AcquisitionMode.SPC_REC_STD_SINGLE, AcquisitionMode.SPC_REC_STD_AVERAGE):
                 self._transfer_buffer = create_samples_acquisition_transfer_buffer(
-                    self.acquisition_length_in_samples * len(self.enabled_channels), notify_size_in_pages=0
+                    self.acquisition_length_in_samples * len(self.enabled_analog_channels), notify_size_in_pages=0
                 )
             else:
                 raise ValueError("AcquisitionMode not recognised")

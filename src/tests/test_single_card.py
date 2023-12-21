@@ -28,11 +28,11 @@ class SingleCardTest(TestCase):
         self._device.disconnect()
 
     def test_count_channels(self) -> None:
-        channels = self._device.channels
+        channels = self._device.analog_channels
         self.assertEqual(self._expected_num_channels, len(channels))
 
     def test_get_channels(self) -> None:
-        channels = self._device.channels
+        channels = self._device.analog_channels
 
         expected_channels = tuple(
             [
@@ -43,13 +43,13 @@ class SingleCardTest(TestCase):
         self.assertEqual(expected_channels, channels)
 
     def test_enable_one_channel(self) -> None:
-        self._device.set_enabled_channels([0])
+        self._device.set_enabled_analog_channels([0])
         self.assertEqual(
             self._all_spectrum_channel_identifiers[0], self._device.read_spectrum_device_register(SPC_CHENABLE)
         )
 
     def test_enable_two_channels(self) -> None:
-        self._device.set_enabled_channels([0, 1])
+        self._device.set_enabled_analog_channels([0, 1])
         expected_command = self._all_spectrum_channel_identifiers[0] | self._all_spectrum_channel_identifiers[1]
         self.assertEqual(expected_command, self._device.read_spectrum_device_register(SPC_CHENABLE))
 

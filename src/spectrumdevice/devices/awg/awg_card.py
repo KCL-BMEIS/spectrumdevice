@@ -3,11 +3,11 @@ from typing import Optional, Sequence
 from numpy import int16
 from numpy.typing import NDArray
 
-from spectrum_gmbh.regs import SPC_MIINST_CHPERMODULE, SPC_MIINST_MODULES
+from spectrum_gmbh.regs import SPC_MIINST_CHPERMODULE, SPC_MIINST_MODULES, TYP_SERIESMASK, TYP_M2PEXPSERIES
 from spectrumdevice import AbstractSpectrumCard
 from spectrumdevice.devices.awg.abstract_spectrum_awg import AbstractSpectrumAWG
-from spectrumdevice.devices.awg.awg_channel import SpectrumAWGAnalogChannel
-from spectrumdevice.devices.awg.awg_interface import SpectrumAWGAnalogChannelInterface
+from spectrumdevice.devices.awg.awg_channel import SpectrumAWGAnalogChannel, SpectrumAWGIOLine
+from spectrumdevice.devices.awg.awg_interface import SpectrumAWGAnalogChannelInterface, SpectrumAWGIOLineInterface
 from spectrumdevice.settings import TransferBuffer
 from spectrumdevice.settings.transfer_buffer import (
     BufferDirection,
@@ -17,12 +17,20 @@ from spectrumdevice.settings.transfer_buffer import (
 )
 
 
-class SpectrumAWGCard(AbstractSpectrumCard[SpectrumAWGAnalogChannelInterface], AbstractSpectrumAWG):
-    def _init_channels(self) -> Sequence[SpectrumAWGAnalogChannelInterface]:
+class SpectrumAWGCard(
+    AbstractSpectrumCard[SpectrumAWGAnalogChannelInterface, SpectrumAWGIOLineInterface], AbstractSpectrumAWG
+):
+    def _init_analog_channels(self) -> Sequence[SpectrumAWGAnalogChannelInterface]:
         num_modules = self.read_spectrum_device_register(SPC_MIINST_MODULES)
         num_channels_per_module = self.read_spectrum_device_register(SPC_MIINST_CHPERMODULE)
         total_channels = num_modules * num_channels_per_module
         return tuple([SpectrumAWGAnalogChannel(n, self) for n in range(total_channels)])
+
+    def _init_io_lines(self) -> Sequence[SpectrumAWGIOLineInterface]:
+        if (self.model_number.value & TYP_SERIESMASK) == TYP_M2PEXPSERIES:
+            return tuple([SpectrumAWGIOLine(n, self) for n in range(4)])
+        else:
+            raise NotImplementedError("Don't know how many IO lines other types of card have. Only M2P series.")
 
     def transfer_waveform(self, waveform: NDArray[int16]) -> None:
         buffer = transfer_buffer_factory(

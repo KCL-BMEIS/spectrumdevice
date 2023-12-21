@@ -116,7 +116,9 @@ class StarHubIntegrationTests(TestCase):
             master_card_index=STAR_HUB_MASTER_CARD_INDEX,
             ip_address=TEST_DEVICE_IP,
         )
-        self.assertEqual(len(hub.channels), NUM_CHANNELS_PER_MODULE * NUM_MODULES_PER_CARD * NUM_CARDS_IN_STAR_HUB)
+        self.assertEqual(
+            len(hub.analog_channels), NUM_CHANNELS_PER_MODULE * NUM_MODULES_PER_CARD * NUM_CARDS_IN_STAR_HUB
+        )
         self.assertEqual(len(hub._child_cards), NUM_CARDS_IN_STAR_HUB)
 
 

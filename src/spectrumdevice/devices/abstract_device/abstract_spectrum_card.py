@@ -34,7 +34,7 @@ from spectrum_gmbh.regs import (
     M2CMD_CARD_FORCETRIGGER,
 )
 from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
-from spectrumdevice.devices.abstract_device.interfaces import SpectrumChannelInterface
+from spectrumdevice.devices.abstract_device.interfaces import SpectrumAnalogChannelInterface, SpectrumIOLineInterface
 from spectrumdevice.exceptions import (
     SpectrumExternalTriggerNotEnabled,
     SpectrumInvalidNumberOfEnabledChannels,
@@ -68,10 +68,13 @@ from spectrumdevice.spectrum_wrapper import destroy_handle
 logger = logging.getLogger(__name__)
 
 
-ChannelInterfaceType = TypeVar("ChannelInterfaceType", bound=SpectrumChannelInterface)
+# Use a Generic and Type Variables to allow subclasses of AbstractSpectrumCard to define whether they own AWG analog
+# channels or Digitiser analog channels and IO lines
+AnalogChannelInterfaceType = TypeVar("AnalogChannelInterfaceType", bound=SpectrumAnalogChannelInterface)
+IOLineInterfaceType = TypeVar("IOLineInterfaceType", bound=SpectrumIOLineInterface)
 
 
-class AbstractSpectrumCard(AbstractSpectrumDevice, Generic[ChannelInterfaceType], ABC):
+class AbstractSpectrumCard(AbstractSpectrumDevice, Generic[AnalogChannelInterfaceType, IOLineInterfaceType], ABC):
     """Abstract superclass implementing methods common to all individual "card" devices (as opposed to "hub" devices)."""
 
     def __init__(self, device_number: int = 0, ip_address: Optional[str] = None):
@@ -88,8 +91,9 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, Generic[ChannelInterfaceType]
         self._connect(self._visa_string)
         self._model_number = ModelNumber(self.read_spectrum_device_register(SPC_PCITYP))
         self._trigger_sources: List[TriggerSource] = []
-        self._channels = self._init_channels()
-        self._enabled_channels: List[int] = [0]
+        self._analog_channels = self._init_analog_channels()
+        self._io_lines = self._init_io_lines()
+        self._enabled_analog_channels: List[int] = [0]
         self._transfer_buffer: Optional[TransferBuffer] = None
         self.apply_channel_enabling()
 
@@ -193,7 +197,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, Generic[ChannelInterfaceType]
             raise NotImplementedError(f"Cannot compare {self.__class__} with {other.__class__}")
 
     @property
-    def channels(self) -> Sequence[ChannelInterfaceType]:
+    def analog_channels(self) -> Sequence[AnalogChannelInterfaceType]:
         """A tuple containing the channels that belong to the card.
 
         Properties of the individual channels can be set by calling the methods of the
@@ -203,24 +207,37 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, Generic[ChannelInterfaceType]
             channels (Sequence[`SpectrumChannelInterface`]): A tuple of objects conforming to the
             `SpectrumChannelInterface` interface.
         """
-        return self._channels
+        return self._analog_channels
 
     @property
-    def enabled_channels(self) -> List[int]:
+    def io_lines(self) -> Sequence[IOLineInterfaceType]:
+        """A tuple containing the Multipurpose IO Lines that belong to the card.
+
+        Properties of the individual channels can be set by calling the methods of the
+            returned objects directly.
+
+        Returns:
+            channels (Sequence[`SpectrumIOLineInterface`]): A tuple of objects conforming to the
+            `SpectrumIOLineInterface` interface.
+        """
+        return self._io_lines
+
+    @property
+    def enabled_analog_channels(self) -> List[int]:
         """The indices of the currently enabled channels.
         Returns:
             enabled_channels (List[int]): The indices of the currently enabled channels.
         """
-        return self._enabled_channels
+        return self._enabled_analog_channels
 
-    def set_enabled_channels(self, channels_nums: List[int]) -> None:
+    def set_enabled_analog_channels(self, channels_nums: List[int]) -> None:
         """Change which channels are enabled.
 
         Args:
             channels_nums (List[int]): The integer channel indices to enable.
         """
         if len(channels_nums) in [1, 2, 4, 8]:
-            self._enabled_channels = channels_nums
+            self._enabled_analog_channels = channels_nums
             self.apply_channel_enabling()
         else:
             raise SpectrumInvalidNumberOfEnabledChannels(f"{len(channels_nums)} cannot be enabled at once.")
@@ -364,7 +381,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, Generic[ChannelInterfaceType]
     def apply_channel_enabling(self) -> None:
         """Apply the enabled channels chosen using set_enable_channels(). This happens automatically and does not
         usually need to be called."""
-        enabled_channel_spectrum_values = [self.channels[i].name.value for i in self._enabled_channels]
+        enabled_channel_spectrum_values = [self.analog_channels[i].name.value for i in self._enabled_analog_channels]
         if len(enabled_channel_spectrum_values) in [1, 2, 4, 8]:
             bitwise_or_of_enabled_channels = reduce(or_, enabled_channel_spectrum_values)
             self.write_to_spectrum_device_register(SPC_CHENABLE, bitwise_or_of_enabled_channels)
@@ -374,7 +391,11 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, Generic[ChannelInterfaceType]
             )
 
     @abstractmethod
-    def _init_channels(self) -> Sequence[ChannelInterfaceType]:
+    def _init_analog_channels(self) -> Sequence[AnalogChannelInterfaceType]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def _init_io_lines(self) -> Sequence[IOLineInterfaceType]:
         raise NotImplementedError()
 
     @property

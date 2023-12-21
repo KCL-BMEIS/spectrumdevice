@@ -53,19 +53,19 @@ class AbstractSpectrumAWG(SpectrumAWGInterface, AbstractSpectrumDevice, ABC):
 
     def _disable_odd_channel(self, channel_pair: ChannelPair) -> None:
         try:
-            enabled_channels = copy(self.enabled_channels)
+            enabled_channels = copy(self.enabled_analog_channels)
             enabled_channels.remove(channel_pair.value + 1)
-            self.set_enabled_channels(enabled_channels)
+            self.set_enabled_analog_channels(enabled_channels)
         except ValueError:
             pass  # odd numbered channel was not enable, so no need to disable it.
 
     def _mirror_even_channel_settings_on_odd_channel(self, channel_pair: ChannelPair) -> None:
-        cast(SpectrumAWGAnalogChannel, self.channels[channel_pair.value + 1]).set_signal_amplitude_in_mv(
-            cast(SpectrumAWGAnalogChannel, self.channels[channel_pair.value]).signal_amplitude_in_mv
+        cast(SpectrumAWGAnalogChannel, self.analog_channels[channel_pair.value + 1]).set_signal_amplitude_in_mv(
+            cast(SpectrumAWGAnalogChannel, self.analog_channels[channel_pair.value]).signal_amplitude_in_mv
         )
-        cast(SpectrumAWGAnalogChannel, self.channels[channel_pair.value + 1]).set_dc_offset_in_mv(
-            cast(SpectrumAWGAnalogChannel, self.channels[channel_pair.value]).dc_offset_in_mv
+        cast(SpectrumAWGAnalogChannel, self.analog_channels[channel_pair.value + 1]).set_dc_offset_in_mv(
+            cast(SpectrumAWGAnalogChannel, self.analog_channels[channel_pair.value]).dc_offset_in_mv
         )
-        cast(SpectrumAWGAnalogChannel, self.channels[channel_pair.value + 1]).set_output_filter(
-            cast(SpectrumAWGAnalogChannel, self.channels[channel_pair.value]).output_filter
+        cast(SpectrumAWGAnalogChannel, self.analog_channels[channel_pair.value + 1]).set_output_filter(
+            cast(SpectrumAWGAnalogChannel, self.analog_channels[channel_pair.value]).output_filter
         )

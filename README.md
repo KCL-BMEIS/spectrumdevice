@@ -157,11 +157,12 @@ independently configuring each channel.
 For example, to change the vertical range of channel 2 of a digitiser card to 1V:
 
 ```python
-card.channels[2].set_vertical_range_in_mv(1000)
+card.analog_channels[2].set_vertical_range_in_mv(1000)
 ```
 and then print the vertical offset:
+
 ```python
-print(card.channels[2].vertical_offset_in_percent)
+print(card.analog_channels[2].vertical_offset_in_percent)
 ```
 
 ### Configuring everything at once

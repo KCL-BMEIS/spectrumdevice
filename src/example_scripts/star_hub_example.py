@@ -49,8 +49,8 @@ if __name__ == "__main__":
     num_measurements = 5
     hub = connect_to_star_hub_example(mock_mode=False, num_cards=2, master_card_index=1, ip_address="169.254.13.35")
 
-    print(f"{hub} contains {len(hub.channels)} channels in total:")
-    for channel in hub.channels:
+    print(f"{hub} contains {len(hub.analog_channels)} channels in total:")
+    for channel in hub.analog_channels:
         print(channel)
 
     # Trigger settings

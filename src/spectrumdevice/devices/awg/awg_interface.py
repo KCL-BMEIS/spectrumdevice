@@ -7,11 +7,19 @@ from spectrumdevice.devices.abstract_device import SpectrumDeviceInterface
 from spectrumdevice.devices.abstract_device.interfaces import SpectrumAnalogChannelInterface, SpectrumIOLineInterface
 from spectrumdevice.settings.channel import OutputChannelFilter, OutputChannelStopLevelMode
 from spectrumdevice.settings.device_modes import GenerationMode
+from spectrumdevice.settings.io_lines import DigOutIOLineModeSettings
 from spectrumdevice.settings.output_channel_pairing import ChannelPair, ChannelPairingMode
 
 
 class SpectrumAWGIOLineInterface(SpectrumIOLineInterface, ABC):
-    pass
+    @property
+    @abstractmethod
+    def dig_out_settings(self) -> DigOutIOLineModeSettings:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_dig_out_settings(self, dig_out_settings: DigOutIOLineModeSettings) -> None:
+        raise NotImplementedError()
 
 
 class SpectrumAWGAnalogChannelInterface(SpectrumAnalogChannelInterface, ABC):
