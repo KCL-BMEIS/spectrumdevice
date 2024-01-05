@@ -6,7 +6,7 @@
 
 from abc import ABC
 from threading import Event, Lock, Thread
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from spectrum_gmbh.regs import (
     SPCM_FEAT_EXTFW_SEGSTAT,
@@ -17,18 +17,19 @@ from spectrum_gmbh.regs import (
     SPCM_X3_AVAILMODES,
     SPCM_XMODE_DISABLE,
     SPC_CARDMODE,
-    SPC_MEMSIZE,
+    SPC_FNCTYPE, SPC_MEMSIZE,
     SPC_MIINST_MAXADCVALUE,
     SPC_PCIEXTFEATURES,
     SPC_PCIFEATURES,
-    SPC_SEGMENTSIZE,
+    SPC_PCITYP, SPC_SEGMENTSIZE,
     SPC_TIMEOUT,
 )
 from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice
 from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
 from spectrumdevice.devices.mocks.mock_waveform_source import mock_waveform_source_factory
 from spectrumdevice.exceptions import SpectrumDeviceNotConnected
-from spectrumdevice.settings import AcquisitionMode, SpectrumRegisterLength
+from spectrumdevice.settings import AcquisitionMode, ModelNumber, SpectrumRegisterLength
+from spectrumdevice.settings.card_dependent_properties import CardType
 
 
 class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
@@ -37,7 +38,8 @@ class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
     class cannot be constructed directly - instantiate `MockAbstractSpectrumDigitiser` and `MockSpectrumStarHub` objects instead,
     which inherit from this class."""
 
-    def __init__(self) -> None:
+    def __init__(self, model: ModelNumber, card_type: CardType, mode: AcquisitionMode, **kwargs: Any) -> None:
+        print("MockAbstractSpectrumDevice", flush=True)
         self._param_dict: Dict[int, int] = {
             SPC_PCIFEATURES: SPCM_FEAT_MULTI,
             SPC_PCIEXTFEATURES: SPCM_FEAT_EXTFW_SEGSTAT,
@@ -48,7 +50,11 @@ class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
             SPC_TIMEOUT: 1000,
             SPC_SEGMENTSIZE: 1000,
             SPC_MEMSIZE: 1000,
+            SPC_PCITYP: model.value,
+            SPC_FNCTYPE: card_type.value,
+            SPC_CARDMODE: mode.value
         }
+        super().__init__()  # required for proper MRO resolution
         self._buffer_lock = Lock()
         self._enabled_channels = [0]
 
@@ -110,14 +116,16 @@ class MockAbstractSpectrumDigitiser(MockAbstractSpectrumDevice, AbstractSpectrum
     class cannot be constructed directly - instantiate `MockAbstractSpectrumDigitiser` and `MockSpectrumStarHub` objects instead,
     which inherit from this class."""
 
-    def __init__(self, source_frame_rate_hz: float = 10.0) -> None:
+    def __init__(self, source_frame_rate_hz: float = 10.0, **kwargs: Any) -> None:
         """
         Args:
             source_frame_rate_hz (float): Frame rate at which a mock waveform source will generate waveforms.
         """
-        MockAbstractSpectrumDevice.__init__(self)
+        # use super() to ensure init of MockAbstractSpectrumDevice is only called once in child classes with multiple
+        # inheritance
+        print("MockAbstractSpectrumDigitiser", flush=True)
+        super().__init__(mode=AcquisitionMode.SPC_REC_STD_SINGLE, **kwargs)
         self._source_frame_rate_hz = source_frame_rate_hz
-        self._param_dict[SPC_CARDMODE] = AcquisitionMode.SPC_REC_STD_SINGLE.value
         self._param_dict[SPC_MIINST_MAXADCVALUE] = 128
 
         self._buffer_lock = Lock()

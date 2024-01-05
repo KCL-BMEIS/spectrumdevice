@@ -5,7 +5,7 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 import datetime
 import logging
-from typing import List, Optional, Sequence, cast
+from typing import Any, List, Optional, Sequence, cast
 
 from numpy import float_, mod, squeeze, zeros
 from numpy.typing import NDArray
@@ -60,14 +60,16 @@ class SpectrumDigitiserCard(
 ):
     """Class for controlling individual Spectrum digitiser cards."""
 
-    def __init__(self, device_number: int = 0, ip_address: Optional[str] = None):
+    def __init__(self, **kwargs: Any) -> None:
         """
         Args:
             device_number (int): Index of the card to control. If only one card is present, set to 0.
             ip_address (Optional[str]): If connecting to a networked card, provide the IP address here as a string.
 
         """
-        AbstractSpectrumCard.__init__(self, device_number, ip_address)
+        print("SpectrumDigitiserCard", flush=True)
+        super().__init__(**kwargs)  # pass unused args up the inheritance hierarchy
+
         if self.type != CardType.SPCM_TYPE_AI:
             raise SpectrumCardIsNotADigitiser(self.type)
         self._acquisition_mode = self.acquisition_mode
@@ -78,11 +80,13 @@ class SpectrumDigitiserCard(
         num_modules = self.read_spectrum_device_register(SPC_MIINST_MODULES)
         num_channels_per_module = self.read_spectrum_device_register(SPC_MIINST_CHPERMODULE)
         total_channels = num_modules * num_channels_per_module
-        return tuple([SpectrumDigitiserAnalogChannel(n, self) for n in range(total_channels)])
+        return tuple(
+            [SpectrumDigitiserAnalogChannel(channel_number=n, parent_device=self) for n in range(total_channels)]
+        )
 
     def _init_io_lines(self) -> Sequence[SpectrumDigitiserIOLineInterface]:
         if (self.model_number.value & TYP_SERIESMASK) == TYP_M2PEXPSERIES:
-            return tuple([SpectrumDigitiserIOLine(n, self) for n in range(4)])
+            return tuple([SpectrumDigitiserIOLine(channel_number=n, parent_device=self) for n in range(4)])
         else:
             raise NotImplementedError("Don't know how many IO lines other types of card have. Only M2P series.")
 

@@ -1,6 +1,6 @@
 """Provides a partially-implemented abstract class common to individual channels of Spectrum devices."""
 from abc import abstractmethod
-from typing import TypeVar, Generic
+from typing import Any, TypeVar, Generic
 
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
@@ -18,6 +18,12 @@ class AbstractSpectrumChannel(SpectrumChannelInterface, Generic[ChannelNameType]
     """Partially implemented abstract superclass contain code common for controlling an individual channel or IO Line of
     all spectrum devices."""
 
+    def __init__(self, channel_number: int, parent_device: AbstractSpectrumCard, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._name = self._make_name(channel_number)
+        self._parent_device = parent_device
+        self._enabled = True
+
     @property
     @abstractmethod
     def _name_prefix(self) -> str:
@@ -26,11 +32,6 @@ class AbstractSpectrumChannel(SpectrumChannelInterface, Generic[ChannelNameType]
     @abstractmethod
     def _make_name(self, channel_number: int) -> ChannelNameType:
         raise NotImplementedError
-
-    def __init__(self, channel_number: int, parent_device: AbstractSpectrumCard):
-        self._name = self._make_name(channel_number)
-        self._parent_device = parent_device
-        self._enabled = True
 
     @property
     def name(self) -> ChannelNameType:

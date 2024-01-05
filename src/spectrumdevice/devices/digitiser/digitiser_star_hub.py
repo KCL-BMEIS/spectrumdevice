@@ -5,7 +5,7 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 import datetime
 from threading import Thread
-from typing import Dict, List, Optional, Sequence
+from typing import Any, Dict, List, Optional, Sequence
 
 from numpy import float_
 from numpy.typing import NDArray
@@ -26,12 +26,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub[SpectrumDigitiserCard], A
     child cards of a StarHub is synchronised, aggregating the channels of all child cards. This class enables the
     control of a StarHub device as if it were a single Spectrum card."""
 
-    def __init__(
-        self,
-        device_number: int,
-        child_cards: Sequence[SpectrumDigitiserCard],
-        master_card_index: int,
-    ):
+    def __init__(self, **kwargs: Any):
         """
         Args:
             device_number (int): The index of the StarHub to connect to. If only one StarHub is present, set to 0.
@@ -40,7 +35,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub[SpectrumDigitiserCard], A
             master_card_index (int): The position within child_cards where the master card (the card which controls the
                 clock) is located.
         """
-        AbstractSpectrumStarHub.__init__(self, device_number, child_cards, master_card_index)
+        super().__init__(**kwargs)
         self._acquisition_mode = self.acquisition_mode
 
     def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:

@@ -6,7 +6,7 @@
 
 import logging
 from time import perf_counter, sleep
-from typing import List, Optional, Sequence
+from typing import Any, List, Optional, Sequence
 
 from spectrum_gmbh.regs import (
     SPC_FNCTYPE,
@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 MOCK_TRANSFER_TIMEOUT_IN_S = 10
 
 
-class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigitiser):
+class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, SpectrumDigitiserCard):
     """A mock spectrum card, for testing software written to use the `SpectrumDigitiserCard` class.
 
     This class overrides methods of `SpectrumDigitiserCard` that communicate with hardware with mocked implementations,
@@ -40,14 +40,7 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
     samples. It also uses a MockTimestamper to generated timestamps for mock waveforms.
     """
 
-    def __init__(
-        self,
-        device_number: int,
-        model: ModelNumber,
-        mock_source_frame_rate_hz: float,
-        num_modules: int = 2,
-        num_channels_per_module: int = 4,
-    ):
+    def __init__(self, num_modules: int = 2, num_channels_per_module: int = 4, **kwargs: Any):
         """
         Args:
             device_number (int): The index of the mock device to create. Used to create a name for the device which is
@@ -61,14 +54,12 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
             num_channels_per_module (int): The number of channels per module. Default 4 (so 8 channels in total). On
                 real hardware, this is read from the device so does not need to be set.
         """
-        MockAbstractSpectrumDigitiser.__init__(self, mock_source_frame_rate_hz)
+        super().__init__(card_type=CardType.SPCM_TYPE_AI, **kwargs)
+        print("EVERYTHING INITIALISED", flush=True)
+        self._visa_string = "Mock_" + self._visa_string
         self._param_dict[SPC_MIINST_MODULES] = num_modules
         self._param_dict[SPC_MIINST_CHPERMODULE] = num_channels_per_module
-        self._param_dict[SPC_PCITYP] = model.value
-        self._param_dict[SPC_FNCTYPE] = CardType.SPCM_TYPE_AI.value
         self._param_dict[TRANSFER_CHUNK_COUNTER] = 0
-        SpectrumDigitiserCard.__init__(self, device_number=device_number)
-        self._visa_string = f"MockCard{device_number}"
         self._connect(self._visa_string)
         self._acquisition_mode = self.acquisition_mode
         self._previous_transfer_chunk_count = 0
@@ -152,19 +143,14 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
             logger.warning("No acquisition in progress. Wait for acquisition to complete has no effect")
 
 
-class MockSpectrumDigitiserStarHub(SpectrumDigitiserStarHub, MockAbstractSpectrumDigitiser):
+class MockSpectrumDigitiserStarHub(MockAbstractSpectrumDigitiser, SpectrumDigitiserStarHub):
     """A mock spectrum StarHub, for testing software written to use the `SpectrumStarHub` class.
 
     Overrides methods of `SpectrumStarHub` and `AbstractSpectrumDigitiser` that communicate with hardware with mocked
     implementations allowing software to be tested without Spectrum hardware connected or drivers installed, e.g. during
     CI."""
 
-    def __init__(
-        self,
-        device_number: int,
-        child_cards: Sequence[MockSpectrumDigitiserCard],
-        master_card_index: int,
-    ):
+    def __init__(self, **kwargs: Any):
         """
         Args:
             child_cards (Sequence[`MockSpectrumDigitiserCard`]): A list of `MockSpectrumCard` objects defining the
@@ -172,9 +158,8 @@ class MockSpectrumDigitiserStarHub(SpectrumDigitiserStarHub, MockAbstractSpectru
             master_card_index (int): The position within child_cards where the master card (the card which controls the
                 clock) is located.
         """
-        MockAbstractSpectrumDigitiser.__init__(self)
-        SpectrumDigitiserStarHub.__init__(self, device_number, child_cards, master_card_index)
-        self._visa_string = f"MockHub{device_number}"
+        super().__init__(**kwargs)
+        # self._visa_string = "Mock_" + self._visa_string
         self._connect(self._visa_string)
         self._acquisition_mode = self.acquisition_mode
 

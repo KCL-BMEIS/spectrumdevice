@@ -9,7 +9,7 @@ import logging
 from abc import ABC, abstractmethod
 from functools import reduce
 from operator import or_
-from typing import List, Optional, Sequence, Tuple, TypeVar, Generic
+from typing import Any, List, Optional, Sequence, Tuple, TypeVar, Generic
 
 from spectrum_gmbh.regs import (
     M2CMD_DATA_STARTDMA,
@@ -77,13 +77,15 @@ IOLineInterfaceType = TypeVar("IOLineInterfaceType", bound=SpectrumIOLineInterfa
 class AbstractSpectrumCard(AbstractSpectrumDevice, Generic[AnalogChannelInterfaceType, IOLineInterfaceType], ABC):
     """Abstract superclass implementing methods common to all individual "card" devices (as opposed to "hub" devices)."""
 
-    def __init__(self, device_number: int = 0, ip_address: Optional[str] = None):
+    def __init__(self, device_number: int = 0, ip_address: Optional[str] = None, **kwargs: Any):
         """
         Args:
             device_number (int): Index of the card to control. If only one card is present, set to 0.
             ip_address (Optional[str]): If connecting to a networked card, provide the IP address here as a string.
 
         """
+        print("AbstractSpectrumCard", flush=True)
+        super().__init__(**kwargs)
         if ip_address is not None:
             self._visa_string = _create_visa_string_from_ip(ip_address, device_number)
         else:

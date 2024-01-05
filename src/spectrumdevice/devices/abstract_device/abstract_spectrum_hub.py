@@ -8,7 +8,7 @@ Spectrum cards)."""
 from abc import ABC
 from functools import reduce
 from operator import or_
-from typing import List, Sequence, Tuple, TypeVar, Generic
+from typing import Any, List, Sequence, Tuple, TypeVar, Generic
 
 from numpy import arange
 
@@ -41,12 +41,7 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, Generic[CardType], ABC):
     composites of more than one Spectrum card. Acquisition and generation from the child cards of a StarHub
     is synchronised, aggregating the channels of all child cards."""
 
-    def __init__(
-        self,
-        device_number: int,
-        child_cards: Sequence[CardType],
-        master_card_index: int,
-    ):
+    def __init__(self, device_number: int, child_cards: Sequence[CardType], master_card_index: int, **kwargs: Any):
         """
         Args:
             device_number (int): The index of the StarHub to connect to. If only one StarHub is present, set to 0.

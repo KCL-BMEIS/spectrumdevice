@@ -15,7 +15,7 @@ from spectrumdevice.settings.output_channel_pairing import (
 )
 
 
-class AbstractSpectrumAWG(SpectrumAWGInterface, AbstractSpectrumDevice, ABC):
+class AbstractSpectrumAWG(AbstractSpectrumDevice, SpectrumAWGInterface, ABC):
     @property
     def generation_mode(self) -> GenerationMode:
         """Change the currently enabled card mode. See `GenerationMode` and the Spectrum documentation

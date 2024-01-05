@@ -36,7 +36,9 @@ class SingleCardTest(TestCase):
 
         expected_channels = tuple(
             [
-                SpectrumDigitiserAnalogChannel(i, cast(SpectrumDigitiserCard, self._device))
+                SpectrumDigitiserAnalogChannel(
+                    channel_number=i, parent_device=cast(SpectrumDigitiserCard, self._device)
+                )
                 for i in range(self._expected_num_channels)
             ]
         )

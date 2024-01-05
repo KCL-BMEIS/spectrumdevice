@@ -30,6 +30,8 @@ def standard_single_mode_example(
         card = SpectrumDigitiserCard(device_number=device_number, ip_address=ip_address)
     else:
         # Set up a mock device
+        for item in MockSpectrumDigitiserCard.__mro__:
+            print(item)
         card = MockSpectrumDigitiserCard(
             device_number=device_number,
             model=ModelNumber.TYP_M2P5966_X4,
@@ -75,7 +77,7 @@ if __name__ == "__main__":
     from matplotlib.pyplot import plot, show, xlabel, tight_layout, ylabel
 
     meas = standard_single_mode_example(
-        mock_mode=False, trigger_source=TriggerSource.SPC_TMASK_EXT0, device_number=1, ip_address="169.254.13.35"
+        mock_mode=True, trigger_source=TriggerSource.SPC_TMASK_EXT0, device_number=1, ip_address="169.254.13.35"
     )
 
     # Plot waveforms

@@ -16,7 +16,7 @@ from spectrumdevice.settings import AcquisitionMode, AcquisitionSettings
 from spectrum_gmbh.regs import M2CMD_CARD_WRITESETUP, SPC_M2CMD
 
 
-class AbstractSpectrumDigitiser(SpectrumDigitiserInterface, AbstractSpectrumDevice, ABC):
+class AbstractSpectrumDigitiser(AbstractSpectrumDevice, SpectrumDigitiserInterface, ABC):
     """Abstract superclass which implements methods common to all Spectrum digitiser devices. Instances of this class
     cannot be constructed directly. Instead, construct instances of the concrete classes (`SpectrumDigitiserCard`,
     `SpectrumDigitiserStarHub` or their mock equivalents) which inherit the methods defined here. Note that

@@ -8,7 +8,7 @@ from tests.device_factories import create_spectrum_card_for_testing
 class SingleChannelTest(TestCase):
     def setUp(self) -> None:
         self._device = create_spectrum_card_for_testing()
-        self._channel = SpectrumDigitiserAnalogChannel(0, self._device)
+        self._channel = SpectrumDigitiserAnalogChannel(channel_number=0, parent_device=self._device)
 
     def tearDown(self) -> None:
         self._channel._parent_device.disconnect()

@@ -24,11 +24,11 @@ class SpectrumAWGCard(
         num_modules = self.read_spectrum_device_register(SPC_MIINST_MODULES)
         num_channels_per_module = self.read_spectrum_device_register(SPC_MIINST_CHPERMODULE)
         total_channels = num_modules * num_channels_per_module
-        return tuple([SpectrumAWGAnalogChannel(n, self) for n in range(total_channels)])
+        return tuple([SpectrumAWGAnalogChannel(channel_number=n, parent_device=self) for n in range(total_channels)])
 
     def _init_io_lines(self) -> Sequence[SpectrumAWGIOLineInterface]:
         if (self.model_number.value & TYP_SERIESMASK) == TYP_M2PEXPSERIES:
-            return tuple([SpectrumAWGIOLine(n, self) for n in range(4)])
+            return tuple([SpectrumAWGIOLine(channel_number=n, parent_device=self) for n in range(4)])
         else:
             raise NotImplementedError("Don't know how many IO lines other types of card have. Only M2P series.")
 
