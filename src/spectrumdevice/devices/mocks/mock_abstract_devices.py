@@ -28,7 +28,8 @@ from spectrum_gmbh.regs import (
     SPC_MIINST_MODULES,
     SPC_MIINST_CHPERMODULE,
 )
-from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice
+from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice, AbstractSpectrumCard, AbstractSpectrumStarHub
+from spectrumdevice.devices.awg.abstract_spectrum_awg import AbstractSpectrumAWG
 from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
 from spectrumdevice.devices.mocks.mock_waveform_source import mock_waveform_source_factory
 from spectrumdevice.exceptions import SpectrumDeviceNotConnected
@@ -96,7 +97,7 @@ class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
             raise SpectrumDeviceNotConnected("Mock device has been disconnected.")
 
 
-class MockAbstractSpectrumCard(MockAbstractSpectrumDevice, ABC):
+class MockAbstractSpectrumCard(MockAbstractSpectrumDevice, AbstractSpectrumCard, ABC):
     """Overrides methods of `AbstractSpectrumDevice` that communicate with hardware with mocked implementations, allowing
     software to be tested without Spectrum hardware connected or drivers installed, e.g. during CI. Instances of this
     class cannot be constructed directly - instantiate `MockAbstractSpectrumDigitiser` and `MockSpectrumStarHub` objects instead,
@@ -134,7 +135,11 @@ class MockAbstractSpectrumCard(MockAbstractSpectrumDevice, ABC):
         )  # then call the rest of the inits after the params have been set
 
 
-class MockAbstractSpectrumDigitiser(MockAbstractSpectrumCard, AbstractSpectrumDigitiser, ABC):
+class MockAbstractSpectrumStarHub(MockAbstractSpectrumDevice, AbstractSpectrumStarHub, ABC):
+    pass
+
+
+class MockAbstractSpectrumDigitiser(MockAbstractSpectrumDevice, AbstractSpectrumDigitiser, ABC):
     """Overrides methods of `AbstractSpectrumDigitiser` that communicate with hardware with mocked implementations, allowing
     software to be tested without Spectrum hardware connected or drivers installed, e.g. during CI. Instances of this
     class cannot be constructed directly - instantiate `MockAbstractSpectrumDigitiser` and `MockSpectrumStarHub` objects instead,
@@ -184,3 +189,7 @@ class MockAbstractSpectrumDigitiser(MockAbstractSpectrumCard, AbstractSpectrumDi
     def stop(self) -> None:
         """Stops the mock waveform source and timestamp threads."""
         self._acquisition_stop_event.set()
+
+
+class MockAbstractSpectrumAWG(MockAbstractSpectrumDevice, AbstractSpectrumAWG, ABC):
+    pass

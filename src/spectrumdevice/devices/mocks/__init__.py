@@ -8,9 +8,15 @@ import logging
 from time import perf_counter, sleep
 from typing import Any, List, Optional, Sequence
 
+from spectrumdevice.devices.awg.awg_card import SpectrumAWGCard
 from spectrumdevice.devices.digitiser import SpectrumDigitiserCard
 from spectrumdevice.devices.digitiser import SpectrumDigitiserStarHub
-from spectrumdevice.devices.mocks.mock_abstract_devices import MockAbstractSpectrumDigitiser, MockAbstractSpectrumDevice
+from spectrumdevice.devices.mocks.mock_abstract_devices import (
+    MockAbstractSpectrumDigitiser,
+    MockAbstractSpectrumCard,
+    MockAbstractSpectrumStarHub,
+    MockAbstractSpectrumAWG,
+)
 from spectrumdevice.devices.mocks.mock_waveform_source import TRANSFER_CHUNK_COUNTER
 from spectrumdevice.devices.mocks.timestamps import MockTimestamper
 from spectrumdevice.exceptions import (
@@ -25,7 +31,7 @@ logger = logging.getLogger(__name__)
 MOCK_TRANSFER_TIMEOUT_IN_S = 10
 
 
-class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, SpectrumDigitiserCard):
+class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, MockAbstractSpectrumCard, SpectrumDigitiserCard):
     """A mock spectrum card, for testing software written to use the `SpectrumDigitiserCard` class.
 
     This class overrides methods of `SpectrumDigitiserCard` that communicate with hardware with mocked implementations,
@@ -49,8 +55,7 @@ class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, SpectrumDigitiser
                 real hardware, this is read from the device so does not need to be set.
         """
         super().__init__(card_type=CardType.SPCM_TYPE_AI, **kwargs)
-        print("EVERYTHING INITIALISED", flush=True)
-        self._visa_string = "Mock_" + self._visa_string
+        self._visa_string = "/mock" + self._visa_string
         self._connect(self._visa_string)
         self._acquisition_mode = self.acquisition_mode
         self._previous_transfer_chunk_count = 0
@@ -135,7 +140,37 @@ class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, SpectrumDigitiser
             logger.warning("No acquisition in progress. Wait for acquisition to complete has no effect")
 
 
-class MockSpectrumDigitiserStarHub(MockAbstractSpectrumDevice, SpectrumDigitiserStarHub):
+class MockSpectrumAWGCard(MockAbstractSpectrumAWG, MockAbstractSpectrumCard, SpectrumAWGCard):
+    def __init__(self, **kwargs: Any):
+        """
+        Args:
+            device_number (int): The index of the mock device to create. Used to create a name for the device which is
+                used internally.
+            model (ModelNumber): The model of card to mock.
+            num_modules (int): The number of internal modules to assign the mock card. Default 2. On real hardware, this
+                is read from the device so does not need to be set. See the Spectrum documentation to work out how many
+                modules your hardware has.
+            num_channels_per_module (int): The number of channels per module. Default 4 (so 8 channels in total). On
+                real hardware, this is read from the device so does not need to be set.
+        """
+        super().__init__(card_type=CardType.SPCM_TYPE_AO, **kwargs)
+        self._visa_string = "/mock" + self._visa_string
+        self._connect(self._visa_string)
+
+    def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
+        """Create or provide a `TransferBuffer` object for transferring samples from the device.
+
+        See SpectrumAWGCard.define_transfer_buffer(). This mock implementation is identical apart from that it
+        does not write to any hardware device."""
+        if buffer is None:
+            raise ValueError(
+                "You must provide a preconfigured buffer for transferring samples to an AWG because the"
+                "buffer size cannot be inferred."
+            )
+        self._transfer_buffer = buffer[0]
+
+
+class MockSpectrumDigitiserStarHub(MockAbstractSpectrumStarHub, SpectrumDigitiserStarHub):
     """A mock spectrum StarHub, for testing software written to use the `SpectrumStarHub` class.
 
     Overrides methods of `SpectrumStarHub` and `AbstractSpectrumDigitiser` that communicate with hardware with mocked
@@ -151,7 +186,7 @@ class MockSpectrumDigitiserStarHub(MockAbstractSpectrumDevice, SpectrumDigitiser
                 clock) is located.
         """
         super().__init__(**kwargs)
-        self._visa_string = "Mock_" + self._visa_string
+        self._visa_string = "/mock" + self._visa_string
         self._connect(self._visa_string)
         self._acquisition_mode = self.acquisition_mode
 

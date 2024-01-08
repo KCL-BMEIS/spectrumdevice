@@ -77,7 +77,7 @@ IOLineInterfaceType = TypeVar("IOLineInterfaceType", bound=SpectrumIOLineInterfa
 class AbstractSpectrumCard(AbstractSpectrumDevice, Generic[AnalogChannelInterfaceType, IOLineInterfaceType], ABC):
     """Abstract superclass implementing methods common to all individual "card" devices (as opposed to "hub" devices)."""
 
-    def __init__(self, device_number: int = 0, ip_address: Optional[str] = None, **kwargs: Any):
+    def __init__(self, device_number: int, ip_address: Optional[str] = None, **kwargs: Any):
         """
         Args:
             device_number (int): Index of the card to control. If only one card is present, set to 0.

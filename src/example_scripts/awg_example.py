@@ -3,8 +3,15 @@ from time import sleep
 from numpy import array, int16, iinfo, bool_
 from numpy.typing import NDArray
 
-from spectrumdevice.devices.awg.awg_card import SpectrumAWGCard
-from spectrumdevice.settings import TriggerSettings, TriggerSource, ExternalTriggerMode, IOLineMode
+from spectrumdevice.devices.mocks import MockSpectrumAWGCard
+from spectrumdevice.settings import (
+    TriggerSettings,
+    TriggerSource,
+    ExternalTriggerMode,
+    IOLineMode,
+    ModelNumber,
+    AcquisitionMode,
+)
 from spectrumdevice.settings.device_modes import GenerationMode
 from spectrumdevice.settings.io_lines import DigOutIOLineModeSettings, DigOutSourceChannel, DigOutSourceBit
 
@@ -24,7 +31,14 @@ def write_digital_waveform_to_bit_15_of_analog(
 
 if __name__ == "__main__":
 
-    card = SpectrumAWGCard()
+    # card = SpectrumAWGCard()
+    card = MockSpectrumAWGCard(
+        device_number=0,
+        model=ModelNumber.TYP_M2P6560_X4,
+        num_channels_per_module=1,
+        num_modules=1,
+        mode=AcquisitionMode.SPC_REC_STD_SINGLE,
+    )
     print(card)
 
     trigger_settings = TriggerSettings(

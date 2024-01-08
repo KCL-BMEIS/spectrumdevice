@@ -2,7 +2,7 @@ from typing import Any
 
 from numpy import int16
 
-from spectrumdevice import AbstractSpectrumCard
+from spectrumdevice.devices.abstract_device import AbstractSpectrumCard
 from spectrumdevice.devices.abstract_device.abstract_spectrum_channel import AbstractSpectrumAnalogChannel
 from spectrumdevice.devices.abstract_device.abstract_spectrum_io_line import AbstractSpectrumIOLine
 from spectrumdevice.devices.awg.awg_interface import SpectrumAWGAnalogChannelInterface, SpectrumAWGIOLineInterface
@@ -30,7 +30,7 @@ class SpectrumAWGIOLine(AbstractSpectrumIOLine, SpectrumAWGIOLineInterface):
     def __init__(self, parent_device: AbstractSpectrumCard, **kwargs: Any) -> None:
         if parent_device.type != CardType.SPCM_TYPE_AO:
             raise SpectrumCardIsNotAnAWG(parent_device.type)
-        super().__init__(**kwargs)  # pass unused args up the inheritance hierarchy
+        super().__init__(parent_device=parent_device, **kwargs)  # pass unused args up the inheritance hierarchy
         self._dig_out_settings = DigOutIOLineModeSettings(
             source_channel=DigOutSourceChannel.SPCM_XMODE_DIGOUTSRC_CH0,
             source_bit=DigOutSourceBit.SPCM_XMODE_DIGOUTSRC_BIT15,
@@ -54,7 +54,7 @@ class SpectrumAWGAnalogChannel(AbstractSpectrumAnalogChannel, SpectrumAWGAnalogC
     def __init__(self, parent_device: AbstractSpectrumCard, **kwargs: Any) -> None:
         if parent_device.type != CardType.SPCM_TYPE_AO:
             raise SpectrumCardIsNotAnAWG(parent_device.type)
-        super().__init__(**kwargs)  # pass unused args up the inheritance hierarchy
+        super().__init__(parent_device=parent_device, **kwargs)  # pass unused args up the inheritance hierarchy
 
     @property
     def is_switched_on(self) -> bool:

@@ -3,7 +3,7 @@ from copy import copy
 from typing import cast
 
 from spectrum_gmbh.regs import SPC_CARDMODE
-from spectrumdevice import AbstractSpectrumDevice
+from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice
 from spectrumdevice.devices.awg.awg_channel import SpectrumAWGAnalogChannel
 from spectrumdevice.devices.awg.awg_interface import SpectrumAWGInterface
 from spectrumdevice.settings.device_modes import GenerationMode
