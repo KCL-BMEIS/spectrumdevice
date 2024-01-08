@@ -85,7 +85,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, Generic[AnalogChannelInterfac
 
         """
         print("AbstractSpectrumCard", flush=True)
-        super().__init__(**kwargs)
+        super().__init__()  # required for proper MRO resolution
         if ip_address is not None:
             self._visa_string = _create_visa_string_from_ip(ip_address, device_number)
         else:

@@ -8,15 +8,9 @@ import logging
 from time import perf_counter, sleep
 from typing import Any, List, Optional, Sequence
 
-from spectrum_gmbh.regs import (
-    SPC_FNCTYPE,
-    SPC_MIINST_CHPERMODULE,
-    SPC_MIINST_MODULES,
-    SPC_PCITYP,
-)
 from spectrumdevice.devices.digitiser import SpectrumDigitiserCard
 from spectrumdevice.devices.digitiser import SpectrumDigitiserStarHub
-from spectrumdevice.devices.mocks.mock_abstract_devices import MockAbstractSpectrumDigitiser
+from spectrumdevice.devices.mocks.mock_abstract_devices import MockAbstractSpectrumDigitiser, MockAbstractSpectrumDevice
 from spectrumdevice.devices.mocks.mock_waveform_source import TRANSFER_CHUNK_COUNTER
 from spectrumdevice.devices.mocks.timestamps import MockTimestamper
 from spectrumdevice.exceptions import (
@@ -24,7 +18,7 @@ from spectrumdevice.exceptions import (
     SpectrumSettingsMismatchError,
 )
 from spectrumdevice.settings import TransferBuffer
-from spectrumdevice.settings.card_dependent_properties import CardType, ModelNumber
+from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.device_modes import AcquisitionMode
 
 logger = logging.getLogger(__name__)
@@ -40,7 +34,7 @@ class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, SpectrumDigitiser
     samples. It also uses a MockTimestamper to generated timestamps for mock waveforms.
     """
 
-    def __init__(self, num_modules: int = 2, num_channels_per_module: int = 4, **kwargs: Any):
+    def __init__(self, **kwargs: Any):
         """
         Args:
             device_number (int): The index of the mock device to create. Used to create a name for the device which is
@@ -57,12 +51,10 @@ class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, SpectrumDigitiser
         super().__init__(card_type=CardType.SPCM_TYPE_AI, **kwargs)
         print("EVERYTHING INITIALISED", flush=True)
         self._visa_string = "Mock_" + self._visa_string
-        self._param_dict[SPC_MIINST_MODULES] = num_modules
-        self._param_dict[SPC_MIINST_CHPERMODULE] = num_channels_per_module
-        self._param_dict[TRANSFER_CHUNK_COUNTER] = 0
         self._connect(self._visa_string)
         self._acquisition_mode = self.acquisition_mode
         self._previous_transfer_chunk_count = 0
+        self._param_dict[TRANSFER_CHUNK_COUNTER] = 0
 
     def enable_timestamping(self) -> None:
         self._timestamper: MockTimestamper = MockTimestamper(self, self._handle)
@@ -143,7 +135,7 @@ class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, SpectrumDigitiser
             logger.warning("No acquisition in progress. Wait for acquisition to complete has no effect")
 
 
-class MockSpectrumDigitiserStarHub(MockAbstractSpectrumDigitiser, SpectrumDigitiserStarHub):
+class MockSpectrumDigitiserStarHub(MockAbstractSpectrumDevice, SpectrumDigitiserStarHub):
     """A mock spectrum StarHub, for testing software written to use the `SpectrumStarHub` class.
 
     Overrides methods of `SpectrumStarHub` and `AbstractSpectrumDigitiser` that communicate with hardware with mocked
@@ -153,13 +145,13 @@ class MockSpectrumDigitiserStarHub(MockAbstractSpectrumDigitiser, SpectrumDigiti
     def __init__(self, **kwargs: Any):
         """
         Args:
-            child_cards (Sequence[`MockSpectrumDigitiserCard`]): A list of `MockSpectrumCard` objects defining the
+            child_cards (Sequence[`MockSpectrumDigitiserCard`]): A list of `MockSpectrumDigitiserCard` objects defining the
                 properties of the child cards located within the mock hub.
             master_card_index (int): The position within child_cards where the master card (the card which controls the
                 clock) is located.
         """
         super().__init__(**kwargs)
-        # self._visa_string = "Mock_" + self._visa_string
+        self._visa_string = "Mock_" + self._visa_string
         self._connect(self._visa_string)
         self._acquisition_mode = self.acquisition_mode
 
