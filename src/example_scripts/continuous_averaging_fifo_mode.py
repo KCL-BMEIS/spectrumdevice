@@ -73,6 +73,7 @@ def continuous_averaging_multi_fifo_example(
         # Retrieve streamed waveform data until desired time has elapsed
         measurements_list = []
         while (monotonic() - start_time) < acquisition_duration_in_seconds:
+            print(f"Asking for waveforms at {monotonic() - start_time}")
             measurements_list += [
                 Measurement(waveforms=frame, timestamp=card.get_timestamp()) for frame in card.get_waveforms()
             ]

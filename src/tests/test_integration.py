@@ -43,7 +43,11 @@ class SingleCardIntegrationTests(TestCase):
         self.assertEqual(len(measurement.waveforms), 1)
         self.assertEqual([wfm.shape for wfm in measurement.waveforms], [(ACQUISITION_LENGTH,)])
         if self._single_card_mock_mode:
-            self.assertAlmostEqual(measurement.waveforms[0].max() - measurement.waveforms[0].min(), 0.4, 1)
+            # mock waveform source generates random values covering full ADC range, which is set to += 0.2 V
+            expected_pk_to_pk_volts = 0.4
+            self.assertAlmostEqual(
+                measurement.waveforms[0].max() - measurement.waveforms[0].min(), expected_pk_to_pk_volts, 1
+            )
             self.assertAlmostEqual(measurement.waveforms[0].mean(), 0.0, 1)
 
         two_seconds_ago = datetime.datetime.now() - datetime.timedelta(seconds=2)
