@@ -46,7 +46,6 @@ from spectrumdevice.settings.transfer_buffer import (
     BufferType,
     create_samples_acquisition_transfer_buffer,
     set_transfer_buffer,
-    SAMPLE_DATA_TYPE,
     NOTIFY_SIZE_PAGE_SIZE_IN_BYTES,
     DEFAULT_NOTIFY_SIZE_IN_PAGES,
 )
@@ -302,11 +301,10 @@ class SpectrumDigitiserCard(
                 raise ValueError("Digitisers need a transfer buffer with type BufferDirection.SPCM_BUF_DATA")
         elif self._transfer_buffer is None:
             if self.acquisition_mode in (AcquisitionMode.SPC_REC_FIFO_MULTI, AcquisitionMode.SPC_REC_FIFO_AVERAGE):
-                bytes_per_sample = SAMPLE_DATA_TYPE().itemsize
                 samples_per_batch = (
                     self.acquisition_length_in_samples * len(self.enabled_analog_channels) * self._batch_size
                 )
-                pages_per_batch = samples_per_batch * bytes_per_sample / NOTIFY_SIZE_PAGE_SIZE_IN_BYTES
+                pages_per_batch = samples_per_batch * self.bytes_per_sample / NOTIFY_SIZE_PAGE_SIZE_IN_BYTES
 
                 if pages_per_batch < DEFAULT_NOTIFY_SIZE_IN_PAGES:
                     notify_size = pages_per_batch
@@ -315,11 +313,15 @@ class SpectrumDigitiserCard(
 
                 # Make transfer buffer big enough to hold all samples in the batch
                 self._transfer_buffer = create_samples_acquisition_transfer_buffer(
-                    samples_per_batch, notify_size_in_pages=notify_size
+                    size_in_samples=samples_per_batch,
+                    notify_size_in_pages=notify_size,
+                    bytes_per_sample=self.bytes_per_sample
                 )
             elif self.acquisition_mode in (AcquisitionMode.SPC_REC_STD_SINGLE, AcquisitionMode.SPC_REC_STD_AVERAGE):
                 self._transfer_buffer = create_samples_acquisition_transfer_buffer(
-                    self.acquisition_length_in_samples * len(self.enabled_analog_channels), notify_size_in_pages=0
+                    size_in_samples=self.acquisition_length_in_samples * len(self.enabled_analog_channels),
+                    notify_size_in_pages=0,
+                    bytes_per_sample=self.bytes_per_sample
                 )
             else:
                 raise ValueError("AcquisitionMode not recognised")

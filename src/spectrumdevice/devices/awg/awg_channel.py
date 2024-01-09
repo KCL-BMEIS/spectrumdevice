@@ -136,4 +136,5 @@ class SpectrumAWGAnalogChannel(AbstractSpectrumAnalogChannel, SpectrumAWGAnalogC
         )
 
     def set_stop_level_custom_value(self, value: int16) -> None:
-        self._parent_device.write_to_spectrum_device_register(OUTPUT_STOP_LEVEL_MODE_COMMANDS[self._number], int(value))
+        self._parent_device.write_to_spectrum_device_register(OUTPUT_STOP_LEVEL_CUSTOM_VALUE_COMMANDS[self._number],
+                                                              int(value))

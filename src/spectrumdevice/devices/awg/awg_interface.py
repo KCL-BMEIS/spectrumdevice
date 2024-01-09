@@ -105,3 +105,12 @@ class SpectrumAWGInterface(SpectrumDeviceInterface, ABC):
     @abstractmethod
     def transfer_waveform(self, waveform: NDArray[int16]) -> None:
         raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def num_loops(self) -> int:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_num_loops(self, num_loops: int) -> None:
+        raise NotImplementedError()

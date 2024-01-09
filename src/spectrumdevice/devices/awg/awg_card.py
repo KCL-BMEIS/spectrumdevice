@@ -1,14 +1,15 @@
 from typing import Optional, Sequence
 
-from numpy import int16
+from numpy import int16, mod
 from numpy.typing import NDArray
 
-from spectrum_gmbh.regs import SPC_MIINST_CHPERMODULE, SPC_MIINST_MODULES, TYP_SERIESMASK, TYP_M2PEXPSERIES
+from spectrum_gmbh.regs import SPC_MIINST_CHPERMODULE, SPC_MIINST_MODULES, TYP_SERIESMASK, TYP_M2PEXPSERIES, SPC_MEMSIZE
 from spectrumdevice.devices.abstract_device import AbstractSpectrumCard
 from spectrumdevice.devices.awg.abstract_spectrum_awg import AbstractSpectrumAWG
 from spectrumdevice.devices.awg.awg_channel import SpectrumAWGAnalogChannel, SpectrumAWGIOLine
 from spectrumdevice.devices.awg.awg_interface import SpectrumAWGAnalogChannelInterface, SpectrumAWGIOLineInterface
 from spectrumdevice.settings import TransferBuffer
+from spectrumdevice.settings.card_dependent_properties import get_memsize_step_size
 from spectrumdevice.settings.transfer_buffer import (
     BufferDirection,
     BufferType,
@@ -37,9 +38,16 @@ class SpectrumAWGCard(
             buffer_type=BufferType.SPCM_BUF_DATA,
             direction=BufferDirection.SPCM_DIR_PCTOCARD,
             size_in_samples=len(waveform),
+            bytes_per_sample=self.bytes_per_sample
         )
         buffer.data_array[:] = waveform
         self.define_transfer_buffer((buffer,))
+        step_size = get_memsize_step_size(self._model_number)
+        remainder = len(waveform) % step_size
+        coerced_mem_size = len(waveform) if remainder == 0 else len(waveform) + (step_size - remainder)
+        self.write_to_spectrum_device_register(SPC_MEMSIZE, coerced_mem_size)
+        self.start_transfer()
+        self.wait_for_transfer_chunk_to_complete()
 
     def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
         """Provide a `TransferBuffer` object for transferring samples to the card. This is called internally when

@@ -231,6 +231,7 @@ buffer = transfer_buffer_factory(
   buffer_type=BufferType.SPCM_BUF_DATA,  # must be SPCM_BUF_DATA to transfer samples from digitiser
   direction=BufferDirection.SPCM_DIR_CARDTOPC,  # must be SPCM_DIR_CARDTOPC to transfer samples from digitiser
   size_in_samples=size_in_samples,
+  bytes_per_sampe=card.bytes_per_sample,
   board_memory_offset_bytes=board_memory_offset_bytes,
   notify_size_in_pages=notify_size_in_pages
 )

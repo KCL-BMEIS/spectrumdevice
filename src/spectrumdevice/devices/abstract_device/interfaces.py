@@ -233,3 +233,8 @@ class SpectrumDeviceInterface(ABC):
     @abstractmethod
     def force_trigger_event(self) -> None:
         raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def bytes_per_sample(self) -> int:
+        raise NotImplementedError()

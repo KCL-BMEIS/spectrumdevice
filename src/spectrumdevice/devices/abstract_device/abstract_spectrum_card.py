@@ -31,7 +31,7 @@ from spectrum_gmbh.regs import (
     SPC_TIMEOUT,
     SPC_TRIG_ANDMASK,
     SPC_TRIG_ORMASK,
-    M2CMD_CARD_FORCETRIGGER,
+    M2CMD_CARD_FORCETRIGGER, SPC_MIINST_BYTESPERSAMPLE,
 )
 from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
 from spectrumdevice.devices.abstract_device.interfaces import SpectrumAnalogChannelInterface, SpectrumIOLineInterface
@@ -489,6 +489,10 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, Generic[AnalogChannelInterfac
     def force_trigger_event(self) -> None:
         """Force a trigger event to occur"""
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_FORCETRIGGER)
+
+    @property
+    def bytes_per_sample(self) -> int:
+        return self.read_spectrum_device_register(SPC_MIINST_BYTESPERSAMPLE)
 
 
 def _create_visa_string_from_ip(ip_address: str, instrument_number: int) -> str:

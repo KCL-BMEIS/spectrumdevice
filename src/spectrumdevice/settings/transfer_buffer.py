@@ -13,7 +13,7 @@ from enum import Enum
 from functools import partial
 from typing import Optional
 
-from numpy import ndarray, zeros, int16, uint8
+from numpy import ndarray, zeros, int16, uint8, int8
 
 from spectrumdevice.spectrum_wrapper import DEVICE_HANDLE_TYPE
 from spectrumdevice.spectrum_wrapper.error_handler import error_handler
@@ -36,9 +36,6 @@ except OSError:
         SPCM_DIR_CARDTOPC,
         spcm_dwDefTransfer_i64,
     )
-
-
-SAMPLE_DATA_TYPE = int16
 
 
 class BufferType(Enum):
@@ -147,6 +144,7 @@ class TimestampsTransferBuffer(TransferBuffer):
 def transfer_buffer_factory(
     buffer_type: BufferType,
     direction: BufferDirection,
+    bytes_per_sample: int,
     size_in_samples: Optional[int] = None,
     board_memory_offset_bytes: int = 0,
     notify_size_in_pages: float = 1,
@@ -156,6 +154,7 @@ def transfer_buffer_factory(
         buffer_type (BufferType): Specifies whether the buffer is to be used to transfer samples, timestamps or A/B data.
         direction (BufferDirection): Specifies whether the buffer is to be used to transfer data from the card to the
             PC, or the PC to the card.
+        bytes_per_sample: The number of bytes per sample used by the card. Can be read using card.bytes_per_sample.
         size_in_samples (int): The size of the array into which samples will be written, in samples. Currently only
             required for BufferType.SPCM_BUF_DATA as SPCM_BUF_TIMESTAMP buffers are always 4096 uint8 long.
         board_memory_offset_bytes (int): Sets the offset for transfer in board memory. Default 0. See Spectrum
@@ -167,10 +166,17 @@ def transfer_buffer_factory(
 
     # _check_notify_size_validity(notify_size_in_pages)
 
+    if bytes_per_sample == 1:
+        sample_data_type = int8
+    elif bytes_per_sample == 2:
+        sample_data_type = int16
+    else:
+        raise ValueError("Invalid number of bytes per sample. Should be 1 or 2.")
+
     if buffer_type == BufferType.SPCM_BUF_DATA:
         if size_in_samples is not None:
             return SamplesTransferBuffer(
-                direction, board_memory_offset_bytes, zeros(size_in_samples, SAMPLE_DATA_TYPE), notify_size_in_pages
+                direction, board_memory_offset_bytes, zeros(size_in_samples, sample_data_type), notify_size_in_pages
             )
         else:
             raise ValueError("You must provide a buffer size_in_samples to create a BufferType.SPCM_BUF_DATA buffer.")
@@ -201,11 +207,11 @@ def _check_notify_size_validity(notify_size_in_pages: float) -> None:
 
 
 create_samples_acquisition_transfer_buffer = partial(
-    transfer_buffer_factory, BufferType.SPCM_BUF_DATA, BufferDirection.SPCM_DIR_CARDTOPC
+    transfer_buffer_factory, buffer_type=BufferType.SPCM_BUF_DATA, direction=BufferDirection.SPCM_DIR_CARDTOPC
 )
 
 create_timestamp_acquisition_transfer_buffer = partial(
-    transfer_buffer_factory, BufferType.SPCM_BUF_TIMESTAMP, BufferDirection.SPCM_DIR_CARDTOPC
+    transfer_buffer_factory, buffer_type=BufferType.SPCM_BUF_TIMESTAMP, direction=BufferDirection.SPCM_DIR_CARDTOPC
 )
 
 
@@ -214,7 +220,8 @@ def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffe
         device_handle,
         buffer.type.value,
         buffer.direction.value,
-        int(buffer.notify_size_in_pages * NOTIFY_SIZE_PAGE_SIZE_IN_BYTES),
+        int(buffer.notify_size_in_pages * NOTIFY_SIZE_PAGE_SIZE_IN_BYTES)
+        if buffer.direction == BufferDirection.SPCM_DIR_CARDTOPC else 0,
         buffer.data_array_pointer,
         buffer.board_memory_offset_bytes,
         buffer.data_array_length_in_bytes,

@@ -2,7 +2,7 @@ from abc import ABC
 from copy import copy
 from typing import cast
 
-from spectrum_gmbh.regs import SPC_CARDMODE
+from spectrum_gmbh.regs import SPC_CARDMODE, SPC_LOOPS
 from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice
 from spectrumdevice.devices.awg.awg_channel import SpectrumAWGAnalogChannel
 from spectrumdevice.devices.awg.awg_interface import SpectrumAWGInterface
@@ -24,6 +24,13 @@ class AbstractSpectrumAWG(AbstractSpectrumDevice, SpectrumAWGInterface, ABC):
 
     def set_generation_mode(self, mode: GenerationMode) -> None:
         self.write_to_spectrum_device_register(SPC_CARDMODE, mode.value)
+
+    @property
+    def num_loops(self) -> int:
+        return self.read_spectrum_device_register(SPC_LOOPS)
+
+    def set_num_loops(self, num_loops: int) -> None:
+        self.write_to_spectrum_device_register(SPC_LOOPS, num_loops)
 
     def configure_channel_pairing(self, channel_pair: ChannelPair, mode: ChannelPairingMode) -> None:
         """Configures a pair of consecutive channels to operate either independently, in differential mode or
