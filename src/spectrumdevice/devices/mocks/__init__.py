@@ -6,32 +6,32 @@
 
 import logging
 from time import perf_counter, sleep
-from typing import List, Optional, Sequence
+from typing import Any, List, Optional, Sequence
 
-from spectrum_gmbh.regs import (
-    SPC_FNCTYPE,
-    SPC_MIINST_CHPERMODULE,
-    SPC_MIINST_MODULES,
-    SPC_PCITYP,
-)
+from spectrumdevice.devices.awg.awg_card import SpectrumAWGCard
 from spectrumdevice.devices.digitiser import SpectrumDigitiserCard
 from spectrumdevice.devices.digitiser import SpectrumDigitiserStarHub
-from spectrumdevice.devices.mocks.mock_abstract_devices import MockAbstractSpectrumDigitiser
+from spectrumdevice.devices.mocks.mock_abstract_devices import (
+    MockAbstractSpectrumDigitiser,
+    MockAbstractSpectrumCard,
+    MockAbstractSpectrumStarHub,
+    MockAbstractSpectrumAWG,
+)
 from spectrumdevice.devices.mocks.mock_waveform_source import TRANSFER_CHUNK_COUNTER
 from spectrumdevice.devices.mocks.timestamps import MockTimestamper
 from spectrumdevice.exceptions import (
     SpectrumNoTransferBufferDefined,
     SpectrumSettingsMismatchError,
 )
-from spectrumdevice.settings import TransferBuffer
-from spectrumdevice.settings.card_dependent_properties import CardType, ModelNumber
+from spectrumdevice.settings import ModelNumber, TransferBuffer
+from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.device_modes import AcquisitionMode
 
 logger = logging.getLogger(__name__)
 MOCK_TRANSFER_TIMEOUT_IN_S = 10
 
 
-class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigitiser):
+class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, MockAbstractSpectrumCard, SpectrumDigitiserCard):
     """A mock spectrum card, for testing software written to use the `SpectrumDigitiserCard` class.
 
     This class overrides methods of `SpectrumDigitiserCard` that communicate with hardware with mocked implementations,
@@ -45,8 +45,8 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
         device_number: int,
         model: ModelNumber,
         mock_source_frame_rate_hz: float,
-        num_modules: int = 2,
-        num_channels_per_module: int = 4,
+        num_modules: int,
+        num_channels_per_module: int,
     ):
         """
         Args:
@@ -61,17 +61,18 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
             num_channels_per_module (int): The number of channels per module. Default 4 (so 8 channels in total). On
                 real hardware, this is read from the device so does not need to be set.
         """
-        MockAbstractSpectrumDigitiser.__init__(self, mock_source_frame_rate_hz)
-        self._param_dict[SPC_MIINST_MODULES] = num_modules
-        self._param_dict[SPC_MIINST_CHPERMODULE] = num_channels_per_module
-        self._param_dict[SPC_PCITYP] = model.value
-        self._param_dict[SPC_FNCTYPE] = CardType.SPCM_TYPE_AI.value
-        self._param_dict[TRANSFER_CHUNK_COUNTER] = 0
-        SpectrumDigitiserCard.__init__(self, device_number=device_number)
-        self._visa_string = f"MockCard{device_number}"
+        super().__init__(
+            device_number=device_number,
+            model=model,
+            mock_source_frame_rate_hz=mock_source_frame_rate_hz,
+            num_modules=num_modules,
+            num_channels_per_module=num_channels_per_module,
+            card_type=CardType.SPCM_TYPE_AI,
+        )
         self._connect(self._visa_string)
         self._acquisition_mode = self.acquisition_mode
         self._previous_transfer_chunk_count = 0
+        self._param_dict[TRANSFER_CHUNK_COUNTER] = 0
 
     def enable_timestamping(self) -> None:
         self._timestamper: MockTimestamper = MockTimestamper(self, self._handle)
@@ -96,7 +97,7 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
         """
         super().set_acquisition_length_in_samples(length_in_samples)
 
-    def set_enabled_channels(self, channels_nums: List[int]) -> None:
+    def set_enabled_analog_channels(self, channels_nums: List[int]) -> None:
         """Set the channels to enable for the mock acquisition. See `SpectrumDigitiserCard` for more information. This
         method is overridden here only so that the internal attributes related to the mock on-device buffer
         can be set.
@@ -105,8 +106,8 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
             channels_nums (List[int]): List of mock channel indices to enable, e.g. [0, 1, 2].
 
         """
-        if len(list(filter(lambda x: 0 <= x < len(self.channels), channels_nums))) == len(channels_nums):
-            super().set_enabled_channels(channels_nums)
+        if len(list(filter(lambda x: 0 <= x < len(self.analog_channels), channels_nums))) == len(channels_nums):
+            super().set_enabled_analog_channels(channels_nums)
         else:
             raise SpectrumSettingsMismatchError("Not enough channels in mock device configuration.")
 
@@ -152,29 +153,58 @@ class MockSpectrumDigitiserCard(SpectrumDigitiserCard, MockAbstractSpectrumDigit
             logger.warning("No acquisition in progress. Wait for acquisition to complete has no effect")
 
 
-class MockSpectrumDigitiserStarHub(SpectrumDigitiserStarHub, MockAbstractSpectrumDigitiser):
+class MockSpectrumAWGCard(MockAbstractSpectrumAWG, MockAbstractSpectrumCard, SpectrumAWGCard):
+    def __init__(self, device_number: int, model: ModelNumber, num_modules: int, num_channels_per_module: int) -> None:
+        """
+        Args:
+            device_number (int): The index of the mock device to create. Used to create a name for the device which is
+                used internally.
+            model (ModelNumber): The model of card to mock.
+            num_modules (int): The number of internal modules to assign the mock card. Default 2. On real hardware, this
+                is read from the device so does not need to be set. See the Spectrum documentation to work out how many
+                modules your hardware has.
+            num_channels_per_module (int): The number of channels per module. Default 4 (so 8 channels in total). On
+                real hardware, this is read from the device so does not need to be set.
+        """
+        super().__init__(
+            card_type=CardType.SPCM_TYPE_AO,
+            device_number=device_number,
+            model=model,
+            num_modules=num_modules,
+            num_channels_per_module=num_channels_per_module,
+        )
+        self._connect(self._visa_string)
+
+    def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
+        """Create or provide a `TransferBuffer` object for transferring samples from the device.
+
+        See SpectrumAWGCard.define_transfer_buffer(). This mock implementation is identical apart from that it
+        does not write to any hardware device."""
+        if buffer is None:
+            raise ValueError(
+                "You must provide a preconfigured buffer for transferring samples to an AWG because the"
+                "buffer size cannot be inferred."
+            )
+        self._transfer_buffer = buffer[0]
+
+
+class MockSpectrumDigitiserStarHub(MockAbstractSpectrumStarHub, SpectrumDigitiserStarHub):
     """A mock spectrum StarHub, for testing software written to use the `SpectrumStarHub` class.
 
     Overrides methods of `SpectrumStarHub` and `AbstractSpectrumDigitiser` that communicate with hardware with mocked
     implementations allowing software to be tested without Spectrum hardware connected or drivers installed, e.g. during
     CI."""
 
-    def __init__(
-        self,
-        device_number: int,
-        child_cards: Sequence[MockSpectrumDigitiserCard],
-        master_card_index: int,
-    ):
+    def __init__(self, **kwargs: Any):
         """
         Args:
-            child_cards (Sequence[`MockSpectrumDigitiserCard`]): A list of `MockSpectrumCard` objects defining the
+            child_cards (Sequence[`MockSpectrumDigitiserCard`]): A list of `MockSpectrumDigitiserCard` objects defining the
                 properties of the child cards located within the mock hub.
             master_card_index (int): The position within child_cards where the master card (the card which controls the
                 clock) is located.
         """
-        MockAbstractSpectrumDigitiser.__init__(self)
-        SpectrumDigitiserStarHub.__init__(self, device_number, child_cards, master_card_index)
-        self._visa_string = f"MockHub{device_number}"
+        super().__init__(param_dict=None, **kwargs)
+        self._visa_string = "/mock" + self._visa_string
         self._connect(self._visa_string)
         self._acquisition_mode = self.acquisition_mode
 

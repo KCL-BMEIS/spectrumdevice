@@ -8,13 +8,17 @@ Spectrum cards)."""
 from abc import ABC
 from functools import reduce
 from operator import or_
-from typing import List, Sequence, Tuple
+from typing import Any, List, Sequence, Tuple, TypeVar, Generic
 
 from numpy import arange
 
 from spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK
 from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
-from spectrumdevice.devices.abstract_device.device_interface import SpectrumChannelInterface, SpectrumDeviceInterface
+from spectrumdevice.devices.abstract_device.interfaces import (
+    SpectrumDeviceInterface,
+    SpectrumAnalogChannelInterface,
+    SpectrumIOLineInterface,
+)
 from spectrumdevice.exceptions import SpectrumSettingsMismatchError
 from spectrumdevice.settings import (
     AdvancedCardFeature,
@@ -29,17 +33,15 @@ from spectrumdevice.settings import (
 from spectrumdevice.spectrum_wrapper import destroy_handle
 
 
-class AbstractSpectrumStarHub(AbstractSpectrumDevice, ABC):
+CardType = TypeVar("CardType", bound=SpectrumDeviceInterface)
+
+
+class AbstractSpectrumStarHub(AbstractSpectrumDevice, Generic[CardType], ABC):
     """Composite abstract class of `AbstractSpectrumCard` implementing methods common to all StarHubs. StarHubs are
     composites of more than one Spectrum card. Acquisition and generation from the child cards of a StarHub
     is synchronised, aggregating the channels of all child cards."""
 
-    def __init__(
-        self,
-        device_number: int,
-        child_cards: Sequence[SpectrumDeviceInterface],
-        master_card_index: int,
-    ):
+    def __init__(self, device_number: int, child_cards: Sequence[CardType], master_card_index: int, **kwargs: Any):
         """
         Args:
             device_number (int): The index of the StarHub to connect to. If only one StarHub is present, set to 0.
@@ -48,7 +50,7 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, ABC):
             master_card_index (int): The position within child_cards where the master card (the card which controls the
                 clock) is located.
         """
-        self._child_cards: Sequence[SpectrumDeviceInterface] = child_cards
+        self._child_cards: Sequence[CardType] = child_cards
         self._master_card = child_cards[master_card_index]
         self._triggering_card = child_cards[master_card_index]
         child_card_logical_indices = (2**n for n in range(len(self._child_cards)))
@@ -227,7 +229,7 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, ABC):
             d.apply_channel_enabling()
 
     @property
-    def enabled_channels(self) -> List[int]:
+    def enabled_analog_channels(self) -> List[int]:
         """The currently enabled channel indices, indexed over the whole hub (from 0 to N-1, where N is the total
         number of channels available to the hub).
 
@@ -237,11 +239,13 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, ABC):
         enabled_channels = []
         n_channels_in_previous_card = 0
         for card in self._child_cards:
-            enabled_channels += [channel_num + n_channels_in_previous_card for channel_num in card.enabled_channels]
-            n_channels_in_previous_card = len(card.channels)
+            enabled_channels += [
+                channel_num + n_channels_in_previous_card for channel_num in card.enabled_analog_channels
+            ]
+            n_channels_in_previous_card = len(card.analog_channels)
         return enabled_channels
 
-    def set_enabled_channels(self, channels_nums: List[int]) -> None:
+    def set_enabled_analog_channels(self, channels_nums: List[int]) -> None:
         """Change the currently enabled channel indices, indexed over the whole hub (from 0 to N-1, where N is the total
         number of channels available to the hub).
 
@@ -252,10 +256,10 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, ABC):
         channels_to_enable_all_cards = channels_nums
 
         for child_card in self._child_cards:
-            n_channels_in_card = len(child_card.channels)
+            n_channels_in_card = len(child_card.analog_channels)
             channels_to_enable_this_card = list(set(arange(n_channels_in_card)) & set(channels_to_enable_all_cards))
             num_channels_to_enable_this_card = len(channels_to_enable_this_card)
-            child_card.set_enabled_channels(channels_to_enable_this_card)
+            child_card.set_enabled_analog_channels(channels_to_enable_this_card)
             channels_to_enable_all_cards = [
                 num - n_channels_in_card for num in channels_nums[num_channels_to_enable_this_card:]
             ]
@@ -270,17 +274,29 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, ABC):
         return [card.transfer_buffers[0] for card in self._child_cards]
 
     @property
-    def channels(self) -> Sequence[SpectrumChannelInterface]:
+    def analog_channels(self) -> Sequence[SpectrumAnalogChannelInterface]:
         """A tuple containing of all the channels of the child cards of the hub. See `AbstractSpectrumCard.channels` for
         more information.
 
         Returns:
             channels (Sequence[`SpectrumChannelInterface`]): A tuple of `SpectrumDigitiserChannel` objects.
         """
-        channels: List[SpectrumChannelInterface] = []
+        channels: List[SpectrumAnalogChannelInterface] = []
         for device in self._child_cards:
-            channels += device.channels
+            channels += device.analog_channels
         return tuple(channels)
+
+    @property
+    def io_lines(self) -> Sequence[SpectrumIOLineInterface]:
+        """A tuple containing of all the Multipurpose IO Lines of the child cards of the hub.
+
+        Returns:
+            channels (Sequence[`SpectrumIOLineInterface`]): A tuple of `SpectrumIOLineInterface` objects.
+        """
+        io_lines: List[SpectrumIOLineInterface] = []
+        for device in self._child_cards:
+            io_lines += device.io_lines
+        return tuple(io_lines)  # todo: this is probably wrong. I don't think both cards in a netbox have IO lines
 
     @property
     def timeout_in_ms(self) -> int:
@@ -323,6 +339,13 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, ABC):
             modes (AvailableIOModes): An `AvailableIOModes` dataclass containing the modes available for each IO line.
         """
         return self._master_card.available_io_modes
+
+    @property
+    def bytes_per_sample(self) -> int:
+        bytes_per_sample_each_card = []
+        for d in self._child_cards:
+            bytes_per_sample_each_card.append(d.bytes_per_sample)
+        return check_settings_constant_across_devices(bytes_per_sample_each_card, __name__)
 
     def __str__(self) -> str:
         return f"StarHub {self._visa_string}"

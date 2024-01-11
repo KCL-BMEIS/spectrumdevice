@@ -132,9 +132,9 @@ def mock_waveform_source_factory(
     param_dict: Dict[int, int],
     notify_size_in_pages: float = 0,
 ) -> MockWaveformSource:
-    if acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
+    if acquisition_mode in (AcquisitionMode.SPC_REC_FIFO_MULTI, AcquisitionMode.SPC_REC_FIFO_AVERAGE):
         return MultiFIFOModeMockWaveformSource(param_dict, notify_size_in_pages)
-    elif AcquisitionMode.SPC_REC_STD_SINGLE:
+    elif acquisition_mode == AcquisitionMode.SPC_REC_STD_SINGLE:
         return SingleModeMockWaveformSource(param_dict)
     else:
         raise NotImplementedError(f"Mock waveform source not yet implemented for {acquisition_mode} acquisition mode.")

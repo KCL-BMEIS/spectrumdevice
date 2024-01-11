@@ -9,7 +9,7 @@ for controlling devices:
 |----------------------------|-----------------------------------------------------------------------|
 | `SpectrumDigitiserCard`    | Controlling individual digitiser cards                                |
 | `SpectrumDigitiserStarHub` | Controlling digitiser cards aggregated with a StarHub                 |
-| `SpectrumAWGCard`          | Controlling individual AWG cards (Not yet implemented)                |
+| `SpectrumAWGCard`          | Controlling individual AWG cards                                      |
 | `SpectrumAWGStarHub`       | Controlling AWG cards aggregated with a StarHub (Not yet implemented) |
 
 `spectrumdevice` also includes mock classes for testing software without drivers installed or hardware connected:
@@ -157,11 +157,12 @@ independently configuring each channel.
 For example, to change the vertical range of channel 2 of a digitiser card to 1V:
 
 ```python
-card.channels[2].set_vertical_range_in_mv(1000)
+card.analog_channels[2].set_vertical_range_in_mv(1000)
 ```
 and then print the vertical offset:
+
 ```python
-print(card.channels[2].vertical_offset_in_percent)
+print(card.analog_channels[2].vertical_offset_in_percent)
 ```
 
 ### Configuring everything at once
@@ -230,6 +231,7 @@ buffer = transfer_buffer_factory(
   buffer_type=BufferType.SPCM_BUF_DATA,  # must be SPCM_BUF_DATA to transfer samples from digitiser
   direction=BufferDirection.SPCM_DIR_CARDTOPC,  # must be SPCM_DIR_CARDTOPC to transfer samples from digitiser
   size_in_samples=size_in_samples,
+  bytes_per_sampe=card.bytes_per_sample,
   board_memory_offset_bytes=board_memory_offset_bytes,
   notify_size_in_pages=notify_size_in_pages
 )

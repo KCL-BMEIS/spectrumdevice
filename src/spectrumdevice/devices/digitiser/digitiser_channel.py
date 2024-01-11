@@ -1,4 +1,5 @@
 """Provides a concrete class for configuring the individual channels of Spectrum digitiser devices."""
+from typing import Any
 
 # Christian Baker, King's College London
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
@@ -7,11 +8,16 @@
 from numpy import ndarray
 
 from spectrum_gmbh.regs import SPC_MIINST_MAXADCVALUE
-from spectrumdevice.devices.abstract_device import AbstractSpectrumCard, AbstractSpectrumChannel
+from spectrumdevice.devices.abstract_device import AbstractSpectrumCard
+from spectrumdevice.devices.abstract_device.abstract_spectrum_channel import AbstractSpectrumAnalogChannel
+from spectrumdevice.devices.abstract_device.abstract_spectrum_io_line import AbstractSpectrumIOLine
 from spectrumdevice.devices.digitiser.digitiser_interface import (
-    SpectrumDigitiserChannelInterface,
+    SpectrumDigitiserInterface,
+    SpectrumDigitiserAnalogChannelInterface,
+    SpectrumDigitiserIOLineInterface,
 )
 from spectrumdevice.exceptions import SpectrumCardIsNotADigitiser
+from spectrumdevice.settings import IOLineMode
 from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.channel import (
     INPUT_IMPEDANCE_COMMANDS,
@@ -25,16 +31,29 @@ from spectrumdevice.settings.channel import (
 )
 
 
-class SpectrumDigitiserChannel(AbstractSpectrumChannel, SpectrumDigitiserChannelInterface):
+class SpectrumDigitiserIOLine(AbstractSpectrumIOLine, SpectrumDigitiserIOLineInterface):
+    def __init__(self, parent_device: AbstractSpectrumCard, **kwargs: Any) -> None:
+        if parent_device.type != CardType.SPCM_TYPE_AI:
+            raise SpectrumCardIsNotADigitiser(parent_device.type)
+        super().__init__(parent_device=parent_device, **kwargs)  # pass unused args up the inheritance hierarchy
+
+    def _get_io_line_mode_settings_mask(self, mode: IOLineMode) -> int:
+        return 0  # no settings required for DigOut
+
+
+class SpectrumDigitiserAnalogChannel(AbstractSpectrumAnalogChannel, SpectrumDigitiserAnalogChannelInterface):
     """Class for controlling an individual channel of a spectrum digitiser. Channels are constructed automatically when
     a `SpectrumDigitiserCard` or `SpectrumDigitiserStarHub` is instantiated, and can then be accessed via the
     `.channels` property."""
 
-    def __init__(self, channel_number: int, parent_device: AbstractSpectrumCard):
+    def __init__(self, channel_number: int, parent_device: SpectrumDigitiserInterface) -> None:
 
         if parent_device.type != CardType.SPCM_TYPE_AI:
             raise SpectrumCardIsNotADigitiser(parent_device.type)
-        AbstractSpectrumChannel.__init__(self, channel_number, parent_device)
+
+        # pass unused args up the inheritance hierarchy
+        super().__init__(channel_number=channel_number, parent_device=parent_device)
+
         self._full_scale_value = self._parent_device.read_spectrum_device_register(SPC_MIINST_MAXADCVALUE)
         # used frequently so store locally instead of reading from device each time:
         self._vertical_range_mv = self.vertical_range_in_mv

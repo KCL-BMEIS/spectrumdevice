@@ -15,6 +15,7 @@ from spectrum_gmbh.regs import (
     SPC_CM_EXTERNAL,
     SPC_CM_EXTREFCLOCK,
     SPC_REP_STD_SINGLE,
+    SPC_REP_STD_SINGLERESTART,
 )
 
 
@@ -39,6 +40,8 @@ class GenerationMode(Enum):
     SPC_REP_STD_SINGLE = SPC_REP_STD_SINGLE
     """Data generation from on-board memory repeating the complete programmed memory either once, infinite or for a
     defined number of times after one single trigger event."""
+    SPC_REP_STD_SINGLERESTART = SPC_REP_STD_SINGLERESTART
+    """Data generation from on-board memory. The programmed memory is repeated once after each single trigger event."""
 
 
 class ClockMode(Enum):

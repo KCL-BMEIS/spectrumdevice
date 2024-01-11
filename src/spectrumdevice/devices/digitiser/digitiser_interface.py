@@ -11,15 +11,20 @@ from typing import List, Optional
 from numpy import float_, ndarray
 from numpy.typing import NDArray
 
-from spectrumdevice.devices.abstract_device import SpectrumChannelInterface, SpectrumDeviceInterface
+from spectrumdevice.devices.abstract_device import SpectrumDeviceInterface
+from spectrumdevice.devices.abstract_device.interfaces import SpectrumAnalogChannelInterface, SpectrumIOLineInterface
 from spectrumdevice.settings import AcquisitionMode, AcquisitionSettings
 from spectrumdevice import Measurement
 from spectrumdevice.settings.channel import InputImpedance, InputCoupling, InputPath
 
 
-class SpectrumDigitiserChannelInterface(SpectrumChannelInterface, ABC):
-    """Defines the public interface for control of the channels of Spectrum digitiser device. All properties are read-
-    only and must be set with their respective setter methods."""
+class SpectrumDigitiserIOLineInterface(SpectrumIOLineInterface, ABC):
+    pass
+
+
+class SpectrumDigitiserAnalogChannelInterface(SpectrumAnalogChannelInterface, ABC):
+    """Defines the public interface for control of the analog channels of Spectrum digitiser device. All properties are
+    read-only and must be set with their respective setter methods."""
 
     @property
     @abstractmethod

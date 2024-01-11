@@ -9,7 +9,7 @@ import logging
 from abc import ABC, abstractmethod
 from functools import reduce
 from operator import or_
-from typing import List, Optional, Sequence, Tuple
+from typing import Any, List, Optional, Sequence, Tuple, TypeVar, Generic
 
 from spectrum_gmbh.regs import (
     M2CMD_DATA_STARTDMA,
@@ -31,9 +31,11 @@ from spectrum_gmbh.regs import (
     SPC_TIMEOUT,
     SPC_TRIG_ANDMASK,
     SPC_TRIG_ORMASK,
+    M2CMD_CARD_FORCETRIGGER,
+    SPC_MIINST_BYTESPERSAMPLE,
 )
 from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
-from spectrumdevice.devices.abstract_device.device_interface import SpectrumChannelInterface
+from spectrumdevice.devices.abstract_device.interfaces import SpectrumAnalogChannelInterface, SpectrumIOLineInterface
 from spectrumdevice.exceptions import (
     SpectrumExternalTriggerNotEnabled,
     SpectrumInvalidNumberOfEnabledChannels,
@@ -67,16 +69,23 @@ from spectrumdevice.spectrum_wrapper import destroy_handle
 logger = logging.getLogger(__name__)
 
 
-class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
+# Use a Generic and Type Variables to allow subclasses of AbstractSpectrumCard to define whether they own AWG analog
+# channels or Digitiser analog channels and IO lines
+AnalogChannelInterfaceType = TypeVar("AnalogChannelInterfaceType", bound=SpectrumAnalogChannelInterface)
+IOLineInterfaceType = TypeVar("IOLineInterfaceType", bound=SpectrumIOLineInterface)
+
+
+class AbstractSpectrumCard(AbstractSpectrumDevice, Generic[AnalogChannelInterfaceType, IOLineInterfaceType], ABC):
     """Abstract superclass implementing methods common to all individual "card" devices (as opposed to "hub" devices)."""
 
-    def __init__(self, device_number: int = 0, ip_address: Optional[str] = None):
+    def __init__(self, device_number: int, ip_address: Optional[str] = None, **kwargs: Any):
         """
         Args:
             device_number (int): Index of the card to control. If only one card is present, set to 0.
             ip_address (Optional[str]): If connecting to a networked card, provide the IP address here as a string.
 
         """
+        super().__init__()  # required for proper MRO resolution
         if ip_address is not None:
             self._visa_string = _create_visa_string_from_ip(ip_address, device_number)
         else:
@@ -84,8 +93,9 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         self._connect(self._visa_string)
         self._model_number = ModelNumber(self.read_spectrum_device_register(SPC_PCITYP))
         self._trigger_sources: List[TriggerSource] = []
-        self._channels = self._init_channels()
-        self._enabled_channels: List[int] = [0]
+        self._analog_channels = self._init_analog_channels()
+        self._io_lines = self._init_io_lines()
+        self._enabled_analog_channels: List[int] = [0]
         self._transfer_buffer: Optional[TransferBuffer] = None
         self.apply_channel_enabling()
 
@@ -118,6 +128,8 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         For digitisers in FIFO mode (SPC_REC_FIFO_MULTI), `start_transfer()` should be called immediately after
         `start()` has been called, so that the waveform data can be continuously streamed into the transfer buffer as it
         is acquired.
+
+        # todo: docstring for AWG transfers
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_STARTDMA)
 
@@ -134,6 +146,8 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         For digitisers in FIFO mode (SPC_REC_FIFO_MULTI), samples are transferred continuously during acquisition,
         and transfer will automatically stop when `stop()` is called as there will be no more
         samples to transfer, so `stop_transfer()` should not be used.
+
+        # todo: docstring for AWG
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_STOPDMA)
 
@@ -146,6 +160,9 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
         be read using the `get_waveforms()` method.
 
         For digitisers in FIFO mode (SPC_REC_FIFO_MULTI) this method is internally used by get_waveforms().
+
+        # todo: update the above docstring to take into account cases where notify size < data lemgth
+        # todo: docstring for AWG
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_DATA_WAITDMA)
 
@@ -182,7 +199,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
             raise NotImplementedError(f"Cannot compare {self.__class__} with {other.__class__}")
 
     @property
-    def channels(self) -> Sequence[SpectrumChannelInterface]:
+    def analog_channels(self) -> Sequence[AnalogChannelInterfaceType]:
         """A tuple containing the channels that belong to the card.
 
         Properties of the individual channels can be set by calling the methods of the
@@ -192,24 +209,37 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
             channels (Sequence[`SpectrumChannelInterface`]): A tuple of objects conforming to the
             `SpectrumChannelInterface` interface.
         """
-        return self._channels
+        return self._analog_channels
 
     @property
-    def enabled_channels(self) -> List[int]:
+    def io_lines(self) -> Sequence[IOLineInterfaceType]:
+        """A tuple containing the Multipurpose IO Lines that belong to the card.
+
+        Properties of the individual channels can be set by calling the methods of the
+            returned objects directly.
+
+        Returns:
+            channels (Sequence[`SpectrumIOLineInterface`]): A tuple of objects conforming to the
+            `SpectrumIOLineInterface` interface.
+        """
+        return self._io_lines
+
+    @property
+    def enabled_analog_channels(self) -> List[int]:
         """The indices of the currently enabled channels.
         Returns:
             enabled_channels (List[int]): The indices of the currently enabled channels.
         """
-        return self._enabled_channels
+        return self._enabled_analog_channels
 
-    def set_enabled_channels(self, channels_nums: List[int]) -> None:
+    def set_enabled_analog_channels(self, channels_nums: List[int]) -> None:
         """Change which channels are enabled.
 
         Args:
             channels_nums (List[int]): The integer channel indices to enable.
         """
         if len(channels_nums) in [1, 2, 4, 8]:
-            self._enabled_channels = channels_nums
+            self._enabled_analog_channels = channels_nums
             self.apply_channel_enabling()
         else:
             raise SpectrumInvalidNumberOfEnabledChannels(f"{len(channels_nums)} cannot be enabled at once.")
@@ -353,7 +383,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
     def apply_channel_enabling(self) -> None:
         """Apply the enabled channels chosen using set_enable_channels(). This happens automatically and does not
         usually need to be called."""
-        enabled_channel_spectrum_values = [self.channels[i].name.value for i in self._enabled_channels]
+        enabled_channel_spectrum_values = [self.analog_channels[i].name.value for i in self._enabled_analog_channels]
         if len(enabled_channel_spectrum_values) in [1, 2, 4, 8]:
             bitwise_or_of_enabled_channels = reduce(or_, enabled_channel_spectrum_values)
             self.write_to_spectrum_device_register(SPC_CHENABLE, bitwise_or_of_enabled_channels)
@@ -363,7 +393,11 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
             )
 
     @abstractmethod
-    def _init_channels(self) -> Sequence[SpectrumChannelInterface]:
+    def _init_analog_channels(self) -> Sequence[AnalogChannelInterfaceType]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def _init_io_lines(self) -> Sequence[IOLineInterfaceType]:
         raise NotImplementedError()
 
     @property
@@ -451,6 +485,14 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, ABC):
     @property
     def type(self) -> CardType:
         return CardType(self.read_spectrum_device_register(SPC_FNCTYPE))
+
+    def force_trigger_event(self) -> None:
+        """Force a trigger event to occur"""
+        self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_FORCETRIGGER)
+
+    @property
+    def bytes_per_sample(self) -> int:
+        return self.read_spectrum_device_register(SPC_MIINST_BYTESPERSAMPLE)
 
 
 def _create_visa_string_from_ip(ip_address: str, instrument_number: int) -> str:

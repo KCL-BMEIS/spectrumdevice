@@ -80,6 +80,7 @@ class AdvancedCardFeature(Enum):
     SPCM_FEAT_EXTFW_SEGSTAT = SPCM_FEAT_EXTFW_SEGSTAT
     SPCM_FEAT_EXTFW_SEGAVERAGE = SPCM_FEAT_EXTFW_SEGAVERAGE
     SPCM_FEAT_EXTFW_BOXCAR = SPCM_FEAT_EXTFW_BOXCAR
+    SPCM_FEAT_EXTFW_PULSEGEN = 0x00000008  # not in regs.py for some reason. None of the AWG stuff seem to be,
 
 
 def decode_advanced_card_features(value: int) -> List[AdvancedCardFeature]:

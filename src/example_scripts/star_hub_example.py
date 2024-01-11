@@ -22,7 +22,9 @@ def connect_to_star_hub_example(
             # Connect to each card in the hub.
             child_cards.append(SpectrumDigitiserCard(device_number=n, ip_address=ip_address))
         # Connect to the hub itself
-        return SpectrumDigitiserStarHub(device_number=0, child_cards=child_cards, master_card_index=master_card_index)
+        return SpectrumDigitiserStarHub(
+            device_number=0, child_cards=tuple(child_cards), master_card_index=master_card_index
+        )
     else:
         mock_child_cards = []
         for n in range(num_cards):
@@ -49,8 +51,8 @@ if __name__ == "__main__":
     num_measurements = 5
     hub = connect_to_star_hub_example(mock_mode=False, num_cards=2, master_card_index=1, ip_address="169.254.13.35")
 
-    print(f"{hub} contains {len(hub.channels)} channels in total:")
-    for channel in hub.channels:
+    print(f"{hub} contains {len(hub.analog_channels)} channels in total:")
+    for channel in hub.analog_channels:
         print(channel)
 
     # Trigger settings

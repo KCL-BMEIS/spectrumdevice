@@ -47,7 +47,9 @@ class Timestamper(ABC):
     ):
         self._parent_device = parent_device
         self._transfer_buffer = transfer_buffer_factory(
-            buffer_type=BufferType.SPCM_BUF_TIMESTAMP, direction=BufferDirection.SPCM_DIR_CARDTOPC
+            buffer_type=BufferType.SPCM_BUF_TIMESTAMP,
+            direction=BufferDirection.SPCM_DIR_CARDTOPC,
+            bytes_per_sample=parent_device.bytes_per_sample,
         )
         self._expected_timestamp_bytes_per_frame = BYTES_PER_TIMESTAMP
 
