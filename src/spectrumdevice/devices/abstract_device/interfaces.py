@@ -14,12 +14,14 @@ from spectrumdevice.settings import (
     ClockMode,
     ExternalTriggerMode,
     DEVICE_STATUS_TYPE,
+    ModelNumber,
     SpectrumRegisterLength,
     TransferBuffer,
     TriggerSettings,
     TriggerSource,
     IOLineMode,
 )
+from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.channel import SpectrumAnalogChannelName, SpectrumChannelName
 from spectrumdevice.settings.io_lines import SpectrumIOLineName
 
@@ -237,4 +239,14 @@ class SpectrumDeviceInterface(ABC):
     @property
     @abstractmethod
     def bytes_per_sample(self) -> int:
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def type(self) -> CardType:
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def model_number(self) -> ModelNumber:
         raise NotImplementedError()

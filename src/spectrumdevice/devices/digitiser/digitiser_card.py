@@ -5,7 +5,7 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 import datetime
 import logging
-from typing import Any, List, Optional, Sequence, cast
+from typing import List, Optional, Sequence, cast
 
 from numpy import float_, mod, squeeze, zeros
 from numpy.typing import NDArray
@@ -59,15 +59,15 @@ class SpectrumDigitiserCard(
 ):
     """Class for controlling individual Spectrum digitiser cards."""
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, device_number: int, ip_address: Optional[str] = None) -> None:
         """
         Args:
             device_number (int): Index of the card to control. If only one card is present, set to 0.
             ip_address (Optional[str]): If connecting to a networked card, provide the IP address here as a string.
 
         """
-        print("SpectrumDigitiserCard", flush=True)
-        super().__init__(**kwargs)  # pass unused args up the inheritance hierarchy
+        # pass unused args up the inheritance hierarchy
+        super().__init__(device_number=device_number, ip_address=ip_address)
 
         if self.type != CardType.SPCM_TYPE_AI:
             raise SpectrumCardIsNotADigitiser(self.type)
@@ -315,13 +315,13 @@ class SpectrumDigitiserCard(
                 self._transfer_buffer = create_samples_acquisition_transfer_buffer(
                     size_in_samples=samples_per_batch,
                     notify_size_in_pages=notify_size,
-                    bytes_per_sample=self.bytes_per_sample
+                    bytes_per_sample=self.bytes_per_sample,
                 )
             elif self.acquisition_mode in (AcquisitionMode.SPC_REC_STD_SINGLE, AcquisitionMode.SPC_REC_STD_AVERAGE):
                 self._transfer_buffer = create_samples_acquisition_transfer_buffer(
                     size_in_samples=self.acquisition_length_in_samples * len(self.enabled_analog_channels),
                     notify_size_in_pages=0,
-                    bytes_per_sample=self.bytes_per_sample
+                    bytes_per_sample=self.bytes_per_sample,
                 )
             else:
                 raise ValueError("AcquisitionMode not recognised")

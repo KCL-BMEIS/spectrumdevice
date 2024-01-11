@@ -6,7 +6,7 @@
 
 from abc import ABC
 from threading import Event, Lock, Thread
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union, cast
 
 from spectrum_gmbh.regs import (
     SPCM_FEAT_EXTFW_SEGSTAT,
@@ -19,6 +19,7 @@ from spectrum_gmbh.regs import (
     SPC_CARDMODE,
     SPC_FNCTYPE,
     SPC_MEMSIZE,
+    SPC_MIINST_BYTESPERSAMPLE,
     SPC_MIINST_MAXADCVALUE,
     SPC_PCIEXTFEATURES,
     SPC_PCIFEATURES,
@@ -35,10 +36,11 @@ from spectrumdevice.devices.mocks.mock_waveform_source import mock_waveform_sour
 from spectrumdevice.exceptions import SpectrumDeviceNotConnected
 from spectrumdevice.settings import AcquisitionMode, ModelNumber, SpectrumRegisterLength
 from spectrumdevice.settings.card_dependent_properties import CardType
+from spectrumdevice.settings.device_modes import GenerationMode
 
 
 class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
-    def __init__(self, param_dict: Optional[Dict[int, int]] = None, **kwargs: Any):
+    def __init__(self, param_dict: Optional[Dict[int, int]], **kwargs: Any):
         if param_dict is None:
             self._param_dict: Dict[int, int] = {}
         else:
@@ -107,12 +109,11 @@ class MockAbstractSpectrumCard(MockAbstractSpectrumDevice, AbstractSpectrumCard,
         self,
         model: ModelNumber,
         card_type: CardType,
-        mode: AcquisitionMode,
+        mode: Union[AcquisitionMode, GenerationMode],
         num_modules: int,
         num_channels_per_module: int,
         **kwargs: Any,
     ) -> None:
-        print("MockAbstractSpectrumCard", flush=True)
         param_dict: dict[int, int] = {}
         param_dict[SPC_PCIFEATURES] = SPCM_FEAT_MULTI
         param_dict[SPC_PCIEXTFEATURES] = SPCM_FEAT_EXTFW_SEGSTAT
@@ -125,14 +126,17 @@ class MockAbstractSpectrumCard(MockAbstractSpectrumDevice, AbstractSpectrumCard,
         param_dict[SPC_MEMSIZE] = 1000
         param_dict[SPC_PCITYP] = model.value
         param_dict[SPC_FNCTYPE] = card_type.value
-        param_dict[SPC_CARDMODE] = mode.value
+        param_dict[SPC_CARDMODE] = cast(int, mode.value)  # cast suppresses a pycharm warning
         param_dict[SPC_MIINST_MODULES] = num_modules
         param_dict[SPC_MIINST_CHPERMODULE] = num_channels_per_module
+        param_dict[SPC_MIINST_BYTESPERSAMPLE] = 2
+        param_dict[SPC_MIINST_MAXADCVALUE] = 128
         self._buffer_lock = Lock()
         self._enabled_channels = [0]
         super().__init__(
             param_dict=param_dict, **kwargs
         )  # then call the rest of the inits after the params have been set
+        self._visa_string = "/mock" + self._visa_string
 
 
 class MockAbstractSpectrumStarHub(MockAbstractSpectrumDevice, AbstractSpectrumStarHub, ABC):
@@ -145,18 +149,15 @@ class MockAbstractSpectrumDigitiser(MockAbstractSpectrumDevice, AbstractSpectrum
     class cannot be constructed directly - instantiate `MockAbstractSpectrumDigitiser` and `MockSpectrumStarHub` objects instead,
     which inherit from this class."""
 
-    def __init__(self, source_frame_rate_hz: float = 10.0, **kwargs: Any) -> None:
+    def __init__(self, mock_source_frame_rate_hz: float = 10.0, **kwargs: Any) -> None:
         """
         Args:
             source_frame_rate_hz (float): Frame rate at which a mock waveform source will generate waveforms.
         """
         # use super() to ensure init of MockAbstractSpectrumDevice is only called once in child classes with multiple
         # inheritance
-        print("MockAbstractSpectrumDigitiser", flush=True)
         super().__init__(mode=AcquisitionMode.SPC_REC_STD_SINGLE, **kwargs)
-        self._source_frame_rate_hz = source_frame_rate_hz
-        self._param_dict[SPC_MIINST_MAXADCVALUE] = 128
-
+        self._source_frame_rate_hz = mock_source_frame_rate_hz
         self._buffer_lock = Lock()
         self._acquisition_stop_event = Event()
         self._acquisition_thread: Optional[Thread] = None
@@ -171,7 +172,7 @@ class MockAbstractSpectrumDigitiser(MockAbstractSpectrumDevice, AbstractSpectrum
         notify_size = self.transfer_buffers[0].notify_size_in_pages  # this will be 0 in STD_SINGLE_MODE
         waveform_source = mock_waveform_source_factory(self.acquisition_mode, self._param_dict, notify_size)
         amplitude = self.read_spectrum_device_register(SPC_MIINST_MAXADCVALUE)
-        print(f"STARTING WAVEFORM SOURCE WITH AMPLITUDE {amplitude}")
+        print(f"STARTING MOCK WAVEFORMS SOURCE WITH AMPLITUDE {amplitude}")
         self._acquisition_stop_event.clear()
         self._acquisition_thread = Thread(
             target=waveform_source,
@@ -192,4 +193,5 @@ class MockAbstractSpectrumDigitiser(MockAbstractSpectrumDevice, AbstractSpectrum
 
 
 class MockAbstractSpectrumAWG(MockAbstractSpectrumDevice, AbstractSpectrumAWG, ABC):
-    pass
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(mode=GenerationMode.SPC_REP_STD_SINGLE, **kwargs)

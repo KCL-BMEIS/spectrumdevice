@@ -1,6 +1,6 @@
 from typing import Optional, Sequence
 
-from numpy import int16, mod
+from numpy import int16
 from numpy.typing import NDArray
 
 from spectrum_gmbh.regs import SPC_MIINST_CHPERMODULE, SPC_MIINST_MODULES, TYP_SERIESMASK, TYP_M2PEXPSERIES, SPC_MEMSIZE
@@ -38,7 +38,7 @@ class SpectrumAWGCard(
             buffer_type=BufferType.SPCM_BUF_DATA,
             direction=BufferDirection.SPCM_DIR_PCTOCARD,
             size_in_samples=len(waveform),
-            bytes_per_sample=self.bytes_per_sample
+            bytes_per_sample=self.bytes_per_sample,
         )
         buffer.data_array[:] = waveform
         self.define_transfer_buffer((buffer,))

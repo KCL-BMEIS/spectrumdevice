@@ -5,7 +5,7 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 import datetime
 from threading import Thread
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Dict, List, Optional, Sequence
 
 from numpy import float_
 from numpy.typing import NDArray
@@ -16,7 +16,8 @@ from spectrumdevice.devices.abstract_device import (
 from spectrumdevice.devices.abstract_device.abstract_spectrum_hub import check_settings_constant_across_devices
 from spectrumdevice.devices.digitiser.digitiser_card import SpectrumDigitiserCard
 from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
-from spectrumdevice.settings import TransferBuffer
+from spectrumdevice.settings import ModelNumber, TransferBuffer
+from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.device_modes import AcquisitionMode
 
 
@@ -26,7 +27,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub[SpectrumDigitiserCard], A
     child cards of a StarHub is synchronised, aggregating the channels of all child cards. This class enables the
     control of a StarHub device as if it were a single Spectrum card."""
 
-    def __init__(self, **kwargs: Any):
+    def __init__(self, device_number: int, child_cards: tuple[SpectrumDigitiserCard, ...], master_card_index: int):
         """
         Args:
             device_number (int): The index of the StarHub to connect to. If only one StarHub is present, set to 0.
@@ -35,7 +36,7 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub[SpectrumDigitiserCard], A
             master_card_index (int): The position within child_cards where the master card (the card which controls the
                 clock) is located.
         """
-        super().__init__(**kwargs)
+        super().__init__(device_number=device_number, child_cards=child_cards, master_card_index=master_card_index)
         self._acquisition_mode = self.acquisition_mode
 
     def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
@@ -186,3 +187,11 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub[SpectrumDigitiserCard], A
     def force_trigger_event(self) -> None:
         for d in self._child_cards:
             d.force_trigger_event()
+
+    @property
+    def type(self) -> CardType:
+        return self._child_cards[0].type
+
+    @property
+    def model_number(self) -> ModelNumber:
+        return self._child_cards[0].model_number

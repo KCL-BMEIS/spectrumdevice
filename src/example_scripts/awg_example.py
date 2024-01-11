@@ -1,23 +1,13 @@
 from time import sleep
 
 from matplotlib.pyplot import plot, show
-from numpy import array, int16, iinfo, bool_, linspace, sin, pi
+from numpy import int16, iinfo, bool_, linspace, sin, pi
 from numpy.typing import NDArray
 
-from spectrumdevice import SpectrumDigitiserCard
 from spectrumdevice.devices.awg.awg_card import SpectrumAWGCard
-from spectrumdevice.devices.mocks import MockSpectrumAWGCard
-from spectrumdevice.settings import (
-    TriggerSettings,
-    TriggerSource,
-    ExternalTriggerMode,
-    IOLineMode,
-    ModelNumber,
-    AcquisitionMode, AcquisitionSettings, InputImpedance,
-)
+from spectrumdevice.settings import TriggerSettings, TriggerSource, ExternalTriggerMode
 from spectrumdevice.settings.channel import OutputChannelStopLevelMode
 from spectrumdevice.settings.device_modes import GenerationMode
-from spectrumdevice.settings.io_lines import DigOutIOLineModeSettings, DigOutSourceChannel, DigOutSourceBit
 
 PULSE_RATE_HZ = 5000
 NUM_PULSES = 5
@@ -64,19 +54,16 @@ if __name__ == "__main__":
 
     card.start()
 
-    waveforms = []
     for _ in range(NUM_PULSES):
         card.force_trigger_event()
         sleep(1 / PULSE_RATE_HZ)
         print("generated pulse")
-
 
     card.stop()
     card.disconnect()
 
     plot(t * 1e6, analog_wfm)
     show()
-
 
     # card = MockSpectrumAWGCard(
     #     device_number=0,

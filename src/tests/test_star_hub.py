@@ -59,9 +59,12 @@ class StarHubTest(SingleCardTest):
 
     def test_transfer_buffer(self) -> None:
 
-        buffer = [create_samples_acquisition_transfer_buffer(size_in_samples=ACQUISITION_LENGTH,
-                                                             bytes_per_sample=self._device.bytes_per_sample)
-                  for _ in range(NUM_CARDS_IN_STAR_HUB)]
+        buffer = [
+            create_samples_acquisition_transfer_buffer(
+                size_in_samples=ACQUISITION_LENGTH, bytes_per_sample=self._device.bytes_per_sample
+            )
+            for _ in range(NUM_CARDS_IN_STAR_HUB)
+        ]
         self._device.define_transfer_buffer(buffer)
         self.assertTrue((array(self._device.transfer_buffers) == buffer).all())
 

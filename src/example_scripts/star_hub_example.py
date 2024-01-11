@@ -22,7 +22,9 @@ def connect_to_star_hub_example(
             # Connect to each card in the hub.
             child_cards.append(SpectrumDigitiserCard(device_number=n, ip_address=ip_address))
         # Connect to the hub itself
-        return SpectrumDigitiserStarHub(device_number=0, child_cards=child_cards, master_card_index=master_card_index)
+        return SpectrumDigitiserStarHub(
+            device_number=0, child_cards=tuple(child_cards), master_card_index=master_card_index
+        )
     else:
         mock_child_cards = []
         for n in range(num_cards):

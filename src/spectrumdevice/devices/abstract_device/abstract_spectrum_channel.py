@@ -6,8 +6,11 @@ from typing import Any, TypeVar, Generic
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
-from spectrumdevice.devices.abstract_device.interfaces import SpectrumChannelInterface, SpectrumAnalogChannelInterface
-from spectrumdevice.devices.abstract_device.abstract_spectrum_card import AbstractSpectrumCard
+from spectrumdevice.devices.abstract_device.interfaces import (
+    SpectrumDeviceInterface,
+    SpectrumChannelInterface,
+    SpectrumAnalogChannelInterface,
+)
 from spectrumdevice.settings.channel import SpectrumAnalogChannelName, SpectrumChannelName
 
 
@@ -18,7 +21,7 @@ class AbstractSpectrumChannel(SpectrumChannelInterface, Generic[ChannelNameType]
     """Partially implemented abstract superclass contain code common for controlling an individual channel or IO Line of
     all spectrum devices."""
 
-    def __init__(self, channel_number: int, parent_device: AbstractSpectrumCard, **kwargs: Any) -> None:
+    def __init__(self, channel_number: int, parent_device: SpectrumDeviceInterface, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self._name = self._make_name(channel_number)
         self._parent_device = parent_device

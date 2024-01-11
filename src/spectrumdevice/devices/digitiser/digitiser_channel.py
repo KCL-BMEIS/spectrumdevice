@@ -12,6 +12,7 @@ from spectrumdevice.devices.abstract_device import AbstractSpectrumCard
 from spectrumdevice.devices.abstract_device.abstract_spectrum_channel import AbstractSpectrumAnalogChannel
 from spectrumdevice.devices.abstract_device.abstract_spectrum_io_line import AbstractSpectrumIOLine
 from spectrumdevice.devices.digitiser.digitiser_interface import (
+    SpectrumDigitiserInterface,
     SpectrumDigitiserAnalogChannelInterface,
     SpectrumDigitiserIOLineInterface,
 )
@@ -45,12 +46,13 @@ class SpectrumDigitiserAnalogChannel(AbstractSpectrumAnalogChannel, SpectrumDigi
     a `SpectrumDigitiserCard` or `SpectrumDigitiserStarHub` is instantiated, and can then be accessed via the
     `.channels` property."""
 
-    def __init__(self, parent_device: AbstractSpectrumCard, **kwargs: Any) -> None:
+    def __init__(self, channel_number: int, parent_device: SpectrumDigitiserInterface) -> None:
 
         if parent_device.type != CardType.SPCM_TYPE_AI:
             raise SpectrumCardIsNotADigitiser(parent_device.type)
 
-        super().__init__(parent_device=parent_device, **kwargs)  # pass unused args up the inheritance hierarchy
+        # pass unused args up the inheritance hierarchy
+        super().__init__(channel_number=channel_number, parent_device=parent_device)
 
         self._full_scale_value = self._parent_device.read_spectrum_device_register(SPC_MIINST_MAXADCVALUE)
         # used frequently so store locally instead of reading from device each time:

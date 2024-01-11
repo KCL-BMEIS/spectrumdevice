@@ -167,7 +167,7 @@ def transfer_buffer_factory(
     # _check_notify_size_validity(notify_size_in_pages)
 
     if bytes_per_sample == 1:
-        sample_data_type = int8
+        sample_data_type: type = int8
     elif bytes_per_sample == 2:
         sample_data_type = int16
     else:
@@ -221,7 +221,8 @@ def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffe
         buffer.type.value,
         buffer.direction.value,
         int(buffer.notify_size_in_pages * NOTIFY_SIZE_PAGE_SIZE_IN_BYTES)
-        if buffer.direction == BufferDirection.SPCM_DIR_CARDTOPC else 0,
+        if buffer.direction == BufferDirection.SPCM_DIR_CARDTOPC
+        else 0,
         buffer.data_array_pointer,
         buffer.board_memory_offset_bytes,
         buffer.data_array_length_in_bytes,

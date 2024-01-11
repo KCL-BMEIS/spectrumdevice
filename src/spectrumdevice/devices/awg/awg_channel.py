@@ -5,7 +5,11 @@ from numpy import int16
 from spectrumdevice.devices.abstract_device import AbstractSpectrumCard
 from spectrumdevice.devices.abstract_device.abstract_spectrum_channel import AbstractSpectrumAnalogChannel
 from spectrumdevice.devices.abstract_device.abstract_spectrum_io_line import AbstractSpectrumIOLine
-from spectrumdevice.devices.awg.awg_interface import SpectrumAWGAnalogChannelInterface, SpectrumAWGIOLineInterface
+from spectrumdevice.devices.awg.awg_interface import (
+    SpectrumAWGAnalogChannelInterface,
+    SpectrumAWGIOLineInterface,
+    SpectrumAWGInterface,
+)
 from spectrumdevice.exceptions import SpectrumCardIsNotAnAWG
 from spectrumdevice.settings import IOLineMode
 from spectrumdevice.settings.card_dependent_properties import CardType, OUTPUT_AMPLITUDE_LIMITS_IN_MV
@@ -51,7 +55,7 @@ class SpectrumAWGIOLine(AbstractSpectrumIOLine, SpectrumAWGIOLineInterface):
 
 
 class SpectrumAWGAnalogChannel(AbstractSpectrumAnalogChannel, SpectrumAWGAnalogChannelInterface):
-    def __init__(self, parent_device: AbstractSpectrumCard, **kwargs: Any) -> None:
+    def __init__(self, parent_device: SpectrumAWGInterface, **kwargs: Any) -> None:
         if parent_device.type != CardType.SPCM_TYPE_AO:
             raise SpectrumCardIsNotAnAWG(parent_device.type)
         super().__init__(parent_device=parent_device, **kwargs)  # pass unused args up the inheritance hierarchy
@@ -136,5 +140,6 @@ class SpectrumAWGAnalogChannel(AbstractSpectrumAnalogChannel, SpectrumAWGAnalogC
         )
 
     def set_stop_level_custom_value(self, value: int16) -> None:
-        self._parent_device.write_to_spectrum_device_register(OUTPUT_STOP_LEVEL_CUSTOM_VALUE_COMMANDS[self._number],
-                                                              int(value))
+        self._parent_device.write_to_spectrum_device_register(
+            OUTPUT_STOP_LEVEL_CUSTOM_VALUE_COMMANDS[self._number], int(value)
+        )

@@ -31,7 +31,8 @@ from spectrum_gmbh.regs import (
     SPC_TIMEOUT,
     SPC_TRIG_ANDMASK,
     SPC_TRIG_ORMASK,
-    M2CMD_CARD_FORCETRIGGER, SPC_MIINST_BYTESPERSAMPLE,
+    M2CMD_CARD_FORCETRIGGER,
+    SPC_MIINST_BYTESPERSAMPLE,
 )
 from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
 from spectrumdevice.devices.abstract_device.interfaces import SpectrumAnalogChannelInterface, SpectrumIOLineInterface
@@ -84,7 +85,6 @@ class AbstractSpectrumCard(AbstractSpectrumDevice, Generic[AnalogChannelInterfac
             ip_address (Optional[str]): If connecting to a networked card, provide the IP address here as a string.
 
         """
-        print("AbstractSpectrumCard", flush=True)
         super().__init__()  # required for proper MRO resolution
         if ip_address is not None:
             self._visa_string = _create_visa_string_from_ip(ip_address, device_number)

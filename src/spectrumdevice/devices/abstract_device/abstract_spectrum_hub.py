@@ -340,6 +340,13 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, Generic[CardType], ABC):
         """
         return self._master_card.available_io_modes
 
+    @property
+    def bytes_per_sample(self) -> int:
+        bytes_per_sample_each_card = []
+        for d in self._child_cards:
+            bytes_per_sample_each_card.append(d.bytes_per_sample)
+        return check_settings_constant_across_devices(bytes_per_sample_each_card, __name__)
+
     def __str__(self) -> str:
         return f"StarHub {self._visa_string}"
 
