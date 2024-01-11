@@ -6,7 +6,12 @@ from spectrumdevice import SpectrumDigitiserAnalogChannel, SpectrumDigitiserStar
 from spectrumdevice.exceptions import SpectrumInvalidNumberOfEnabledChannels
 from spectrumdevice.settings.channel import SpectrumAnalogChannelName
 from spectrumdevice.settings.transfer_buffer import create_samples_acquisition_transfer_buffer
-from tests.configuration import ACQUISITION_LENGTH, NUM_CARDS_IN_STAR_HUB, NUM_CHANNELS_PER_DIGITISER_MODULE, NUM_MODULES_PER_DIGITISER
+from tests.configuration import (
+    ACQUISITION_LENGTH,
+    NUM_CARDS_IN_STAR_HUB,
+    NUM_CHANNELS_PER_DIGITISER_MODULE,
+    NUM_MODULES_PER_DIGITISER,
+)
 from tests.device_factories import create_spectrum_star_hub_for_testing
 from tests.test_single_card import SingleCardTest
 

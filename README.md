@@ -9,7 +9,7 @@ for controlling devices:
 |----------------------------|-----------------------------------------------------------------------|
 | `SpectrumDigitiserCard`    | Controlling individual digitiser cards                                |
 | `SpectrumDigitiserStarHub` | Controlling digitiser cards aggregated with a StarHub                 |
-| `SpectrumAWGCard`          | Controlling individual AWG cards (Not yet implemented)                |
+| `SpectrumAWGCard`          | Controlling individual AWG cards                                      |
 | `SpectrumAWGStarHub`       | Controlling AWG cards aggregated with a StarHub (Not yet implemented) |
 
 `spectrumdevice` also includes mock classes for testing software without drivers installed or hardware connected:

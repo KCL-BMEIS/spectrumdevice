@@ -18,7 +18,7 @@ from tests.configuration import (
     NUM_CARDS_IN_STAR_HUB,
     NUM_CHANNELS_PER_DIGITISER_MODULE,
     NUM_MODULES_PER_DIGITISER,
-    SINGLE_CARD_TEST_MODE,
+    SINGLE_DIGITISER_CARD_TEST_MODE,
     STAR_HUB_MASTER_CARD_INDEX,
     DIGITISER_STAR_HUB_TEST_MODE,
     SpectrumTestMode,
@@ -30,7 +30,7 @@ from tests.configuration import (
 @pytest.mark.integration
 class SingleCardIntegrationTests(TestCase):
     def setUp(self) -> None:
-        self._single_card_mock_mode = SINGLE_CARD_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
+        self._single_card_mock_mode = SINGLE_DIGITISER_CARD_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
 
     def test_standard_single_mode(self) -> None:
         measurement = standard_single_mode_example(
@@ -121,7 +121,8 @@ class StarHubIntegrationTests(TestCase):
             ip_address=TEST_DIGITISER_IP,
         )
         self.assertEqual(
-            len(hub.analog_channels), NUM_CHANNELS_PER_DIGITISER_MODULE * NUM_MODULES_PER_DIGITISER * NUM_CARDS_IN_STAR_HUB
+            len(hub.analog_channels),
+            NUM_CHANNELS_PER_DIGITISER_MODULE * NUM_MODULES_PER_DIGITISER * NUM_CARDS_IN_STAR_HUB,
         )
         self.assertEqual(len(hub._child_cards), NUM_CARDS_IN_STAR_HUB)
 

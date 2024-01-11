@@ -18,11 +18,20 @@ from spectrumdevice.exceptions import (
 )
 from spectrumdevice.settings.channel import SpectrumAnalogChannelName
 from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode, GenerationMode
-from spectrumdevice.settings.transfer_buffer import create_samples_acquisition_transfer_buffer, transfer_buffer_factory, \
-    BufferType, BufferDirection
+from spectrumdevice.settings.transfer_buffer import (
+    create_samples_acquisition_transfer_buffer,
+    transfer_buffer_factory,
+    BufferType,
+    BufferDirection,
+)
 from spectrumdevice.settings.triggering import ExternalTriggerMode, TriggerSource
-from tests.configuration import ACQUISITION_LENGTH, NUM_CHANNELS_PER_DIGITISER_MODULE, NUM_MODULES_PER_DIGITISER, \
-    NUM_MODULES_PER_AWG, NUM_CHANNELS_PER_AWG_MODULE
+from tests.configuration import (
+    ACQUISITION_LENGTH,
+    NUM_CHANNELS_PER_DIGITISER_MODULE,
+    NUM_MODULES_PER_DIGITISER,
+    NUM_MODULES_PER_AWG,
+    NUM_CHANNELS_PER_AWG_MODULE,
+)
 from tests.device_factories import create_awg_card_for_testing, create_digitiser_card_for_testing
 
 
@@ -209,8 +218,10 @@ class AWGCardTest(SingleCardTest[SpectrumAWGInterface]):
         self.assertEqual(5, self._device.num_loops)
 
     def test_transfer_waveform(self) -> None:
-        wfm = (array([0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8])
-               * iinfo(int16).max).astype(int16)
+        wfm = (
+            array([0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8])
+            * iinfo(int16).max
+        ).astype(int16)
         self._device.transfer_waveform(wfm)
         transferred_wfm = self._device.transfer_buffers[0].data_array
         assert_array_equal(wfm, transferred_wfm)
