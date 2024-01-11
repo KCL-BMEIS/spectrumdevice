@@ -1,3 +1,4 @@
+import logging
 from typing import Optional, Sequence
 
 from numpy import int16
@@ -16,6 +17,8 @@ from spectrumdevice.settings.transfer_buffer import (
     set_transfer_buffer,
     transfer_buffer_factory,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class SpectrumAWGCard(
@@ -40,10 +43,15 @@ class SpectrumAWGCard(
             size_in_samples=len(waveform),
             bytes_per_sample=self.bytes_per_sample,
         )
+        if len(waveform) < 16:
+            raise ValueError("Waveform must be at least 16 samples long")
         buffer.data_array[:] = waveform
         self.define_transfer_buffer((buffer,))
         step_size = get_memsize_step_size(self._model_number)
         remainder = len(waveform) % step_size
+        if remainder > 0:
+            logger.warning("Waveform length is not a multiple of 8 samples. Waveform in card memory will be zero-padded"
+                           " to the next multiple of 8.")
         coerced_mem_size = len(waveform) if remainder == 0 else len(waveform) + (step_size - remainder)
         self.write_to_spectrum_device_register(SPC_MEMSIZE, coerced_mem_size)
         self.start_transfer()

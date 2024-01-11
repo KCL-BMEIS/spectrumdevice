@@ -16,14 +16,14 @@ from tests.configuration import (
     ACQUISITION_LENGTH,
     INTEGRATION_TEST_TRIGGER_SOURCE,
     NUM_CARDS_IN_STAR_HUB,
-    NUM_CHANNELS_PER_MODULE,
-    NUM_MODULES_PER_CARD,
+    NUM_CHANNELS_PER_DIGITISER_MODULE,
+    NUM_MODULES_PER_DIGITISER,
     SINGLE_CARD_TEST_MODE,
     STAR_HUB_MASTER_CARD_INDEX,
-    STAR_HUB_TEST_MODE,
+    DIGITISER_STAR_HUB_TEST_MODE,
     SpectrumTestMode,
-    TEST_DEVICE_IP,
-    TEST_DEVICE_NUMBER,
+    TEST_DIGITISER_IP,
+    TEST_DIGITISER_NUMBER,
 )
 
 
@@ -36,8 +36,8 @@ class SingleCardIntegrationTests(TestCase):
         measurement = standard_single_mode_example(
             mock_mode=self._single_card_mock_mode,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
-            device_number=TEST_DEVICE_NUMBER,
-            ip_address=TEST_DEVICE_IP,
+            device_number=TEST_DIGITISER_NUMBER,
+            ip_address=TEST_DIGITISER_IP,
             acquisition_length=ACQUISITION_LENGTH,
         )
         self.assertEqual(len(measurement.waveforms), 1)
@@ -63,8 +63,8 @@ class SingleCardIntegrationTests(TestCase):
             num_measurements=5,
             batch_size=5,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
-            device_number=TEST_DEVICE_NUMBER,
-            ip_address=TEST_DEVICE_IP,
+            device_number=TEST_DIGITISER_NUMBER,
+            ip_address=TEST_DIGITISER_IP,
             acquisition_length=ACQUISITION_LENGTH,
         )
         self.assertEqual(len(measurements), 5)
@@ -76,8 +76,8 @@ class SingleCardIntegrationTests(TestCase):
             time_to_keep_acquiring_for_in_seconds=0.5,
             batch_size=1,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
-            device_number=TEST_DEVICE_NUMBER,
-            ip_address=TEST_DEVICE_IP,
+            device_number=TEST_DIGITISER_NUMBER,
+            ip_address=TEST_DIGITISER_IP,
             single_acquisition_length_in_samples=ACQUISITION_LENGTH,
         )
         self._asserts_for_fifo_mode(measurements)
@@ -88,8 +88,8 @@ class SingleCardIntegrationTests(TestCase):
             acquisition_duration_in_seconds=0.5,
             num_averages=2,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
-            device_number=TEST_DEVICE_NUMBER,
-            ip_address=TEST_DEVICE_IP,
+            device_number=TEST_DIGITISER_NUMBER,
+            ip_address=TEST_DIGITISER_IP,
             acquisition_length=ACQUISITION_LENGTH,
         )
         self._asserts_for_fifo_mode(measurements)
@@ -111,17 +111,17 @@ class SingleCardIntegrationTests(TestCase):
 @pytest.mark.star_hub
 class StarHubIntegrationTests(TestCase):
     def setUp(self) -> None:
-        self._star_hub_mock_mode = STAR_HUB_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
+        self._star_hub_mock_mode = DIGITISER_STAR_HUB_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
 
     def test_star_hub(self) -> None:
         hub = connect_to_star_hub_example(
             mock_mode=self._star_hub_mock_mode,
             num_cards=NUM_CARDS_IN_STAR_HUB,
             master_card_index=STAR_HUB_MASTER_CARD_INDEX,
-            ip_address=TEST_DEVICE_IP,
+            ip_address=TEST_DIGITISER_IP,
         )
         self.assertEqual(
-            len(hub.analog_channels), NUM_CHANNELS_PER_MODULE * NUM_MODULES_PER_CARD * NUM_CARDS_IN_STAR_HUB
+            len(hub.analog_channels), NUM_CHANNELS_PER_DIGITISER_MODULE * NUM_MODULES_PER_DIGITISER * NUM_CARDS_IN_STAR_HUB
         )
         self.assertEqual(len(hub._child_cards), NUM_CARDS_IN_STAR_HUB)
 
@@ -132,5 +132,5 @@ class NoDriversTest(TestCase):
     def test_fails_with_no_driver_without_mock_mode(self) -> None:
         with self.assertRaises(SpectrumDriversNotFound):
             standard_single_mode_example(
-                mock_mode=False, trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE, device_number=TEST_DEVICE_NUMBER
+                mock_mode=False, trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE, device_number=TEST_DIGITISER_NUMBER
             )

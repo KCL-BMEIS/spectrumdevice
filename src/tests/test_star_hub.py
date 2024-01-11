@@ -6,7 +6,7 @@ from spectrumdevice import SpectrumDigitiserAnalogChannel, SpectrumDigitiserStar
 from spectrumdevice.exceptions import SpectrumInvalidNumberOfEnabledChannels
 from spectrumdevice.settings.channel import SpectrumAnalogChannelName
 from spectrumdevice.settings.transfer_buffer import create_samples_acquisition_transfer_buffer
-from tests.configuration import ACQUISITION_LENGTH, NUM_CARDS_IN_STAR_HUB, NUM_CHANNELS_PER_MODULE, NUM_MODULES_PER_CARD
+from tests.configuration import ACQUISITION_LENGTH, NUM_CARDS_IN_STAR_HUB, NUM_CHANNELS_PER_DIGITISER_MODULE, NUM_MODULES_PER_DIGITISER
 from tests.device_factories import create_spectrum_star_hub_for_testing
 from tests.test_single_card import SingleCardTest
 
@@ -16,7 +16,7 @@ class StarHubTest(SingleCardTest):
     def setUp(self) -> None:
         self._device: SpectrumDigitiserStarHub = create_spectrum_star_hub_for_testing()
 
-        self._expected_num_channels_each_card = NUM_CHANNELS_PER_MODULE * NUM_MODULES_PER_CARD
+        self._expected_num_channels_each_card = NUM_CHANNELS_PER_DIGITISER_MODULE * NUM_MODULES_PER_DIGITISER
         self._expected_total_num_channels = self._expected_num_channels_each_card * NUM_CARDS_IN_STAR_HUB
 
         self._all_spectrum_channel_identifiers = [c.value for c in SpectrumAnalogChannelName]
