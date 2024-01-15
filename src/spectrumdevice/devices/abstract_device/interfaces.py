@@ -37,6 +37,23 @@ class SpectrumChannelInterface(Generic[ChannelNameType], ABC):
     def name(self) -> ChannelNameType:
         raise NotImplementedError
 
+    @abstractmethod
+    def write_to_parent_device_register(
+        self,
+        spectrum_register: int,
+        value: int,
+        length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
+    ) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def read_parent_device_register(
+        self,
+        spectrum_register: int,
+        length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
+    ) -> int:
+        raise NotImplementedError()
+
 
 class SpectrumAnalogChannelInterface(SpectrumChannelInterface[SpectrumAnalogChannelName], ABC):
     """Defines the common public interface for control of the analog channels of Digitiser and AWG devices. All
