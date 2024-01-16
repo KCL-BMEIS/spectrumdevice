@@ -4,6 +4,7 @@ from spectrum_gmbh.py_header.regs import SPC_XIO_PULSEGEN_AVAILLEN_MAX, SPC_XIO_
     SPC_XIO_PULSEGEN_AVAILLEN_STEP, SPC_XIO_PULSEGEN_AVAILLOOPS_MAX, SPC_XIO_PULSEGEN_AVAILLOOPS_MIN, \
     SPC_XIO_PULSEGEN_AVAILLOOPS_STEP, SPC_XIO_PULSEGEN_CLOCK, SPC_XIO_PULSEGEN_ENABLE
 from spectrumdevice.devices.abstract_device.interfaces import SpectrumIOLineInterface
+from spectrumdevice.exceptions import SpectrumInvalidParameterValue
 from spectrumdevice.settings.pulse_generator import PULSE_GEN_DELAY_COMMANDS, PULSE_GEN_ENABLE_COMMANDS, \
     PULSE_GEN_PULSE_PERIOD_COMMANDS, \
     PULSE_GEN_HIGH_DURATION_COMMANDS, PULSE_GEN_NUM_REPEATS_COMMANDS, decode_enabled_pulse_gens
@@ -79,21 +80,28 @@ class PulseGenerator:
             self._parent_io_line.read_parent_device_register(PULSE_GEN_PULSE_PERIOD_COMMANDS(self._number))
         )
 
-    def set_period_in_seconds(self, period: float) -> None:
-
-        if not (self.min_allowed_period_in_seconds <= period <= self.max_allowed_period_in_seconds):
-            raise ValueError(f"Pulse period must be between {self.min_allowed_period_in_seconds} and "
-                             f"{self.max_allowed_period_in_seconds} seconds long, inclusive. Ths range is "
-                             f"affected by the number of active channels and the sampling rate.")
-
+    def set_period_in_seconds(self, period: float, coerce: bool = True) -> None:
+        """ Set the time between the start of each generated pulse in seconds. If coerce is True, the requested value
+        will be coerced according to min_allowed_period_in_seconds, max_allowed_period_in_seconds and
+        allowed_period_step_size_in_seconds. Otherwise, when an invalid value is requested a
+        SpectrumInvalidParameterValue will be raised. The allowed values are affected by the number of active
+        channels and the sample rate."""
         period_in_clock_cycles = self._convert_seconds_to_clock_cycles(period)
-        period_in_allowed_steps = period_in_clock_cycles / self._allowed_period_step_size_in_clock_cycles
-        if not period_in_allowed_steps.is_integer():
-            raise ValueError(f"Pulse period must a multiple of {self.allowed_period_step_size_in_seconds} "
-                             f"seconds.")
+        coerced_period = _coerce_fractional_value_to_allowed_integer(
+            period_in_clock_cycles,
+            int(self._convert_seconds_to_clock_cycles(self.min_allowed_period_in_seconds)),
+            int(self._convert_seconds_to_clock_cycles(self.max_allowed_period_in_seconds)),
+            self._allowed_period_step_size_in_clock_cycles
+        )
+        if not coerce and coerced_period != period:
+            raise SpectrumInvalidParameterValue("pulse generator period",
+                                                period_in_clock_cycles,
+                                                self.min_allowed_period_in_seconds,
+                                                self.max_allowed_period_in_seconds,
+                                                self.allowed_period_step_size_in_seconds)
 
         self._parent_io_line.write_to_parent_device_register(
-            PULSE_GEN_PULSE_PERIOD_COMMANDS(int(period_in_clock_cycles))
+            PULSE_GEN_PULSE_PERIOD_COMMANDS(int(coerced_period))
         )
 
     @property
@@ -132,20 +140,27 @@ class PulseGenerator:
     def duty_cycle(self) -> float:
         return self.duration_of_high_voltage_in_seconds / self.period_in_seconds
 
-    def set_duty_cycle(self, duty_cycle: float) -> float:
-        """ Set the duty cycle. Value will be coerced to be within allowed range and use allowed step size.
-        The allowed values are affected by the number of active channels and the sample rate.
-        The coerced value is returned."""
+    def set_duty_cycle(self, duty_cycle: float, coerce: bool = True) -> float:
+        """ Set the duty cycle. If coerce is True, the requested value will be coerced to be within allowed range and
+        use allowed step size and then the coerced value wll be returned. Otherwise, when an invalid value is requested
+        an SpectrumInvalidParameterValue will be raised. The allowed values are affected by the number of active
+        channels and the sample rate.
+        """
         requested_high_v_duration_in_clock_cycles = self._convert_seconds_to_clock_cycles(
             self.period_in_seconds * duty_cycle
         )
-        step_size = self._allowed_high_voltage_duration_step_size_in_clock_cycles
-        coerced_duration = round(requested_high_v_duration_in_clock_cycles / step_size) * step_size
-        clipped_duration = clip(
-            coerced_duration,
+        clipped_duration = _coerce_fractional_value_to_allowed_integer(
+            requested_high_v_duration_in_clock_cycles,
             int(self._convert_seconds_to_clock_cycles(self.min_allowed_high_voltage_duration_in_seconds)),
-            int(self._convert_seconds_to_clock_cycles(self.max_allowed_high_voltage_duration_in_seconds))
+            int(self._convert_seconds_to_clock_cycles(self.max_allowed_high_voltage_duration_in_seconds)),
+            self._allowed_high_voltage_duration_step_size_in_clock_cycles
         )
+        if not coerce and clipped_duration != requested_high_v_duration_in_clock_cycles:
+            raise SpectrumInvalidParameterValue("high-voltage duration",
+                                                duty_cycle,
+                                                self.min_allowed_high_voltage_duration_in_seconds,
+                                                self.max_allowed_high_voltage_duration_in_seconds,
+                                                self._allowed_high_voltage_duration_step_size_in_clock_cycles)
         self._parent_io_line.write_to_parent_device_register(
             PULSE_GEN_HIGH_DURATION_COMMANDS(self._number), clipped_duration
         )
@@ -168,15 +183,30 @@ class PulseGenerator:
         """The number of pulses to generate on receipt of a trigger. If 0, pulses will be generated continuously."""
         return self._parent_io_line.read_parent_device_register(PULSE_GEN_NUM_REPEATS_COMMANDS(self._number))
 
-    def set_num_pulses(self, num_pulses: int) -> None:
-        #todo: add step size check (raise ValueError if wrong step size)
-        """Set the number of pulses to generate on receipt of a trigger. If 0, pulses will be generated continuously."""
-        if num_pulses <= 0:
-            raise ValueError("Number of pulses cannot be negative")
-        if num_pulses != 0 and not (self.min_allowed_pulses <= num_pulses <= self.max_allowed_pulses):
-            raise ValueError(f"Number of pulses must be between {self.min_allowed_pulses} and "
-                             f"{self.max_allowed_pulses} (inclusive), or 0 for continuous pulse generation.")
-        self._parent_io_line.write_to_parent_device_register(PULSE_GEN_NUM_REPEATS_COMMANDS(self._number), num_pulses)
+    def set_num_pulses(self, num_pulses: int, coerce: bool = True) -> None:
+        """Set the number of pulses to generate on receipt of a trigger. If 0 or negative, pulses will be generated
+        continuously. If coerce if True, the requested number of pulses will be coerced according to min_allowed_pulses,
+        max_allowed_pulses and allowed_num_pulses_step_size. Otherwise, a SpectrumInvalidParameterValue exception
+        is raised if an invalid number of pulses is requested."""
+
+        num_pulses = max(0, num_pulses)  # make negative value 0 to enable continuous pulse generation
+
+        coerced_num_pulses = _coerce_fractional_value_to_allowed_integer(
+            float(num_pulses),
+            self.min_allowed_pulses,
+            self.max_allowed_pulses,
+            self.allowed_num_pulses_step_size
+        )
+
+        if not coerce and coerced_num_pulses != num_pulses:
+            raise SpectrumInvalidParameterValue("number of pulses",
+                                                num_pulses,
+                                                self.min_allowed_pulses,
+                                                self.max_allowed_pulses,
+                                                self.allowed_num_pulses_step_size)
+
+        self._parent_io_line.write_to_parent_device_register(PULSE_GEN_NUM_REPEATS_COMMANDS(self._number),
+                                                             coerced_num_pulses)
 
     @property
     def min_allowed_delay_in_seconds(self) -> float:
@@ -203,12 +233,35 @@ class PulseGenerator:
             self._parent_io_line.read_parent_device_register(PULSE_GEN_DELAY_COMMANDS(self._number))
         )
 
-    def set_delay_in_seconds(self, delay_in_seconds: float) -> None:
-        """Set the delay between the trigger and the first pulse transmission"""
-        #todo: add step size check (coerce if wrong step size)
-        #todo: add range limits check (coerce if wrong)
-        self._convert_seconds_to_clock_cycles(delay_in_seconds)
+    def set_delay_in_seconds(self, delay_in_seconds: float, coerce: bool = True) -> float:
+        """Set the delay between the trigger and the first pulse transmission. If coerce=True, the requested value is
+        coerced according to min_allowed_delay_in_seconds, max_allowed_delay_in_seconds and
+        allowed_delay_step_size_in_seconds, and then the coerced value is returned. Otherwise, an ValueError is raised
+        if the requested value is invalid."""
+
+        requested_delay_in_clock_cycles = self._convert_seconds_to_clock_cycles(delay_in_seconds)
+        clipped_delay_in_clock_cycles = _coerce_fractional_value_to_allowed_integer(
+            requested_delay_in_clock_cycles,
+            int(self._convert_seconds_to_clock_cycles(self.min_allowed_delay_in_seconds)),
+            int(self._convert_seconds_to_clock_cycles(self.max_allowed_delay_in_seconds)),
+            int(self._convert_seconds_to_clock_cycles(self.allowed_delay_step_size_in_seconds))
+        )
+
+        if not coerce and clipped_delay_in_clock_cycles != requested_delay_in_clock_cycles:
+            raise SpectrumInvalidParameterValue("delay in seconds",
+                                                requested_delay_in_clock_cycles,
+                                                self.min_allowed_delay_in_seconds,
+                                                self.max_allowed_delay_in_seconds,
+                                                self.allowed_delay_step_size_in_seconds)
+
+        self._parent_io_line.write_to_parent_device_register(PULSE_GEN_DELAY_COMMANDS(self._number),
+                                                             clipped_delay_in_clock_cycles)
+        return self._convert_clock_cycles_to_seconds(clipped_delay_in_clock_cycles)
 
 
+def _coerce_fractional_value_to_allowed_integer(fractional_value: float, min_allowed: int, max_allowed: int,
+                                                step: int) -> int:
+    coerced = int(round(fractional_value / step) * step)
+    return clip(coerced, min_allowed, max_allowed)
 
 
