@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import List
 
+from spectrumdevice.exceptions import SpectrumIOError
 from spectrumdevice.settings.channel import SpectrumChannelName
 from spectrumdevice.spectrum_wrapper import decode_bitmap_using_list_of_ints
 from spectrum_gmbh.regs import (
@@ -144,6 +145,16 @@ def decode_available_io_modes(value: int) -> List[IOLineMode]:
     of IOLineModes."""
     possible_values = [mode.value for mode in IOLineMode]
     return [IOLineMode(found_value) for found_value in decode_bitmap_using_list_of_ints(value, possible_values)]
+
+
+def decode_enabled_io_line_mode(value: int) -> IOLineMode:
+    """DigOutSourceChannel and DigOutSourceBit are bitmapped on to IOLine mode in the IO_LINE_MODE_COMMANDS register,
+    so need to extract only the IOLine mode bits for determining the currently enabled mode."""
+    possible_values = [mode.value for mode in IOLineMode]
+    active_modes = [IOLineMode(found_value) for found_value in decode_bitmap_using_list_of_ints(value, possible_values)]
+    if len(active_modes) != 1:
+        raise SpectrumIOError("Could not read enabled IO line mode")
+    return active_modes[0]
 
 
 @dataclass

@@ -7,6 +7,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional, Sequence, Tuple, TypeVar, Generic
 
+from spectrumdevice.features.pulse_generator.interfaces import PulseGeneratorInterface
 from spectrumdevice.settings import (
     AdvancedCardFeature,
     AvailableIOModes,
@@ -75,6 +76,12 @@ class SpectrumIOLineInterface(SpectrumChannelInterface[SpectrumIOLineName], ABC)
     @abstractmethod
     def set_mode(self, mode: IOLineMode) -> None:
         """Sets the current mode of the IO Line"""
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def pulse_generator(self) -> PulseGeneratorInterface:
+        """Gets the IO line's pulse generator."""
         raise NotImplementedError()
 
 

@@ -1,4 +1,6 @@
 """Defines exceptions raised by spectrumdevice device classes."""
+from typing import Optional
+
 from spectrumdevice.settings.card_dependent_properties import CARD_TYPE_DESCRIPTIONS, CardType
 
 
@@ -46,10 +48,11 @@ class SpectrumApiCallFailed(IOError):
     def __init__(
         self,
         call_description: str,
-        error_code: int,
+        error_code: Optional[int] = None,
         message: str = "Unknown",
     ) -> None:
-        super().__init__(f'"{call_description}" failed with "{message}" ({self.error_code_string(error_code)})')
+        code_suffix = ({self.error_code_string(error_code)}) if error_code is not None else ""
+        super().__init__(f'"{call_description}" failed with "{message}" {code_suffix}')
 
     @classmethod
     def error_code_string(cls, error_code: int) -> str:
@@ -57,6 +60,10 @@ class SpectrumApiCallFailed(IOError):
 
 
 class SpectrumFIFOModeHardwareBufferOverrun(SpectrumApiCallFailed):
+    pass
+
+
+class SpectrumFeatureNotSupportedByCard(SpectrumApiCallFailed):
     pass
 
 
@@ -94,10 +101,6 @@ class SpectrumCardIsNotADigitiser(SpectrumWrongCardType):
 
 
 class SpectrumCardIsNotAnAWG(SpectrumWrongCardType):
-    pass
-
-
-class SpectrumFeatureNotSupportedByCard(IOError):
     pass
 
 

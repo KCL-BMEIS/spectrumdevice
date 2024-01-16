@@ -2,6 +2,7 @@ from numpy import clip
 
 from spectrum_gmbh.py_header.regs import (
     SPCM_PULSEGEN_CONFIG_INVERT,
+    SPC_PCIEXTFEATURES,
     SPC_XIO_PULSEGEN_AVAILLEN_MAX,
     SPC_XIO_PULSEGEN_AVAILLEN_MIN,
     SPC_XIO_PULSEGEN_AVAILLEN_STEP,
@@ -12,12 +13,13 @@ from spectrum_gmbh.py_header.regs import (
     SPC_XIO_PULSEGEN_ENABLE,
 )
 from spectrumdevice.devices.abstract_device.interfaces import SpectrumIOLineInterface
-from spectrumdevice.exceptions import SpectrumInvalidParameterValue
+from spectrumdevice.exceptions import SpectrumFeatureNotSupportedByCard, SpectrumInvalidParameterValue
 from spectrumdevice.features.pulse_generator.interfaces import (
     PulseGeneratorInterface,
 )
 from spectrumdevice.features.pulse_generator.multiplexer import PulseGeneratorMultiplexer1, PulseGeneratorMultiplexer2
-from spectrumdevice.settings import SpectrumRegisterLength
+from spectrumdevice.settings import AdvancedCardFeature, SpectrumRegisterLength
+from spectrumdevice.settings.card_features import decode_advanced_card_features
 from spectrumdevice.settings.pulse_generator import (
     PULSE_GEN_CONFIG_COMMANDS,
     PULSE_GEN_DELAY_COMMANDS,
@@ -38,6 +40,14 @@ from spectrumdevice.spectrum_wrapper import toggle_bitmap_value
 
 class PulseGenerator(PulseGeneratorInterface):
     def __init__(self, parent: SpectrumIOLineInterface):
+        available_advanced_features = decode_advanced_card_features(
+            self.read_parent_device_register(SPC_PCIEXTFEATURES)
+        )
+        if AdvancedCardFeature.SPCM_FEAT_EXTFW_PULSEGEN not in available_advanced_features:
+            raise SpectrumFeatureNotSupportedByCard(
+                call_description=self.__str__() + ".__init__()",
+                message="Pulse generator firmware option not installed on device.",
+            )
         self._parent_io_line = parent
         # last char of IO line name is IO line chanel number, which is used to set pulse generator number
         self._number = int(parent.name.name[-1])
@@ -348,6 +358,9 @@ class PulseGenerator(PulseGeneratorInterface):
 
         self.write_to_parent_device_register(PULSE_GEN_DELAY_COMMANDS[self._number], clipped_delay_in_clock_cycles)
         return self._convert_clock_cycles_to_seconds(clipped_delay_in_clock_cycles)
+
+    def __str__(self) -> str:
+        return f"Pulse generator {self._number} of {self._parent_io_line}."
 
 
 def _coerce_fractional_value_to_allowed_integer(
