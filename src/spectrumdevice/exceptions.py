@@ -112,3 +112,7 @@ class SpectrumInvalidParameterValue(ValueError):
             f"The requested {param_name} value of {requested_value} is invalid. It must be between"
             f"{param_min} and {param_max} inclusive, and a multiple of {param_step}."
         )
+
+
+class MockRegisterNotImplemented(ValueError):
+    pass

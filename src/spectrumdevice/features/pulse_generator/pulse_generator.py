@@ -142,7 +142,7 @@ class PulseGenerator(PulseGeneratorInterface):
         currently_enabled_config_options = decode_pulse_gen_config(
             self.read_parent_device_register(PULSE_GEN_CONFIG_COMMANDS[self._number])
         )
-        if PulseGeneratorTriggerDetectionMode.SPCM_PULSEGEN_CONFIG_HIGH in currently_enabled_config_options:
+        if PulseGeneratorTriggerDetectionMode.SPCM_PULSEGEN_CONFIG_HIGH.value in currently_enabled_config_options:
             return PulseGeneratorTriggerDetectionMode.SPCM_PULSEGEN_CONFIG_HIGH
         else:
             return PulseGeneratorTriggerDetectionMode.RISING_EDGE
@@ -310,19 +310,19 @@ class PulseGenerator(PulseGeneratorInterface):
 
     @property
     def min_allowed_delay_in_seconds(self) -> float:
-        return self._convert_seconds_to_clock_cycles(
+        return self._convert_clock_cycles_to_seconds(
             self.read_parent_device_register(602007)  # SPC_XIO_PULSEGEN_AVAILDELAY_MIN not in regs.py
         )
 
     @property
     def max_allowed_delay_in_seconds(self) -> float:
-        return self._convert_seconds_to_clock_cycles(
+        return self._convert_clock_cycles_to_seconds(
             self.read_parent_device_register(602008)  # SPC_XIO_PULSEGEN_AVAILDELAY_MAX not in regs.py
         )
 
     @property
     def allowed_delay_step_size_in_seconds(self) -> float:
-        return self._convert_seconds_to_clock_cycles(
+        return self._convert_clock_cycles_to_seconds(
             self.read_parent_device_register(602009)  # SPC_XIO_PULSEGEN_AVAILDELAY_STEP not in regs.py
         )
 
