@@ -12,7 +12,7 @@ from spectrum_gmbh.py_header.regs import (
     SPC_XIO_PULSEGEN_CLOCK,
     SPC_XIO_PULSEGEN_ENABLE,
 )
-from spectrumdevice.devices.abstract_device.interfaces import SpectrumIOLineInterface
+from spectrumdevice.devices.abstract_device.channel_interfaces import SpectrumIOLineInterface
 from spectrumdevice.exceptions import SpectrumFeatureNotSupportedByCard, SpectrumInvalidParameterValue
 from spectrumdevice.features.pulse_generator.interfaces import (
     PulseGeneratorInterface,
@@ -40,6 +40,9 @@ from spectrumdevice.spectrum_wrapper import toggle_bitmap_value
 
 class PulseGenerator(PulseGeneratorInterface):
     def __init__(self, parent: SpectrumIOLineInterface):
+        self._parent_io_line = parent
+        # last char of IO line name is IO line chanel number, which is used to set pulse generator number
+        self._number = int(parent.name.name[-1])
         available_advanced_features = decode_advanced_card_features(
             self.read_parent_device_register(SPC_PCIEXTFEATURES)
         )
@@ -48,9 +51,6 @@ class PulseGenerator(PulseGeneratorInterface):
                 call_description=self.__str__() + ".__init__()",
                 message="Pulse generator firmware option not installed on device.",
             )
-        self._parent_io_line = parent
-        # last char of IO line name is IO line chanel number, which is used to set pulse generator number
-        self._number = int(parent.name.name[-1])
         self._multiplexer_1 = PulseGeneratorMultiplexer1(parent=self)
         self._multiplexer_2 = PulseGeneratorMultiplexer2(parent=self)
 

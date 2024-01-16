@@ -5,12 +5,12 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
 from abc import ABC
+from functools import reduce
+from operator import or_
 from threading import Event, Lock, Thread
 from typing import Any, Dict, Optional, Union, cast
 
 from spectrum_gmbh.regs import (
-    SPCM_FEAT_EXTFW_SEGSTAT,
-    SPCM_FEAT_MULTI,
     SPCM_X0_AVAILMODES,
     SPCM_X1_AVAILMODES,
     SPCM_X2_AVAILMODES,
@@ -29,12 +29,19 @@ from spectrum_gmbh.regs import (
     SPC_MIINST_MODULES,
     SPC_MIINST_CHPERMODULE,
 )
+
 from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice, AbstractSpectrumCard, AbstractSpectrumStarHub
 from spectrumdevice.devices.awg.abstract_spectrum_awg import AbstractSpectrumAWG
 from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
 from spectrumdevice.devices.mocks.mock_waveform_source import mock_waveform_source_factory
 from spectrumdevice.exceptions import SpectrumDeviceNotConnected
-from spectrumdevice.settings import AcquisitionMode, ModelNumber, SpectrumRegisterLength
+from spectrumdevice.settings import (
+    AcquisitionMode,
+    AdvancedCardFeature,
+    CardFeature,
+    ModelNumber,
+    SpectrumRegisterLength,
+)
 from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.device_modes import GenerationMode
 
@@ -112,11 +119,15 @@ class MockAbstractSpectrumCard(MockAbstractSpectrumDevice, AbstractSpectrumCard,
         mode: Union[AcquisitionMode, GenerationMode],
         num_modules: int,
         num_channels_per_module: int,
+        card_features: list[CardFeature],
+        advanced_card_features: list[AdvancedCardFeature],
         **kwargs: Any,
     ) -> None:
         param_dict: dict[int, int] = {}
-        param_dict[SPC_PCIFEATURES] = SPCM_FEAT_MULTI
-        param_dict[SPC_PCIEXTFEATURES] = SPCM_FEAT_EXTFW_SEGSTAT
+        param_dict[SPC_PCIFEATURES] = reduce(or_, [f.value for f in card_features]) if card_features else 0
+        param_dict[SPC_PCIEXTFEATURES] = (
+            reduce(or_, [f.value for f in advanced_card_features]) if advanced_card_features else 0
+        )
         param_dict[SPCM_X0_AVAILMODES] = SPCM_XMODE_DISABLE
         param_dict[SPCM_X1_AVAILMODES] = SPCM_XMODE_DISABLE
         param_dict[SPCM_X2_AVAILMODES] = SPCM_XMODE_DISABLE

@@ -6,11 +6,11 @@ from typing import Any, TypeVar, Generic
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
-from spectrumdevice.devices.abstract_device.interfaces import (
-    SpectrumDeviceInterface,
+from spectrumdevice.devices.abstract_device.channel_interfaces import (
     SpectrumChannelInterface,
     SpectrumAnalogChannelInterface,
 )
+from spectrumdevice.devices.abstract_device.device_interface import SpectrumDeviceInterface
 from spectrumdevice.settings import SpectrumRegisterLength
 from spectrumdevice.settings.channel import SpectrumAnalogChannelName, SpectrumChannelName
 

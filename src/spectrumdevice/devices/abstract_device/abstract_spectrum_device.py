@@ -6,7 +6,7 @@
 
 from abc import ABC
 
-from spectrumdevice.devices.abstract_device.interfaces import SpectrumDeviceInterface
+from spectrumdevice.devices.abstract_device.device_interface import SpectrumDeviceInterface
 from spectrumdevice.exceptions import SpectrumDeviceNotConnected, SpectrumDriversNotFound
 from spectrumdevice.settings import SpectrumRegisterLength, TriggerSettings
 from spectrumdevice.settings.triggering import EXTERNAL_TRIGGER_SOURCES

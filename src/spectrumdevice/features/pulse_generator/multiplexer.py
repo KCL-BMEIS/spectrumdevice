@@ -1,5 +1,4 @@
 from abc import ABC
-from typing import Generic
 
 from spectrumdevice.features.pulse_generator.interfaces import (
     MultiplexerTriggerSourceTypeVar,
@@ -19,7 +18,7 @@ from spectrumdevice.settings.pulse_generator import (
 from spectrumdevice.spectrum_wrapper import toggle_bitmap_value
 
 
-class PulseGeneratorMultiplexer(Generic[MultiplexerTriggerSourceTypeVar], PulseGeneratorMultiplexerInterface, ABC):
+class PulseGeneratorMultiplexer(PulseGeneratorMultiplexerInterface[MultiplexerTriggerSourceTypeVar], ABC):
     def __init__(self, parent: PulseGeneratorInterface) -> None:
         self._parent_pulse_gen = parent
 

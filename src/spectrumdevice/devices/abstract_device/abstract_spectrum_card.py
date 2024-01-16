@@ -35,7 +35,10 @@ from spectrum_gmbh.regs import (
     SPC_MIINST_BYTESPERSAMPLE,
 )
 from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
-from spectrumdevice.devices.abstract_device.interfaces import SpectrumAnalogChannelInterface, SpectrumIOLineInterface
+from spectrumdevice.devices.abstract_device.channel_interfaces import (
+    SpectrumAnalogChannelInterface,
+    SpectrumIOLineInterface,
+)
 from spectrumdevice.exceptions import (
     SpectrumExternalTriggerNotEnabled,
     SpectrumInvalidNumberOfEnabledChannels,

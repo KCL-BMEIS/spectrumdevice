@@ -3,7 +3,7 @@ from spectrumdevice.devices.awg.awg_card import SpectrumAWGCard
 from spectrumdevice.devices.awg.awg_interface import SpectrumAWGInterface
 from spectrumdevice.devices.digitiser import SpectrumDigitiserCard, SpectrumDigitiserInterface
 from spectrumdevice.devices.mocks import MockSpectrumAWGCard, MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub
-from spectrumdevice.settings import ModelNumber
+from spectrumdevice.settings import AdvancedCardFeature, CardFeature, ModelNumber
 from tests.configuration import (
     MOCK_DEVICE_TEST_FRAME_RATE_HZ,
     NUM_CARDS_IN_STAR_HUB,
@@ -35,6 +35,11 @@ def create_digitiser_card_for_testing() -> SpectrumDigitiserInterface:
             mock_source_frame_rate_hz=MOCK_DEVICE_TEST_FRAME_RATE_HZ,
             num_modules=NUM_MODULES_PER_DIGITISER,
             num_channels_per_module=NUM_CHANNELS_PER_DIGITISER_MODULE,
+            card_features=[CardFeature.SPCM_FEAT_MULTI],
+            advanced_card_features=[
+                AdvancedCardFeature.SPCM_FEAT_EXTFW_SEGSTAT,
+                AdvancedCardFeature.SPCM_FEAT_EXTFW_PULSEGEN,
+            ],
         )
 
 
@@ -49,6 +54,11 @@ def create_awg_card_for_testing() -> SpectrumAWGInterface:
             model=ModelNumber.TYP_M2P6560_X4,
             num_modules=NUM_MODULES_PER_AWG,
             num_channels_per_module=NUM_CHANNELS_PER_AWG_MODULE,
+            card_features=[CardFeature.SPCM_FEAT_MULTI],
+            advanced_card_features=[
+                AdvancedCardFeature.SPCM_FEAT_EXTFW_SEGSTAT,
+                AdvancedCardFeature.SPCM_FEAT_EXTFW_PULSEGEN,
+            ],
         )
 
 

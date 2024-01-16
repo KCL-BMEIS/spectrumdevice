@@ -11,8 +11,11 @@ from typing import List, Optional
 from numpy import float_, ndarray
 from numpy.typing import NDArray
 
-from spectrumdevice.devices.abstract_device import SpectrumDeviceInterface
-from spectrumdevice.devices.abstract_device.interfaces import SpectrumAnalogChannelInterface, SpectrumIOLineInterface
+from spectrumdevice.devices.abstract_device.device_interface import SpectrumDeviceInterface
+from spectrumdevice.devices.abstract_device.channel_interfaces import (
+    SpectrumAnalogChannelInterface,
+    SpectrumIOLineInterface,
+)
 from spectrumdevice.settings import AcquisitionMode, AcquisitionSettings
 from spectrumdevice import Measurement
 from spectrumdevice.settings.channel import InputImpedance, InputCoupling, InputPath

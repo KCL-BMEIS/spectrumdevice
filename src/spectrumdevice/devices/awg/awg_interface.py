@@ -3,8 +3,11 @@ from abc import ABC, abstractmethod
 from numpy import int16
 from numpy.typing import NDArray
 
-from spectrumdevice.devices.abstract_device import SpectrumDeviceInterface
-from spectrumdevice.devices.abstract_device.interfaces import SpectrumAnalogChannelInterface, SpectrumIOLineInterface
+from spectrumdevice.devices.abstract_device.device_interface import SpectrumDeviceInterface
+from spectrumdevice.devices.abstract_device.channel_interfaces import (
+    SpectrumAnalogChannelInterface,
+    SpectrumIOLineInterface,
+)
 from spectrumdevice.settings.channel import OutputChannelFilter, OutputChannelStopLevelMode
 from spectrumdevice.settings.device_modes import GenerationMode
 from spectrumdevice.settings.io_lines import DigOutIOLineModeSettings

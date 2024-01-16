@@ -23,7 +23,7 @@ from spectrumdevice.exceptions import (
     SpectrumNoTransferBufferDefined,
     SpectrumSettingsMismatchError,
 )
-from spectrumdevice.settings import ModelNumber, TransferBuffer
+from spectrumdevice.settings import AdvancedCardFeature, CardFeature, ModelNumber, TransferBuffer
 from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.device_modes import AcquisitionMode
 
@@ -47,6 +47,8 @@ class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, MockAbstractSpect
         mock_source_frame_rate_hz: float,
         num_modules: int,
         num_channels_per_module: int,
+        card_features: Optional[list[CardFeature]] = None,
+        advanced_card_features: Optional[list[AdvancedCardFeature]] = None,
     ):
         """
         Args:
@@ -60,7 +62,11 @@ class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, MockAbstractSpect
                 modules your hardware has.
             num_channels_per_module (int): The number of channels per module. Default 4 (so 8 channels in total). On
                 real hardware, this is read from the device so does not need to be set.
+            card_features (list[CardFeature]): List of available features of the mock device
+            advanced_card_features (list[AdvancedCardFeature]): List of available advanced features of the mock device
+
         """
+
         super().__init__(
             device_number=device_number,
             model=model,
@@ -68,6 +74,8 @@ class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, MockAbstractSpect
             num_modules=num_modules,
             num_channels_per_module=num_channels_per_module,
             card_type=CardType.SPCM_TYPE_AI,
+            card_features=card_features if card_features is not None else [],
+            advanced_card_features=advanced_card_features if advanced_card_features is not None else [],
         )
         self._connect(self._visa_string)
         self._acquisition_mode = self.acquisition_mode
@@ -154,7 +162,15 @@ class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, MockAbstractSpect
 
 
 class MockSpectrumAWGCard(MockAbstractSpectrumAWG, MockAbstractSpectrumCard, SpectrumAWGCard):
-    def __init__(self, device_number: int, model: ModelNumber, num_modules: int, num_channels_per_module: int) -> None:
+    def __init__(
+        self,
+        device_number: int,
+        model: ModelNumber,
+        num_modules: int,
+        num_channels_per_module: int,
+        card_features: Optional[list[CardFeature]],
+        advanced_card_features: Optional[list[AdvancedCardFeature]],
+    ) -> None:
         """
         Args:
             device_number (int): The index of the mock device to create. Used to create a name for the device which is
@@ -165,6 +181,8 @@ class MockSpectrumAWGCard(MockAbstractSpectrumAWG, MockAbstractSpectrumCard, Spe
                 modules your hardware has.
             num_channels_per_module (int): The number of channels per module. Default 4 (so 8 channels in total). On
                 real hardware, this is read from the device so does not need to be set.
+            card_features (list[CardFeature]): List of available features of the mock device
+            advanced_card_features (list[AdvancedCardFeature]): List of available advanced features of the mock device
         """
         super().__init__(
             card_type=CardType.SPCM_TYPE_AO,
@@ -172,6 +190,8 @@ class MockSpectrumAWGCard(MockAbstractSpectrumAWG, MockAbstractSpectrumCard, Spe
             model=model,
             num_modules=num_modules,
             num_channels_per_module=num_channels_per_module,
+            card_features=card_features if card_features is not None else [],
+            advanced_card_features=advanced_card_features if advanced_card_features is not None else [],
         )
         self._connect(self._visa_string)
 

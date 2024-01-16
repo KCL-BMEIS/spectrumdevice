@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from typing import Any, Optional
 
 from spectrumdevice.devices.abstract_device import AbstractSpectrumChannel
-from spectrumdevice.devices.abstract_device.interfaces import SpectrumIOLineInterface
+from spectrumdevice.devices.abstract_device.channel_interfaces import SpectrumIOLineInterface
 from spectrumdevice.exceptions import SpectrumFeatureNotSupportedByCard
-from spectrumdevice.features.pulse_generator import PulseGenerator
+from spectrumdevice.features.pulse_generator.pulse_generator import PulseGenerator
 from spectrumdevice.features.pulse_generator.interfaces import PulseGeneratorInterface
 from spectrumdevice.settings import IOLineMode
 from spectrumdevice.settings.io_lines import IO_LINE_MODE_COMMANDS, SpectrumIOLineName, decode_enabled_io_line_mode
