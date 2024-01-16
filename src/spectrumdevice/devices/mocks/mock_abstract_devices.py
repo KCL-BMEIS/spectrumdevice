@@ -199,7 +199,6 @@ class MockAbstractSpectrumCard(MockAbstractSpectrumDevice, AbstractSpectrumCard,
         param_dict[SPCM_X1_AVAILMODES] = SPCM_XMODE_DISABLE
         param_dict[SPCM_X2_AVAILMODES] = SPCM_XMODE_DISABLE
         param_dict[SPCM_X3_AVAILMODES] = SPCM_XMODE_DISABLE
-        param_dict[SPC_XIO_PULSEGEN_CLOCK] = 1000
         param_dict[SPC_TIMEOUT] = 1000
         param_dict[SPC_SEGMENTSIZE] = 1000
         param_dict[SPC_MEMSIZE] = 1000
@@ -211,6 +210,7 @@ class MockAbstractSpectrumCard(MockAbstractSpectrumDevice, AbstractSpectrumCard,
         param_dict[SPC_MIINST_BYTESPERSAMPLE] = 2
         param_dict[SPC_MIINST_MAXADCVALUE] = 128
         # Pulse generation:
+        param_dict[SPC_XIO_PULSEGEN_CLOCK] = 1000
         param_dict[SPC_XIO_PULSEGEN_ENABLE] = 0
         param_dict[SPC_XIO_PULSEGEN0_CONFIG] = 0
         param_dict[SPC_XIO_PULSEGEN1_CONFIG] = 0

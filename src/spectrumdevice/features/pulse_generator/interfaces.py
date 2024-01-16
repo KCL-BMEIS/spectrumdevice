@@ -53,7 +53,9 @@ class PulseGeneratorMultiplexerInterface(Generic[MultiplexerTriggerSourceTypeVar
 
 class PulseGeneratorInterface(ABC):
     @abstractmethod
-    def configure_output(self, settings: PulseGeneratorOutputSettings) -> None:
+    def configure_output(
+        self, settings: PulseGeneratorOutputSettings, coerce: bool = True
+    ) -> PulseGeneratorOutputSettings:
         raise NotImplementedError()
 
     @abstractmethod
@@ -161,7 +163,7 @@ class PulseGeneratorInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def set_period_in_seconds(self, period: float, coerce: bool = True) -> None:
+    def set_period_in_seconds(self, period: float, coerce: bool = False) -> float:
         raise NotImplementedError()
 
     @property
@@ -195,7 +197,7 @@ class PulseGeneratorInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def set_duty_cycle(self, duty_cycle: float, coerce: bool = True) -> float:
+    def set_duty_cycle(self, duty_cycle: float, coerce: bool = False) -> float:
         raise NotImplementedError()
 
     @property
@@ -219,7 +221,7 @@ class PulseGeneratorInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def set_num_pulses(self, num_pulses: int, coerce: bool = True) -> None:
+    def set_num_pulses(self, num_pulses: int, coerce: bool = False) -> int:
         raise NotImplementedError()
 
     @property
@@ -243,5 +245,5 @@ class PulseGeneratorInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def set_delay_in_seconds(self, delay_in_seconds: float, coerce: bool = True) -> float:
+    def set_delay_in_seconds(self, delay_in_seconds: float, coerce: bool = False) -> float:
         raise NotImplementedError()

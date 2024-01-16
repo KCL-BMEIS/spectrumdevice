@@ -1,9 +1,16 @@
 from unittest import TestCase
 
 from spectrumdevice import MockSpectrumDigitiserCard
-from spectrumdevice.exceptions import SpectrumFeatureNotSupportedByCard
+from spectrumdevice.exceptions import SpectrumFeatureNotSupportedByCard, SpectrumInvalidParameterValue
 from spectrumdevice.settings import ModelNumber
-from spectrumdevice.settings.pulse_generator import PulseGeneratorTriggerDetectionMode, PulseGeneratorTriggerMode
+from spectrumdevice.settings.pulse_generator import (
+    PulseGeneratorMultiplexer1TriggerSource,
+    PulseGeneratorMultiplexer2TriggerSource,
+    PulseGeneratorOutputSettings,
+    PulseGeneratorTriggerDetectionMode,
+    PulseGeneratorTriggerMode,
+    PulseGeneratorTriggerSettings,
+)
 from tests.configuration import (
     MOCK_DEVICE_TEST_FRAME_RATE_HZ,
     NUM_CHANNELS_PER_DIGITISER_MODULE,
@@ -67,21 +74,104 @@ class PulseGeneratorTest(TestCase):
 
     def test_pulse_period(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
-        pg.set_period_in_seconds(1)
-        self.assertEqual(1, pg.period_in_seconds)
+        pg.set_period_in_seconds(pg.min_allowed_period_in_seconds)
+        self.assertEqual(pg.min_allowed_period_in_seconds, pg.period_in_seconds)
+
+    def test_coerce_pulse_period(self) -> None:
+        pg = self._awg.io_lines[0].pulse_generator
+        pg.set_period_in_seconds(pg.max_allowed_period_in_seconds + 1, coerce=True)
+        self.assertEqual(pg.max_allowed_period_in_seconds, pg.period_in_seconds)
+
+    def test_invalid_pulse_period(self) -> None:
+        pg = self._awg.io_lines[0].pulse_generator
+        with self.assertRaises(SpectrumInvalidParameterValue):
+            pg.set_period_in_seconds(pg.max_allowed_period_in_seconds + 1)
 
     def test_duty_cycle(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
+        pg.set_period_in_seconds(pg.max_allowed_period_in_seconds)
+        duty_cycle = pg.min_allowed_high_voltage_duration_in_seconds / pg.period_in_seconds
+        pg.set_duty_cycle(duty_cycle)
+        self.assertEqual(duty_cycle, pg.duty_cycle)
+
+    def test_coerce_duty_cycle(self) -> None:
+        pg = self._awg.io_lines[0].pulse_generator
         pg.set_period_in_seconds(1)
-        pg.set_duty_cycle(0.5)
-        self.assertEqual(0.5, pg.duty_cycle)
+        pg.set_duty_cycle(1.1, coerce=True)
+        self.assertEqual(pg.max_allowed_high_voltage_duration_in_seconds, pg.duration_of_high_voltage_in_seconds)
+
+    def test_invalid_duty_cycle(self) -> None:
+        pg = self._awg.io_lines[0].pulse_generator
+        with self.assertRaises(SpectrumInvalidParameterValue):
+            pg.set_period_in_seconds(1)
+            pg.set_duty_cycle(1.1)
 
     def test_num_pulses(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
-        pg.set_num_pulses(500)
-        self.assertEqual(500, pg.num_pulses)
+        pg.set_num_pulses(pg.min_allowed_pulses)
+        self.assertEqual(pg.min_allowed_pulses, pg.num_pulses)
+
+    def test_coerce_num_pulses(self) -> None:
+        pg = self._awg.io_lines[0].pulse_generator
+        pg.set_num_pulses(pg.max_allowed_pulses + 1, coerce=True)
+        self.assertEqual(pg.max_allowed_pulses, pg.num_pulses)
+
+    def test_invalid_num_pulses(self) -> None:
+        pg = self._awg.io_lines[0].pulse_generator
+        with self.assertRaises(SpectrumInvalidParameterValue):
+            pg.set_num_pulses(pg.max_allowed_pulses + 1)
 
     def test_delay(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
-        pg.set_delay_in_seconds(10)
-        self.assertEqual(10, pg.delay_in_seconds)
+        pg.set_delay_in_seconds(pg.min_allowed_delay_in_seconds)
+        self.assertEqual(pg.min_allowed_delay_in_seconds, pg.delay_in_seconds)
+
+    def test_coerce_delay(self) -> None:
+        pg = self._awg.io_lines[0].pulse_generator
+        pg.set_delay_in_seconds(pg.max_allowed_delay_in_seconds + 1, coerce=True)
+        self.assertEqual(pg.max_allowed_delay_in_seconds, pg.delay_in_seconds)
+
+    def test_invalid_delay(self) -> None:
+        pg = self._awg.io_lines[0].pulse_generator
+        with self.assertRaises(SpectrumInvalidParameterValue):
+            pg.set_delay_in_seconds(pg.max_allowed_delay_in_seconds + 1)
+
+    def test_configure_trigger(self) -> None:
+        trigger_settings = PulseGeneratorTriggerSettings(
+            trigger_mode=PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_TRIGGERED,
+            trigger_detection_mode=PulseGeneratorTriggerDetectionMode.RISING_EDGE,
+            multiplexer_1_source=PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_UNUSED,
+            multiplexer_1_output_inversion=False,
+            multiplexer_2_source=PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_SOFTWARE,
+            multiplexer_2_output_inversion=False,
+        )
+        pg = self._awg.io_lines[0].pulse_generator
+        pg.configure_trigger(trigger_settings)
+
+        self.assertEqual(PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_TRIGGERED, pg.trigger_mode)
+        self.assertEqual(PulseGeneratorTriggerDetectionMode.RISING_EDGE, pg.trigger_detection_mode)
+        self.assertEqual(
+            PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_UNUSED, pg.multiplexer_1.trigger_source
+        )
+        self.assertFalse(pg.multiplexer_1.output_inversion)
+        self.assertEqual(
+            PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_SOFTWARE, pg.multiplexer_2.trigger_source
+        )
+        self.assertFalse(pg.multiplexer_2.output_inversion)
+
+    def test_configure_output(self) -> None:
+        pg = self._awg.io_lines[0].pulse_generator
+        duty_cycle = pg.min_allowed_high_voltage_duration_in_seconds / pg.max_allowed_period_in_seconds
+        output_settings = PulseGeneratorOutputSettings(
+            period_in_seconds=pg.max_allowed_period_in_seconds,
+            duty_cycle=duty_cycle,
+            num_pulses=pg.max_allowed_pulses,
+            delay_in_seconds=pg.max_allowed_delay_in_seconds,
+            output_inversion=True,
+        )
+        pg.configure_output(output_settings, coerce=False)
+        self.assertEqual(pg.max_allowed_period_in_seconds, pg.period_in_seconds)
+        self.assertEqual(duty_cycle, pg.duty_cycle)
+        self.assertEqual(pg.max_allowed_pulses, pg.num_pulses)
+        self.assertEqual(pg.max_allowed_delay_in_seconds, pg.delay_in_seconds)
+        self.assertTrue(pg.output_inversion)

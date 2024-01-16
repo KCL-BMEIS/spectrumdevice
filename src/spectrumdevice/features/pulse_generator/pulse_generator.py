@@ -54,12 +54,19 @@ class PulseGenerator(PulseGeneratorInterface):
         self._multiplexer_1 = PulseGeneratorMultiplexer1(parent=self)
         self._multiplexer_2 = PulseGeneratorMultiplexer2(parent=self)
 
-    def configure_output(self, settings: PulseGeneratorOutputSettings) -> None:
-        self.set_period_in_seconds(settings.period_in_seconds)
-        self.set_duty_cycle(settings.duty_cycle)
-        self.set_num_pulses(settings.num_pulses)
-        self.set_delay_in_seconds(settings.delay_in_seconds)
+    def configure_output(
+        self, settings: PulseGeneratorOutputSettings, coerce: bool = True
+    ) -> PulseGeneratorOutputSettings:
+        """Configure all pulse generator output settings at once. By default, all values are coerced to the
+        nearest values allowed by the hardware, and the coerced values are returned."""
         self.set_output_inversion(settings.output_inversion)
+        return PulseGeneratorOutputSettings(
+            period_in_seconds=self.set_period_in_seconds(settings.period_in_seconds, coerce=coerce),
+            duty_cycle=self.set_duty_cycle(settings.duty_cycle, coerce=coerce),
+            num_pulses=self.set_num_pulses(settings.num_pulses, coerce=coerce),
+            delay_in_seconds=self.set_delay_in_seconds(settings.delay_in_seconds, coerce=coerce),
+            output_inversion=settings.output_inversion,
+        )
 
     def configure_trigger(self, settings: PulseGeneratorTriggerSettings) -> None:
         self.set_trigger_mode(settings.trigger_mode)
@@ -188,12 +195,12 @@ class PulseGenerator(PulseGeneratorInterface):
             self.read_parent_device_register(PULSE_GEN_PULSE_PERIOD_COMMANDS[self._number])
         )
 
-    def set_period_in_seconds(self, period: float, coerce: bool = True) -> None:
+    def set_period_in_seconds(self, period: float, coerce: bool = False) -> float:
         """Set the time between the start of each generated pulse in seconds. If coerce is True, the requested value
         will be coerced according to min_allowed_period_in_seconds, max_allowed_period_in_seconds and
-        allowed_period_step_size_in_seconds. Otherwise, when an invalid value is requested a
-        SpectrumInvalidParameterValue will be raised. The allowed values are affected by the number of active
-        channels and the sample rate."""
+        allowed_period_step_size_in_seconds and the coerced value is returned. Otherwise, when an invalid value is
+        requested a SpectrumInvalidParameterValue will be raised. The allowed values are affected by the number of
+        active channels and the sample rate."""
         period_in_clock_cycles = self._convert_seconds_to_clock_cycles(period)
         coerced_period = _coerce_fractional_value_to_allowed_integer(
             period_in_clock_cycles,
@@ -201,16 +208,17 @@ class PulseGenerator(PulseGeneratorInterface):
             int(self._convert_seconds_to_clock_cycles(self.max_allowed_period_in_seconds)),
             self._allowed_period_step_size_in_clock_cycles,
         )
-        if not coerce and coerced_period != period:
+        if not coerce and coerced_period != period_in_clock_cycles:
             raise SpectrumInvalidParameterValue(
                 "pulse generator period",
-                period_in_clock_cycles,
+                period,
                 self.min_allowed_period_in_seconds,
                 self.max_allowed_period_in_seconds,
                 self.allowed_period_step_size_in_seconds,
             )
 
         self.write_to_parent_device_register(PULSE_GEN_PULSE_PERIOD_COMMANDS[self._number], int(coerced_period))
+        return self._convert_clock_cycles_to_seconds(coerced_period)
 
     @property
     def min_allowed_high_voltage_duration_in_seconds(self) -> float:
@@ -242,7 +250,7 @@ class PulseGenerator(PulseGeneratorInterface):
     def duty_cycle(self) -> float:
         return self.duration_of_high_voltage_in_seconds / self.period_in_seconds
 
-    def set_duty_cycle(self, duty_cycle: float, coerce: bool = True) -> float:
+    def set_duty_cycle(self, duty_cycle: float, coerce: bool = False) -> float:
         """Set the duty cycle. If coerce is True, the requested value will be coerced to be within allowed range and
         use allowed step size and then the coerced value wll be returned. Otherwise, when an invalid value is requested
         an SpectrumInvalidParameterValue will be raised. The allowed values are affected by the number of active
@@ -263,7 +271,7 @@ class PulseGenerator(PulseGeneratorInterface):
                 duty_cycle,
                 self.min_allowed_high_voltage_duration_in_seconds,
                 self.max_allowed_high_voltage_duration_in_seconds,
-                self._allowed_high_voltage_duration_step_size_in_clock_cycles,
+                self.allowed_high_voltage_duration_step_size_in_seconds,
             )
         self.write_to_parent_device_register(PULSE_GEN_HIGH_DURATION_COMMANDS[self._number], clipped_duration)
         return self._convert_clock_cycles_to_seconds(clipped_duration) / self.period_in_seconds
@@ -285,11 +293,11 @@ class PulseGenerator(PulseGeneratorInterface):
         """The number of pulses to generate on receipt of a trigger. If 0, pulses will be generated continuously."""
         return self.read_parent_device_register(PULSE_GEN_NUM_REPEATS_COMMANDS[self._number])
 
-    def set_num_pulses(self, num_pulses: int, coerce: bool = True) -> None:
+    def set_num_pulses(self, num_pulses: int, coerce: bool = False) -> int:
         """Set the number of pulses to generate on receipt of a trigger. If 0 or negative, pulses will be generated
         continuously. If coerce if True, the requested number of pulses will be coerced according to min_allowed_pulses,
-        max_allowed_pulses and allowed_num_pulses_step_size. Otherwise, a SpectrumInvalidParameterValue exception
-        is raised if an invalid number of pulses is requested."""
+        max_allowed_pulses and allowed_num_pulses_step_size and the coerced value is returned. Otherwise, a
+        SpectrumInvalidParameterValue exception is raised if an invalid number of pulses is requested."""
 
         num_pulses = max(0, num_pulses)  # make negative value 0 to enable continuous pulse generation
 
@@ -307,6 +315,7 @@ class PulseGenerator(PulseGeneratorInterface):
             )
 
         self.write_to_parent_device_register(PULSE_GEN_NUM_REPEATS_COMMANDS[self._number], coerced_num_pulses)
+        return coerced_num_pulses
 
     @property
     def min_allowed_delay_in_seconds(self) -> float:
@@ -333,7 +342,7 @@ class PulseGenerator(PulseGeneratorInterface):
             self.read_parent_device_register(PULSE_GEN_DELAY_COMMANDS[self._number])
         )
 
-    def set_delay_in_seconds(self, delay_in_seconds: float, coerce: bool = True) -> float:
+    def set_delay_in_seconds(self, delay_in_seconds: float, coerce: bool = False) -> float:
         """Set the delay between the trigger and the first pulse transmission. If coerce=True, the requested value is
         coerced according to min_allowed_delay_in_seconds, max_allowed_delay_in_seconds and
         allowed_delay_step_size_in_seconds, and then the coerced value is returned. Otherwise, an ValueError is raised

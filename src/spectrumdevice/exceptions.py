@@ -109,7 +109,7 @@ class SpectrumInvalidParameterValue(ValueError):
         self, param_name: str, requested_value: float, param_min: float, param_max: float, param_step: float
     ) -> None:
         super().__init__(
-            f"The requested {param_name} value of {requested_value} is invalid. It must be between"
+            f"The requested {param_name} value of {requested_value} is invalid. It must be between "
             f"{param_min} and {param_max} inclusive, and a multiple of {param_step}."
         )
 
