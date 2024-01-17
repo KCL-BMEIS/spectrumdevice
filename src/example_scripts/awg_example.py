@@ -1,9 +1,10 @@
 from time import sleep
 
 from matplotlib.pyplot import plot, show
-from numpy import int16, iinfo, linspace, sin, pi
+from numpy import int16
 
 from spectrumdevice.devices.awg.awg_card import SpectrumAWGCard
+from spectrumdevice.devices.awg.synthesis import make_full_scale_sine_waveform
 from spectrumdevice.settings import TriggerSettings, TriggerSource, ExternalTriggerMode
 from spectrumdevice.settings.channel import OutputChannelStopLevelMode
 from spectrumdevice.settings.device_modes import GenerationMode
@@ -27,12 +28,8 @@ if __name__ == "__main__":
     )
     card.configure_trigger(trigger_settings)
 
-    full_scale_min_value = iinfo(int16).min
-    full_scale_max_value = iinfo(int16).max
+    t, analog_wfm = make_full_scale_sine_waveform(FREQUENCY, SAMPLE_RATE, NUM_CYCLES, dtype=int16)
 
-    duration = NUM_CYCLES / FREQUENCY
-    t = linspace(0, duration, int(duration * SAMPLE_RATE + 1))
-    analog_wfm = (sin(2 * pi * FREQUENCY * t) * full_scale_max_value).astype(int16)
     card.set_sample_rate_in_hz(SAMPLE_RATE)
     card.set_generation_mode(GenerationMode.SPC_REP_STD_SINGLERESTART)
     card.set_num_loops(NUM_PULSES)

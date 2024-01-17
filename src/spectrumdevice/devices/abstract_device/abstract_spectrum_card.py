@@ -9,7 +9,7 @@ import logging
 from abc import ABC, abstractmethod
 from functools import reduce
 from operator import or_
-from typing import Any, List, Optional, Sequence, Tuple, TypeVar, Generic
+from typing import Any, List, Optional, Sequence, Tuple
 
 from spectrum_gmbh.regs import (
     M2CMD_DATA_STARTDMA,
@@ -35,10 +35,7 @@ from spectrum_gmbh.regs import (
     SPC_MIINST_BYTESPERSAMPLE,
 )
 from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
-from spectrumdevice.devices.abstract_device.channel_interfaces import (
-    SpectrumAnalogChannelInterface,
-    SpectrumIOLineInterface,
-)
+from spectrumdevice.devices.abstract_device.device_interface import AnalogChannelInterfaceType, IOLineInterfaceType
 from spectrumdevice.exceptions import (
     SpectrumExternalTriggerNotEnabled,
     SpectrumInvalidNumberOfEnabledChannels,
@@ -74,11 +71,9 @@ logger = logging.getLogger(__name__)
 
 # Use a Generic and Type Variables to allow subclasses of AbstractSpectrumCard to define whether they own AWG analog
 # channels or Digitiser analog channels and IO lines
-AnalogChannelInterfaceType = TypeVar("AnalogChannelInterfaceType", bound=SpectrumAnalogChannelInterface)
-IOLineInterfaceType = TypeVar("IOLineInterfaceType", bound=SpectrumIOLineInterface)
 
 
-class AbstractSpectrumCard(AbstractSpectrumDevice, Generic[AnalogChannelInterfaceType, IOLineInterfaceType], ABC):
+class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IOLineInterfaceType], ABC):
     """Abstract superclass implementing methods common to all individual "card" devices (as opposed to "hub" devices)."""
 
     def __init__(self, device_number: int, ip_address: Optional[str] = None, **kwargs: Any):

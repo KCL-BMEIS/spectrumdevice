@@ -67,6 +67,10 @@ class SpectrumFeatureNotSupportedByCard(SpectrumApiCallFailed):
     pass
 
 
+class SpectrumParameterValueOutOfRange(SpectrumApiCallFailed):
+    pass
+
+
 class SpectrumWrongAcquisitionMode(IOError):
     def __init__(self, msg: str) -> None:
         super().__init__(f"Incorrect acquisition mode: {msg}")

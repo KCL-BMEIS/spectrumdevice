@@ -8,11 +8,12 @@ from functools import wraps
 from importlib import resources
 from typing import Callable, Dict, Any
 
-from spectrum_gmbh.py_header.spcerr import ERR_FEATURE
+from spectrum_gmbh.py_header.spcerr import ERR_FEATURE, ERR_VALUE
 from spectrumdevice.exceptions import (
     SpectrumApiCallFailed,
     SpectrumFIFOModeHardwareBufferOverrun,
     SpectrumFeatureNotSupportedByCard,
+    SpectrumParameterValueOutOfRange,
 )
 from spectrum_gmbh.spcerr import (
     ERR_OK,
@@ -42,6 +43,7 @@ ERROR_CODES_TO_REPORT_BUT_NOT_RAISE = [ERR_LASTERR, ERR_TIMEOUT, ERR_ABORT]
 ERROR_CODES_WITH_EXCEPTIONS = {
     ERR_FIFOHWOVERRUN: SpectrumFIFOModeHardwareBufferOverrun,
     ERR_FEATURE: SpectrumFeatureNotSupportedByCard,
+    ERR_VALUE: SpectrumParameterValueOutOfRange,
 }
 
 

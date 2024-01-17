@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Sequence, Tuple
+from typing import List, Optional, Sequence, Tuple, TypeVar, Generic
 
 from spectrumdevice.devices.abstract_device.channel_interfaces import (
     SpectrumAnalogChannelInterface,
@@ -21,7 +21,11 @@ from spectrumdevice.settings import (
 from spectrumdevice.settings.card_dependent_properties import CardType
 
 
-class SpectrumDeviceInterface(ABC):
+AnalogChannelInterfaceType = TypeVar("AnalogChannelInterfaceType", bound=SpectrumAnalogChannelInterface)
+IOLineInterfaceType = TypeVar("IOLineInterfaceType", bound=SpectrumIOLineInterface)
+
+
+class SpectrumDeviceInterface(Generic[AnalogChannelInterfaceType, IOLineInterfaceType], ABC):
     """Defines the common public interface for control of all digitiser and AWG devices, be they StarHub composite
     devices (e.g. the NetBox) or individual cards. All properties are read-only and must be set with their respective
     setter methods."""
@@ -78,11 +82,11 @@ class SpectrumDeviceInterface(ABC):
 
     @property
     @abstractmethod
-    def analog_channels(self) -> Sequence[SpectrumAnalogChannelInterface]:
+    def analog_channels(self) -> Sequence[AnalogChannelInterfaceType]:
         raise NotImplementedError()
 
     @property
-    def io_lines(self) -> Sequence[SpectrumIOLineInterface]:
+    def io_lines(self) -> Sequence[IOLineInterfaceType]:
         raise NotImplementedError()
 
     @property

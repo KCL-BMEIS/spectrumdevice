@@ -1,4 +1,5 @@
-from numpy import clip
+import numpy as np
+from numpy import clip, int16, iinfo
 
 from spectrum_gmbh.py_header.regs import (
     SPCM_PULSEGEN_CONFIG_INVERT,
@@ -11,9 +12,17 @@ from spectrum_gmbh.py_header.regs import (
     SPC_XIO_PULSEGEN_AVAILLOOPS_STEP,
     SPC_XIO_PULSEGEN_CLOCK,
     SPC_XIO_PULSEGEN_ENABLE,
+    SPC_XIO_PULSEGEN_COMMAND,
+    SPCM_PULSEGEN_CMD_FORCE,
+    SPC_M2CMD,
+    M2CMD_CARD_WRITESETUP,
 )
 from spectrumdevice.devices.abstract_device.channel_interfaces import SpectrumIOLineInterface
-from spectrumdevice.exceptions import SpectrumFeatureNotSupportedByCard, SpectrumInvalidParameterValue
+from spectrumdevice.exceptions import (
+    SpectrumFeatureNotSupportedByCard,
+    SpectrumInvalidParameterValue,
+    SpectrumIOError,
+)
 from spectrumdevice.features.pulse_generator.interfaces import (
     PulseGeneratorInterface,
 )
@@ -34,6 +43,7 @@ from spectrumdevice.settings.pulse_generator import (
     PulseGeneratorTriggerSettings,
     decode_enabled_pulse_gens,
     decode_pulse_gen_config,
+    PulseGeneratorMultiplexer2TriggerSource,
 )
 from spectrumdevice.spectrum_wrapper import toggle_bitmap_value
 
@@ -60,13 +70,15 @@ class PulseGenerator(PulseGeneratorInterface):
         """Configure all pulse generator output settings at once. By default, all values are coerced to the
         nearest values allowed by the hardware, and the coerced values are returned."""
         self.set_output_inversion(settings.output_inversion)
-        return PulseGeneratorOutputSettings(
+        coerced_settings = PulseGeneratorOutputSettings(
             period_in_seconds=self.set_period_in_seconds(settings.period_in_seconds, coerce=coerce),
             duty_cycle=self.set_duty_cycle(settings.duty_cycle, coerce=coerce),
             num_pulses=self.set_num_pulses(settings.num_pulses, coerce=coerce),
             delay_in_seconds=self.set_delay_in_seconds(settings.delay_in_seconds, coerce=coerce),
             output_inversion=settings.output_inversion,
         )
+        self.write_to_parent_device_register(SPC_M2CMD, M2CMD_CARD_WRITESETUP)
+        return coerced_settings
 
     def configure_trigger(self, settings: PulseGeneratorTriggerSettings) -> None:
         self.set_trigger_mode(settings.trigger_mode)
@@ -75,6 +87,15 @@ class PulseGenerator(PulseGeneratorInterface):
         self.multiplexer_2.set_trigger_source(settings.multiplexer_2_source)
         self.multiplexer_1.set_output_inversion(settings.multiplexer_1_output_inversion)
         self.multiplexer_2.set_output_inversion(settings.multiplexer_2_output_inversion)
+        self.write_to_parent_device_register(SPC_M2CMD, M2CMD_CARD_WRITESETUP)
+
+    def force_trigger(self) -> None:
+        if (
+            self._multiplexer_2.trigger_source
+            != PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_SOFTWARE
+        ):
+            raise SpectrumIOError("Force trigger can only be used if trigger source (mux 2) is set to 'software'")
+        self.write_to_parent_device_register(SPC_XIO_PULSEGEN_COMMAND, SPCM_PULSEGEN_CMD_FORCE)
 
     @property
     def number(self) -> int:
@@ -105,7 +126,8 @@ class PulseGenerator(PulseGeneratorInterface):
         return clock_cycles * self.clock_period_in_seconds
 
     def _convert_seconds_to_clock_cycles(self, seconds: float) -> float:
-        return seconds * self.clock_rate_in_hz
+        # round to nearest milli-cycle to avoid floating point precision problems
+        return round(seconds * self.clock_rate_in_hz * 1e3) / 1e3
 
     def _get_enabled_pulse_generator_ids(self) -> list[int]:
         return decode_enabled_pulse_gens(self.read_parent_device_register(SPC_XIO_PULSEGEN_ENABLE))
@@ -175,11 +197,15 @@ class PulseGenerator(PulseGeneratorInterface):
 
     @property
     def min_allowed_period_in_seconds(self) -> float:
-        return self._convert_clock_cycles_to_seconds(self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLEN_MIN))
+        reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLEN_MIN)
+        reg_val = 0 if reg_val == -1 else reg_val
+        return self._convert_clock_cycles_to_seconds(reg_val)
 
     @property
     def max_allowed_period_in_seconds(self) -> float:
-        return self._convert_clock_cycles_to_seconds(self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLEN_MAX))
+        reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLEN_MAX)
+        reg_val = iinfo(int16).max if reg_val == -1 else reg_val
+        return self._convert_clock_cycles_to_seconds(reg_val)
 
     @property
     def _allowed_period_step_size_in_clock_cycles(self) -> int:
@@ -222,11 +248,15 @@ class PulseGenerator(PulseGeneratorInterface):
 
     @property
     def min_allowed_high_voltage_duration_in_seconds(self) -> float:
-        return self._convert_clock_cycles_to_seconds(self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLEN_MIN))
+        reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLEN_MIN)
+        reg_val = 0 if reg_val == -1 else reg_val
+        return self._convert_clock_cycles_to_seconds(reg_val)
 
     @property
     def max_allowed_high_voltage_duration_in_seconds(self) -> float:
-        return self._convert_clock_cycles_to_seconds(self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLEN_MAX))
+        reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLEN_MAX)
+        reg_val = iinfo(int16).max if reg_val == -1 else reg_val
+        return self._convert_clock_cycles_to_seconds(reg_val)
 
     @property
     def _allowed_high_voltage_duration_step_size_in_clock_cycles(self) -> int:
@@ -268,7 +298,7 @@ class PulseGenerator(PulseGeneratorInterface):
         if not coerce and clipped_duration != requested_high_v_duration_in_clock_cycles:
             raise SpectrumInvalidParameterValue(
                 "high-voltage duration",
-                duty_cycle,
+                self.period_in_seconds * duty_cycle,
                 self.min_allowed_high_voltage_duration_in_seconds,
                 self.max_allowed_high_voltage_duration_in_seconds,
                 self.allowed_high_voltage_duration_step_size_in_seconds,
@@ -282,7 +312,9 @@ class PulseGenerator(PulseGeneratorInterface):
 
     @property
     def max_allowed_pulses(self) -> int:
-        return self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLOOPS_MAX)
+        reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLOOPS_MAX)
+        # my card has this register set to -2, which I assume means no limit (can't work it out from the docs)
+        return reg_val if reg_val > 0 else iinfo(int16).max
 
     @property
     def allowed_num_pulses_step_size(self) -> int:
@@ -319,15 +351,15 @@ class PulseGenerator(PulseGeneratorInterface):
 
     @property
     def min_allowed_delay_in_seconds(self) -> float:
-        return self._convert_clock_cycles_to_seconds(
-            self.read_parent_device_register(602007)  # SPC_XIO_PULSEGEN_AVAILDELAY_MIN not in regs.py
-        )
+        reg_value = self.read_parent_device_register(602007)  # SPC_XIO_PULSEGEN_AVAILDELAY_MIN not in regs.py
+        reg_value = 0 if reg_value == -1 else reg_value
+        return self._convert_clock_cycles_to_seconds(reg_value)
 
     @property
     def max_allowed_delay_in_seconds(self) -> float:
-        return self._convert_clock_cycles_to_seconds(
-            self.read_parent_device_register(602008)  # SPC_XIO_PULSEGEN_AVAILDELAY_MAX not in regs.py
-        )
+        reg_value = self.read_parent_device_register(602008)  # SPC_XIO_PULSEGEN_AVAILDELAY_MAX not in regs.py
+        reg_value = iinfo(int16).max if reg_value == -1 else reg_value
+        return self._convert_clock_cycles_to_seconds(reg_value)
 
     @property
     def allowed_delay_step_size_in_seconds(self) -> float:
@@ -376,4 +408,8 @@ def _coerce_fractional_value_to_allowed_integer(
     fractional_value: float, min_allowed: int, max_allowed: int, step: int
 ) -> int:
     coerced = int(round(fractional_value / step) * step)
+    if min_allowed == -1:
+        min_allowed = 0
+    if max_allowed == -1:
+        max_allowed = np.iinfo(int16).max
     return int(clip(coerced, min_allowed, max_allowed))

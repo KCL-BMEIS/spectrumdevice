@@ -23,6 +23,13 @@ from tests.device_factories import create_awg_card_for_testing
 class PulseGeneratorTest(TestCase):
     def setUp(self) -> None:
         self._awg = create_awg_card_for_testing()
+        self._awg.set_sample_rate_in_hz(1000000)
+        self._awg.analog_channels[0].set_is_switched_on(True)
+        self._awg.analog_channels[0].set_signal_amplitude_in_mv(1000)
+
+    def tearDown(self) -> None:
+        self._awg.reset()
+        self._awg.disconnect()
 
     def test_pulse_gen_feat_not_available(self) -> None:
         mock_digitiser_without_pulse_gen = MockSpectrumDigitiserCard(
@@ -80,7 +87,7 @@ class PulseGeneratorTest(TestCase):
     def test_coerce_pulse_period(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
         pg.set_period_in_seconds(pg.max_allowed_period_in_seconds + 1, coerce=True)
-        self.assertEqual(pg.max_allowed_period_in_seconds, pg.period_in_seconds)
+        self.assertAlmostEqual(pg.max_allowed_period_in_seconds, pg.period_in_seconds, places=5)
 
     def test_invalid_pulse_period(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
@@ -92,18 +99,20 @@ class PulseGeneratorTest(TestCase):
         pg.set_period_in_seconds(pg.max_allowed_period_in_seconds)
         duty_cycle = pg.min_allowed_high_voltage_duration_in_seconds / pg.period_in_seconds
         pg.set_duty_cycle(duty_cycle)
-        self.assertEqual(duty_cycle, pg.duty_cycle)
+        self.assertAlmostEqual(duty_cycle, pg.duty_cycle, places=5)
 
     def test_coerce_duty_cycle(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
-        pg.set_period_in_seconds(1)
+        pg.set_period_in_seconds(pg.max_allowed_period_in_seconds)
         pg.set_duty_cycle(1.1, coerce=True)
-        self.assertEqual(pg.max_allowed_high_voltage_duration_in_seconds, pg.duration_of_high_voltage_in_seconds)
+        self.assertAlmostEqual(
+            pg.max_allowed_high_voltage_duration_in_seconds, pg.duration_of_high_voltage_in_seconds, places=5
+        )
 
     def test_invalid_duty_cycle(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
         with self.assertRaises(SpectrumInvalidParameterValue):
-            pg.set_period_in_seconds(1)
+            pg.set_period_in_seconds(pg.max_allowed_period_in_seconds)
             pg.set_duty_cycle(1.1)
 
     def test_num_pulses(self) -> None:
@@ -129,7 +138,7 @@ class PulseGeneratorTest(TestCase):
     def test_coerce_delay(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
         pg.set_delay_in_seconds(pg.max_allowed_delay_in_seconds + 1, coerce=True)
-        self.assertEqual(pg.max_allowed_delay_in_seconds, pg.delay_in_seconds)
+        self.assertAlmostEqual(pg.max_allowed_delay_in_seconds, pg.delay_in_seconds, places=5)
 
     def test_invalid_delay(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator

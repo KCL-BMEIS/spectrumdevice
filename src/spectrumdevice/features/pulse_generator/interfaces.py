@@ -62,6 +62,10 @@ class PulseGeneratorInterface(ABC):
     def configure_trigger(self, settings: PulseGeneratorTriggerSettings) -> None:
         raise NotImplementedError()
 
+    @abstractmethod
+    def force_trigger(self) -> None:
+        raise NotImplementedError()
+
     @property
     @abstractmethod
     def number(self) -> int:
