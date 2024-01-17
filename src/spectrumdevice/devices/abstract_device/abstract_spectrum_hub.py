@@ -14,11 +14,11 @@ from numpy import arange
 
 from spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK
 from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
-from spectrumdevice.devices.abstract_device.interfaces import (
-    SpectrumDeviceInterface,
+from spectrumdevice.devices.abstract_device.channel_interfaces import (
     SpectrumAnalogChannelInterface,
     SpectrumIOLineInterface,
 )
+from spectrumdevice.devices.abstract_device.device_interface import SpectrumDeviceInterface
 from spectrumdevice.exceptions import SpectrumSettingsMismatchError
 from spectrumdevice.settings import (
     AdvancedCardFeature,

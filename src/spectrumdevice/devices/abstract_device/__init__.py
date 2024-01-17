@@ -8,13 +8,9 @@ from spectrumdevice.devices.abstract_device.abstract_spectrum_card import Abstra
 from spectrumdevice.devices.abstract_device.abstract_spectrum_channel import AbstractSpectrumChannel
 from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
 from spectrumdevice.devices.abstract_device.abstract_spectrum_hub import AbstractSpectrumStarHub
-from spectrumdevice.devices.abstract_device.interfaces import SpectrumChannelInterface, SpectrumDeviceInterface
-
 
 __all__ = [
-    "SpectrumChannelInterface",
     "AbstractSpectrumChannel",
-    "SpectrumDeviceInterface",
     "AbstractSpectrumDevice",
     "AbstractSpectrumCard",
     "AbstractSpectrumStarHub",

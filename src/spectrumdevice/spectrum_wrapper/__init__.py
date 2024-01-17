@@ -52,6 +52,13 @@ def decode_bitmap_using_list_of_ints(bitmap_value: int, test_values: List[int]) 
     return values_in_bitmap
 
 
+def toggle_bitmap_value(bitmap_value: int, option: int, enabled: bool) -> int:
+    if enabled:
+        return bitmap_value | option  # set relevant bit to one
+    else:
+        return bitmap_value & ~option  # set relevant bit to zero
+
+
 def get_spectrum_i32_api_param(device_handle: DEVICE_HANDLE_TYPE, spectrum_command: int) -> int:
     param = int32(0)
     error_handler(spcm_dwGetParam_i32)(device_handle, spectrum_command, byref(param))

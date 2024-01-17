@@ -6,7 +6,11 @@
 
 from abc import ABC
 
-from spectrumdevice.devices.abstract_device.interfaces import SpectrumDeviceInterface
+from spectrumdevice.devices.abstract_device.device_interface import (
+    SpectrumDeviceInterface,
+    AnalogChannelInterfaceType,
+    IOLineInterfaceType,
+)
 from spectrumdevice.exceptions import SpectrumDeviceNotConnected, SpectrumDriversNotFound
 from spectrumdevice.settings import SpectrumRegisterLength, TriggerSettings
 from spectrumdevice.settings.triggering import EXTERNAL_TRIGGER_SOURCES
@@ -28,7 +32,7 @@ from spectrumdevice.spectrum_wrapper import (
 )
 
 
-class AbstractSpectrumDevice(SpectrumDeviceInterface, ABC):
+class AbstractSpectrumDevice(SpectrumDeviceInterface[AnalogChannelInterfaceType, IOLineInterfaceType], ABC):
     """Abstract superclass which implements methods common to all Spectrum devices. Instances of this class
     cannot be constructed directly. Instead, construct instances of the concrete classes listed in
     spectrumdevice/__init__.py, which inherit the methods defined here. Note that the concrete mock devices override

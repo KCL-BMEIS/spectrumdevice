@@ -45,7 +45,8 @@ __all__ = [
 
 @dataclass
 class TriggerSettings:
-    """A dataclass collecting all settings related to triggering. See Spectrum documentation."""
+    """A dataclass collecting all settings related to triggering generation and acquisition. See Spectrum documentation.
+    Note that pulse generators have their own trigger options."""
 
     trigger_sources: List[TriggerSource]
     """The trigger sources to enable"""

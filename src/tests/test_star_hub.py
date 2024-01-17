@@ -13,11 +13,13 @@ from tests.configuration import (
     NUM_MODULES_PER_DIGITISER,
 )
 from tests.device_factories import create_spectrum_star_hub_for_testing
-from tests.test_single_card import SingleCardTest
+from tests.test_single_card import DigitiserCardTest
 
 
 @pytest.mark.star_hub
-class StarHubTest(SingleCardTest):
+class StarHubTest(DigitiserCardTest):
+    __test__ = True
+
     def setUp(self) -> None:
         self._device: SpectrumDigitiserStarHub = create_spectrum_star_hub_for_testing()
 

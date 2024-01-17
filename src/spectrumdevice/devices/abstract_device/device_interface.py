@@ -1,67 +1,31 @@
-"""Defines a common public interface for controlling all Spectrum devices and their channels."""
-
-# Christian Baker, King's College London
-# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
-# Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
-
 from abc import ABC, abstractmethod
 from typing import List, Optional, Sequence, Tuple, TypeVar, Generic
 
+from spectrumdevice.devices.abstract_device.channel_interfaces import (
+    SpectrumAnalogChannelInterface,
+    SpectrumIOLineInterface,
+)
 from spectrumdevice.settings import (
     AdvancedCardFeature,
     AvailableIOModes,
     CardFeature,
     ClockMode,
-    ExternalTriggerMode,
     DEVICE_STATUS_TYPE,
+    ExternalTriggerMode,
     ModelNumber,
     SpectrumRegisterLength,
     TransferBuffer,
     TriggerSettings,
     TriggerSource,
-    IOLineMode,
 )
 from spectrumdevice.settings.card_dependent_properties import CardType
-from spectrumdevice.settings.channel import SpectrumAnalogChannelName, SpectrumChannelName
-from spectrumdevice.settings.io_lines import SpectrumIOLineName
-
-ChannelNameType = TypeVar("ChannelNameType", bound=SpectrumChannelName)
 
 
-class SpectrumChannelInterface(Generic[ChannelNameType], ABC):
-    """Defines the common public interface for control of the channels of Digitiser and AWG devices including
-    Multipurpose IO Lines. All properties are read-only and must be set with their respective setter methods."""
-
-    @property
-    @abstractmethod
-    def name(self) -> ChannelNameType:
-        raise NotImplementedError
+AnalogChannelInterfaceType = TypeVar("AnalogChannelInterfaceType", bound=SpectrumAnalogChannelInterface)
+IOLineInterfaceType = TypeVar("IOLineInterfaceType", bound=SpectrumIOLineInterface)
 
 
-class SpectrumAnalogChannelInterface(SpectrumChannelInterface[SpectrumAnalogChannelName], ABC):
-    """Defines the common public interface for control of the analog channels of Digitiser and AWG devices. All
-    properties are read-only and must be set with their respective setter methods."""
-
-    pass
-
-
-class SpectrumIOLineInterface(SpectrumChannelInterface[SpectrumIOLineName], ABC):
-    """Defines the common public interface for control of the Multipurpose IO Lines of Digitiser and AWG devices. All
-    properties are read-only and must be set with their respective setter methods."""
-
-    @property
-    @abstractmethod
-    def mode(self) -> IOLineMode:
-        """Returns the current mode of the IO Line."""
-        raise NotImplementedError()
-
-    @abstractmethod
-    def set_mode(self, mode: IOLineMode) -> None:
-        """Sets the current mode of the IO Line"""
-        raise NotImplementedError()
-
-
-class SpectrumDeviceInterface(ABC):
+class SpectrumDeviceInterface(Generic[AnalogChannelInterfaceType, IOLineInterfaceType], ABC):
     """Defines the common public interface for control of all digitiser and AWG devices, be they StarHub composite
     devices (e.g. the NetBox) or individual cards. All properties are read-only and must be set with their respective
     setter methods."""
@@ -118,11 +82,11 @@ class SpectrumDeviceInterface(ABC):
 
     @property
     @abstractmethod
-    def analog_channels(self) -> Sequence[SpectrumAnalogChannelInterface]:
+    def analog_channels(self) -> Sequence[AnalogChannelInterfaceType]:
         raise NotImplementedError()
 
     @property
-    def io_lines(self) -> Sequence[SpectrumIOLineInterface]:
+    def io_lines(self) -> Sequence[IOLineInterfaceType]:
         raise NotImplementedError()
 
     @property

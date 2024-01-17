@@ -6,11 +6,12 @@ from typing import Any, TypeVar, Generic
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
-from spectrumdevice.devices.abstract_device.interfaces import (
-    SpectrumDeviceInterface,
+from spectrumdevice.devices.abstract_device.channel_interfaces import (
     SpectrumChannelInterface,
     SpectrumAnalogChannelInterface,
 )
+from spectrumdevice.devices.abstract_device.device_interface import SpectrumDeviceInterface
+from spectrumdevice.settings import SpectrumRegisterLength
 from spectrumdevice.settings.channel import SpectrumAnalogChannelName, SpectrumChannelName
 
 
@@ -47,6 +48,21 @@ class AbstractSpectrumChannel(SpectrumChannelInterface, Generic[ChannelNameType]
     @property
     def _number(self) -> int:
         return int(self.name.name.split(self._name_prefix)[-1])
+
+    def write_to_parent_device_register(
+        self,
+        spectrum_register: int,
+        value: int,
+        length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
+    ) -> None:
+        self._parent_device.write_to_spectrum_device_register(spectrum_register, value, length)
+
+    def read_parent_device_register(
+        self,
+        spectrum_register: int,
+        length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
+    ) -> int:
+        return self._parent_device.read_spectrum_device_register(spectrum_register, length)
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, AbstractSpectrumChannel):

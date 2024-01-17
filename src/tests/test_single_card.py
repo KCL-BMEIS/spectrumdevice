@@ -7,7 +7,7 @@ from numpy.testing import assert_array_equal
 
 from spectrum_gmbh.regs import SPC_CHENABLE
 from spectrumdevice import SpectrumDigitiserAnalogChannel
-from spectrumdevice.devices.abstract_device import SpectrumDeviceInterface
+from spectrumdevice.devices.abstract_device.device_interface import SpectrumDeviceInterface
 from spectrumdevice.devices.awg.awg_channel import SpectrumAWGAnalogChannel
 from spectrumdevice.devices.awg.awg_interface import SpectrumAWGInterface
 from spectrumdevice.devices.digitiser import SpectrumDigitiserInterface

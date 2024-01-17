@@ -51,8 +51,8 @@ class SpectrumAWGCard(
         remainder = len(waveform) % step_size
         if remainder > 0:
             logger.warning(
-                "Waveform length is not a multiple of 8 samples. Waveform in card memory will be zero-padded"
-                " to the next multiple of 8."
+                "Length of waveform transmitted to AWG is not a multiple of 8 samples. Waveform in card memory will be "
+                "zero-padded to the next multiple of 8."
             )
         coerced_mem_size = len(waveform) if remainder == 0 else len(waveform) + (step_size - remainder)
         self.write_to_spectrum_device_register(SPC_MEMSIZE, coerced_mem_size)
