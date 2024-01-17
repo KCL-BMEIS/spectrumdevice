@@ -14,7 +14,7 @@ class SpectrumTestMode(Enum):
 # Set to TestMode.REAL_HARDWARE to run tests on a real hardware device as configured below.
 SINGLE_DIGITISER_CARD_TEST_MODE = SpectrumTestMode.MOCK_HARDWARE
 DIGITISER_STAR_HUB_TEST_MODE = SpectrumTestMode.MOCK_HARDWARE
-SINGLE_AWG_CARD_TEST_MODE = SpectrumTestMode.REAL_HARDWARE
+SINGLE_AWG_CARD_TEST_MODE = SpectrumTestMode.MOCK_HARDWARE
 
 # Set IP address of real spectrum device (for use if TestMode.REAL_HARDWARE is set above). Set to None to run tests on
 # a local (PCIe) card.
