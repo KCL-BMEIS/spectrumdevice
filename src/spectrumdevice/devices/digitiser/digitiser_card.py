@@ -46,7 +46,7 @@ from spectrumdevice.settings.transfer_buffer import (
     BufferType,
     create_samples_acquisition_transfer_buffer,
     set_transfer_buffer,
-    NOTIFY_SIZE_PAGE_SIZE_IN_BYTES,
+    PAGE_SIZE_IN_BYTES,
     DEFAULT_NOTIFY_SIZE_IN_PAGES,
 )
 
@@ -304,7 +304,7 @@ class SpectrumDigitiserCard(
                 samples_per_batch = (
                     self.acquisition_length_in_samples * len(self.enabled_analog_channels) * self._batch_size
                 )
-                pages_per_batch = samples_per_batch * self.bytes_per_sample / NOTIFY_SIZE_PAGE_SIZE_IN_BYTES
+                pages_per_batch = samples_per_batch * self.bytes_per_sample / PAGE_SIZE_IN_BYTES
 
                 if pages_per_batch < DEFAULT_NOTIFY_SIZE_IN_PAGES:
                     notify_size = pages_per_batch

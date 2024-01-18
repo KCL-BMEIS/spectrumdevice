@@ -14,7 +14,7 @@ from numpy.random import uniform
 
 from spectrum_gmbh.regs import SPC_DATA_AVAIL_USER_LEN, SPC_DATA_AVAIL_USER_POS
 from spectrumdevice.settings import AcquisitionMode
-from spectrumdevice.settings.transfer_buffer import NOTIFY_SIZE_PAGE_SIZE_IN_BYTES
+from spectrumdevice.settings.transfer_buffer import PAGE_SIZE_IN_BYTES
 
 
 TRANSFER_CHUNK_COUNTER = -1  # this is a custom key used in the _para_dict to count the number of transfers
@@ -104,7 +104,7 @@ class MultiFIFOModeMockWaveformSource(MockWaveformSource):
 
         """
         bytes_per_sample = transfer_buffer_data_array.itemsize
-        notify_size_in_samples = int(self._notify_size_in_pages * NOTIFY_SIZE_PAGE_SIZE_IN_BYTES / bytes_per_sample)
+        notify_size_in_samples = int(self._notify_size_in_pages * PAGE_SIZE_IN_BYTES / bytes_per_sample)
         notify_size_in_samples = min((samples_per_frame, notify_size_in_samples))
         samples_per_second = frame_rate * samples_per_frame
         notify_sizes_per_second = samples_per_second / notify_size_in_samples

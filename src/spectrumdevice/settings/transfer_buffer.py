@@ -130,8 +130,8 @@ class TimestampsTransferBuffer(TransferBuffer):
             BufferType.SPCM_BUF_TIMESTAMP,
             direction,
             board_memory_offset_bytes,
-            zeros(NOTIFY_SIZE_PAGE_SIZE_IN_BYTES, dtype=uint8),
-            NOTIFY_SIZE_PAGE_SIZE_IN_BYTES,
+            zeros(PAGE_SIZE_IN_BYTES, dtype=uint8),
+            PAGE_SIZE_IN_BYTES,
         )
 
     def read_chunk(self, chunk_position_in_bytes: int, chunk_size_in_bytes: int) -> ndarray:
@@ -220,7 +220,7 @@ def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffe
         device_handle,
         buffer.type.value,
         buffer.direction.value,
-        int(buffer.notify_size_in_pages * NOTIFY_SIZE_PAGE_SIZE_IN_BYTES)
+        int(buffer.notify_size_in_pages * PAGE_SIZE_IN_BYTES)
         if buffer.direction == BufferDirection.SPCM_DIR_CARDTOPC
         else 0,
         buffer.data_array_pointer,
@@ -230,5 +230,5 @@ def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffe
 
 
 DEFAULT_NOTIFY_SIZE_IN_PAGES = 10
-NOTIFY_SIZE_PAGE_SIZE_IN_BYTES = 4096
+PAGE_SIZE_IN_BYTES = 4096
 ALLOWED_FRACTIONAL_NOTIFY_SIZES_IN_PAGES = [1 / 2, 1 / 4, 1 / 8, 1 / 16, 1 / 32, 1 / 64, 1 / 128, 1 / 256]
