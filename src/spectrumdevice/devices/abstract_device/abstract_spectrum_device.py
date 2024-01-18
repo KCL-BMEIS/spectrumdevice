@@ -5,6 +5,7 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
 from abc import ABC
+from copy import copy
 
 from spectrumdevice.devices.abstract_device.device_interface import (
     SpectrumDeviceInterface,
@@ -13,6 +14,12 @@ from spectrumdevice.devices.abstract_device.device_interface import (
 )
 from spectrumdevice.exceptions import SpectrumDeviceNotConnected, SpectrumDriversNotFound
 from spectrumdevice.settings import SpectrumRegisterLength, TriggerSettings
+from spectrumdevice.settings.output_channel_pairing import (
+    ChannelPair,
+    ChannelPairingMode,
+    DIFFERENTIAL_CHANNEL_PAIR_COMMANDS,
+    DOUBLING_CHANNEL_PAIR_COMMANDS,
+)
 from spectrumdevice.settings.triggering import EXTERNAL_TRIGGER_SOURCES
 from spectrum_gmbh.regs import (
     M2CMD_CARD_ENABLETRIGGER,
@@ -90,6 +97,45 @@ class AbstractSpectrumDevice(SpectrumDeviceInterface[AnalogChannelInterfaceType,
 
         # Write the configuration to the card
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_WRITESETUP)
+
+    def configure_channel_pairing(self, channel_pair: ChannelPair, mode: ChannelPairingMode) -> None:
+        """Configures a pair of consecutive channels to operate either independently, in differential mode or
+        in double  mode. If enabling differential or double mode, then the odd-numbered channel will be automatically
+        configured to be identical to the even-numbered channel, and the odd-numbered channel will be disabled as is
+        required by the Spectrum API.
+
+        Args:
+            channel_pair (ChannelPair): The pair of channels to configure
+            mode (ChannelPairingMode): The mode to enable: SINGLE, DOUBLE, or DIFFERENTIAL
+        """
+
+        doubling_enabled = int(mode == ChannelPairingMode.DOUBLE)
+        differential_mode_enabled = int(mode == ChannelPairingMode.DIFFERENTIAL)
+
+        if doubling_enabled and channel_pair in (channel_pair.CHANNEL_4_AND_5, channel_pair.CHANNEL_6_AND_7):
+            raise ValueError("Doubling can only be enabled for channel pairs CHANNEL_0_AND_1 or CHANNEL_2_AND_3.")
+
+        if doubling_enabled or differential_mode_enabled:
+            self._mirror_even_channel_settings_on_odd_channel(channel_pair)
+            self._disable_odd_channel(channel_pair)
+
+        self.write_to_spectrum_device_register(
+            DIFFERENTIAL_CHANNEL_PAIR_COMMANDS[channel_pair], differential_mode_enabled
+        )
+        self.write_to_spectrum_device_register(DOUBLING_CHANNEL_PAIR_COMMANDS[channel_pair], doubling_enabled)
+
+    def _disable_odd_channel(self, channel_pair: ChannelPair) -> None:
+        try:
+            enabled_channels = copy(self.enabled_analog_channels)
+            enabled_channels.remove(channel_pair.value + 1)
+            self.set_enabled_analog_channels(enabled_channels)
+        except ValueError:
+            pass  # odd numbered channel was not enable, so no need to disable it.
+
+    def _mirror_even_channel_settings_on_odd_channel(self, channel_pair: ChannelPair) -> None:
+        self.analog_channels[channel_pair.value + 1].copy_settings_from_other_channel(
+            self.analog_channels[channel_pair.value]
+        )
 
     def write_to_spectrum_device_register(
         self,

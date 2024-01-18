@@ -5,7 +5,7 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic
+from typing import TypeVar, Generic, Protocol
 
 from spectrumdevice.features.pulse_generator.interfaces import PulseGeneratorInterface
 from spectrumdevice.settings import (
@@ -45,11 +45,24 @@ class SpectrumChannelInterface(Generic[ChannelNameType], ABC):
         raise NotImplementedError()
 
 
-class SpectrumAnalogChannelInterface(SpectrumChannelInterface[SpectrumAnalogChannelName], ABC):
+class GettableSettingsProtocol(Protocol):
+    @abstractmethod
+    def _get_settings_as_dict(self) -> dict:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def _set_settings_from_dict(self, settings: dict) -> None:
+        raise NotImplementedError()
+
+
+class SpectrumAnalogChannelInterface(
+    SpectrumChannelInterface[SpectrumAnalogChannelName], GettableSettingsProtocol, ABC
+):
     """Defines the common public interface for control of the analog channels of Digitiser and AWG devices. All
     properties are read-only and must be set with their respective setter methods."""
 
-    pass
+    def copy_settings_from_other_channel(self, channel_to_copy: GettableSettingsProtocol) -> None:
+        self._set_settings_from_dict(channel_to_copy._get_settings_as_dict())
 
 
 class SpectrumIOLineInterface(SpectrumChannelInterface[SpectrumIOLineName], ABC):

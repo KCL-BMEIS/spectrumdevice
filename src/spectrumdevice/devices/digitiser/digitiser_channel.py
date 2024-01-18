@@ -59,6 +59,24 @@ class SpectrumDigitiserAnalogChannel(AbstractSpectrumAnalogChannel, SpectrumDigi
         self._vertical_range_mv = self.vertical_range_in_mv
         self._vertical_offset_in_percent = self.vertical_offset_in_percent
 
+    def _get_settings_as_dict(self) -> dict:
+        return {
+            SpectrumDigitiserAnalogChannel.input_path.__name__: self.input_path,
+            SpectrumDigitiserAnalogChannel.input_coupling.__name__: self.input_coupling,
+            SpectrumDigitiserAnalogChannel.input_impedance.__name__: self.input_impedance,
+            SpectrumDigitiserAnalogChannel.vertical_range_in_mv.__name__: self.vertical_range_in_mv,
+            SpectrumDigitiserAnalogChannel.vertical_offset_in_percent.__name__: self.vertical_offset_in_percent,
+        }
+
+    def _set_settings_from_dict(self, settings: dict) -> None:
+        self.set_input_path(settings[SpectrumDigitiserAnalogChannel.input_path.__name__])
+        self.set_input_coupling(settings[SpectrumDigitiserAnalogChannel.input_coupling.__name__])
+        self.set_input_impedance(settings[SpectrumDigitiserAnalogChannel.input_impedance.__name__])
+        self.set_vertical_range_in_mv(settings[SpectrumDigitiserAnalogChannel.vertical_range_in_mv.__name__])
+        self.set_vertical_offset_in_percent(
+            settings[SpectrumDigitiserAnalogChannel.vertical_offset_in_percent.__name__]
+        )
+
     def convert_raw_waveform_to_voltage_waveform(self, raw_waveform: ndarray) -> ndarray:
         vertical_offset_mv = 0.01 * float(self._vertical_range_mv * self._vertical_offset_in_percent)
         return 1e-3 * (

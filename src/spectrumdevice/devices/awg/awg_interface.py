@@ -11,7 +11,6 @@ from spectrumdevice.devices.abstract_device.channel_interfaces import (
 from spectrumdevice.settings.channel import OutputChannelFilter, OutputChannelStopLevelMode
 from spectrumdevice.settings.device_modes import GenerationMode
 from spectrumdevice.settings.io_lines import DigOutIOLineModeSettings
-from spectrumdevice.settings.output_channel_pairing import ChannelPair, ChannelPairingMode
 
 
 class SpectrumAWGIOLineInterface(SpectrumIOLineInterface, ABC):
@@ -99,10 +98,6 @@ class SpectrumAWGInterface(SpectrumDeviceInterface, ABC):
 
     @abstractmethod
     def set_generation_mode(self, mode: GenerationMode) -> None:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def configure_channel_pairing(self, channel_pair: ChannelPair, mode: ChannelPairingMode) -> None:
         raise NotImplementedError()
 
     @abstractmethod

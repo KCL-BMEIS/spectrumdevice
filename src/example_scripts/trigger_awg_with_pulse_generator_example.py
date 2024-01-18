@@ -29,7 +29,6 @@ if __name__ == "__main__":
         trigger_sources=[TriggerSource.SPC_TMASK_EXT1],  # ext1 trigger source is the X1 I/O Line (Xo cannot be used as
         # a trigger source)
         external_trigger_mode=ExternalTriggerMode.SPC_TM_POS,
-
     )
     #
     # t, analog_wfm = make_full_scale_sine_waveform(

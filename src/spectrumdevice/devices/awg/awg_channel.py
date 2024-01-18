@@ -60,6 +60,22 @@ class SpectrumAWGAnalogChannel(AbstractSpectrumAnalogChannel, SpectrumAWGAnalogC
             raise SpectrumCardIsNotAnAWG(parent_device.type)
         super().__init__(parent_device=parent_device, **kwargs)  # pass unused args up the inheritance hierarchy
 
+    def _get_settings_as_dict(self) -> dict:
+        return {
+            SpectrumAWGAnalogChannel.signal_amplitude_in_mv.__name__: self.signal_amplitude_in_mv,
+            SpectrumAWGAnalogChannel.dc_offset_in_mv.__name__: self.dc_offset_in_mv,
+            SpectrumAWGAnalogChannel.output_filter.__name__: self.output_filter,
+            SpectrumAWGAnalogChannel.stop_level_mode.__name__: self.stop_level_mode,
+            SpectrumAWGAnalogChannel.stop_level_custom_value.__name__: self.stop_level_custom_value,
+        }
+
+    def _set_settings_from_dict(self, settings: dict) -> None:
+        self.set_signal_amplitude_in_mv(settings[SpectrumAWGAnalogChannel.signal_amplitude_in_mv.__name__])
+        self.set_dc_offset_in_mv(settings[SpectrumAWGAnalogChannel.dc_offset_in_mv.__name__])
+        self.set_output_filter(settings[SpectrumAWGAnalogChannel.output_filter.__name__])
+        self.set_stop_level_mode(settings[SpectrumAWGAnalogChannel.stop_level_mode.__name__])
+        self.set_stop_level_custom_value(settings[SpectrumAWGAnalogChannel.stop_level_custom_value.__name__])
+
     @property
     def is_switched_on(self) -> bool:
         """Returns "True" if the output channel is switched on, or "False" if it is muted."""
