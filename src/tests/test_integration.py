@@ -5,12 +5,13 @@ from unittest import TestCase
 import pytest
 from numpy import array, concatenate
 
-from example_scripts.awg_example import awg_single_restart_mode_example
-from example_scripts.star_hub_example import connect_to_star_hub_example
-from example_scripts.continuous_averaging_fifo_mode import continuous_averaging_multi_fifo_example
-from example_scripts.continuous_multi_fifo_mode import continuous_multi_fifo_example
-from example_scripts.finite_multi_fifo_mode import finite_multi_fifo_example
-from example_scripts.standard_single_mode import digitiser_standard_single_mode_example
+from example_scripts.awg_standard_single_restart_mode_example import awg_single_restart_mode_example
+from example_scripts.digitiser_star_hub_example_example import connect_to_star_hub_example
+from example_scripts.digitiser_continuous_averaging_fifo_mode_example import continuous_averaging_multi_fifo_example
+from example_scripts.digitiser_continuous_multi_fifo_mode_example import continuous_multi_fifo_example
+from example_scripts.digitiser_finite_multi_fifo_mode_example import finite_multi_fifo_example
+from example_scripts.digitiser_standard_single_mode_example import digitiser_standard_single_mode_example
+from example_scripts.pulse_generator_example import pulse_generator_example
 from spectrumdevice.measurement import Measurement
 from spectrumdevice.exceptions import SpectrumDriversNotFound
 from tests.configuration import (
@@ -24,7 +25,8 @@ from tests.configuration import (
     DIGITISER_STAR_HUB_TEST_MODE,
     SpectrumTestMode,
     TEST_DIGITISER_IP,
-    TEST_DIGITISER_NUMBER, SINGLE_AWG_CARD_TEST_MODE,
+    TEST_DIGITISER_NUMBER,
+    SINGLE_AWG_CARD_TEST_MODE,
 )
 
 
@@ -61,6 +63,9 @@ class SingleCardIntegrationTests(TestCase):
 
     def test_awg_standard_single_restart_mode(self) -> None:
         awg_single_restart_mode_example(self._single_awg_card_mock_mode)
+
+    def test_awg_pulse_generator(self) -> None:
+        pulse_generator_example(self._single_awg_card_mock_mode)
 
     def test_finite_multi_fifo_mode(self) -> None:
         measurements = finite_multi_fifo_example(

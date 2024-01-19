@@ -30,8 +30,6 @@ def digitiser_standard_single_mode_example(
         card = SpectrumDigitiserCard(device_number=device_number, ip_address=ip_address)
     else:
         # Set up a mock device
-        for item in MockSpectrumDigitiserCard.__mro__:
-            print(item)
         card = MockSpectrumDigitiserCard(
             device_number=device_number,
             model=ModelNumber.TYP_M2P5966_X4,

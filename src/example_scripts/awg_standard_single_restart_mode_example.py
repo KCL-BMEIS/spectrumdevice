@@ -10,7 +10,8 @@ from spectrumdevice.settings import (
     TriggerSource,
     ExternalTriggerMode,
     GenerationSettings,
-    OutputChannelFilter, ModelNumber,
+    OutputChannelFilter,
+    ModelNumber,
 )
 from spectrumdevice.settings.channel import OutputChannelStopLevelMode
 from spectrumdevice.settings.device_modes import GenerationMode
@@ -25,25 +26,19 @@ SAMPLE_RATE = 125000000
 def awg_single_restart_mode_example(mock_mode: bool) -> None:
 
     # create a connection to a mock or real AWG card
-    if mock_mode:
-        card = MockSpectrumAWGCard(
-            device_number=0,
-            model=ModelNumber.TYP_M2P6560_X4,
-            num_modules=1,
-            num_channels_per_module=1
-        )
-    else:
+    if not mock_mode:
         card = SpectrumAWGCard(device_number=0)
+    else:
+        card = MockSpectrumAWGCard(
+            device_number=0, model=ModelNumber.TYP_M2P6560_X4, num_modules=1, num_channels_per_module=1
+        )
 
     sample_rate_in_hz = 1000000
     number_of_generations = 3
 
     # create a waveform to generate
     t, analog_wfm = make_full_scale_sine_waveform(
-        frequency_in_hz=20e3,
-        sample_rate_in_hz=sample_rate_in_hz,
-        num_cycles=1,
-        dtype=int16
+        frequency_in_hz=20e3, sample_rate_in_hz=sample_rate_in_hz, num_cycles=1, dtype=int16
     )
 
     # configure signal generation
