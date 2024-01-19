@@ -26,7 +26,7 @@ def pulse_generator_example(mock_mode: bool) -> None:
             advanced_card_features=[AdvancedCardFeature.SPCM_FEAT_EXTFW_PULSEGEN],
         )
 
-    # Each of the cards four multipurpose IO lines (X0, X1, X2 and X3) has a pulse generator
+    # Each of the card's four multipurpose IO lines (X0, X1, X2 and X3) has a pulse generator
     # Choose the one you would like to use and set it to pulse gen mode. Here we are using X0 (index 0)
     io_line_index = 0
     card.io_lines[io_line_index].set_mode(IOLineMode.SPCM_XMODE_PULSEGEN)

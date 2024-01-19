@@ -40,8 +40,6 @@ __all__ = [
     "IOLineMode",
     "AvailableIOModes",
     "TransferBuffer",
-    "CardToPCDataTransferBuffer",
-    "PCToCardDataTransferBuffer",
     "TriggerSource",
     "ExternalTriggerMode",
     "CARD_STATUS_TYPE",
@@ -49,6 +47,8 @@ __all__ = [
     "StatusCode",
     "SpectrumRegisterLength",
     "ModelNumber",
+    "GenerationSettings",
+    "OutputChannelFilter",
 ]
 
 
