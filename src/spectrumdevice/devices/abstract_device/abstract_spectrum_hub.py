@@ -229,7 +229,7 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, Generic[CardType], ABC):
             d.apply_channel_enabling()
 
     @property
-    def enabled_analog_channels(self) -> List[int]:
+    def enabled_analog_channel_nums(self) -> List[int]:
         """The currently enabled channel indices, indexed over the whole hub (from 0 to N-1, where N is the total
         number of channels available to the hub).
 
@@ -240,7 +240,7 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, Generic[CardType], ABC):
         n_channels_in_previous_card = 0
         for card in self._child_cards:
             enabled_channels += [
-                channel_num + n_channels_in_previous_card for channel_num in card.enabled_analog_channels
+                channel_num + n_channels_in_previous_card for channel_num in card.enabled_analog_channel_nums
             ]
             n_channels_in_previous_card = len(card.analog_channels)
         return enabled_channels

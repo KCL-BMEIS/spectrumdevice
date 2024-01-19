@@ -23,28 +23,30 @@ class AbstractSpectrumAWG(
             to apply.
         """
         self.set_generation_mode(generation_settings.generation_mode)
+        self.set_sample_rate_in_hz(generation_settings.sample_rate_in_hz)
         self.transfer_waveform(generation_settings.waveform)
         self.set_num_loops(generation_settings.num_loops)
         self.set_enabled_analog_channels(generation_settings.enabled_channels)
         if generation_settings.custom_stop_levels is None:
-            custom_stop_levels: list[Optional[int]] = [None] * len(self.enabled_analog_channels)
+            custom_stop_levels: list[Optional[int]] = [None] * len(self.enabled_analog_channel_nums)
         else:
             custom_stop_levels = generation_settings.custom_stop_levels
-        for channel, amp, dc, filt, stop_mode, stop_level in zip(
-            self.enabled_analog_channels,
-            generation_settings.amplitudes_in_mv,
+        for channel_num, amp, dc, filt, stop_mode, stop_level in zip(
+            self.enabled_analog_channel_nums,
+            generation_settings.signal_amplitudes_in_mv,
             generation_settings.dc_offsets_in_mv,
             generation_settings.output_filters,
             generation_settings.stop_level_modes,
             custom_stop_levels,
         ):
-            channel.set_amplitude(amp)
-            channel.set_dc_offset(dc)
+            channel = self.analog_channels[channel_num]
+            channel.set_signal_amplitude_in_mv(amp)
+            channel.set_dc_offset_in_mv(dc)
             channel.set_output_filter(filt)
-            channel.set_stop_mode(stop_mode)
+            channel.set_stop_level_mode(stop_mode)
             if stop_level is not None:
                 channel.set_custom_stop_level(stop_level)
-            channel.set_switched_on(True)
+            channel.set_is_switched_on(True)
 
         # Write the configuration to the card
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_WRITESETUP)

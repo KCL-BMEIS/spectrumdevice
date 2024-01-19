@@ -168,8 +168,8 @@ class MockSpectrumAWGCard(MockAbstractSpectrumAWG, MockAbstractSpectrumCard, Spe
         model: ModelNumber,
         num_modules: int,
         num_channels_per_module: int,
-        card_features: Optional[list[CardFeature]],
-        advanced_card_features: Optional[list[AdvancedCardFeature]],
+        card_features: Optional[list[CardFeature]] = None,
+        advanced_card_features: Optional[list[AdvancedCardFeature]] = None,
     ) -> None:
         """
         Args:

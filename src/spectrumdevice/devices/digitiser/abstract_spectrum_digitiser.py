@@ -7,10 +7,10 @@
 from abc import ABC
 from typing import List
 
-from spectrumdevice.devices.digitiser import SpectrumDigitiserAnalogChannelInterface
 from spectrumdevice.measurement import Measurement
 from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice
 from spectrumdevice.devices.digitiser.digitiser_interface import (
+    SpectrumDigitiserAnalogChannelInterface,
     SpectrumDigitiserIOLineInterface,
     SpectrumDigitiserInterface,
 )
@@ -49,12 +49,13 @@ class AbstractSpectrumDigitiser(
         self.set_enabled_analog_channels(settings.enabled_channels)
 
         # Apply channel dependent settings
-        for channel, v_range, v_offset, impedance in zip(
-            self.analog_channels,
+        for channel_num, v_range, v_offset, impedance in zip(
+            self.enabled_analog_channel_nums,
             settings.vertical_ranges_in_mv,
             settings.vertical_offsets_in_percent,
             settings.input_impedances,
         ):
+            channel = self.analog_channels[channel_num]
             channel.set_vertical_range_in_mv(v_range)
             channel.set_vertical_offset_in_percent(v_offset)
             channel.set_input_impedance(impedance)

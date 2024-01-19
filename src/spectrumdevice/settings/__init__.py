@@ -111,12 +111,14 @@ class GenerationSettings:
     """SPC_REP_STD_SINGLE , SPC_REP_STD_SINGLERESTART"""
     waveform: NDArray[int16]
     """The waveform to generate."""
+    sample_rate_in_hz: int
+    """Generation rate in samples per second."""
     num_loops: int
     """In SPC_REP_STD_SINGLE mode: the number of times to repeat the waveform after a trigger is received. In
      SPC_REP_STD_SINGLERESTART: The number of times to wait for a trigger and generate waveform once."""
     enabled_channels: list[int]
     """List of analog channel indices to enable for signal generation"""
-    amplitudes_in_mv: list[int]
+    signal_amplitudes_in_mv: list[int]
     """The amplitude of each enabled channel."""
     dc_offsets_in_mv: list[int]
     """The dc offset of each enabled channel."""

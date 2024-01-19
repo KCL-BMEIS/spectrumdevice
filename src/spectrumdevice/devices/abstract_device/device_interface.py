@@ -91,7 +91,7 @@ class SpectrumDeviceInterface(Generic[AnalogChannelInterfaceType, IOLineInterfac
 
     @property
     @abstractmethod
-    def enabled_analog_channels(self) -> List[int]:
+    def enabled_analog_channel_nums(self) -> List[int]:
         raise NotImplementedError()
 
     @abstractmethod

@@ -223,7 +223,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
         return self._io_lines
 
     @property
-    def enabled_analog_channels(self) -> List[int]:
+    def enabled_analog_channel_nums(self) -> List[int]:
         """The indices of the currently enabled channels.
         Returns:
             enabled_channels (List[int]): The indices of the currently enabled channels.

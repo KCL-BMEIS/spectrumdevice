@@ -126,7 +126,7 @@ class AbstractSpectrumDevice(SpectrumDeviceInterface[AnalogChannelInterfaceType,
 
     def _disable_odd_channel(self, channel_pair: ChannelPair) -> None:
         try:
-            enabled_channels = copy(self.enabled_analog_channels)
+            enabled_channels = copy(self.enabled_analog_channel_nums)
             enabled_channels.remove(channel_pair.value + 1)
             self.set_enabled_analog_channels(enabled_channels)
         except ValueError:
