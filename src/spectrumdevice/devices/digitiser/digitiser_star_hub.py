@@ -14,14 +14,21 @@ from spectrumdevice.devices.abstract_device import (
     AbstractSpectrumStarHub,
 )
 from spectrumdevice.devices.abstract_device.abstract_spectrum_hub import check_settings_constant_across_devices
+from spectrumdevice.devices.digitiser import SpectrumDigitiserAnalogChannelInterface
 from spectrumdevice.devices.digitiser.digitiser_card import SpectrumDigitiserCard
 from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
+from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserIOLineInterface
 from spectrumdevice.settings import ModelNumber, TransferBuffer
 from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.device_modes import AcquisitionMode
 
 
-class SpectrumDigitiserStarHub(AbstractSpectrumStarHub[SpectrumDigitiserCard], AbstractSpectrumDigitiser):
+class SpectrumDigitiserStarHub(
+    AbstractSpectrumStarHub[
+        SpectrumDigitiserCard, SpectrumDigitiserAnalogChannelInterface, SpectrumDigitiserIOLineInterface
+    ],
+    AbstractSpectrumDigitiser,
+):
     """Composite class of `SpectrumDigitiserCard` for controlling a StarHub digitiser device, for example the Spectrum
     NetBox. StarHub digitiser devices are composites of more than one Spectrum digitiser card. Acquisition from the
     child cards of a StarHub is synchronised, aggregating the channels of all child cards. This class enables the
@@ -184,9 +191,9 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub[SpectrumDigitiserCard], A
         for d in self._child_cards:
             d.set_batch_size(batch_size)
 
-    def force_trigger_event(self) -> None:
+    def force_trigger(self) -> None:
         for d in self._child_cards:
-            d.force_trigger_event()
+            d.force_trigger()
 
     @property
     def type(self) -> CardType:
@@ -195,3 +202,14 @@ class SpectrumDigitiserStarHub(AbstractSpectrumStarHub[SpectrumDigitiserCard], A
     @property
     def model_number(self) -> ModelNumber:
         return self._child_cards[0].model_number
+
+    @property
+    def analog_channels(self) -> Sequence[SpectrumDigitiserAnalogChannelInterface]:
+        """A tuple containing of all the channels of the child cards of the hub. See `AbstractSpectrumCard.channels` for
+        more information.
+
+        Returns:
+            channels (Sequence[`SpectrumDigitiserAnalogChannelInterface`]):
+            A tuple of `SpectrumDigitiserAnalogChannelInterface` objects.
+        """
+        return super().analog_channels

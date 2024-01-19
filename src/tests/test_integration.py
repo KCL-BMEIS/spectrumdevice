@@ -5,11 +5,13 @@ from unittest import TestCase
 import pytest
 from numpy import array, concatenate
 
-from example_scripts.star_hub_example import connect_to_star_hub_example
-from example_scripts.continuous_averaging_fifo_mode import continuous_averaging_multi_fifo_example
-from example_scripts.continuous_multi_fifo_mode import continuous_multi_fifo_example
-from example_scripts.finite_multi_fifo_mode import finite_multi_fifo_example
-from example_scripts.standard_single_mode import standard_single_mode_example
+from example_scripts.awg_standard_single_restart_mode_example import awg_single_restart_mode_example
+from example_scripts.digitiser_star_hub_example_example import connect_to_star_hub_example
+from example_scripts.digitiser_continuous_averaging_fifo_mode_example import continuous_averaging_multi_fifo_example
+from example_scripts.digitiser_continuous_multi_fifo_mode_example import continuous_multi_fifo_example
+from example_scripts.digitiser_finite_multi_fifo_mode_example import finite_multi_fifo_example
+from example_scripts.digitiser_standard_single_mode_example import digitiser_standard_single_mode_example
+from example_scripts.pulse_generator_example import pulse_generator_example
 from spectrumdevice.measurement import Measurement
 from spectrumdevice.exceptions import SpectrumDriversNotFound
 from tests.configuration import (
@@ -24,17 +26,19 @@ from tests.configuration import (
     SpectrumTestMode,
     TEST_DIGITISER_IP,
     TEST_DIGITISER_NUMBER,
+    SINGLE_AWG_CARD_TEST_MODE,
 )
 
 
 @pytest.mark.integration
 class SingleCardIntegrationTests(TestCase):
     def setUp(self) -> None:
-        self._single_card_mock_mode = SINGLE_DIGITISER_CARD_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
+        self._single_digitiser_card_mock_mode = SINGLE_DIGITISER_CARD_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
+        self._single_awg_card_mock_mode = SINGLE_AWG_CARD_TEST_MODE == SpectrumTestMode.MOCK_HARDWARE
 
-    def test_standard_single_mode(self) -> None:
-        measurement = standard_single_mode_example(
-            mock_mode=self._single_card_mock_mode,
+    def test_digitiser_standard_single_mode(self) -> None:
+        measurement = digitiser_standard_single_mode_example(
+            mock_mode=self._single_digitiser_card_mock_mode,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
             device_number=TEST_DIGITISER_NUMBER,
             ip_address=TEST_DIGITISER_IP,
@@ -42,7 +46,7 @@ class SingleCardIntegrationTests(TestCase):
         )
         self.assertEqual(len(measurement.waveforms), 1)
         self.assertEqual([wfm.shape for wfm in measurement.waveforms], [(ACQUISITION_LENGTH,)])
-        if self._single_card_mock_mode:
+        if self._single_digitiser_card_mock_mode:
             # mock waveform source generates random values covering full ADC range, which is set to += 0.2 V
             expected_pk_to_pk_volts = 0.4
             self.assertAlmostEqual(
@@ -57,9 +61,15 @@ class SingleCardIntegrationTests(TestCase):
         else:
             raise IOError("No timestamp available")
 
+    def test_awg_standard_single_restart_mode(self) -> None:
+        awg_single_restart_mode_example(self._single_awg_card_mock_mode)
+
+    def test_awg_pulse_generator(self) -> None:
+        pulse_generator_example(self._single_awg_card_mock_mode)
+
     def test_finite_multi_fifo_mode(self) -> None:
         measurements = finite_multi_fifo_example(
-            mock_mode=self._single_card_mock_mode,
+            mock_mode=self._single_digitiser_card_mock_mode,
             num_measurements=5,
             batch_size=5,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
@@ -72,7 +82,7 @@ class SingleCardIntegrationTests(TestCase):
 
     def test_continuous_multi_fifo_mode(self) -> None:
         measurements = continuous_multi_fifo_example(
-            mock_mode=self._single_card_mock_mode,
+            mock_mode=self._single_digitiser_card_mock_mode,
             time_to_keep_acquiring_for_in_seconds=0.5,
             batch_size=1,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
@@ -84,7 +94,7 @@ class SingleCardIntegrationTests(TestCase):
 
     def test_averaging_continuous_multi_fifo_example(self) -> None:
         measurements = continuous_averaging_multi_fifo_example(
-            mock_mode=self._single_card_mock_mode,
+            mock_mode=self._single_digitiser_card_mock_mode,
             acquisition_duration_in_seconds=0.5,
             num_averages=2,
             trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
@@ -132,6 +142,6 @@ class StarHubIntegrationTests(TestCase):
 class NoDriversTest(TestCase):
     def test_fails_with_no_driver_without_mock_mode(self) -> None:
         with self.assertRaises(SpectrumDriversNotFound):
-            standard_single_mode_example(
+            digitiser_standard_single_mode_example(
                 mock_mode=False, trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE, device_number=TEST_DIGITISER_NUMBER
             )

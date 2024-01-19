@@ -1,10 +1,16 @@
 import logging
 from typing import Optional, Sequence
 
-from numpy import int16
+from numpy import int16, concatenate, zeros
 from numpy.typing import NDArray
 
-from spectrum_gmbh.regs import SPC_MIINST_CHPERMODULE, SPC_MIINST_MODULES, TYP_SERIESMASK, TYP_M2PEXPSERIES, SPC_MEMSIZE
+from spectrum_gmbh.py_header.regs import (
+    SPC_MIINST_CHPERMODULE,
+    SPC_MIINST_MODULES,
+    TYP_SERIESMASK,
+    TYP_M2PEXPSERIES,
+    SPC_MEMSIZE,
+)
 from spectrumdevice.devices.abstract_device import AbstractSpectrumCard
 from spectrumdevice.devices.awg.abstract_spectrum_awg import AbstractSpectrumAWG
 from spectrumdevice.devices.awg.awg_channel import SpectrumAWGAnalogChannel, SpectrumAWGIOLine
@@ -37,16 +43,8 @@ class SpectrumAWGCard(
             raise NotImplementedError("Don't know how many IO lines other types of card have. Only M2P series.")
 
     def transfer_waveform(self, waveform: NDArray[int16]) -> None:
-        buffer = transfer_buffer_factory(
-            buffer_type=BufferType.SPCM_BUF_DATA,
-            direction=BufferDirection.SPCM_DIR_PCTOCARD,
-            size_in_samples=len(waveform),
-            bytes_per_sample=self.bytes_per_sample,
-        )
         if len(waveform) < 16:
             raise ValueError("Waveform must be at least 16 samples long")
-        buffer.data_array[:] = waveform
-        self.define_transfer_buffer((buffer,))
         step_size = get_memsize_step_size(self._model_number)
         remainder = len(waveform) % step_size
         if remainder > 0:
@@ -55,6 +53,15 @@ class SpectrumAWGCard(
                 "zero-padded to the next multiple of 8."
             )
         coerced_mem_size = len(waveform) if remainder == 0 else len(waveform) + (step_size - remainder)
+
+        buffer = transfer_buffer_factory(
+            buffer_type=BufferType.SPCM_BUF_DATA,
+            direction=BufferDirection.SPCM_DIR_PCTOCARD,
+            size_in_samples=coerced_mem_size,
+            bytes_per_sample=self.bytes_per_sample,
+        )
+        buffer.data_array[:] = concatenate([waveform, zeros(coerced_mem_size - len(waveform), dtype=int16)])
+        self.define_transfer_buffer((buffer,))
         self.write_to_spectrum_device_register(SPC_MEMSIZE, coerced_mem_size)
         self.start_transfer()
         self.wait_for_transfer_chunk_to_complete()

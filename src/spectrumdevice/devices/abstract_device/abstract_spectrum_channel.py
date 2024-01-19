@@ -1,5 +1,5 @@
 """Provides a partially-implemented abstract class common to individual channels of Spectrum devices."""
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from typing import Any, TypeVar, Generic
 
 # Christian Baker, King's College London
@@ -77,7 +77,9 @@ class AbstractSpectrumChannel(SpectrumChannelInterface, Generic[ChannelNameType]
         return str(self)
 
 
-class AbstractSpectrumAnalogChannel(AbstractSpectrumChannel[SpectrumAnalogChannelName], SpectrumAnalogChannelInterface):
+class AbstractSpectrumAnalogChannel(
+    AbstractSpectrumChannel[SpectrumAnalogChannelName], SpectrumAnalogChannelInterface, ABC
+):
     """Partially implemented abstract superclass contain code common for controlling an individual analog channel of all
     spectrum devices."""
 

@@ -5,18 +5,25 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
 from abc import ABC
-from typing import List, cast
+from typing import List
 
 from spectrumdevice.measurement import Measurement
 from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice
-from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserInterface
-from spectrumdevice.devices.digitiser.digitiser_channel import SpectrumDigitiserAnalogChannel
+from spectrumdevice.devices.digitiser.digitiser_interface import (
+    SpectrumDigitiserAnalogChannelInterface,
+    SpectrumDigitiserIOLineInterface,
+    SpectrumDigitiserInterface,
+)
 from spectrumdevice.exceptions import SpectrumWrongAcquisitionMode
 from spectrumdevice.settings import AcquisitionMode, AcquisitionSettings
-from spectrum_gmbh.regs import M2CMD_CARD_WRITESETUP, SPC_M2CMD
+from spectrum_gmbh.py_header.regs import M2CMD_CARD_WRITESETUP, SPC_M2CMD
 
 
-class AbstractSpectrumDigitiser(AbstractSpectrumDevice, SpectrumDigitiserInterface, ABC):
+class AbstractSpectrumDigitiser(
+    AbstractSpectrumDevice[SpectrumDigitiserAnalogChannelInterface, SpectrumDigitiserIOLineInterface],
+    SpectrumDigitiserInterface,
+    ABC,
+):
     """Abstract superclass which implements methods common to all Spectrum digitiser devices. Instances of this class
     cannot be constructed directly. Instead, construct instances of the concrete classes (`SpectrumDigitiserCard`,
     `SpectrumDigitiserStarHub` or their mock equivalents) which inherit the methods defined here. Note that
@@ -42,25 +49,26 @@ class AbstractSpectrumDigitiser(AbstractSpectrumDevice, SpectrumDigitiserInterfa
         self.set_enabled_analog_channels(settings.enabled_channels)
 
         # Apply channel dependent settings
-        for channel, v_range, v_offset, impedance in zip(
-            self.analog_channels,
+        for channel_num, v_range, v_offset, impedance in zip(
+            self.enabled_analog_channel_nums,
             settings.vertical_ranges_in_mv,
             settings.vertical_offsets_in_percent,
             settings.input_impedances,
         ):
-            cast(SpectrumDigitiserAnalogChannel, channel).set_vertical_range_in_mv(v_range)
-            cast(SpectrumDigitiserAnalogChannel, channel).set_vertical_offset_in_percent(v_offset)
-            cast(SpectrumDigitiserAnalogChannel, channel).set_input_impedance(impedance)
+            channel = self.analog_channels[channel_num]
+            channel.set_vertical_range_in_mv(v_range)
+            channel.set_vertical_offset_in_percent(v_offset)
+            channel.set_input_impedance(impedance)
 
         # Only some hardware has software programmable input coupling, so coupling can be None
         if settings.input_couplings is not None:
             for channel, coupling in zip(self.analog_channels, settings.input_couplings):
-                cast(SpectrumDigitiserAnalogChannel, channel).set_input_coupling(coupling)
+                channel.set_input_coupling(coupling)
 
         # Only some hardware has software programmable input paths, so it can be None
         if settings.input_paths is not None:
             for channel, path in zip(self.analog_channels, settings.input_paths):
-                cast(SpectrumDigitiserAnalogChannel, channel).set_input_path(path)
+                channel.set_input_path(path)
 
         # Write the configuration to the card
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_WRITESETUP)

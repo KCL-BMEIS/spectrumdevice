@@ -18,11 +18,11 @@ for controlling devices:
 |--------------------------------|-------------------------------------------------------------------|
 | `MockSpectrumDigitiserCard`    | Mocking individual digitiser cards                                |
 | `MockSpectrumDigitiserStarHub` | Mocking digitiser cards aggregated with a StarHub                 |
-| `MockSpectrumAWGCard`          | Mocking individual AWG cards (Not yet implemented)                |
+| `MockSpectrumAWGCard`          | Mocking individual AWG cards                                      |
 | `MockSpectrumAWGStarHub`       | Mocking AWG cards aggregated with a StarHub (Not yet implemented) |
 
-For digitisers, `spectrumdevice` currently only supports 'Standard Single' and 'Multi FIFO' acquisition modes. See the 
-Limitations section for more information.
+For digitisers, `spectrumdevice` currently only supports 'Standard Single' and 'Multi FIFO' acquisition modes. For AWGs,
+'Standard Single' and Standard Single Restart' modes are supported. See the Limitations section for more information. 
 
 * [Examples](https://github.com/KCL-BMEIS/spectrumdevice/tree/main/example_scripts)
 * [API reference documentation](https://kcl-bmeis.github.io/spectrumdevice/)
@@ -55,29 +55,32 @@ pip install https://github.com/KCL-BMEIS/spectrumdevice/tarball/main.
 ```
 
 `spectrumdevice` depends only on NumPy. `spectrumdevice` includes a module called `spectrum_gmbh` containing a few 
-files taken from the `spcm_examples` directory, provided with Spectrum hardware. The files in this module were written by Spectrum GMBH and are included with their permission. The files provide `spectrumdevice` with a low-level Python interface to the Spectrum driver and define global constants which are used throughout `spectrumdevice`.
+files taken from the `spcm_examples` directory, provided with Spectrum hardware. The files in this module were written 
+by Spectrum GMBH and are included with their permission. The files provide `spectrumdevice` with a low-level Python 
+interface to the Spectrum driver and define global constants which are used throughout `spectrumdevice`.
 
 ## Limitations
 * Currently, `spectrumdevice` only supports Standard Single and Multi FIFO digitiser acquisition modes. See the 
   Spectrum documentation for more information.
+* Only Standard Single and Standard Single Restart modes have been implemented for AWGs.
 * If timestamping is enabled, timestamps are acquired using Spectrum's 'polling' mode. This seems to add around
   5 to 10 ms of latency to the acquisition.
 * Only current digitisers from the [59xx](https://spectrum-instrumentation.com/de/59xx-16-bit-digitizer-125-mss),
 [44xx](https://spectrum-instrumentation.com/de/44xx-1416-bit-digitizers-500-mss) and 
 [22xx](https://spectrum-instrumentation.com/de/22xx-8-bit-digitizers-5-gss) families are currently supported, and 
-`spectrumdevice` has only been tested on 59xx devices. However, `spectrumdevice` may work fine on older devices. If 
-you've tried `spectrumdevice` on an older device, please let us know if it works and raise any issues you encounter in
-the issue tracker. It's likely possible to add support with minimal effort.
+`spectrumdevice` has only been tested on 59xx digitisers and 65xx AWGs. However, `spectrumdevice` may work fine on older
+devices. If you've tried `spectrumdevice` on an older device, please let us know if it works and raise any issues you
+encounter in the issue tracker. It's likely possible to add support with minimal effort.
 
 ## Usage
 ### Connect to devices
 Connect to local (PCIe) cards:
 
 ```python
-from spectrumdevice import SpectrumDigitiserCard
+from spectrumdevice import SpectrumDigitiserCard, SpectrumAWGCard
 
-card_0 = SpectrumDigitiserCard(device_number=0)
-card_1 = SpectrumDigitiserCard(device_number=1)
+digitiser_1 = SpectrumDigitiserCard(device_number=0)
+awg_1 = SpectrumAWGCard(device_number=1)
 ```
 Connect to networked cards (you can find a card's IP using the
 [Spectrum Control Centre](https://spectrum-instrumentation.com/en/spectrum-control-center) software):
@@ -120,29 +123,39 @@ modules in a hardware device using the
 of the mock data source must also be set on construction.
 
 ```python
-from spectrumdevice import MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub
+from spectrumdevice import MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub, MockSpectrumAWGCard
 from spectrumdevice.settings import ModelNumber
 
-mock_card = MockSpectrumDigitiserCard(device_number=0, model=ModelNumber.TYP_M2P5966_X4,
-                                      mock_source_frame_rate_hz=10.0,
-                                      num_modules=2, num_channels_per_module=4)
-mock_hub = MockSpectrumDigitiserStarHub(device_number=0, child_cards=[mock_card], master_card_index=0)
+mock_digitiser = MockSpectrumDigitiserCard(
+    device_number=0,
+    model=ModelNumber.TYP_M2P5966_X4,
+    mock_source_frame_rate_hz=10.0,
+    num_modules=2,
+    num_channels_per_module=4
+)
+mock_hub = MockSpectrumDigitiserStarHub(device_number=0, child_cards=[mock_digitiser], master_card_index=0)
+mock_awg = MockSpectrumAWGCard(
+    device_number=0,
+    model=ModelNumber.TYP_M2P6560_X4,
+    num_modules=1,
+    num_channels_per_module=1
+)
 ```
 After construction, mock devices can be used identically to real devices.
 
 ### Configuring device settings
-`SpectrumDigitiserCard` and `SpectrumDigitiserStarHub` provide methods for reading and writing device settings located 
-within on-device registers. Some settings must be set using Enums imported from the `settings` module. Others are set
-using integer values. For example, to put a card in 'Standard Single' acquisition mode and set the sample rate to 10 
-MHz:
+`SpectrumDigitiserCard`, `SpectrumDigitiserStarHub` and `SpectrumAWGCard` provide methods for reading and writing device
+settings located within on-device registers. Some settings must be set using Enums imported from the `settings` module.
+ Others are set using integer values. For example, to put a digitiser card in 'Standard Single' acquisition mode and set
+the sample rate to 10 MHz:
 
 ```python
 from spectrumdevice import SpectrumDigitiserCard
 from spectrumdevice.settings import AcquisitionMode
 
-card = SpectrumDigitiserCard(device_number=0)
-card.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
-card.set_sample_rate_in_hz(10000000)
+digitiser_card = SpectrumDigitiserCard(device_number=0)
+digitiser_card.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
+digitiser_card.set_sample_rate_in_hz(10000000)
 ```
 and to print the currently set sample rate:
 
@@ -151,34 +164,41 @@ print(card.sample_rate_in_hz)
 ```
 
 ### Configuring channel settings
-The channels available to a spectrum device (card or StarHub) can be accessed via the `channels` property. This 
-property contains a list of `SpectrumDigitiserChannel` or `SpectrumAWGChannel` objects which provide methods for 
-independently configuring each channel. 
-For example, to change the vertical range of channel 2 of a digitiser card to 1V:
+The analog channels available to a spectrum device (card or StarHub) can be accessed via the `analog_channels` property.
+ This property contains a list of `SpectrumDigitiserChannel` or `SpectrumAWGChannel` objects which provide methods for 
+independently configuring each channel. For example, to change the vertical range of channel 2 of a digitiser card to 1V:
 
 ```python
-card.analog_channels[2].set_vertical_range_in_mv(1000)
+digitiser_card.analog_channels[2].set_vertical_range_in_mv(1000)
 ```
 and then print the vertical offset:
 
 ```python
-print(card.analog_channels[2].vertical_offset_in_percent)
+print(digitiser_card.analog_channels[2].vertical_offset_in_percent)
 ```
 
 ### Configuring everything at once
-You can set multiple settings at once using the `TriggerSettings` and `AcquisitionSettings` dataclasses and the 
-`configure_trigger()` and `configure_acquisition()` methods:
+You can set multiple settings at once using the `TriggerSettings`, `AcquisitionSettings` and `GenerationSettings` 
+dataclasses and the `configure_trigger()`, `configure_acquisition()` and `configure_generation()` methods:
 
 ```python
+import numpy as np
+
+from spectrumdevice import SpectrumDigitiserCard, SpectrumAWGCard
 from spectrumdevice.settings import TriggerSettings, AcquisitionSettings, TriggerSource, ExternalTriggerMode, \
-AcquisitionMode
+AcquisitionMode, GenerationSettings, GenerationMode, OutputChannelFilter, OutputChannelStopLevelMode
 from spectrumdevice.settings.channel import InputImpedance
+
+digitiser_card = SpectrumDigitiserCard(device_number=0)
+awg_card = SpectrumAWGCard(device_number=1)
 
 trigger_settings = TriggerSettings(
   trigger_sources=[TriggerSource.SPC_TMASK_EXT0],
   external_trigger_mode=ExternalTriggerMode.SPC_TM_POS,
   external_trigger_level_in_mv=1000,
 )
+digitiser_card.configure_trigger(trigger_settings)
+awg_card.configure_trigger(trigger_settings)
 
 acquisition_settings = AcquisitionSettings(
   acquisition_mode=AcquisitionMode.SPC_REC_FIFO_MULTI,
@@ -193,9 +213,20 @@ acquisition_settings = AcquisitionSettings(
   timestamping_enabled=True,
   batch_size=1
 )
+digitiser_card.configure_acquisition(acquisition_settings)
 
-card.configure_trigger(trigger_settings)
-card.configure_acquisition(acquisition_settings)
+generation_settings = GenerationSettings(
+    generation_mode=GenerationMode.SPC_REP_STD_SINGLERESTART,
+    waveform=np.array(np.ones(16), dtype=np.int16),
+    sample_rate_in_hz=40000000,
+    num_loops=5,
+    enabled_channels=[0],
+    signal_amplitudes_in_mv=[1000],
+    dc_offsets_in_mv=[0],
+    output_filters=[OutputChannelFilter.LOW_PASS_70_MHZ],
+    stop_level_modes=[OutputChannelStopLevelMode.SPCM_STOPLVL_ZERO],
+)
+awg_card.configure_generation(generation_settings)
 ```
 
 ### Acquiring waveforms from a digitiser (standard single mode)
@@ -272,6 +303,67 @@ card.stop()
 ```
 and execute some logic to exit the `while` loop.
 
+### Generating a signal with an AWG
+After configuring your trigger and generation settings as shown above, you can start your card:
+```python
+awg_card.start()
+```
+The card is now waiting for a trigger. If the card is in software trigger mode, you can trigger its output manually:
+```python
+awg_card.force_trigger()
+```
+Then stop and disconnect when finished:
+```python
+awg_card.stop()
+awg_card.disconnect()
+```
+
+### Using the optional Pulse Generator firmware add-on
+For both AWGs and Digitisers, Spectrum provide an optional pulse generator feature which can be activated retrospectively.
+
+Each of the card's four multipurpose IO lines (X0, X1, X2 and X3) has a pulse generator. Choose the one you would like 
+to use and set it to pulse gen mode. Here we are using X0 (index 0)
+```python
+from spectrumdevice.settings import IOLineMode
+
+io_line_index = 0
+card.io_lines[io_line_index].set_mode(IOLineMode.SPCM_XMODE_PULSEGEN)
+```
+Then get its pulse generator and configure its trigger and output settings
+```python
+from spectrumdevice.settings import (
+    PulseGeneratorTriggerSettings,
+    PulseGeneratorTriggerMode,
+    PulseGeneratorTriggerDetectionMode,
+    PulseGeneratorMultiplexer1TriggerSource,
+    PulseGeneratorMultiplexer2TriggerSource,
+    PulseGeneratorOutputSettings
+)
+
+pulse_gen = card.io_lines[io_line_index].pulse_generator
+pg_trigger_settings = PulseGeneratorTriggerSettings(
+    trigger_mode=PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_SINGLESHOT,
+    trigger_detection_mode=PulseGeneratorTriggerDetectionMode.RISING_EDGE,
+    multiplexer_1_source=PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_UNUSED,
+    multiplexer_1_output_inversion=False,
+    multiplexer_2_source=PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_SOFTWARE,
+    multiplexer_2_output_inversion=False,
+)
+pulse_gen.configure_trigger(pg_trigger_settings)
+pulse_output_settings = PulseGeneratorOutputSettings(
+    period_in_seconds=1e-3, duty_cycle=0.5, num_pulses=10, delay_in_seconds=0.0, output_inversion=False
+)
+pulse_gen.configure_output(pulse_output_settings)
+# Enable the pulse generator
+pulse_gen.enable()
+```
+We have set the pulse generator to use a software trigger, so you can manually trigger it to start pulsing:
+```python
+pulse_gen.force_trigger()
+
+card.stop()
+card.disconnect()
+```
 ## Examples
 See the `example_scripts` directory.
 

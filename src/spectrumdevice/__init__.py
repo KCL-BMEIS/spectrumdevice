@@ -60,7 +60,8 @@ from spectrumdevice.measurement import Measurement
 from .devices.digitiser.digitiser_card import SpectrumDigitiserCard
 from .devices.digitiser.digitiser_channel import SpectrumDigitiserAnalogChannel
 from .devices.digitiser.digitiser_star_hub import SpectrumDigitiserStarHub
-from .devices.mocks import MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub
+from .devices.awg.awg_card import SpectrumAWGCard
+from .devices.mocks import MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub, MockSpectrumAWGCard
 from .devices.abstract_device import (
     AbstractSpectrumDevice,
     AbstractSpectrumCard,
@@ -82,6 +83,8 @@ __all__ = [
     "AbstractSpectrumChannel",
     "settings",
     "Measurement",
+    "SpectrumAWGCard",
+    "MockSpectrumAWGCard",
 ]
 
 

@@ -19,7 +19,7 @@ from spectrumdevice.settings import (
     TriggerSource,
 )
 from spectrumdevice.settings.card_dependent_properties import CardType
-
+from spectrumdevice.settings.output_channel_pairing import ChannelPair, ChannelPairingMode
 
 AnalogChannelInterfaceType = TypeVar("AnalogChannelInterfaceType", bound=SpectrumAnalogChannelInterface)
 IOLineInterfaceType = TypeVar("IOLineInterfaceType", bound=SpectrumIOLineInterface)
@@ -91,7 +91,7 @@ class SpectrumDeviceInterface(Generic[AnalogChannelInterfaceType, IOLineInterfac
 
     @property
     @abstractmethod
-    def enabled_analog_channels(self) -> List[int]:
+    def enabled_analog_channel_nums(self) -> List[int]:
         raise NotImplementedError()
 
     @abstractmethod
@@ -171,6 +171,10 @@ class SpectrumDeviceInterface(Generic[AnalogChannelInterfaceType, IOLineInterfac
         raise NotImplementedError()
 
     @abstractmethod
+    def configure_channel_pairing(self, channel_pair: ChannelPair, mode: ChannelPairingMode) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
     def write_to_spectrum_device_register(
         self,
         spectrum_register: int,
@@ -197,7 +201,7 @@ class SpectrumDeviceInterface(Generic[AnalogChannelInterfaceType, IOLineInterfac
         raise NotImplementedError()
 
     @abstractmethod
-    def force_trigger_event(self) -> None:
+    def force_trigger(self) -> None:
         raise NotImplementedError()
 
     @property

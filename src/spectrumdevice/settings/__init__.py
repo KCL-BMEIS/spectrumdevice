@@ -9,16 +9,33 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import List, Optional
 
+from numpy import int16
+from numpy.typing import NDArray
+
 from spectrumdevice.settings.card_dependent_properties import ModelNumber
 from spectrumdevice.settings.card_features import CardFeature, AdvancedCardFeature
-from spectrumdevice.settings.channel import InputImpedance, InputCoupling, InputPath
-from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode
+from spectrumdevice.settings.channel import (
+    InputImpedance,
+    InputCoupling,
+    InputPath,
+    OutputChannelFilter,
+    OutputChannelStopLevelMode,
+)
+from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode, GenerationMode
 from spectrumdevice.settings.io_lines import IOLineMode, AvailableIOModes
 from spectrumdevice.settings.transfer_buffer import (
     TransferBuffer,
 )
 from spectrumdevice.settings.triggering import TriggerSource, ExternalTriggerMode
 from spectrumdevice.settings.status import CARD_STATUS_TYPE, DEVICE_STATUS_TYPE, StatusCode
+from spectrumdevice.settings.pulse_generator import (
+    PulseGeneratorTriggerSettings,
+    PulseGeneratorTriggerMode,
+    PulseGeneratorTriggerDetectionMode,
+    PulseGeneratorMultiplexer1TriggerSource,
+    PulseGeneratorMultiplexer2TriggerSource,
+    PulseGeneratorOutputSettings,
+)
 
 
 __all__ = [
@@ -31,8 +48,6 @@ __all__ = [
     "IOLineMode",
     "AvailableIOModes",
     "TransferBuffer",
-    "CardToPCDataTransferBuffer",
-    "PCToCardDataTransferBuffer",
     "TriggerSource",
     "ExternalTriggerMode",
     "CARD_STATUS_TYPE",
@@ -40,6 +55,16 @@ __all__ = [
     "StatusCode",
     "SpectrumRegisterLength",
     "ModelNumber",
+    "GenerationSettings",
+    "OutputChannelFilter",
+    "OutputChannelStopLevelMode",
+    "GenerationMode",
+    "PulseGeneratorTriggerSettings",
+    "PulseGeneratorTriggerMode",
+    "PulseGeneratorTriggerDetectionMode",
+    "PulseGeneratorMultiplexer1TriggerSource",
+    "PulseGeneratorMultiplexer2TriggerSource",
+    "PulseGeneratorOutputSettings",
 ]
 
 
@@ -92,6 +117,33 @@ class AcquisitionSettings:
     """The coupling (AC or DC) to apply to each channel. Only available on some hardware, so default is None."""
     input_paths: Optional[List[InputPath]] = None
     """The input path (HF or Buffered) to apply to each channel. Only available on some hardware, so default is None."""
+
+
+@dataclass
+class GenerationSettings:
+    """A dataclass collecting all settings required to configure signal generation. See Spectrum documentation."""
+
+    generation_mode: GenerationMode
+    """SPC_REP_STD_SINGLE , SPC_REP_STD_SINGLERESTART"""
+    waveform: NDArray[int16]
+    """The waveform to generate."""
+    sample_rate_in_hz: int
+    """Generation rate in samples per second."""
+    num_loops: int
+    """In SPC_REP_STD_SINGLE mode: the number of times to repeat the waveform after a trigger is received. In
+     SPC_REP_STD_SINGLERESTART: The number of times to wait for a trigger and generate waveform once."""
+    enabled_channels: list[int]
+    """List of analog channel indices to enable for signal generation"""
+    signal_amplitudes_in_mv: list[int]
+    """The amplitude of each enabled channel."""
+    dc_offsets_in_mv: list[int]
+    """The dc offset of each enabled channel."""
+    output_filters: list[OutputChannelFilter]
+    """The output filter setting for each enabled channel."""
+    stop_level_modes: list[OutputChannelStopLevelMode]
+    """The behavior of each enabled channel after the waveform ends."""
+    custom_stop_levels: Optional[list[Optional[int]]] = None
+    """The stop level each channel will use it stop level mode is set to custom."""
 
 
 class SpectrumRegisterLength(Enum):
