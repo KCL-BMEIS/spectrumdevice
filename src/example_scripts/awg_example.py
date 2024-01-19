@@ -22,7 +22,7 @@ FREQUENCY = 20e3
 SAMPLE_RATE = 125000000
 
 
-def awg_single_mode_example(mock_mode: bool) -> None:
+def awg_single_restart_mode_example(mock_mode: bool) -> None:
 
     # create a connection to a mock or real AWG card
     if mock_mode:
@@ -82,4 +82,4 @@ def awg_single_mode_example(mock_mode: bool) -> None:
 
 if __name__ == "__main__":
     # change mock_mode to False to connect to a real card
-    awg_single_mode_example(mock_mode=True)
+    awg_single_restart_mode_example(mock_mode=True)
