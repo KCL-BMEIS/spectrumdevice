@@ -4,7 +4,13 @@ from typing import Optional, Sequence
 from numpy import int16, concatenate, zeros
 from numpy.typing import NDArray
 
-from spectrum_gmbh.regs import SPC_MIINST_CHPERMODULE, SPC_MIINST_MODULES, TYP_SERIESMASK, TYP_M2PEXPSERIES, SPC_MEMSIZE
+from spectrum_gmbh.py_header.regs import (
+    SPC_MIINST_CHPERMODULE,
+    SPC_MIINST_MODULES,
+    TYP_SERIESMASK,
+    TYP_M2PEXPSERIES,
+    SPC_MEMSIZE,
+)
 from spectrumdevice.devices.abstract_device import AbstractSpectrumCard
 from spectrumdevice.devices.awg.abstract_spectrum_awg import AbstractSpectrumAWG
 from spectrumdevice.devices.awg.awg_channel import SpectrumAWGAnalogChannel, SpectrumAWGIOLine

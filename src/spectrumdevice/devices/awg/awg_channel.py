@@ -15,7 +15,7 @@ from spectrumdevice.settings import IOLineMode
 from spectrumdevice.settings.card_dependent_properties import CardType, OUTPUT_AMPLITUDE_LIMITS_IN_MV
 from spectrumdevice.settings.channel import (
     OUTPUT_AMPLITUDE_COMMANDS,
-    OUTPUT_CHANNEL_ON_OFF_COMMANDS,
+    OUTPUT_CHANNEL_ENABLED_COMMANDS,
     OUTPUT_DC_OFFSET_COMMANDS,
     OUTPUT_FILTER_COMMANDS,
     OUTPUT_STOP_LEVEL_CUSTOM_VALUE_COMMANDS,
@@ -79,12 +79,12 @@ class SpectrumAWGAnalogChannel(AbstractSpectrumAnalogChannel, SpectrumAWGAnalogC
     @property
     def is_switched_on(self) -> bool:
         """Returns "True" if the output channel is switched on, or "False" if it is muted."""
-        return bool(self._parent_device.read_spectrum_device_register(OUTPUT_CHANNEL_ON_OFF_COMMANDS[self._number]))
+        return bool(self._parent_device.read_spectrum_device_register(OUTPUT_CHANNEL_ENABLED_COMMANDS[self._number]))
 
-    def set_is_switched_on(self, is_switched_on: bool) -> None:
+    def set_is_switched_on(self, is_enabled: bool) -> None:
         """Switches the output channel on ("True") or off ("False")."""
         self._parent_device.write_to_spectrum_device_register(
-            OUTPUT_CHANNEL_ON_OFF_COMMANDS[self._number], int(is_switched_on)
+            OUTPUT_CHANNEL_ENABLED_COMMANDS[self._number], int(is_enabled)
         )
 
     @property

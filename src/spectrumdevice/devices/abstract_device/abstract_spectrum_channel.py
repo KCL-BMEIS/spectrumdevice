@@ -77,8 +77,9 @@ class AbstractSpectrumChannel(SpectrumChannelInterface, Generic[ChannelNameType]
         return str(self)
 
 
-class AbstractSpectrumAnalogChannel(AbstractSpectrumChannel[SpectrumAnalogChannelName], SpectrumAnalogChannelInterface,
-                                    ABC):
+class AbstractSpectrumAnalogChannel(
+    AbstractSpectrumChannel[SpectrumAnalogChannelName], SpectrumAnalogChannelInterface, ABC
+):
     """Partially implemented abstract superclass contain code common for controlling an individual analog channel of all
     spectrum devices."""
 

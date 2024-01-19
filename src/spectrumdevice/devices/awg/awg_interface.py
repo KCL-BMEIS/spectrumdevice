@@ -8,6 +8,7 @@ from spectrumdevice.devices.abstract_device.channel_interfaces import (
     SpectrumAnalogChannelInterface,
     SpectrumIOLineInterface,
 )
+from spectrumdevice.settings import GenerationSettings
 from spectrumdevice.settings.channel import OutputChannelFilter, OutputChannelStopLevelMode
 from spectrumdevice.settings.device_modes import GenerationMode
 from spectrumdevice.settings.io_lines import DigOutIOLineModeSettings
@@ -111,4 +112,8 @@ class SpectrumAWGInterface(SpectrumDeviceInterface, ABC):
 
     @abstractmethod
     def set_num_loops(self, num_loops: int) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def configure_generation(self, generation_settings: GenerationSettings) -> None:
         raise NotImplementedError()
