@@ -28,6 +28,14 @@ from spectrumdevice.settings.transfer_buffer import (
 )
 from spectrumdevice.settings.triggering import TriggerSource, ExternalTriggerMode
 from spectrumdevice.settings.status import CARD_STATUS_TYPE, DEVICE_STATUS_TYPE, StatusCode
+from spectrumdevice.settings.pulse_generator import (
+    PulseGeneratorTriggerSettings,
+    PulseGeneratorTriggerMode,
+    PulseGeneratorTriggerDetectionMode,
+    PulseGeneratorMultiplexer1TriggerSource,
+    PulseGeneratorMultiplexer2TriggerSource,
+    PulseGeneratorOutputSettings,
+)
 
 
 __all__ = [
@@ -49,6 +57,14 @@ __all__ = [
     "ModelNumber",
     "GenerationSettings",
     "OutputChannelFilter",
+    "OutputChannelStopLevelMode",
+    "GenerationMode",
+    "PulseGeneratorTriggerSettings",
+    "PulseGeneratorTriggerMode",
+    "PulseGeneratorTriggerDetectionMode",
+    "PulseGeneratorMultiplexer1TriggerSource",
+    "PulseGeneratorMultiplexer2TriggerSource",
+    "PulseGeneratorOutputSettings",
 ]
 
 

@@ -12,13 +12,13 @@ from typing import Any, List, Sequence, Tuple, TypeVar, Generic
 
 from numpy import arange
 
-from spectrum_gmbh.regs import SPC_SYNC_ENABLEMASK
+from spectrum_gmbh.py_header.regs import SPC_SYNC_ENABLEMASK
 from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
-from spectrumdevice.devices.abstract_device.channel_interfaces import (
-    SpectrumAnalogChannelInterface,
-    SpectrumIOLineInterface,
+from spectrumdevice.devices.abstract_device.device_interface import (
+    SpectrumDeviceInterface,
+    IOLineInterfaceType,
+    AnalogChannelInterfaceType,
 )
-from spectrumdevice.devices.abstract_device.device_interface import SpectrumDeviceInterface
 from spectrumdevice.exceptions import SpectrumSettingsMismatchError
 from spectrumdevice.settings import (
     AdvancedCardFeature,
@@ -36,7 +36,9 @@ from spectrumdevice.spectrum_wrapper import destroy_handle
 CardType = TypeVar("CardType", bound=SpectrumDeviceInterface)
 
 
-class AbstractSpectrumStarHub(AbstractSpectrumDevice, Generic[CardType], ABC):
+class AbstractSpectrumStarHub(
+    AbstractSpectrumDevice, Generic[CardType, AnalogChannelInterfaceType, IOLineInterfaceType], ABC
+):
     """Composite abstract class of `AbstractSpectrumCard` implementing methods common to all StarHubs. StarHubs are
     composites of more than one Spectrum card. Acquisition and generation from the child cards of a StarHub
     is synchronised, aggregating the channels of all child cards."""
@@ -274,26 +276,26 @@ class AbstractSpectrumStarHub(AbstractSpectrumDevice, Generic[CardType], ABC):
         return [card.transfer_buffers[0] for card in self._child_cards]
 
     @property
-    def analog_channels(self) -> Sequence[SpectrumAnalogChannelInterface]:
+    def analog_channels(self) -> Sequence[AnalogChannelInterfaceType]:
         """A tuple containing of all the channels of the child cards of the hub. See `AbstractSpectrumCard.channels` for
         more information.
 
         Returns:
             channels (Sequence[`SpectrumChannelInterface`]): A tuple of `SpectrumDigitiserChannel` objects.
         """
-        channels: List[SpectrumAnalogChannelInterface] = []
+        channels: List[AnalogChannelInterfaceType] = []
         for device in self._child_cards:
             channels += device.analog_channels
         return tuple(channels)
 
     @property
-    def io_lines(self) -> Sequence[SpectrumIOLineInterface]:
+    def io_lines(self) -> Sequence[IOLineInterfaceType]:
         """A tuple containing of all the Multipurpose IO Lines of the child cards of the hub.
 
         Returns:
             channels (Sequence[`SpectrumIOLineInterface`]): A tuple of `SpectrumIOLineInterface` objects.
         """
-        io_lines: List[SpectrumIOLineInterface] = []
+        io_lines: List[IOLineInterfaceType] = []
         for device in self._child_cards:
             io_lines += device.io_lines
         return tuple(io_lines)  # todo: this is probably wrong. I don't think both cards in a netbox have IO lines

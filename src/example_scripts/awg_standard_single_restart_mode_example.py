@@ -68,7 +68,7 @@ def awg_single_restart_mode_example(mock_mode: bool) -> None:
     # is trigger, until "num_loops" triggers have been detected.
     card.start()
     for _ in range(number_of_generations):
-        card.force_trigger_event()
+        card.force_trigger()
         sleep(100e-3)  # here we are waiting 0.1 seconds between triggers
         print("generated pulse")
     card.stop()

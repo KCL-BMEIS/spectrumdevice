@@ -484,7 +484,7 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
     def type(self) -> CardType:
         return CardType(self.read_spectrum_device_register(SPC_FNCTYPE))
 
-    def force_trigger_event(self) -> None:
+    def force_trigger(self) -> None:
         """Force a trigger event to occur"""
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_FORCETRIGGER)
 

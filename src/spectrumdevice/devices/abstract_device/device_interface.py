@@ -201,7 +201,7 @@ class SpectrumDeviceInterface(Generic[AnalogChannelInterfaceType, IOLineInterfac
         raise NotImplementedError()
 
     @abstractmethod
-    def force_trigger_event(self) -> None:
+    def force_trigger(self) -> None:
         raise NotImplementedError()
 
     @property

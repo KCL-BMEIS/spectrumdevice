@@ -228,7 +228,9 @@ class DigitiserCardTest(SingleCardTest[SpectrumDigitiserInterface]):
             acquisition_settings.vertical_offsets_in_percent[0],
             self._device.analog_channels[channel_to_enable].vertical_offset_in_percent,
         )
-        self.assertEqual(acquisition_settings.input_impedances[0], self._device.analog_channels[1].input_impedance)
+        self.assertEqual(
+            acquisition_settings.input_impedances[0], self._device.analog_channels[channel_to_enable].input_impedance
+        )
 
 
 class AWGCardTest(SingleCardTest[SpectrumAWGInterface]):
