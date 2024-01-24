@@ -7,12 +7,16 @@ A high-level, object-oriented Python library for controlling Spectrum Instrument
 for controlling devices:
 
 ### Hardware Classes
-| Name                       | Purpose                                                 |
-|----------------------------|---------------------------------------------------------|
-| `SpectrumDigitiserCard`    | Controlling individual digitiser cards                  |
-| `SpectrumDigitiserStarHub` | Controlling digitiser cards aggregated with a StarHub   |
-| `SpectrumAWGCard`          | Controlling individual AWG cards                        |
-| `SpectrumAWGStarHub`       | Controlling AWG cards aggregated with a StarHub         |
+| Name                             | Purpose                                                 |
+|----------------------------------|---------------------------------------------------------|
+| `SpectrumDigitiserCard`          | Controlling individual digitiser cards                  |
+| `SpectrumDigitiserStarHub`       | Controlling digitiser cards aggregated with a StarHub   |
+| `SpectrumDigitiserAnalogChannel` | Controlling analog channels of a digitiser              |
+| `SpectrumDigitiserIOLine`        | Controlling multipurpose IO channels of a digitiser     |
+| `SpectrumAWGCard`                | Controlling individual AWG cards                        |
+| `SpectrumAWGStarHub`             | (not yet implemented)                                   |
+| `SpectrumAWGAnalogChannel`       | Controlling analog channels of an AWG                   |
+| `SpectrumAWGIOLine`              | Controlling multipurpose IO channels of an AWG          |
 
 ### Mock Classes
 `spectrumdevice` also includes mock classes for testing software without drivers installed or hardware connected:
