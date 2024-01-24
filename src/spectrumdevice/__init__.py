@@ -61,7 +61,7 @@ Spectrum API, to be used for configuring hardware and interpreting responses rec
 # Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
-from spectrumdevice.measurement import Measurement
+from .measurement import Measurement
 from .devices.digitiser.digitiser_card import SpectrumDigitiserCard
 from .devices.digitiser.digitiser_channel import SpectrumDigitiserAnalogChannel, SpectrumDigitiserIOLine
 from .devices.digitiser.digitiser_star_hub import SpectrumDigitiserStarHub
