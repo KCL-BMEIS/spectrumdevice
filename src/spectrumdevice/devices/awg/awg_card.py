@@ -43,6 +43,16 @@ class SpectrumAWGCard(
             raise NotImplementedError("Don't know how many IO lines other types of card have. Only M2P series.")
 
     def transfer_waveform(self, waveform: NDArray[int16]) -> None:
+        """ "Write an arbitrary waveform to the card's on-board memory.
+
+        Args:
+            waveform (NDArray[int16]): A numpy array of signed 16-bit integers representing the samples of the
+                waveform to transfer. The amplitude and offset of the generated signals can be set per-channel (see
+                SpectrumAWGAnalogChannel), so the waveform provided here should be scaled to the full range of int16
+                (i.e. -32767 to 32767). Must be at least 16 samples long. If the waveform length is not a multiple of
+                8 samples, the waveform will be zero-padded so its length is the next multiple of 8.
+
+        """
         if len(waveform) < 16:
             raise ValueError("Waveform must be at least 16 samples long")
         step_size = get_memsize_step_size(self._model_number)
