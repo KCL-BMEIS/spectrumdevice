@@ -6,7 +6,7 @@
 
 from enum import Enum
 
-from spectrum_gmbh.regs import (
+from spectrum_gmbh.py_header.regs import (
     SPC_REC_FIFO_AVERAGE,
     SPC_REC_STD_AVERAGE,
     SPC_REC_STD_SINGLE,

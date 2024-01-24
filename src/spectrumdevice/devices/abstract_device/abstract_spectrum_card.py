@@ -11,7 +11,7 @@ from functools import reduce
 from operator import or_
 from typing import Any, List, Optional, Sequence, Tuple
 
-from spectrum_gmbh.regs import (
+from spectrum_gmbh.py_header.regs import (
     M2CMD_DATA_STARTDMA,
     M2CMD_DATA_STOPDMA,
     M2CMD_DATA_WAITDMA,

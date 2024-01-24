@@ -26,9 +26,16 @@ def pulse_generator_example(mock_mode: bool) -> None:
             advanced_card_features=[AdvancedCardFeature.SPCM_FEAT_EXTFW_PULSEGEN],
         )
 
+    # Set the card's sample rate. This affects the precision with which pulse timings can be chosen, and the min and max
+    # allowed pulse periods
+    card.set_sample_rate_in_hz(100000)
+    # Enable a single channel of the card. Although not used in this example, the number of enabled channels affects
+    # the precision with which pulse timings can be chosen and the min and max allowed pulse periods
+    card.set_enabled_analog_channels([0])
+
     # Each of the card's four multipurpose IO lines (X0, X1, X2 and X3) has a pulse generator
-    # Choose the one you would like to use and set it to pulse gen mode. Here we are using X0 (index 0)
-    io_line_index = 0
+    # Choose the one you would like to use and set it to pulse gen mode. Here we are using X1 (index 1)
+    io_line_index = 1
     card.io_lines[io_line_index].set_mode(IOLineMode.SPCM_XMODE_PULSEGEN)
     # Then get its pulse generator
     pulse_gen = card.io_lines[io_line_index].pulse_generator
@@ -55,9 +62,14 @@ def pulse_generator_example(mock_mode: bool) -> None:
     # The period is the length of the whole pulse (high-voltage length + 0V length)
     # The duty cycle is the high-voltage length divided by the period
     pulse_output_settings = PulseGeneratorOutputSettings(
-        period_in_seconds=1e-3, duty_cycle=0.5, num_pulses=10, delay_in_seconds=0.0, output_inversion=False
+        period_in_seconds=1e-3, duty_cycle=0.5, num_pulses=2, delay_in_seconds=0.0, output_inversion=False
     )
-    pulse_gen.configure_output(pulse_output_settings)
+    pulse_gen.configure_output(pulse_output_settings, coerce=False)
+
+    # Print pulse timings. They may have been coerced to allowed values
+    print(f"Pulse period: {pulse_gen.period_in_seconds * 1e3} ms")
+    print(f"Duty cycle: {pulse_gen.duty_cycle}")
+
     # Enable the pulse generator
     pulse_gen.enable()
 
@@ -69,4 +81,4 @@ def pulse_generator_example(mock_mode: bool) -> None:
 
 
 if __name__ == "__main__":
-    pulse_generator_example(mock_mode=True)
+    pulse_generator_example(mock_mode=False)

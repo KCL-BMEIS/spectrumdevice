@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any
 
 from numpy import int16
 
@@ -49,7 +49,7 @@ class SpectrumAWGIOLine(AbstractSpectrumIOLine, SpectrumAWGIOLineInterface):
 
     def _get_io_line_mode_settings_mask(self, mode: IOLineMode) -> int:
         if mode == IOLineMode.SPCM_XMODE_DIGOUT:
-            return cast(int, self._dig_out_settings.source_channel.value | self._dig_out_settings.source_bit.value)
+            return self._dig_out_settings.source_channel.value | self._dig_out_settings.source_bit.value
         else:
             return 0
 

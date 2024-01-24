@@ -12,7 +12,7 @@ from typing import Dict
 from numpy import ndarray
 from numpy.random import uniform
 
-from spectrum_gmbh.regs import SPC_DATA_AVAIL_USER_LEN, SPC_DATA_AVAIL_USER_POS
+from spectrum_gmbh.py_header.regs import SPC_DATA_AVAIL_USER_LEN, SPC_DATA_AVAIL_USER_POS
 from spectrumdevice.settings import AcquisitionMode
 from spectrumdevice.settings.transfer_buffer import PAGE_SIZE_IN_BYTES
 

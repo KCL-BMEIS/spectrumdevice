@@ -13,7 +13,7 @@ from typing import List
 from spectrumdevice.exceptions import SpectrumIOError
 from spectrumdevice.settings.channel import SpectrumChannelName
 from spectrumdevice.spectrum_wrapper import decode_bitmap_using_list_of_ints
-from spectrum_gmbh.regs import (
+from spectrum_gmbh.py_header.regs import (
     SPCM_XMODE_DISABLE,
     SPCM_XMODE_ASYNCIN,
     SPCM_XMODE_ASYNCOUT,

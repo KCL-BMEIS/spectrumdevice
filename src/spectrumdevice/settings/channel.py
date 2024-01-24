@@ -7,7 +7,7 @@ accessing the commands used to set vertical range and offset of each channel of 
 
 from enum import Enum
 
-from spectrum_gmbh.regs import (
+from spectrum_gmbh.py_header.regs import (
     SPCM_STOPLVL_CUSTOM,
     SPCM_STOPLVL_HIGH,
     SPCM_STOPLVL_HOLDLAST,

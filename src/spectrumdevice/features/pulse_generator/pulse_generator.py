@@ -16,6 +16,9 @@ from spectrum_gmbh.py_header.regs import (
     SPCM_PULSEGEN_CMD_FORCE,
     SPC_M2CMD,
     M2CMD_CARD_WRITESETUP,
+    SPC_XIO_PULSEGEN_AVAILHIGH_STEP,
+    SPC_XIO_PULSEGEN_AVAILHIGH_MAX,
+    SPC_XIO_PULSEGEN_AVAILHIGH_MIN,
 )
 from spectrumdevice.devices.abstract_device.channel_interfaces import SpectrumIOLineInterface
 from spectrumdevice.exceptions import (
@@ -198,13 +201,13 @@ class PulseGenerator(PulseGeneratorInterface):
     @property
     def min_allowed_period_in_seconds(self) -> float:
         reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLEN_MIN)
-        reg_val = 0 if reg_val == -1 else reg_val
+        reg_val = 0 if reg_val < 0 else reg_val
         return self._convert_clock_cycles_to_seconds(reg_val)
 
     @property
     def max_allowed_period_in_seconds(self) -> float:
         reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLEN_MAX)
-        reg_val = iinfo(int16).max if reg_val == -1 else reg_val
+        reg_val = iinfo(int16).max if reg_val < 0 else reg_val
         return self._convert_clock_cycles_to_seconds(reg_val)
 
     @property
@@ -248,23 +251,23 @@ class PulseGenerator(PulseGeneratorInterface):
 
     @property
     def min_allowed_high_voltage_duration_in_seconds(self) -> float:
-        reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLEN_MIN)
-        reg_val = 0 if reg_val == -1 else reg_val
+        reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILHIGH_MIN)
+        reg_val = 0 if reg_val < 0 else reg_val
         return self._convert_clock_cycles_to_seconds(reg_val)
 
     @property
     def max_allowed_high_voltage_duration_in_seconds(self) -> float:
-        reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLEN_MAX)
-        reg_val = iinfo(int16).max if reg_val == -1 else reg_val
+        reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILHIGH_MAX)
+        reg_val = iinfo(int16).max if reg_val < 0 else reg_val
         return self._convert_clock_cycles_to_seconds(reg_val)
 
     @property
     def _allowed_high_voltage_duration_step_size_in_clock_cycles(self) -> int:
-        return self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLEN_STEP)
+        return self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILHIGH_STEP)
 
     @property
     def allowed_high_voltage_duration_step_size_in_seconds(self) -> float:
-        return self._convert_clock_cycles_to_seconds(self._allowed_period_step_size_in_clock_cycles)
+        return self._convert_clock_cycles_to_seconds(self._allowed_high_voltage_duration_step_size_in_clock_cycles)
 
     @property
     def duration_of_high_voltage_in_seconds(self) -> float:

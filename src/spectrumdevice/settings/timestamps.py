@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum
 
-from spectrum_gmbh.regs import (
+from spectrum_gmbh.py_header.regs import (
     SPC_TSMODE_STANDARD,
     SPC_TSMODE_STARTRESET,
     SPC_TSCNT_REFCLOCKPOS,
