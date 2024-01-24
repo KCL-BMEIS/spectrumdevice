@@ -162,6 +162,8 @@ class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, MockAbstractSpect
 
 
 class MockSpectrumAWGCard(MockAbstractSpectrumAWG, MockAbstractSpectrumCard, SpectrumAWGCard):
+    """A mock AWG card."""
+
     def __init__(
         self,
         device_number: int,

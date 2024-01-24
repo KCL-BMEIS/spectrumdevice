@@ -32,6 +32,8 @@ from spectrumdevice.settings.channel import (
 
 
 class SpectrumDigitiserIOLine(AbstractSpectrumIOLine, SpectrumDigitiserIOLineInterface):
+    """Class for controlling multipurpose IO lines of a digitiser, e.g. X0, X1, X2 and X3."""
+
     def __init__(self, parent_device: AbstractSpectrumCard, **kwargs: Any) -> None:
         if parent_device.type != CardType.SPCM_TYPE_AI:
             raise SpectrumCardIsNotADigitiser(parent_device.type)

@@ -31,6 +31,8 @@ from spectrumdevice.settings.io_lines import (
 
 
 class SpectrumAWGIOLine(AbstractSpectrumIOLine, SpectrumAWGIOLineInterface):
+    """Class for controlling Multipurpose IO lines of an AWG (e.g. X0, X1, X2 and X3)"""
+
     def __init__(self, parent_device: AbstractSpectrumCard, **kwargs: Any) -> None:
         if parent_device.type != CardType.SPCM_TYPE_AO:
             raise SpectrumCardIsNotAnAWG(parent_device.type)
@@ -55,6 +57,8 @@ class SpectrumAWGIOLine(AbstractSpectrumIOLine, SpectrumAWGIOLineInterface):
 
 
 class SpectrumAWGAnalogChannel(AbstractSpectrumAnalogChannel, SpectrumAWGAnalogChannelInterface):
+    """Class for controlling analog channels of an AWG."""
+
     def __init__(self, parent_device: SpectrumAWGInterface, **kwargs: Any) -> None:
         if parent_device.type != CardType.SPCM_TYPE_AO:
             raise SpectrumCardIsNotAnAWG(parent_device.type)

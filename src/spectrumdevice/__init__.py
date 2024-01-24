@@ -90,6 +90,7 @@ __all__ = [
     "AbstractSpectrumDevice",
     "AbstractSpectrumChannel",
     "settings",
+    "features",
     "Measurement",
     "SpectrumAWGCard",
     "MockSpectrumAWGCard",
