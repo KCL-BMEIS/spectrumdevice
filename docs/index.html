@@ -43,6 +43,7 @@
                     <h2>Submodules</h2>
                     <ul>
                             <li><a href="spectrumdevice/settings.html">spectrumdevice.settings</a></li>
+                            <li><a href="spectrumdevice/features.html">spectrumdevice.features</a></li>
                     </ul>
 
                     <h2>API Documentation</h2>
@@ -540,6 +541,9 @@
                     <a class="module" href="#settings">settings</a>
             </li>
             <li>
+                    <a class="module" href="#features">features</a>
+            </li>
+            <li>
                     <a class="class" href="#Measurement">Measurement</a>
                             <ul class="memberlist">
                         <li>
@@ -998,7 +1002,7 @@ Spectrum API, to be used for configuring hardware and interpreting responses rec
 <span class="c1"># Copyright (c) 2021 School of Biomedical Engineering &amp; Imaging Sciences, King&#39;s College London</span>
 <span class="c1"># Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.</span>
 
-<span class="kn">from</span> <span class="nn">spectrumdevice.measurement</span> <span class="kn">import</span> <span class="n">Measurement</span>
+<span class="kn">from</span> <span class="nn">.measurement</span> <span class="kn">import</span> <span class="n">Measurement</span>
 <span class="kn">from</span> <span class="nn">.devices.digitiser.digitiser_card</span> <span class="kn">import</span> <span class="n">SpectrumDigitiserCard</span>
 <span class="kn">from</span> <span class="nn">.devices.digitiser.digitiser_channel</span> <span class="kn">import</span> <span class="n">SpectrumDigitiserAnalogChannel</span><span class="p">,</span> <span class="n">SpectrumDigitiserIOLine</span>
 <span class="kn">from</span> <span class="nn">.devices.digitiser.digitiser_star_hub</span> <span class="kn">import</span> <span class="n">SpectrumDigitiserStarHub</span>
@@ -1027,6 +1031,7 @@ Spectrum API, to be used for configuring hardware and interpreting responses rec
     <span class="s2">&quot;AbstractSpectrumDevice&quot;</span><span class="p">,</span>
     <span class="s2">&quot;AbstractSpectrumChannel&quot;</span><span class="p">,</span>
     <span class="s2">&quot;settings&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;features&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Measurement&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SpectrumAWGCard&quot;</span><span class="p">,</span>
     <span class="s2">&quot;MockSpectrumAWGCard&quot;</span><span class="p">,</span>
@@ -1465,6 +1470,8 @@ values.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">SpectrumDigitiserIOLine</span><span class="p">(</span><span class="n">AbstractSpectrumIOLine</span><span class="p">,</span> <span class="n">SpectrumDigitiserIOLineInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for controlling multipurpose IO lines of a digitiser, e.g. X0, X1, X2 and X3.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent_device</span><span class="p">:</span> <span class="n">AbstractSpectrumCard</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">parent_device</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">CardType</span><span class="o">.</span><span class="n">SPCM_TYPE_AI</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SpectrumCardIsNotADigitiser</span><span class="p">(</span><span class="n">parent_device</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
@@ -1476,8 +1483,7 @@ values.</p>
 
         </details>
 
-            <div class="docstring"><p>Partially implemented abstract superclass contain code common for controlling an individual IO Line of all
-spectrum devices.</p>
+            <div class="docstring"><p>Class for controlling multipurpose IO lines of a digitiser, e.g. X0, X1, X2 and X3.</p>
 </div>
 
 
@@ -7848,6 +7854,28 @@ hardware and interpreting responses received from hardware.</p>
 
 
                 </section>
+                <section id="features">
+                                <div class="attr module"><a class="headerlink" href="#features">#&nbsp;&nbsp</a>
+<span class="name"><a href="spectrumdevice/features.html">spectrumdevice.features</a></span></div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Provides Enums and Dataclasses wrapping the register values provided by the Spectrum API, to be used for configuring</span>
+<span class="sd">hardware and interpreting responses received from hardware.&quot;&quot;&quot;</span>
+
+<span class="c1"># Christian Baker, King&#39;s College London</span>
+<span class="c1"># Copyright (c) 2024 School of Biomedical Engineering &amp; Imaging Sciences, King&#39;s College London</span>
+<span class="c1"># Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Provides Enums and Dataclasses wrapping the register values provided by the Spectrum API, to be used for configuring
+hardware and interpreting responses received from hardware.</p>
+</div>
+
+
+                </section>
                 <section id="Measurement">
                                 <div class="attr class">
         <a class="headerlink" href="#Measurement">#&nbsp;&nbsp</a>
@@ -8187,6 +8215,8 @@ length of the data to transfer.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MockSpectrumAWGCard</span><span class="p">(</span><span class="n">MockAbstractSpectrumAWG</span><span class="p">,</span> <span class="n">MockAbstractSpectrumCard</span><span class="p">,</span> <span class="n">SpectrumAWGCard</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A mock AWG card.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">device_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -8235,10 +8265,7 @@ length of the data to transfer.</li>
 
         </details>
 
-            <div class="docstring"><p>Overrides methods of <code><a href="#AbstractSpectrumDevice">AbstractSpectrumDevice</a></code> that communicate with hardware with mocked implementations, allowing
-software to be tested without Spectrum hardware connected or drivers installed, e.g. during CI. Instances of this
-class cannot be constructed directly - instantiate <code>MockAbstractSpectrumDigitiser</code> and <code>MockSpectrumStarHub</code> objects instead,
-which inherit from this class.</p>
+            <div class="docstring"><p>A mock AWG card.</p>
 </div>
 
 
@@ -8427,6 +8454,8 @@ does not write to any hardware device.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">SpectrumAWGAnalogChannel</span><span class="p">(</span><span class="n">AbstractSpectrumAnalogChannel</span><span class="p">,</span> <span class="n">SpectrumAWGAnalogChannelInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for controlling analog channels of an AWG.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent_device</span><span class="p">:</span> <span class="n">SpectrumAWGInterface</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">parent_device</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">CardType</span><span class="o">.</span><span class="n">SPCM_TYPE_AO</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SpectrumCardIsNotAnAWG</span><span class="p">(</span><span class="n">parent_device</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
@@ -8535,8 +8564,7 @@ does not write to any hardware device.</p>
 
         </details>
 
-            <div class="docstring"><p>Partially implemented abstract superclass contain code common for controlling an individual analog channel of all
-spectrum devices.</p>
+            <div class="docstring"><p>Class for controlling analog channels of an AWG.</p>
 </div>
 
 
@@ -8815,6 +8843,8 @@ stop_level_mode is set to <code>OutputChannelStopLevelMode.SPCM_STOPLVL_CUSTOM</
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">SpectrumAWGIOLine</span><span class="p">(</span><span class="n">AbstractSpectrumIOLine</span><span class="p">,</span> <span class="n">SpectrumAWGIOLineInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for controlling Multipurpose IO lines of an AWG (e.g. X0, X1, X2 and X3)&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent_device</span><span class="p">:</span> <span class="n">AbstractSpectrumCard</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">parent_device</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">CardType</span><span class="o">.</span><span class="n">SPCM_TYPE_AO</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SpectrumCardIsNotAnAWG</span><span class="p">(</span><span class="n">parent_device</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
@@ -8840,8 +8870,7 @@ stop_level_mode is set to <code>OutputChannelStopLevelMode.SPCM_STOPLVL_CUSTOM</
 
         </details>
 
-            <div class="docstring"><p>Partially implemented abstract superclass contain code common for controlling an individual IO Line of all
-spectrum devices.</p>
+            <div class="docstring"><p>Class for controlling Multipurpose IO lines of an AWG (e.g. X0, X1, X2 and X3)</p>
 </div>
 
 
@@ -8927,7 +8956,7 @@ spectrum devices.</p>
 
         
         <span class="def">class</span>
-        <span class="name">PulseGenerator</span><wbr>(<span class="base">spectrumdevice.features.pulse_generator.interfaces.PulseGeneratorInterface</span>):
+        <span class="name">PulseGenerator</span><wbr>(<span class="base"><a href="spectrumdevice/features/pulse_generator/interfaces.html#PulseGeneratorInterface">spectrumdevice.features.pulse_generator.interfaces.PulseGeneratorInterface</a></span>):
     </div>
 
                 <details>
@@ -9474,7 +9503,7 @@ nearest values allowed by the hardware, and the coerced values are returned.</p>
                             <div id="PulseGenerator.multiplexer_1" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#PulseGenerator.multiplexer_1">#&nbsp;&nbsp</a>
 
-        <span class="name">multiplexer_1</span><span class="annotation">: <a href="#features.pulse_generator.multiplexer.PulseGeneratorMultiplexer1">spectrumdevice.features.pulse_generator.multiplexer.PulseGeneratorMultiplexer1</a></span>
+        <span class="name">multiplexer_1</span><span class="annotation">: <a href="spectrumdevice/features/pulse_generator/multiplexer.html#PulseGeneratorMultiplexer1">spectrumdevice.features.pulse_generator.multiplexer.PulseGeneratorMultiplexer1</a></span>
     </div>
 
             <div class="docstring"><p>Change the trigger source of this multiplexer to control when it is possible to trigger the pulse generator.</p>
@@ -9485,7 +9514,7 @@ nearest values allowed by the hardware, and the coerced values are returned.</p>
                             <div id="PulseGenerator.multiplexer_2" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#PulseGenerator.multiplexer_2">#&nbsp;&nbsp</a>
 
-        <span class="name">multiplexer_2</span><span class="annotation">: <a href="#features.pulse_generator.multiplexer.PulseGeneratorMultiplexer2">spectrumdevice.features.pulse_generator.multiplexer.PulseGeneratorMultiplexer2</a></span>
+        <span class="name">multiplexer_2</span><span class="annotation">: <a href="spectrumdevice/features/pulse_generator/multiplexer.html#PulseGeneratorMultiplexer2">spectrumdevice.features.pulse_generator.multiplexer.PulseGeneratorMultiplexer2</a></span>
     </div>
 
             <div class="docstring"><p>Change the trigger source of this multiplexer to control how the pulse generator is triggered.</p>
