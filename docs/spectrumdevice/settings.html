@@ -22,7 +22,7 @@
   <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
 </svg>                            &nbsp;spectrumdevice</a>
 
-    <h2>spectrumdevice v1.0.1</h2>
+    <h2>spectrumdevice v1.1.0</h2>
 
                         <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
                                pattern=".+" required>
@@ -208,6 +208,9 @@
                         <li>
                                 <a class="variable" href="#AdvancedCardFeature.SPCM_FEAT_EXTFW_BOXCAR">SPCM_FEAT_EXTFW_BOXCAR</a>
                         </li>
+                        <li>
+                                <a class="variable" href="#AdvancedCardFeature.SPCM_FEAT_EXTFW_PULSEGEN">SPCM_FEAT_EXTFW_PULSEGEN</a>
+                        </li>
                 </ul>
 
             </li>
@@ -243,6 +246,9 @@
                         </li>
                         <li>
                                 <a class="variable" href="#IOLineMode.SPCM_XMODE_CONTOUTMARK">SPCM_XMODE_CONTOUTMARK</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#IOLineMode.SPCM_XMODE_PULSEGEN">SPCM_XMODE_PULSEGEN</a>
                         </li>
                 </ul>
 
@@ -300,12 +306,6 @@
                         </li>
                 </ul>
 
-            </li>
-            <li>
-                    <a class="variable" href="#CardToPCDataTransferBuffer">CardToPCDataTransferBuffer</a>
-            </li>
-            <li>
-                    <a class="variable" href="#PCToCardDataTransferBuffer">PCToCardDataTransferBuffer</a>
             </li>
             <li>
                     <a class="class" href="#TriggerSource">TriggerSource</a>
@@ -658,10 +658,196 @@
                 </ul>
 
             </li>
+            <li>
+                    <a class="class" href="#GenerationSettings">GenerationSettings</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#GenerationSettings.__init__">GenerationSettings</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#GenerationSettings.generation_mode">generation_mode</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#GenerationSettings.waveform">waveform</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#GenerationSettings.sample_rate_in_hz">sample_rate_in_hz</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#GenerationSettings.num_loops">num_loops</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#GenerationSettings.enabled_channels">enabled_channels</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#GenerationSettings.signal_amplitudes_in_mv">signal_amplitudes_in_mv</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#GenerationSettings.dc_offsets_in_mv">dc_offsets_in_mv</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#GenerationSettings.output_filters">output_filters</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#GenerationSettings.stop_level_modes">stop_level_modes</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#GenerationSettings.custom_stop_levels">custom_stop_levels</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#OutputChannelFilter">OutputChannelFilter</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#OutputChannelFilter.LOW_PASS_70_MHZ">LOW_PASS_70_MHZ</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#OutputChannelFilter.LOW_PASS_20_MHZ">LOW_PASS_20_MHZ</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#OutputChannelFilter.LOW_PASS_5_MHZ">LOW_PASS_5_MHZ</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#OutputChannelFilter.LOW_PASS_1_MHZ">LOW_PASS_1_MHZ</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#OutputChannelStopLevelMode">OutputChannelStopLevelMode</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#OutputChannelStopLevelMode.SPCM_STOPLVL_ZERO">SPCM_STOPLVL_ZERO</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#OutputChannelStopLevelMode.SPCM_STOPLVL_LOW">SPCM_STOPLVL_LOW</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#OutputChannelStopLevelMode.SPCM_STOPLVL_HIGH">SPCM_STOPLVL_HIGH</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#OutputChannelStopLevelMode.SPCM_STOPLVL_HOLDLAST">SPCM_STOPLVL_HOLDLAST</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#OutputChannelStopLevelMode.SPCM_STOPLVL_CUSTOM">SPCM_STOPLVL_CUSTOM</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#GenerationMode">GenerationMode</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#GenerationMode.SPC_REP_STD_SINGLE">SPC_REP_STD_SINGLE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#GenerationMode.SPC_REP_STD_SINGLERESTART">SPC_REP_STD_SINGLERESTART</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#PulseGeneratorTriggerSettings">PulseGeneratorTriggerSettings</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#PulseGeneratorTriggerSettings.__init__">PulseGeneratorTriggerSettings</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#PulseGeneratorTriggerMode">PulseGeneratorTriggerMode</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_GATED">SPCM_PULSEGEN_MODE_GATED</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_TRIGGERED">SPCM_PULSEGEN_MODE_TRIGGERED</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_SINGLESHOT">SPCM_PULSEGEN_MODE_SINGLESHOT</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#PulseGeneratorTriggerDetectionMode">PulseGeneratorTriggerDetectionMode</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#PulseGeneratorTriggerDetectionMode.RISING_EDGE">RISING_EDGE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PulseGeneratorTriggerDetectionMode.SPCM_PULSEGEN_CONFIG_HIGH">SPCM_PULSEGEN_CONFIG_HIGH</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#PulseGeneratorMultiplexer1TriggerSource">PulseGeneratorMultiplexer1TriggerSource</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_UNUSED">SPCM_PULSEGEN_MUX1_SRC_UNUSED</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_RUN">SPCM_PULSEGEN_MUX1_SRC_RUN</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_ARM">SPCM_PULSEGEN_MUX1_SRC_ARM</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#PulseGeneratorMultiplexer2TriggerSource">PulseGeneratorMultiplexer2TriggerSource</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_UNUSED">SPCM_PULSEGEN_MUX2_SRC_UNUSED</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_SOFTWARE">SPCM_PULSEGEN_MUX2_SRC_SOFTWARE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN0">SPCM_PULSEGEN_MUX2_SRC_PULSEGEN0</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN1">SPCM_PULSEGEN_MUX2_SRC_PULSEGEN1</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN2">SPCM_PULSEGEN_MUX2_SRC_PULSEGEN2</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN3">SPCM_PULSEGEN_MUX2_SRC_PULSEGEN3</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO0">SPCM_PULSEGEN_MUX2_SRC_XIO0</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO1">SPCM_PULSEGEN_MUX2_SRC_XIO1</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO2">SPCM_PULSEGEN_MUX2_SRC_XIO2</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO3">SPCM_PULSEGEN_MUX2_SRC_XIO3</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#PulseGeneratorOutputSettings">PulseGeneratorOutputSettings</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#PulseGeneratorOutputSettings.__init__">PulseGeneratorOutputSettings</a>
+                        </li>
+                </ul>
+
+            </li>
     </ul>
 
 
-    <footer>spectrumdevice v1.0.1</footer>
+    <footer>spectrumdevice v1.1.0</footer>
 
                     <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev">
                         built with <span class="visually-hidden">pdoc</span><img
@@ -692,16 +878,33 @@ hardware and interpreting responses received from hardware.</p>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">int16</span>
+<span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
+
 <span class="kn">from</span> <span class="nn">spectrumdevice.settings.card_dependent_properties</span> <span class="kn">import</span> <span class="n">ModelNumber</span>
 <span class="kn">from</span> <span class="nn">spectrumdevice.settings.card_features</span> <span class="kn">import</span> <span class="n">CardFeature</span><span class="p">,</span> <span class="n">AdvancedCardFeature</span>
-<span class="kn">from</span> <span class="nn">spectrumdevice.settings.channel</span> <span class="kn">import</span> <span class="n">InputImpedance</span><span class="p">,</span> <span class="n">InputCoupling</span><span class="p">,</span> <span class="n">InputPath</span>
-<span class="kn">from</span> <span class="nn">spectrumdevice.settings.device_modes</span> <span class="kn">import</span> <span class="n">AcquisitionMode</span><span class="p">,</span> <span class="n">ClockMode</span>
+<span class="kn">from</span> <span class="nn">spectrumdevice.settings.channel</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InputImpedance</span><span class="p">,</span>
+    <span class="n">InputCoupling</span><span class="p">,</span>
+    <span class="n">InputPath</span><span class="p">,</span>
+    <span class="n">OutputChannelFilter</span><span class="p">,</span>
+    <span class="n">OutputChannelStopLevelMode</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">spectrumdevice.settings.device_modes</span> <span class="kn">import</span> <span class="n">AcquisitionMode</span><span class="p">,</span> <span class="n">ClockMode</span><span class="p">,</span> <span class="n">GenerationMode</span>
 <span class="kn">from</span> <span class="nn">spectrumdevice.settings.io_lines</span> <span class="kn">import</span> <span class="n">IOLineMode</span><span class="p">,</span> <span class="n">AvailableIOModes</span>
 <span class="kn">from</span> <span class="nn">spectrumdevice.settings.transfer_buffer</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">TransferBuffer</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">spectrumdevice.settings.triggering</span> <span class="kn">import</span> <span class="n">TriggerSource</span><span class="p">,</span> <span class="n">ExternalTriggerMode</span>
 <span class="kn">from</span> <span class="nn">spectrumdevice.settings.status</span> <span class="kn">import</span> <span class="n">CARD_STATUS_TYPE</span><span class="p">,</span> <span class="n">DEVICE_STATUS_TYPE</span><span class="p">,</span> <span class="n">StatusCode</span>
+<span class="kn">from</span> <span class="nn">spectrumdevice.settings.pulse_generator</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PulseGeneratorTriggerSettings</span><span class="p">,</span>
+    <span class="n">PulseGeneratorTriggerMode</span><span class="p">,</span>
+    <span class="n">PulseGeneratorTriggerDetectionMode</span><span class="p">,</span>
+    <span class="n">PulseGeneratorMultiplexer1TriggerSource</span><span class="p">,</span>
+    <span class="n">PulseGeneratorMultiplexer2TriggerSource</span><span class="p">,</span>
+    <span class="n">PulseGeneratorOutputSettings</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
@@ -714,8 +917,6 @@ hardware and interpreting responses received from hardware.</p>
     <span class="s2">&quot;IOLineMode&quot;</span><span class="p">,</span>
     <span class="s2">&quot;AvailableIOModes&quot;</span><span class="p">,</span>
     <span class="s2">&quot;TransferBuffer&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;CardToPCDataTransferBuffer&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PCToCardDataTransferBuffer&quot;</span><span class="p">,</span>
     <span class="s2">&quot;TriggerSource&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ExternalTriggerMode&quot;</span><span class="p">,</span>
     <span class="s2">&quot;CARD_STATUS_TYPE&quot;</span><span class="p">,</span>
@@ -723,12 +924,23 @@ hardware and interpreting responses received from hardware.</p>
     <span class="s2">&quot;StatusCode&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SpectrumRegisterLength&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ModelNumber&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;GenerationSettings&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OutputChannelFilter&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OutputChannelStopLevelMode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;GenerationMode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PulseGeneratorTriggerSettings&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PulseGeneratorTriggerMode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PulseGeneratorTriggerDetectionMode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PulseGeneratorMultiplexer1TriggerSource&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PulseGeneratorMultiplexer2TriggerSource&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PulseGeneratorOutputSettings&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">TriggerSettings</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dataclass collecting all settings related to triggering. See Spectrum documentation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dataclass collecting all settings related to triggering generation and acquisition. See Spectrum documentation.</span>
+<span class="sd">    Note that pulse generators have their own trigger options.&quot;&quot;&quot;</span>
 
     <span class="n">trigger_sources</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TriggerSource</span><span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The trigger sources to enable&quot;&quot;&quot;</span>
@@ -774,6 +986,33 @@ hardware and interpreting responses received from hardware.</p>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The coupling (AC or DC) to apply to each channel. Only available on some hardware, so default is None.&quot;&quot;&quot;</span>
     <span class="n">input_paths</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">InputPath</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The input path (HF or Buffered) to apply to each channel. Only available on some hardware, so default is None.&quot;&quot;&quot;</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">GenerationSettings</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dataclass collecting all settings required to configure signal generation. See Spectrum documentation.&quot;&quot;&quot;</span>
+
+    <span class="n">generation_mode</span><span class="p">:</span> <span class="n">GenerationMode</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;SPC_REP_STD_SINGLE , SPC_REP_STD_SINGLERESTART&quot;&quot;&quot;</span>
+    <span class="n">waveform</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">int16</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The waveform to generate.&quot;&quot;&quot;</span>
+    <span class="n">sample_rate_in_hz</span><span class="p">:</span> <span class="nb">int</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generation rate in samples per second.&quot;&quot;&quot;</span>
+    <span class="n">num_loops</span><span class="p">:</span> <span class="nb">int</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;In SPC_REP_STD_SINGLE mode: the number of times to repeat the waveform after a trigger is received. In</span>
+<span class="sd">     SPC_REP_STD_SINGLERESTART: The number of times to wait for a trigger and generate waveform once.&quot;&quot;&quot;</span>
+    <span class="n">enabled_channels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;List of analog channel indices to enable for signal generation&quot;&quot;&quot;</span>
+    <span class="n">signal_amplitudes_in_mv</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The amplitude of each enabled channel.&quot;&quot;&quot;</span>
+    <span class="n">dc_offsets_in_mv</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The dc offset of each enabled channel.&quot;&quot;&quot;</span>
+    <span class="n">output_filters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">OutputChannelFilter</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The output filter setting for each enabled channel.&quot;&quot;&quot;</span>
+    <span class="n">stop_level_modes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">OutputChannelStopLevelMode</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The behavior of each enabled channel after the waveform ends.&quot;&quot;&quot;</span>
+    <span class="n">custom_stop_levels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The stop level each channel will use it stop level mode is set to custom.&quot;&quot;&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">SpectrumRegisterLength</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -1041,7 +1280,8 @@ SpectrumDigitiserCard.get_waveforms().</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">TriggerSettings</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dataclass collecting all settings related to triggering. See Spectrum documentation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dataclass collecting all settings related to triggering generation and acquisition. See Spectrum documentation.</span>
+<span class="sd">    Note that pulse generators have their own trigger options.&quot;&quot;&quot;</span>
 
     <span class="n">trigger_sources</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TriggerSource</span><span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The trigger sources to enable&quot;&quot;&quot;</span>
@@ -1055,7 +1295,8 @@ SpectrumDigitiserCard.get_waveforms().</p>
 
         </details>
 
-            <div class="docstring"><p>A dataclass collecting all settings related to triggering. See Spectrum documentation.</p>
+            <div class="docstring"><p>A dataclass collecting all settings related to triggering generation and acquisition. See Spectrum documentation.
+Note that pulse generators have their own trigger options.</p>
 </div>
 
 
@@ -1515,6 +1756,7 @@ using the feature_list property. See the Spectrum documentation for descriptions
     <span class="n">SPCM_FEAT_EXTFW_SEGSTAT</span> <span class="o">=</span> <span class="n">SPCM_FEAT_EXTFW_SEGSTAT</span>
     <span class="n">SPCM_FEAT_EXTFW_SEGAVERAGE</span> <span class="o">=</span> <span class="n">SPCM_FEAT_EXTFW_SEGAVERAGE</span>
     <span class="n">SPCM_FEAT_EXTFW_BOXCAR</span> <span class="o">=</span> <span class="n">SPCM_FEAT_EXTFW_BOXCAR</span>
+    <span class="n">SPCM_FEAT_EXTFW_PULSEGEN</span> <span class="o">=</span> <span class="n">SPCM_FEAT_EXTFW_PULSEGEN</span>
 </pre></div>
 
         </details>
@@ -1546,6 +1788,15 @@ device using the feature_list property. See the Spectrum documentation for descr
                                             <div class="attr variable"><a class="headerlink" href="#AdvancedCardFeature.SPCM_FEAT_EXTFW_BOXCAR">#&nbsp;&nbsp</a>
 
         <span class="name">SPCM_FEAT_EXTFW_BOXCAR</span><span class="default_value"> = &lt;<a href="#AdvancedCardFeature.SPCM_FEAT_EXTFW_BOXCAR">AdvancedCardFeature.SPCM_FEAT_EXTFW_BOXCAR</a>: 4&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="AdvancedCardFeature.SPCM_FEAT_EXTFW_PULSEGEN" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#AdvancedCardFeature.SPCM_FEAT_EXTFW_PULSEGEN">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_FEAT_EXTFW_PULSEGEN</span><span class="default_value"> = &lt;<a href="#AdvancedCardFeature.SPCM_FEAT_EXTFW_PULSEGEN">AdvancedCardFeature.SPCM_FEAT_EXTFW_PULSEGEN</a>: 8&gt;</span>
     </div>
 
     
@@ -1588,6 +1839,7 @@ device using the feature_list property. See the Spectrum documentation for descr
     <span class="n">SPCM_XMODE_RUNSTATE</span> <span class="o">=</span> <span class="n">SPCM_XMODE_RUNSTATE</span>
     <span class="n">SPCM_XMODE_ARMSTATE</span> <span class="o">=</span> <span class="n">SPCM_XMODE_ARMSTATE</span>
     <span class="n">SPCM_XMODE_CONTOUTMARK</span> <span class="o">=</span> <span class="n">SPCM_XMODE_CONTOUTMARK</span>
+    <span class="n">SPCM_XMODE_PULSEGEN</span> <span class="o">=</span> <span class="n">SPCM_XMODE_PULSEGEN</span>
 </pre></div>
 
         </details>
@@ -1683,6 +1935,15 @@ documentation for a description of each of the modes.</p>
                                             <div class="attr variable"><a class="headerlink" href="#IOLineMode.SPCM_XMODE_CONTOUTMARK">#&nbsp;&nbsp</a>
 
         <span class="name">SPCM_XMODE_CONTOUTMARK</span><span class="default_value"> = &lt;<a href="#IOLineMode.SPCM_XMODE_CONTOUTMARK">IOLineMode.SPCM_XMODE_CONTOUTMARK</a>: 8192&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="IOLineMode.SPCM_XMODE_PULSEGEN" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#IOLineMode.SPCM_XMODE_PULSEGEN">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_XMODE_PULSEGEN</span><span class="default_value"> = &lt;<a href="#IOLineMode.SPCM_XMODE_PULSEGEN">IOLineMode.SPCM_XMODE_PULSEGEN</a>: 524288&gt;</span>
     </div>
 
     
@@ -1984,24 +2245,6 @@ sets the notify-size equal to the acquisition length.</p>
 
 
                             </div>
-                </section>
-                <section id="CardToPCDataTransferBuffer">
-                                <div class="attr variable"><a class="headerlink" href="#CardToPCDataTransferBuffer">#&nbsp;&nbsp</a>
-
-        <span class="name">CardToPCDataTransferBuffer</span>
-    </div>
-
-    
-
-                </section>
-                <section id="PCToCardDataTransferBuffer">
-                                <div class="attr variable"><a class="headerlink" href="#PCToCardDataTransferBuffer">#&nbsp;&nbsp</a>
-
-        <span class="name">PCToCardDataTransferBuffer</span>
-    </div>
-
-    
-
                 </section>
                 <section id="TriggerSource">
                                 <div class="attr class">
@@ -3318,6 +3561,846 @@ SPC_PCITYP register. Only the supported card types are listed (Digitisers: 22xx,
 
             </div>
                                 </dl>
+                            </div>
+                </section>
+                <section id="GenerationSettings">
+                                <div class="attr class">
+        <a class="headerlink" href="#GenerationSettings">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@dataclass</div>
+
+        <span class="def">class</span>
+        <span class="name">GenerationSettings</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">GenerationSettings</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dataclass collecting all settings required to configure signal generation. See Spectrum documentation.&quot;&quot;&quot;</span>
+
+    <span class="n">generation_mode</span><span class="p">:</span> <span class="n">GenerationMode</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;SPC_REP_STD_SINGLE , SPC_REP_STD_SINGLERESTART&quot;&quot;&quot;</span>
+    <span class="n">waveform</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">int16</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The waveform to generate.&quot;&quot;&quot;</span>
+    <span class="n">sample_rate_in_hz</span><span class="p">:</span> <span class="nb">int</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generation rate in samples per second.&quot;&quot;&quot;</span>
+    <span class="n">num_loops</span><span class="p">:</span> <span class="nb">int</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;In SPC_REP_STD_SINGLE mode: the number of times to repeat the waveform after a trigger is received. In</span>
+<span class="sd">     SPC_REP_STD_SINGLERESTART: The number of times to wait for a trigger and generate waveform once.&quot;&quot;&quot;</span>
+    <span class="n">enabled_channels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;List of analog channel indices to enable for signal generation&quot;&quot;&quot;</span>
+    <span class="n">signal_amplitudes_in_mv</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The amplitude of each enabled channel.&quot;&quot;&quot;</span>
+    <span class="n">dc_offsets_in_mv</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The dc offset of each enabled channel.&quot;&quot;&quot;</span>
+    <span class="n">output_filters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">OutputChannelFilter</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The output filter setting for each enabled channel.&quot;&quot;&quot;</span>
+    <span class="n">stop_level_modes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">OutputChannelStopLevelMode</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The behavior of each enabled channel after the waveform ends.&quot;&quot;&quot;</span>
+    <span class="n">custom_stop_levels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The stop level each channel will use it stop level mode is set to custom.&quot;&quot;&quot;</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>A dataclass collecting all settings required to configure signal generation. See Spectrum documentation.</p>
+</div>
+
+
+                            <div id="GenerationSettings.__init__" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#GenerationSettings.__init__">#&nbsp;&nbsp</a>
+
+        
+            <span class="name">GenerationSettings</span><span class="signature">(
+    generation_mode: <a href="#device_modes.GenerationMode">spectrumdevice.settings.device_modes.GenerationMode</a>,
+    waveform: numpy.ndarray[typing.Any, numpy.dtype[numpy.int16]],
+    sample_rate_in_hz: int,
+    num_loops: int,
+    enabled_channels: list[int],
+    signal_amplitudes_in_mv: list[int],
+    dc_offsets_in_mv: list[int],
+    output_filters: list[<a href="#channel.OutputChannelFilter">spectrumdevice.settings.channel.OutputChannelFilter</a>],
+    stop_level_modes: list[<a href="#channel.OutputChannelStopLevelMode">spectrumdevice.settings.channel.OutputChannelStopLevelMode</a>],
+    custom_stop_levels: Optional[list[Optional[int]]] = None
+)</span>
+    </div>
+
+        
+    
+
+                            </div>
+                            <div id="GenerationSettings.generation_mode" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#GenerationSettings.generation_mode">#&nbsp;&nbsp</a>
+
+        <span class="name">generation_mode</span><span class="annotation">: <a href="#device_modes.GenerationMode">spectrumdevice.settings.device_modes.GenerationMode</a></span>
+    </div>
+
+            <div class="docstring"><p>SPC_REP_STD_SINGLE , SPC_REP_STD_SINGLERESTART</p>
+</div>
+
+
+                            </div>
+                            <div id="GenerationSettings.waveform" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#GenerationSettings.waveform">#&nbsp;&nbsp</a>
+
+        <span class="name">waveform</span><span class="annotation">: numpy.ndarray[typing.Any, numpy.dtype[numpy.int16]]</span>
+    </div>
+
+            <div class="docstring"><p>The waveform to generate.</p>
+</div>
+
+
+                            </div>
+                            <div id="GenerationSettings.sample_rate_in_hz" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#GenerationSettings.sample_rate_in_hz">#&nbsp;&nbsp</a>
+
+        <span class="name">sample_rate_in_hz</span><span class="annotation">: int</span>
+    </div>
+
+            <div class="docstring"><p>Generation rate in samples per second.</p>
+</div>
+
+
+                            </div>
+                            <div id="GenerationSettings.num_loops" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#GenerationSettings.num_loops">#&nbsp;&nbsp</a>
+
+        <span class="name">num_loops</span><span class="annotation">: int</span>
+    </div>
+
+            <div class="docstring"><p>In SPC_REP_STD_SINGLE mode: the number of times to repeat the waveform after a trigger is received. In
+SPC_REP_STD_SINGLERESTART: The number of times to wait for a trigger and generate waveform once.</p>
+</div>
+
+
+                            </div>
+                            <div id="GenerationSettings.enabled_channels" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#GenerationSettings.enabled_channels">#&nbsp;&nbsp</a>
+
+        <span class="name">enabled_channels</span><span class="annotation">: list[int]</span>
+    </div>
+
+            <div class="docstring"><p>List of analog channel indices to enable for signal generation</p>
+</div>
+
+
+                            </div>
+                            <div id="GenerationSettings.signal_amplitudes_in_mv" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#GenerationSettings.signal_amplitudes_in_mv">#&nbsp;&nbsp</a>
+
+        <span class="name">signal_amplitudes_in_mv</span><span class="annotation">: list[int]</span>
+    </div>
+
+            <div class="docstring"><p>The amplitude of each enabled channel.</p>
+</div>
+
+
+                            </div>
+                            <div id="GenerationSettings.dc_offsets_in_mv" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#GenerationSettings.dc_offsets_in_mv">#&nbsp;&nbsp</a>
+
+        <span class="name">dc_offsets_in_mv</span><span class="annotation">: list[int]</span>
+    </div>
+
+            <div class="docstring"><p>The dc offset of each enabled channel.</p>
+</div>
+
+
+                            </div>
+                            <div id="GenerationSettings.output_filters" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#GenerationSettings.output_filters">#&nbsp;&nbsp</a>
+
+        <span class="name">output_filters</span><span class="annotation">: list[<a href="#channel.OutputChannelFilter">spectrumdevice.settings.channel.OutputChannelFilter</a>]</span>
+    </div>
+
+            <div class="docstring"><p>The output filter setting for each enabled channel.</p>
+</div>
+
+
+                            </div>
+                            <div id="GenerationSettings.stop_level_modes" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#GenerationSettings.stop_level_modes">#&nbsp;&nbsp</a>
+
+        <span class="name">stop_level_modes</span><span class="annotation">: list[<a href="#channel.OutputChannelStopLevelMode">spectrumdevice.settings.channel.OutputChannelStopLevelMode</a>]</span>
+    </div>
+
+            <div class="docstring"><p>The behavior of each enabled channel after the waveform ends.</p>
+</div>
+
+
+                            </div>
+                            <div id="GenerationSettings.custom_stop_levels" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#GenerationSettings.custom_stop_levels">#&nbsp;&nbsp</a>
+
+        <span class="name">custom_stop_levels</span><span class="annotation">: Optional[list[Optional[int]]]</span><span class="default_value"> = None</span>
+    </div>
+
+            <div class="docstring"><p>The stop level each channel will use it stop level mode is set to custom.</p>
+</div>
+
+
+                            </div>
+                </section>
+                <section id="OutputChannelFilter">
+                                <div class="attr class">
+        <a class="headerlink" href="#OutputChannelFilter">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">OutputChannelFilter</span><wbr>(<span class="base">enum.Enum</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">OutputChannelFilter</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">LOW_PASS_70_MHZ</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">LOW_PASS_20_MHZ</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">LOW_PASS_5_MHZ</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">LOW_PASS_1_MHZ</span> <span class="o">=</span> <span class="mi">3</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>An enumeration.</p>
+</div>
+
+
+                            <div id="OutputChannelFilter.LOW_PASS_70_MHZ" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#OutputChannelFilter.LOW_PASS_70_MHZ">#&nbsp;&nbsp</a>
+
+        <span class="name">LOW_PASS_70_MHZ</span><span class="default_value"> = &lt;<a href="#OutputChannelFilter.LOW_PASS_70_MHZ">OutputChannelFilter.LOW_PASS_70_MHZ</a>: 0&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="OutputChannelFilter.LOW_PASS_20_MHZ" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#OutputChannelFilter.LOW_PASS_20_MHZ">#&nbsp;&nbsp</a>
+
+        <span class="name">LOW_PASS_20_MHZ</span><span class="default_value"> = &lt;<a href="#OutputChannelFilter.LOW_PASS_20_MHZ">OutputChannelFilter.LOW_PASS_20_MHZ</a>: 1&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="OutputChannelFilter.LOW_PASS_5_MHZ" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#OutputChannelFilter.LOW_PASS_5_MHZ">#&nbsp;&nbsp</a>
+
+        <span class="name">LOW_PASS_5_MHZ</span><span class="default_value"> = &lt;<a href="#OutputChannelFilter.LOW_PASS_5_MHZ">OutputChannelFilter.LOW_PASS_5_MHZ</a>: 2&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="OutputChannelFilter.LOW_PASS_1_MHZ" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#OutputChannelFilter.LOW_PASS_1_MHZ">#&nbsp;&nbsp</a>
+
+        <span class="name">LOW_PASS_1_MHZ</span><span class="default_value"> = &lt;<a href="#OutputChannelFilter.LOW_PASS_1_MHZ">OutputChannelFilter.LOW_PASS_1_MHZ</a>: 3&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="OutputChannelFilter.name" class="variable">name</dd>
+                <dd id="OutputChannelFilter.value" class="variable">value</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="OutputChannelStopLevelMode">
+                                <div class="attr class">
+        <a class="headerlink" href="#OutputChannelStopLevelMode">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">OutputChannelStopLevelMode</span><wbr>(<span class="base">enum.Enum</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">OutputChannelStopLevelMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Behavior of output channel when output is stopped or playback completes.&quot;&quot;&quot;</span>
+
+    <span class="n">SPCM_STOPLVL_ZERO</span> <span class="o">=</span> <span class="n">SPCM_STOPLVL_ZERO</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Output level will go to zero.&quot;&quot;&quot;</span>
+    <span class="n">SPCM_STOPLVL_LOW</span> <span class="o">=</span> <span class="n">SPCM_STOPLVL_LOW</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Output level will go to minimum possible negative value.&quot;&quot;&quot;</span>
+    <span class="n">SPCM_STOPLVL_HIGH</span> <span class="o">=</span> <span class="n">SPCM_STOPLVL_HIGH</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Output level will go to maximum possible positive value.&quot;&quot;&quot;</span>
+    <span class="n">SPCM_STOPLVL_HOLDLAST</span> <span class="o">=</span> <span class="n">SPCM_STOPLVL_HOLDLAST</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Output level will stay at the level of the last played sample.&quot;&quot;&quot;</span>
+    <span class="n">SPCM_STOPLVL_CUSTOM</span> <span class="o">=</span> <span class="n">SPCM_STOPLVL_CUSTOM</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Output level will go to the value defined using SpectrumAWGChannel.set_stop_level_custom_value()&quot;&quot;&quot;</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Behavior of output channel when output is stopped or playback completes.</p>
+</div>
+
+
+                            <div id="OutputChannelStopLevelMode.SPCM_STOPLVL_ZERO" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#OutputChannelStopLevelMode.SPCM_STOPLVL_ZERO">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_STOPLVL_ZERO</span><span class="default_value"> = &lt;<a href="#OutputChannelStopLevelMode.SPCM_STOPLVL_ZERO">OutputChannelStopLevelMode.SPCM_STOPLVL_ZERO</a>: 16&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Output level will go to zero.</p>
+</div>
+
+
+                            </div>
+                            <div id="OutputChannelStopLevelMode.SPCM_STOPLVL_LOW" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#OutputChannelStopLevelMode.SPCM_STOPLVL_LOW">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_STOPLVL_LOW</span><span class="default_value"> = &lt;<a href="#OutputChannelStopLevelMode.SPCM_STOPLVL_LOW">OutputChannelStopLevelMode.SPCM_STOPLVL_LOW</a>: 2&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Output level will go to minimum possible negative value.</p>
+</div>
+
+
+                            </div>
+                            <div id="OutputChannelStopLevelMode.SPCM_STOPLVL_HIGH" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#OutputChannelStopLevelMode.SPCM_STOPLVL_HIGH">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_STOPLVL_HIGH</span><span class="default_value"> = &lt;<a href="#OutputChannelStopLevelMode.SPCM_STOPLVL_HIGH">OutputChannelStopLevelMode.SPCM_STOPLVL_HIGH</a>: 4&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Output level will go to maximum possible positive value.</p>
+</div>
+
+
+                            </div>
+                            <div id="OutputChannelStopLevelMode.SPCM_STOPLVL_HOLDLAST" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#OutputChannelStopLevelMode.SPCM_STOPLVL_HOLDLAST">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_STOPLVL_HOLDLAST</span><span class="default_value"> = &lt;<a href="#OutputChannelStopLevelMode.SPCM_STOPLVL_HOLDLAST">OutputChannelStopLevelMode.SPCM_STOPLVL_HOLDLAST</a>: 8&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Output level will stay at the level of the last played sample.</p>
+</div>
+
+
+                            </div>
+                            <div id="OutputChannelStopLevelMode.SPCM_STOPLVL_CUSTOM" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#OutputChannelStopLevelMode.SPCM_STOPLVL_CUSTOM">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_STOPLVL_CUSTOM</span><span class="default_value"> = &lt;<a href="#OutputChannelStopLevelMode.SPCM_STOPLVL_CUSTOM">OutputChannelStopLevelMode.SPCM_STOPLVL_CUSTOM</a>: 32&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Output level will go to the value defined using SpectrumAWGChannel.set_stop_level_custom_value()</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="OutputChannelStopLevelMode.name" class="variable">name</dd>
+                <dd id="OutputChannelStopLevelMode.value" class="variable">value</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="GenerationMode">
+                                <div class="attr class">
+        <a class="headerlink" href="#GenerationMode">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">GenerationMode</span><wbr>(<span class="base">enum.Enum</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">GenerationMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum representing the AWG generation modes currently supported by spectrumdevice. See Spectrum documentation for</span>
+<span class="sd">    more information about each mode.&quot;&quot;&quot;</span>
+
+    <span class="n">SPC_REP_STD_SINGLE</span> <span class="o">=</span> <span class="n">SPC_REP_STD_SINGLE</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data generation from on-board memory repeating the complete programmed memory either once, infinite or for a</span>
+<span class="sd">    defined number of times after one single trigger event.&quot;&quot;&quot;</span>
+    <span class="n">SPC_REP_STD_SINGLERESTART</span> <span class="o">=</span> <span class="n">SPC_REP_STD_SINGLERESTART</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data generation from on-board memory. The programmed memory is repeated once after each single trigger event.&quot;&quot;&quot;</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Enum representing the AWG generation modes currently supported by spectrumdevice. See Spectrum documentation for
+more information about each mode.</p>
+</div>
+
+
+                            <div id="GenerationMode.SPC_REP_STD_SINGLE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#GenerationMode.SPC_REP_STD_SINGLE">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_REP_STD_SINGLE</span><span class="default_value"> = &lt;<a href="#GenerationMode.SPC_REP_STD_SINGLE">GenerationMode.SPC_REP_STD_SINGLE</a>: 256&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Data generation from on-board memory repeating the complete programmed memory either once, infinite or for a
+defined number of times after one single trigger event.</p>
+</div>
+
+
+                            </div>
+                            <div id="GenerationMode.SPC_REP_STD_SINGLERESTART" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#GenerationMode.SPC_REP_STD_SINGLERESTART">#&nbsp;&nbsp</a>
+
+        <span class="name">SPC_REP_STD_SINGLERESTART</span><span class="default_value"> = &lt;<a href="#GenerationMode.SPC_REP_STD_SINGLERESTART">GenerationMode.SPC_REP_STD_SINGLERESTART</a>: 32768&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Data generation from on-board memory. The programmed memory is repeated once after each single trigger event.</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="GenerationMode.name" class="variable">name</dd>
+                <dd id="GenerationMode.value" class="variable">value</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="PulseGeneratorTriggerSettings">
+                                <div class="attr class">
+        <a class="headerlink" href="#PulseGeneratorTriggerSettings">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@dataclass</div>
+
+        <span class="def">class</span>
+        <span class="name">PulseGeneratorTriggerSettings</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">PulseGeneratorTriggerSettings</span><span class="p">:</span>
+    <span class="n">trigger_mode</span><span class="p">:</span> <span class="n">PulseGeneratorTriggerMode</span>
+    <span class="n">trigger_detection_mode</span><span class="p">:</span> <span class="n">PulseGeneratorTriggerDetectionMode</span>
+    <span class="n">multiplexer_1_source</span><span class="p">:</span> <span class="n">PulseGeneratorMultiplexer1TriggerSource</span>
+    <span class="n">multiplexer_1_output_inversion</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">multiplexer_2_source</span><span class="p">:</span> <span class="n">PulseGeneratorMultiplexer2TriggerSource</span>
+    <span class="n">multiplexer_2_output_inversion</span><span class="p">:</span> <span class="nb">bool</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>PulseGeneratorTriggerSettings(trigger_mode: <a href="#pulse_generator.PulseGeneratorTriggerMode">spectrumdevice.settings.pulse_generator.PulseGeneratorTriggerMode</a>, trigger_detection_mode: <a href="#pulse_generator.PulseGeneratorTriggerDetectionMode">spectrumdevice.settings.pulse_generator.PulseGeneratorTriggerDetectionMode</a>, multiplexer_1_source: <a href="#pulse_generator.PulseGeneratorMultiplexer1TriggerSource">spectrumdevice.settings.pulse_generator.PulseGeneratorMultiplexer1TriggerSource</a>, multiplexer_1_output_inversion: bool, multiplexer_2_source: <a href="#pulse_generator.PulseGeneratorMultiplexer2TriggerSource">spectrumdevice.settings.pulse_generator.PulseGeneratorMultiplexer2TriggerSource</a>, multiplexer_2_output_inversion: bool)</p>
+</div>
+
+
+                            <div id="PulseGeneratorTriggerSettings.__init__" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#PulseGeneratorTriggerSettings.__init__">#&nbsp;&nbsp</a>
+
+        
+            <span class="name">PulseGeneratorTriggerSettings</span><span class="signature">(
+    trigger_mode: <a href="#pulse_generator.PulseGeneratorTriggerMode">spectrumdevice.settings.pulse_generator.PulseGeneratorTriggerMode</a>,
+    trigger_detection_mode: <a href="#pulse_generator.PulseGeneratorTriggerDetectionMode">spectrumdevice.settings.pulse_generator.PulseGeneratorTriggerDetectionMode</a>,
+    multiplexer_1_source: <a href="#pulse_generator.PulseGeneratorMultiplexer1TriggerSource">spectrumdevice.settings.pulse_generator.PulseGeneratorMultiplexer1TriggerSource</a>,
+    multiplexer_1_output_inversion: bool,
+    multiplexer_2_source: <a href="#pulse_generator.PulseGeneratorMultiplexer2TriggerSource">spectrumdevice.settings.pulse_generator.PulseGeneratorMultiplexer2TriggerSource</a>,
+    multiplexer_2_output_inversion: bool
+)</span>
+    </div>
+
+        
+    
+
+                            </div>
+                </section>
+                <section id="PulseGeneratorTriggerMode">
+                                <div class="attr class">
+        <a class="headerlink" href="#PulseGeneratorTriggerMode">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">PulseGeneratorTriggerMode</span><wbr>(<span class="base">enum.Enum</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">PulseGeneratorTriggerMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">SPCM_PULSEGEN_MODE_GATED</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_MODE_GATED</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pulse generator will start if the trigger condition or “gate” is met and will stop, if either the gate becomes</span>
+<span class="sd">    inactive or the defined number of LOOPS have been generated. Will reset its loop counter, when the gate becomes LOW.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SPCM_PULSEGEN_MODE_TRIGGERED</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_MODE_TRIGGERED</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The pulse generator will start if the trigger condition is met and will replay the defined number of loops</span>
+<span class="sd">    before re-arm- ing itself and waiting for another trigger event. Changes in the trigger signal while replaying will</span>
+<span class="sd">    be ignored.&quot;&quot;&quot;</span>
+    <span class="n">SPCM_PULSEGEN_MODE_SINGLESHOT</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_MODE_SINGLESHOT</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The pulse generator will start if the trigger condition is met and will replay the defined number of loops once.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>An enumeration.</p>
+</div>
+
+
+                            <div id="PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_GATED" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_GATED">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_MODE_GATED</span><span class="default_value"> = &lt;<a href="#PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_GATED">PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_GATED</a>: 1&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Pulse generator will start if the trigger condition or “gate” is met and will stop, if either the gate becomes
+inactive or the defined number of LOOPS have been generated. Will reset its loop counter, when the gate becomes LOW.</p>
+</div>
+
+
+                            </div>
+                            <div id="PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_TRIGGERED" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_TRIGGERED">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_MODE_TRIGGERED</span><span class="default_value"> = &lt;<a href="#PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_TRIGGERED">PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_TRIGGERED</a>: 2&gt;</span>
+    </div>
+
+            <div class="docstring"><p>The pulse generator will start if the trigger condition is met and will replay the defined number of loops
+before re-arm- ing itself and waiting for another trigger event. Changes in the trigger signal while replaying will
+be ignored.</p>
+</div>
+
+
+                            </div>
+                            <div id="PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_SINGLESHOT" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_SINGLESHOT">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_MODE_SINGLESHOT</span><span class="default_value"> = &lt;<a href="#PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_SINGLESHOT">PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_SINGLESHOT</a>: 3&gt;</span>
+    </div>
+
+            <div class="docstring"><p>The pulse generator will start if the trigger condition is met and will replay the defined number of loops once.</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="PulseGeneratorTriggerMode.name" class="variable">name</dd>
+                <dd id="PulseGeneratorTriggerMode.value" class="variable">value</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="PulseGeneratorTriggerDetectionMode">
+                                <div class="attr class">
+        <a class="headerlink" href="#PulseGeneratorTriggerDetectionMode">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">PulseGeneratorTriggerDetectionMode</span><wbr>(<span class="base">enum.Enum</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">PulseGeneratorTriggerDetectionMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">RISING_EDGE</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># this value is not defined in reg as really its just &quot;HIGH&quot; mode on or off</span>
+    <span class="n">SPCM_PULSEGEN_CONFIG_HIGH</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_CONFIG_HIGH</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>An enumeration.</p>
+</div>
+
+
+                            <div id="PulseGeneratorTriggerDetectionMode.RISING_EDGE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorTriggerDetectionMode.RISING_EDGE">#&nbsp;&nbsp</a>
+
+        <span class="name">RISING_EDGE</span><span class="default_value"> = &lt;<a href="#PulseGeneratorTriggerDetectionMode.RISING_EDGE">PulseGeneratorTriggerDetectionMode.RISING_EDGE</a>: 0&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="PulseGeneratorTriggerDetectionMode.SPCM_PULSEGEN_CONFIG_HIGH" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorTriggerDetectionMode.SPCM_PULSEGEN_CONFIG_HIGH">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_CONFIG_HIGH</span><span class="default_value"> = &lt;<a href="#PulseGeneratorTriggerDetectionMode.SPCM_PULSEGEN_CONFIG_HIGH">PulseGeneratorTriggerDetectionMode.SPCM_PULSEGEN_CONFIG_HIGH</a>: 8&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="PulseGeneratorTriggerDetectionMode.name" class="variable">name</dd>
+                <dd id="PulseGeneratorTriggerDetectionMode.value" class="variable">value</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="PulseGeneratorMultiplexer1TriggerSource">
+                                <div class="attr class">
+        <a class="headerlink" href="#PulseGeneratorMultiplexer1TriggerSource">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">PulseGeneratorMultiplexer1TriggerSource</span><wbr>(<span class="base">spectrumdevice.settings.pulse_generator.PulseGeneratorMultiplexerTriggerSource</span>, <span class="base">enum.Enum</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">PulseGeneratorMultiplexer1TriggerSource</span><span class="p">(</span><span class="n">PulseGeneratorMultiplexerTriggerSource</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+    <span class="n">SPCM_PULSEGEN_MUX1_SRC_UNUSED</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_MUX1_SRC_UNUSED</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Inputs of MUX1 are not used in creating the trigger condition and instead a static logic HIGH is used for MUX1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SPCM_PULSEGEN_MUX1_SRC_RUN</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_MUX1_SRC_RUN</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This input of MUX1 reflects the current run state of the card. If acquisition/output is running the signal is</span>
+<span class="sd">    HIGH. If card has stopped the signal is LOW. The signal is identical to XIO output using SPCM_XMODE_RUNSTATE.&quot;&quot;&quot;</span>
+    <span class="n">SPCM_PULSEGEN_MUX1_SRC_ARM</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_MUX1_SRC_ARM</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This input of MUX1 reflects the current ARM state of the card. If the card is armed and ready to receive a</span>
+<span class="sd">    trigger the signal is HIGH. If the card isn’t running or the card is still acquiring pretrigger data or the trigger</span>
+<span class="sd">    has already been detected. the signal is LOW. The signal is identical to XIO output using SPCM_XMODE_ARMSTATE.&quot;&quot;&quot;</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>An enumeration.</p>
+</div>
+
+
+                            <div id="PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_UNUSED" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_UNUSED">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_MUX1_SRC_UNUSED</span><span class="default_value"> = &lt;<a href="#PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_UNUSED">PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_UNUSED</a>: 0&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Inputs of MUX1 are not used in creating the trigger condition and instead a static logic HIGH is used for MUX1.</p>
+</div>
+
+
+                            </div>
+                            <div id="PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_RUN" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_RUN">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_MUX1_SRC_RUN</span><span class="default_value"> = &lt;<a href="#PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_RUN">PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_RUN</a>: 1&gt;</span>
+    </div>
+
+            <div class="docstring"><p>This input of MUX1 reflects the current run state of the card. If acquisition/output is running the signal is
+HIGH. If card has stopped the signal is LOW. The signal is identical to XIO output using SPCM_XMODE_RUNSTATE.</p>
+</div>
+
+
+                            </div>
+                            <div id="PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_ARM" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_ARM">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_MUX1_SRC_ARM</span><span class="default_value"> = &lt;<a href="#PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_ARM">PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_ARM</a>: 2&gt;</span>
+    </div>
+
+            <div class="docstring"><p>This input of MUX1 reflects the current ARM state of the card. If the card is armed and ready to receive a
+trigger the signal is HIGH. If the card isn’t running or the card is still acquiring pretrigger data or the trigger
+has already been detected. the signal is LOW. The signal is identical to XIO output using SPCM_XMODE_ARMSTATE.</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="PulseGeneratorMultiplexer1TriggerSource.name" class="variable">name</dd>
+                <dd id="PulseGeneratorMultiplexer1TriggerSource.value" class="variable">value</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="PulseGeneratorMultiplexer2TriggerSource">
+                                <div class="attr class">
+        <a class="headerlink" href="#PulseGeneratorMultiplexer2TriggerSource">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">PulseGeneratorMultiplexer2TriggerSource</span><wbr>(<span class="base">spectrumdevice.settings.pulse_generator.PulseGeneratorMultiplexerTriggerSource</span>, <span class="base">enum.Enum</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">PulseGeneratorMultiplexer2TriggerSource</span><span class="p">(</span><span class="n">PulseGeneratorMultiplexerTriggerSource</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+    <span class="n">SPCM_PULSEGEN_MUX2_SRC_UNUSED</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_MUX2_SRC_UNUSED</span>
+    <span class="n">SPCM_PULSEGEN_MUX2_SRC_SOFTWARE</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_MUX2_SRC_SOFTWARE</span>
+    <span class="n">SPCM_PULSEGEN_MUX2_SRC_PULSEGEN0</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_MUX2_SRC_PULSEGEN0</span>
+    <span class="n">SPCM_PULSEGEN_MUX2_SRC_PULSEGEN1</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_MUX2_SRC_PULSEGEN1</span>
+    <span class="n">SPCM_PULSEGEN_MUX2_SRC_PULSEGEN2</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_MUX2_SRC_PULSEGEN2</span>
+    <span class="n">SPCM_PULSEGEN_MUX2_SRC_PULSEGEN3</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_MUX2_SRC_PULSEGEN3</span>
+    <span class="n">SPCM_PULSEGEN_MUX2_SRC_XIO0</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_MUX2_SRC_XIO0</span>
+    <span class="n">SPCM_PULSEGEN_MUX2_SRC_XIO1</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_MUX2_SRC_XIO1</span>
+    <span class="n">SPCM_PULSEGEN_MUX2_SRC_XIO2</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_MUX2_SRC_XIO2</span>
+    <span class="n">SPCM_PULSEGEN_MUX2_SRC_XIO3</span> <span class="o">=</span> <span class="n">SPCM_PULSEGEN_MUX2_SRC_XIO3</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>An enumeration.</p>
+</div>
+
+
+                            <div id="PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_UNUSED" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_UNUSED">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_MUX2_SRC_UNUSED</span><span class="default_value"> = &lt;<a href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_UNUSED">PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_UNUSED</a>: 0&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_SOFTWARE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_SOFTWARE">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_MUX2_SRC_SOFTWARE</span><span class="default_value"> = &lt;<a href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_SOFTWARE">PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_SOFTWARE</a>: 1&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN0" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN0">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_MUX2_SRC_PULSEGEN0</span><span class="default_value"> = &lt;<a href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN0">PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN0</a>: 3&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN1" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN1">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_MUX2_SRC_PULSEGEN1</span><span class="default_value"> = &lt;<a href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN1">PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN1</a>: 4&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN2" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN2">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_MUX2_SRC_PULSEGEN2</span><span class="default_value"> = &lt;<a href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN2">PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN2</a>: 5&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN3" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN3">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_MUX2_SRC_PULSEGEN3</span><span class="default_value"> = &lt;<a href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN3">PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_PULSEGEN3</a>: 6&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO0" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO0">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_MUX2_SRC_XIO0</span><span class="default_value"> = &lt;<a href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO0">PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO0</a>: 7&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO1" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO1">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_MUX2_SRC_XIO1</span><span class="default_value"> = &lt;<a href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO1">PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO1</a>: 8&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO2" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO2">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_MUX2_SRC_XIO2</span><span class="default_value"> = &lt;<a href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO2">PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO2</a>: 9&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO3" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO3">#&nbsp;&nbsp</a>
+
+        <span class="name">SPCM_PULSEGEN_MUX2_SRC_XIO3</span><span class="default_value"> = &lt;<a href="#PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO3">PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_XIO3</a>: 10&gt;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="PulseGeneratorMultiplexer2TriggerSource.name" class="variable">name</dd>
+                <dd id="PulseGeneratorMultiplexer2TriggerSource.value" class="variable">value</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="PulseGeneratorOutputSettings">
+                                <div class="attr class">
+        <a class="headerlink" href="#PulseGeneratorOutputSettings">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@dataclass</div>
+
+        <span class="def">class</span>
+        <span class="name">PulseGeneratorOutputSettings</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">PulseGeneratorOutputSettings</span><span class="p">:</span>
+    <span class="n">period_in_seconds</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">duty_cycle</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">num_pulses</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">delay_in_seconds</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">output_inversion</span><span class="p">:</span> <span class="nb">bool</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>PulseGeneratorOutputSettings(period_in_seconds: float, duty_cycle: float, num_pulses: int, delay_in_seconds: float, output_inversion: bool)</p>
+</div>
+
+
+                            <div id="PulseGeneratorOutputSettings.__init__" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#PulseGeneratorOutputSettings.__init__">#&nbsp;&nbsp</a>
+
+        
+            <span class="name">PulseGeneratorOutputSettings</span><span class="signature">(
+    period_in_seconds: float,
+    duty_cycle: float,
+    num_pulses: int,
+    delay_in_seconds: float,
+    output_inversion: bool
+)</span>
+    </div>
+
+        
+    
+
                             </div>
                 </section>
     </main>
