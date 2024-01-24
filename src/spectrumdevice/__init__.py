@@ -12,11 +12,12 @@ for controlling devices:
 | `SpectrumDigitiserCard`          | Controlling individual digitiser cards                  |
 | `SpectrumDigitiserStarHub`       | Controlling digitiser cards aggregated with a StarHub   |
 | `SpectrumDigitiserAnalogChannel` | Controlling analog channels of a digitiser              |
-| `SpectrumDigitiserIOLine`        | Controlling multipurpose IO channels of a digitiser     |
+| `SpectrumDigitiserIOLine`        | Controlling multipurpose IO lines of a digitiser        |
 | `SpectrumAWGCard`                | Controlling individual AWG cards                        |
 | `SpectrumAWGStarHub`             | (not yet implemented)                                   |
 | `SpectrumAWGAnalogChannel`       | Controlling analog channels of an AWG                   |
-| `SpectrumAWGIOLine`              | Controlling multipurpose IO channels of an AWG          |
+| `SpectrumAWGIOLine`              | Controlling multipurpose IO lines of an AWG             |
+| `PulseGenerator`                 | Controlling pulse generators belonging to IO lines      |
 
 ### Mock Classes
 `spectrumdevice` also includes mock classes for testing software without drivers installed or hardware connected:
@@ -62,9 +63,10 @@ Spectrum API, to be used for configuring hardware and interpreting responses rec
 
 from spectrumdevice.measurement import Measurement
 from .devices.digitiser.digitiser_card import SpectrumDigitiserCard
-from .devices.digitiser.digitiser_channel import SpectrumDigitiserAnalogChannel
+from .devices.digitiser.digitiser_channel import SpectrumDigitiserAnalogChannel, SpectrumDigitiserIOLine
 from .devices.digitiser.digitiser_star_hub import SpectrumDigitiserStarHub
 from .devices.awg.awg_card import SpectrumAWGCard
+from .devices.awg.awg_channel import SpectrumAWGAnalogChannel, SpectrumAWGIOLine
 from .devices.mocks import MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub, MockSpectrumAWGCard
 from .devices.abstract_device import (
     AbstractSpectrumDevice,
@@ -73,9 +75,11 @@ from .devices.abstract_device import (
     AbstractSpectrumStarHub,
 )
 from .devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
+from .features.pulse_generator.pulse_generator import PulseGenerator
 
 __all__ = [
     "SpectrumDigitiserAnalogChannel",
+    "SpectrumDigitiserIOLine",
     "SpectrumDigitiserCard",
     "SpectrumDigitiserStarHub",
     "MockSpectrumDigitiserCard",
@@ -89,6 +93,9 @@ __all__ = [
     "Measurement",
     "SpectrumAWGCard",
     "MockSpectrumAWGCard",
+    "SpectrumAWGAnalogChannel",
+    "SpectrumAWGIOLine",
+    "PulseGenerator",
 ]
 
 
