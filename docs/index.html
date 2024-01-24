@@ -612,12 +612,28 @@ for controlling devices:</p>
   <td>Controlling digitiser cards aggregated with a StarHub</td>
 </tr>
 <tr>
+  <td><code><a href="#SpectrumDigitiserAnalogChannel">SpectrumDigitiserAnalogChannel</a></code></td>
+  <td>Controlling analog channels of a digitiser</td>
+</tr>
+<tr>
+  <td><code>SpectrumDigitiserIOLine</code></td>
+  <td>Controlling multipurpose IO channels of a digitiser</td>
+</tr>
+<tr>
   <td><code><a href="#SpectrumAWGCard">SpectrumAWGCard</a></code></td>
   <td>Controlling individual AWG cards</td>
 </tr>
 <tr>
   <td><code>SpectrumAWGStarHub</code></td>
-  <td>Controlling AWG cards aggregated with a StarHub</td>
+  <td>(not yet implemented)</td>
+</tr>
+<tr>
+  <td><code>SpectrumAWGAnalogChannel</code></td>
+  <td>Controlling analog channels of an AWG</td>
+</tr>
+<tr>
+  <td><code>SpectrumAWGIOLine</code></td>
+  <td>Controlling multipurpose IO channels of an AWG</td>
 </tr>
 </tbody>
 </table>
@@ -723,12 +739,16 @@ Spectrum API, to be used for configuring hardware and interpreting responses rec
 <span class="sd">for controlling devices:</span>
 
 <span class="sd">### Hardware Classes</span>
-<span class="sd">| Name                       | Purpose                                                 |</span>
-<span class="sd">|----------------------------|---------------------------------------------------------|</span>
-<span class="sd">| `SpectrumDigitiserCard`    | Controlling individual digitiser cards                  |</span>
-<span class="sd">| `SpectrumDigitiserStarHub` | Controlling digitiser cards aggregated with a StarHub   |</span>
-<span class="sd">| `SpectrumAWGCard`          | Controlling individual AWG cards                        |</span>
-<span class="sd">| `SpectrumAWGStarHub`       | Controlling AWG cards aggregated with a StarHub         |</span>
+<span class="sd">| Name                             | Purpose                                                 |</span>
+<span class="sd">|----------------------------------|---------------------------------------------------------|</span>
+<span class="sd">| `SpectrumDigitiserCard`          | Controlling individual digitiser cards                  |</span>
+<span class="sd">| `SpectrumDigitiserStarHub`       | Controlling digitiser cards aggregated with a StarHub   |</span>
+<span class="sd">| `SpectrumDigitiserAnalogChannel` | Controlling analog channels of a digitiser              |</span>
+<span class="sd">| `SpectrumDigitiserIOLine`        | Controlling multipurpose IO channels of a digitiser     |</span>
+<span class="sd">| `SpectrumAWGCard`                | Controlling individual AWG cards                        |</span>
+<span class="sd">| `SpectrumAWGStarHub`             | (not yet implemented)                                   |</span>
+<span class="sd">| `SpectrumAWGAnalogChannel`       | Controlling analog channels of an AWG                   |</span>
+<span class="sd">| `SpectrumAWGIOLine`              | Controlling multipurpose IO channels of an AWG          |</span>
 
 <span class="sd">### Mock Classes</span>
 <span class="sd">`spectrumdevice` also includes mock classes for testing software without drivers installed or hardware connected:</span>
@@ -7626,6 +7646,8 @@ hardware and interpreting responses received from hardware.</p>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">SpectrumAWGCard</span><span class="p">(</span>
     <span class="n">AbstractSpectrumCard</span><span class="p">[</span><span class="n">SpectrumAWGAnalogChannelInterface</span><span class="p">,</span> <span class="n">SpectrumAWGIOLineInterface</span><span class="p">],</span> <span class="n">AbstractSpectrumAWG</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for controlling individual Spectrum AWG cards.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">_init_analog_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">SpectrumAWGAnalogChannelInterface</span><span class="p">]:</span>
         <span class="n">num_modules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_spectrum_device_register</span><span class="p">(</span><span class="n">SPC_MIINST_MODULES</span><span class="p">)</span>
         <span class="n">num_channels_per_module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_spectrum_device_register</span><span class="p">(</span><span class="n">SPC_MIINST_CHPERMODULE</span><span class="p">)</span>
@@ -7693,7 +7715,7 @@ hardware and interpreting responses received from hardware.</p>
 
         </details>
 
-            <div class="docstring"><p>Abstract superclass implementing methods common to all individual "card" devices (as opposed to "hub" devices).</p>
+            <div class="docstring"><p>Class for controlling individual Spectrum AWG cards.</p>
 </div>
 
 
