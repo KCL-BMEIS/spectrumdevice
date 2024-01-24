@@ -31,6 +31,7 @@ class SpectrumAWGCard(
     AbstractSpectrumCard[SpectrumAWGAnalogChannelInterface, SpectrumAWGIOLineInterface], AbstractSpectrumAWG
 ):
     """Class for controlling individual Spectrum AWG cards."""
+
     def _init_analog_channels(self) -> Sequence[SpectrumAWGAnalogChannelInterface]:
         num_modules = self.read_spectrum_device_register(SPC_MIINST_MODULES)
         num_channels_per_module = self.read_spectrum_device_register(SPC_MIINST_CHPERMODULE)

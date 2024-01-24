@@ -53,6 +53,7 @@ from spectrumdevice.spectrum_wrapper import toggle_bitmap_value
 
 class PulseGenerator(PulseGeneratorInterface):
     """Class for controlling pulse generators associated with IO lines (requires firmware option be enabled)."""
+
     def __init__(self, parent: SpectrumIOLineInterface):
         self._parent_io_line = parent
         # last char of IO line name is IO line chanel number, which is used to set pulse generator number
