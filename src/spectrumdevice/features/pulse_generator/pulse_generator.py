@@ -84,6 +84,7 @@ class PulseGenerator(PulseGeneratorInterface):
         return coerced_settings
 
     def configure_trigger(self, settings: PulseGeneratorTriggerSettings) -> None:
+        """Configure all pulse generator trigger settings at once."""
         self.set_trigger_mode(settings.trigger_mode)
         self.set_trigger_detection_mode(settings.trigger_detection_mode)
         self.multiplexer_1.set_trigger_source(settings.multiplexer_1_source)
@@ -93,6 +94,7 @@ class PulseGenerator(PulseGeneratorInterface):
         self.write_to_parent_device_register(SPC_M2CMD, M2CMD_CARD_WRITESETUP)
 
     def force_trigger(self) -> None:
+        """Generates a pulse when the pulse generator trigger source (mux 2) is set to 'software'."""
         if (
             self._multiplexer_2.trigger_source
             != PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_SOFTWARE
@@ -102,14 +104,17 @@ class PulseGenerator(PulseGeneratorInterface):
 
     @property
     def number(self) -> int:
+        """The index of the pulse generator. Corresponds to the index of the IO line to which it belongs."""
         return self._number
 
     @property
     def multiplexer_1(self) -> PulseGeneratorMultiplexer1:
+        """Change the trigger source of this multiplexer to control when it is possible to trigger the pulse generator."""
         return self._multiplexer_1
 
     @property
     def multiplexer_2(self) -> PulseGeneratorMultiplexer2:
+        """Change the trigger source of this multiplexer to control how the pulse generator is triggered."""
         return self._multiplexer_2
 
     def read_parent_device_register(
@@ -137,22 +142,29 @@ class PulseGenerator(PulseGeneratorInterface):
 
     @property
     def clock_rate_in_hz(self) -> int:
+        """The current pulse generator clock rate. Affected by the sample rate of the parent card, and the number of
+        channels enabled. Effects the precision with which pulse timings can be set, and their min and max values."""
         return self.read_parent_device_register(SPC_XIO_PULSEGEN_CLOCK)
 
     @property
     def clock_period_in_seconds(self) -> float:
+        """The reciprocal of the clock rate, in seconds."""
         return 1 / self.clock_rate_in_hz
 
     @property
     def enabled(self) -> bool:
+        """True if the pulse generator is currently enabled."""
         return PULSE_GEN_ENABLE_COMMANDS[self._number] in self._get_enabled_pulse_generator_ids()
 
     def enable(self) -> None:
+        """Enable the pulse generator. Note that the mode of the parent IO Line must also be set to
+        IOLineMOdO.SPCM_XMODE_PULSEGEN."""
         current_register_value = self.read_parent_device_register(SPC_XIO_PULSEGEN_ENABLE)
         new_register_value = toggle_bitmap_value(current_register_value, PULSE_GEN_ENABLE_COMMANDS[self._number], True)
         self.write_to_parent_device_register(SPC_XIO_PULSEGEN_ENABLE, new_register_value)
 
     def disable(self) -> None:
+        """Disable the pulse generator."""
         current_register_value = self.read_parent_device_register(SPC_XIO_PULSEGEN_ENABLE)
         new_register_value = toggle_bitmap_value(current_register_value, PULSE_GEN_ENABLE_COMMANDS[self._number], False)
         self.write_to_parent_device_register(SPC_XIO_PULSEGEN_ENABLE, new_register_value)
@@ -171,6 +183,7 @@ class PulseGenerator(PulseGeneratorInterface):
 
     @property
     def trigger_detection_mode(self) -> PulseGeneratorTriggerDetectionMode:
+        """How the pulse generator trigger circuit responds to a trigger signal, .e.g rising edge..."""
         currently_enabled_config_options = decode_pulse_gen_config(
             self.read_parent_device_register(PULSE_GEN_CONFIG_COMMANDS[self._number])
         )
@@ -180,6 +193,7 @@ class PulseGenerator(PulseGeneratorInterface):
             return PulseGeneratorTriggerDetectionMode.RISING_EDGE
 
     def set_trigger_detection_mode(self, mode: PulseGeneratorTriggerDetectionMode) -> None:
+        """e.g. rising edge, high-voltage..."""
         current_register_value = self.read_parent_device_register(PULSE_GEN_CONFIG_COMMANDS[self._number])
         high_voltage_mode_value = PulseGeneratorTriggerDetectionMode.SPCM_PULSEGEN_CONFIG_HIGH.value
         new_register_value = toggle_bitmap_value(
@@ -191,21 +205,25 @@ class PulseGenerator(PulseGeneratorInterface):
 
     @property
     def trigger_mode(self) -> PulseGeneratorTriggerMode:
+        """Gated, triggered or single-shot. See PulseGeneratorTriggerMode for more information."""
         return PulseGeneratorTriggerMode(
             self.read_parent_device_register(PULSE_GEN_TRIGGER_MODE_COMMANDS[self._number])
         )
 
     def set_trigger_mode(self, mode: PulseGeneratorTriggerMode) -> None:
+        """Gated, triggered or single-shot. See PulseGeneratorTriggerMode for more information."""
         self.write_to_parent_device_register(PULSE_GEN_TRIGGER_MODE_COMMANDS[self._number], mode.value)
 
     @property
     def min_allowed_period_in_seconds(self) -> float:
+        """Minimum allowed pulse period in seconds, given the current clock rate."""
         reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLEN_MIN)
         reg_val = 0 if reg_val < 0 else reg_val
         return self._convert_clock_cycles_to_seconds(reg_val)
 
     @property
     def max_allowed_period_in_seconds(self) -> float:
+        """Maximum allowed pulse period in seconds, given the current clock rate."""
         reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLEN_MAX)
         reg_val = iinfo(int16).max if reg_val < 0 else reg_val
         return self._convert_clock_cycles_to_seconds(reg_val)
@@ -216,10 +234,12 @@ class PulseGenerator(PulseGeneratorInterface):
 
     @property
     def allowed_period_step_size_in_seconds(self) -> float:
+        """Resolution with which the pulse period can be set, given the current clock rate."""
         return self._convert_clock_cycles_to_seconds(self._allowed_period_step_size_in_clock_cycles)
 
     @property
     def period_in_seconds(self) -> float:
+        """The pulse length in seconds, including both the high-voltage and low-voltage sections."""
         return self._convert_clock_cycles_to_seconds(
             self.read_parent_device_register(PULSE_GEN_PULSE_PERIOD_COMMANDS[self._number])
         )
@@ -251,12 +271,14 @@ class PulseGenerator(PulseGeneratorInterface):
 
     @property
     def min_allowed_high_voltage_duration_in_seconds(self) -> float:
+        """Minimum allowed duration of the high-voltage part of the pulse in seconds, given the current clock rate."""
         reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILHIGH_MIN)
         reg_val = 0 if reg_val < 0 else reg_val
         return self._convert_clock_cycles_to_seconds(reg_val)
 
     @property
     def max_allowed_high_voltage_duration_in_seconds(self) -> float:
+        """Maximum allowed duration of the high-voltage part of the pulse in seconds, given the current clock rate."""
         reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILHIGH_MAX)
         reg_val = iinfo(int16).max if reg_val < 0 else reg_val
         return self._convert_clock_cycles_to_seconds(reg_val)
@@ -267,20 +289,24 @@ class PulseGenerator(PulseGeneratorInterface):
 
     @property
     def allowed_high_voltage_duration_step_size_in_seconds(self) -> float:
+        """Resolution with which the high-voltage duration can be set, in seconds, given the current clock rate."""
         return self._convert_clock_cycles_to_seconds(self._allowed_high_voltage_duration_step_size_in_clock_cycles)
 
     @property
     def duration_of_high_voltage_in_seconds(self) -> float:
+        """The length of the high-voltage part of a pulse, in seconds. Equal to the pulse duration * duty cycle."""
         return self._convert_clock_cycles_to_seconds(
             self.read_parent_device_register(PULSE_GEN_HIGH_DURATION_COMMANDS[self._number])
         )
 
     @property
     def duration_of_low_voltage_in_seconds(self) -> float:
+        """The length of the low-voltage part of a pulse, in seconds. Equal to the pulse duration * (1 - duty cycle)."""
         return self.period_in_seconds - self.duration_of_high_voltage_in_seconds
 
     @property
     def duty_cycle(self) -> float:
+        """The ratio between the high-voltage and low-voltage parts of the pulse."""
         return self.duration_of_high_voltage_in_seconds / self.period_in_seconds
 
     def set_duty_cycle(self, duty_cycle: float, coerce: bool = False) -> float:
@@ -311,16 +337,19 @@ class PulseGenerator(PulseGeneratorInterface):
 
     @property
     def min_allowed_pulses(self) -> int:
+        """Minimum allowed number of pulses to transmit."""
         return self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLOOPS_MIN)
 
     @property
     def max_allowed_pulses(self) -> int:
+        """Maximum allowed number of pulses to transmit."""
         reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLOOPS_MAX)
         # my card has this register set to -2, which I assume means no limit (can't work it out from the docs)
         return reg_val if reg_val > 0 else iinfo(int16).max
 
     @property
     def allowed_num_pulses_step_size(self) -> int:
+        """Resolution with which the number of pulses to transmit can be set."""
         return self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLOOPS_STEP)
 
     @property
@@ -354,18 +383,24 @@ class PulseGenerator(PulseGeneratorInterface):
 
     @property
     def min_allowed_delay_in_seconds(self) -> float:
+        """Minimum allowed delay between the trigger event and pulse generation, in seconds, given the current clock
+        rate."""
         reg_value = self.read_parent_device_register(602007)  # SPC_XIO_PULSEGEN_AVAILDELAY_MIN not in regs.py
         reg_value = 0 if reg_value == -1 else reg_value
         return self._convert_clock_cycles_to_seconds(reg_value)
 
     @property
     def max_allowed_delay_in_seconds(self) -> float:
+        """Maximum allowed delay between the trigger event and pulse generation, in seconds, given the current clock
+        rate."""
         reg_value = self.read_parent_device_register(602008)  # SPC_XIO_PULSEGEN_AVAILDELAY_MAX not in regs.py
         reg_value = iinfo(int16).max if reg_value == -1 else reg_value
         return self._convert_clock_cycles_to_seconds(reg_value)
 
     @property
     def allowed_delay_step_size_in_seconds(self) -> float:
+        """resolution with which the delay between the trigger event and pulse generation can be set, in seconds, given
+        the current clock rate."""
         return self._convert_clock_cycles_to_seconds(
             self.read_parent_device_register(602009)  # SPC_XIO_PULSEGEN_AVAILDELAY_STEP not in regs.py
         )

@@ -53,16 +53,25 @@ class AbstractSpectrumAWG(
 
     @property
     def generation_mode(self) -> GenerationMode:
-        """Change the currently enabled card mode. See `GenerationMode` and the Spectrum documentation
-        for the available modes."""
+        """The currently enabled card mode."""
         return GenerationMode(self.read_spectrum_device_register(SPC_CARDMODE))
 
     def set_generation_mode(self, mode: GenerationMode) -> None:
+        """Change the currently enabled card mode. See `GenerationMode` and the Spectrum documentation
+        for the available modes."""
         self.write_to_spectrum_device_register(SPC_CARDMODE, mode.value)
 
     @property
     def num_loops(self) -> int:
+        """In GenerationMode.SPC_REP_STD_SINGLE, the arbitrary waveform will be repeated this many times after a single
+        trigger event. In GenerationMode.SPC_REP_STD_SINGLERESTART, the card will wait for this many triggers before
+        stopping, and will generate the arbitrary waveform once for each received trigger even. Set to 0 for continuous
+        output."""
         return self.read_spectrum_device_register(SPC_LOOPS)
 
     def set_num_loops(self, num_loops: int) -> None:
+        """In GenerationMode.SPC_REP_STD_SINGLE, the arbitrary waveform will be repeated this many times after a single
+        trigger event. In GenerationMode.SPC_REP_STD_SINGLERESTART, the card will wait for this many triggers before
+        stopping, and will generate the arbitrary waveform once for each received trigger even. Set to 0 for continuous
+        output."""
         self.write_to_spectrum_device_register(SPC_LOOPS, num_loops)
