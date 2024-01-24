@@ -1,6 +1,6 @@
 from enum import Enum
 
-from spectrum_gmbh.regs import (
+from spectrum_gmbh.py_header.regs import (
     SPCM_TYPE_AI,
     SPCM_TYPE_AO,
     SPCM_TYPE_DI,

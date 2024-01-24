@@ -5,7 +5,7 @@ from unittest import TestCase
 from numpy import array, iinfo, int16, zeros
 from numpy.testing import assert_array_equal
 
-from spectrum_gmbh.regs import SPC_CHENABLE
+from spectrum_gmbh.py_header.regs import SPC_CHENABLE
 from spectrumdevice import SpectrumDigitiserAnalogChannel
 from spectrumdevice.devices.abstract_device.device_interface import SpectrumDeviceInterface
 from spectrumdevice.devices.awg.awg_channel import SpectrumAWGAnalogChannel
@@ -54,6 +54,9 @@ class SingleCardTest(TestCase, Generic[CardInterfaceVar], ABC):
         self._all_spectrum_channel_identifiers.sort()  # Enums are unordered so ensure channels are in ascending order
         self._expected_num_channels = self._determine_expected_num_channels()
 
+    def tearDown(self) -> None:
+        self._device.disconnect()
+
     @abstractmethod
     def _create_test_card(self) -> CardInterfaceVar:
         raise NotImplementedError
@@ -61,9 +64,6 @@ class SingleCardTest(TestCase, Generic[CardInterfaceVar], ABC):
     @abstractmethod
     def _determine_expected_num_channels(self) -> int:
         raise NotImplementedError
-
-    def tearDown(self) -> None:
-        self._device.disconnect()
 
     def test_count_channels(self) -> None:
         channels = self._device.analog_channels

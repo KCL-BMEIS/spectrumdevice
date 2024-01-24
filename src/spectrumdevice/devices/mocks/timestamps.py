@@ -8,7 +8,7 @@ import datetime
 
 from numpy import uint64
 
-from spectrum_gmbh.regs import SPC_TIMESTAMP_CMD
+from spectrum_gmbh.py_header.regs import SPC_TIMESTAMP_CMD
 from spectrumdevice.devices.spectrum_timestamper import Timestamper
 from spectrumdevice.settings.timestamps import TimestampMode
 from spectrumdevice.spectrum_wrapper import DEVICE_HANDLE_TYPE

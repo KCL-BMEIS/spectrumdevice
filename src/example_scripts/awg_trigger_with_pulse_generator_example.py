@@ -2,6 +2,7 @@ from time import sleep
 
 from numpy import int16
 
+from spectrumdevice import SpectrumAWGCard
 from spectrumdevice.devices.awg.synthesis import make_full_scale_rect_waveform
 from spectrumdevice.devices.mocks import MockSpectrumAWGCard
 from spectrumdevice.settings import (
@@ -25,27 +26,28 @@ from spectrumdevice.settings.pulse_generator import (
     PulseGeneratorMultiplexer2TriggerSource,
 )
 
-
-SAMPLE_RATE_IN_HZ = 40000000
-NUM_GENERATIONS = 4
+MOCK_CARD = True
+SAMPLE_RATE_IN_HZ = 1000000
+NUM_GENERATIONS = 3
 
 
 if __name__ == "__main__":
 
     # AWG CARD SETUP ---------------------------------------------------------------------------------------------------
 
-    # Connect to a real AWG card with the optional pulse generator firmware option unlocked
-    # card = SpectrumAWGCard(device_number=0)
-
-    # Or a mock AWG card
-    card = MockSpectrumAWGCard(
-        device_number=0,
-        model=ModelNumber.TYP_M2P6560_X4,
-        num_modules=1,
-        num_channels_per_module=1,
-        # make sure the mock card has the pulse generator feature unlocked!
-        advanced_card_features=[AdvancedCardFeature.SPCM_FEAT_EXTFW_PULSEGEN],
-    )
+    if not MOCK_CARD:
+        # Connect to a real AWG card with the optional pulse generator firmware option unlocked
+        card = SpectrumAWGCard(device_number=0)
+    else:
+        # Or a mock AWG card
+        card = MockSpectrumAWGCard(
+            device_number=0,
+            model=ModelNumber.TYP_M2P6560_X4,
+            num_modules=1,
+            num_channels_per_module=1,
+            # make sure the mock card has the pulse generator feature unlocked!
+            advanced_card_features=[AdvancedCardFeature.SPCM_FEAT_EXTFW_PULSEGEN],
+        )
 
     # Set up the AWG trigger settings using the X1 multipurpose IO Line as a trigger source
     card_trigger_settings = TriggerSettings(
@@ -107,16 +109,20 @@ if __name__ == "__main__":
     # continuous output
     # The period is the length of the whole pulse (high-voltage length + 0V length)
     # The duty cycle is the high-voltage length divided by the period
+
+    print(f"SAMPLE RATE IS {card.sample_rate_in_hz} Hz")
+
     pulse_output_settings = PulseGeneratorOutputSettings(
-        period_in_seconds=1e-3, duty_cycle=0.5, num_pulses=NUM_GENERATIONS, delay_in_seconds=0.0, output_inversion=False
+        period_in_seconds=1e-3, duty_cycle=0.1, num_pulses=NUM_GENERATIONS, delay_in_seconds=0.0, output_inversion=False
     )
-    pulse_gen.configure_output(pulse_output_settings)
+    pulse_gen.configure_output(pulse_output_settings, coerce=False)
 
     # Enable the pulse generator
     pulse_gen.enable()
 
     # Start the AWG so it is waiting for a trigger
     card.start()
+    sleep(0.2)
 
     # Force a software trigger on the pulse generator, causing pulse to be generated on X1, triggering the AWG
     pulse_gen.force_trigger()
@@ -124,10 +130,8 @@ if __name__ == "__main__":
     sleep(1)
 
     # Note that there is a delay between a trigger being received and the AWG generating a signal.
-    # This is in the technical data section of the manual, and for my device is apparently 63 samples + 7 ns
-    # However I see 74 samples + 7 ns when testing this script, suggesting there is an additional delay of 11 samples
-    # between the pulse generator and the AWG trigger circuitry
-    print(f"Expected delay between pulse and signal: {(63 * 1 / SAMPLE_RATE_IN_HZ + 7e-9) * 1e6} microseconds")
+    # This is in the technical data section of the manual, and for my device is apparently 73 samples + 7 ns
+    print(f"Expected delay between pulse and signal: {(73 * 1 / SAMPLE_RATE_IN_HZ + 7e-9) * 1e6} microseconds")
 
     card.stop()
     card.disconnect()

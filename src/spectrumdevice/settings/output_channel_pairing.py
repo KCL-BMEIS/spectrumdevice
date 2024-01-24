@@ -1,6 +1,6 @@
 from enum import Enum
 
-from spectrum_gmbh.regs import SPC_DIFF0, SPC_DIFF2, SPC_DIFF4, SPC_DIFF6, SPC_DOUBLEOUT0, SPC_DOUBLEOUT2
+from spectrum_gmbh.py_header.regs import SPC_DIFF0, SPC_DIFF2, SPC_DIFF4, SPC_DIFF6, SPC_DOUBLEOUT0, SPC_DOUBLEOUT2
 
 
 class ChannelPairingMode:

@@ -10,7 +10,7 @@ from typing import List, Optional, Sequence, cast
 from numpy import float_, mod, squeeze, zeros
 from numpy.typing import NDArray
 
-from spectrum_gmbh.regs import (
+from spectrum_gmbh.py_header.regs import (
     M2CMD_CARD_WAITREADY,
     SPC_AVERAGES,
     SPC_CARDMODE,

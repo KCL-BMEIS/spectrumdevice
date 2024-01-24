@@ -9,7 +9,7 @@ from enum import Enum
 from typing import List
 
 from spectrumdevice.spectrum_wrapper import decode_bitmap_using_list_of_ints
-from spectrum_gmbh.regs import (
+from spectrum_gmbh.py_header.regs import (
     SPCM_FEAT_MULTI,
     SPCM_FEAT_GATE,
     SPCM_FEAT_DIGITAL,

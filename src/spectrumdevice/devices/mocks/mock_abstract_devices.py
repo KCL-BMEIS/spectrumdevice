@@ -10,7 +10,7 @@ from operator import or_
 from threading import Event, Lock, Thread
 from typing import Any, Dict, Optional, Union, cast
 
-from spectrum_gmbh.regs import (
+from spectrum_gmbh.py_header.regs import (
     SPCM_X0_AVAILMODES,
     SPCM_X1_AVAILMODES,
     SPCM_X2_AVAILMODES,
@@ -210,7 +210,7 @@ class MockAbstractSpectrumCard(MockAbstractSpectrumDevice, AbstractSpectrumCard,
         param_dict[SPC_MIINST_BYTESPERSAMPLE] = 2
         param_dict[SPC_MIINST_MAXADCVALUE] = 128
         # Pulse generation:
-        param_dict[SPC_XIO_PULSEGEN_CLOCK] = 1000
+        param_dict[SPC_XIO_PULSEGEN_CLOCK] = 100000
         param_dict[SPC_XIO_PULSEGEN_ENABLE] = 0
         param_dict[SPC_XIO_PULSEGEN0_CONFIG] = 0
         param_dict[SPC_XIO_PULSEGEN1_CONFIG] = 0

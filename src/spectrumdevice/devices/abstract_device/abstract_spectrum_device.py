@@ -21,7 +21,7 @@ from spectrumdevice.settings.output_channel_pairing import (
     DOUBLING_CHANNEL_PAIR_COMMANDS,
 )
 from spectrumdevice.settings.triggering import EXTERNAL_TRIGGER_SOURCES
-from spectrum_gmbh.regs import (
+from spectrum_gmbh.py_header.regs import (
     M2CMD_CARD_ENABLETRIGGER,
     M2CMD_CARD_RESET,
     M2CMD_CARD_START,
@@ -185,13 +185,13 @@ class AbstractSpectrumDevice(SpectrumDeviceInterface[AnalogChannelInterfaceType,
 
         Args:
             spectrum_register (int): Identifier of the register to set. This should be a global constant imported from
-                spectrum_gmbh.regs.
+                spectrum_gmbh.py_header.regs.
             length (`SpectrumRegisterLength`): A `SpectrumRegisterLength` object specifying the length of the register
                 to set, in bits.
 
         Returns:
             value (int): Value of the register. This can be matched to a global constant imported from
-                spectrum_gmbh.regs, usually using one of the Enums defined in the settings module.
+                spectrum_gmbh.py_header.regs, usually using one of the Enums defined in the settings module.
         """
         if not SPECTRUM_DRIVERS_FOUND:
             raise SpectrumDriversNotFound(

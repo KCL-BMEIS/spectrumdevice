@@ -10,7 +10,7 @@ from copy import copy
 from datetime import datetime, timedelta
 from typing import Tuple, Optional
 
-from spectrum_gmbh.regs import (
+from spectrum_gmbh.py_header.regs import (
     SPC_TIMESTAMP_CMD,
     SPC_TS_RESET,
     SPC_M2CMD,

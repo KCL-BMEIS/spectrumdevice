@@ -38,6 +38,9 @@ class SingleAWGAnalogChannelTest(TestCase):
         self._device = create_awg_card_for_testing()
         self._channel = SpectrumAWGAnalogChannel(channel_number=0, parent_device=self._device)
 
+    def tearDown(self) -> None:
+        self._channel._parent_device.disconnect()
+
     def test_switched_on(self) -> None:
         self._channel.set_is_switched_on(True)
         self.assertTrue(self._channel.is_switched_on)
