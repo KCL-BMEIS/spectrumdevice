@@ -232,13 +232,13 @@ class SpectrumDigitiserCard(
         self.write_to_spectrum_device_register(SPC_POSTTRIGGER, length_in_samples)
 
     def _coerce_num_samples_if_fifo(self, value: int) -> int:
-    if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
-        if mod(value, get_memsize_step_size(self._model_number)) != 0:
-            logger.warning(
-                f"FIFO mode: coercing length to nearest {get_memsize_step_size(self._model_number)}" f" samples"
-            )
-        value = int(value - mod(value, get_memsize_step_size(self._model_number)))
-    return value
+        if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
+            if value != mod(value, get_memsize_step_size(self._model_number)):
+                logger.warning(
+                    f"FIFO mode: coercing length to nearest {get_memsize_step_size(self._model_number)}" f" samples"
+                )
+                value = int(value - mod(value, get_memsize_step_size(self._model_number)))
+        return value
 
     @property
     def number_of_averages(self) -> int:
