@@ -233,7 +233,7 @@ class SpectrumDigitiserCard(
 
     def _coerce_num_samples_if_fifo(self, value: int) -> int:
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
-            if value != mod(value, get_memsize_step_size(self._model_number)):
+            if mod(value, get_memsize_step_size(self._model_number)) != 0:
                 logger.warning(
                     f"FIFO mode: coercing length to nearest {get_memsize_step_size(self._model_number)}" f" samples"
                 )

@@ -11,6 +11,14 @@ from typing import List
 
 from spectrumdevice.spectrum_wrapper import decode_bitmap_using_list_of_ints
 from spectrum_gmbh.py_header.regs import (
+    SPC_TMASK0_CH0,
+    SPC_TMASK0_CH1,
+    SPC_TMASK0_CH2,
+    SPC_TMASK0_CH3,
+    SPC_TMASK0_CH4,
+    SPC_TMASK0_CH5,
+    SPC_TMASK0_CH6,
+    SPC_TMASK0_CH7,
     SPC_TMASK_SOFTWARE,
     SPC_TMASK_EXT0,
     SPC_TMASK_EXT1,
@@ -49,6 +57,22 @@ class TriggerSource(Enum):
     """Enables the X2 (logic) trigger for the OR mask."""
     SPC_TMASK_EXT3 = SPC_TMASK_EXT3
     """Enables the X3 (logic) trigger for the OR mask."""
+    SPC_TMASK0_CH0 = SPC_TMASK0_CH0
+    """Enables channel 0 for recognition within the channel OR mask"""
+    SPC_TMASK0_CH1 = SPC_TMASK0_CH1
+    """Enables channel 1 for recognition within the channel OR mask"""
+    SPC_TMASK0_CH2 = SPC_TMASK0_CH2
+    """Enables channel 2 for recognition within the channel OR mask"""
+    SPC_TMASK0_CH3 = SPC_TMASK0_CH3
+    """Enables channel 3 for recognition within the channel OR mask"""
+    SPC_TMASK0_CH4 = SPC_TMASK0_CH4
+    """Enables channel 4 for recognition within the channel OR mask"""
+    SPC_TMASK0_CH5 = SPC_TMASK0_CH5
+    """Enables channel 5 for recognition within the channel OR mask"""
+    SPC_TMASK0_CH6 = SPC_TMASK0_CH6
+    """Enables channel 6 for recognition within the channel OR mask"""
+    SPC_TMASK0_CH7 = SPC_TMASK0_CH7
+    """Enables channel 7 for recognition within the channel OR mask"""
     SPC_TMASK_NONE = SPC_TMASK_NONE
     """No trigger source selected."""
 
@@ -62,7 +86,7 @@ EXTERNAL_TRIGGER_SOURCES = [
 
 
 class ExternalTriggerMode(Enum):
-    """An Enum representing the supported trigger modes. See the Spectrum documentation more more Information.
+    """An Enum representing the supported trigger modes. See the Spectrum documentation more Information.
 
     SPC_TM_NONE:
     SPC_TM_POS:
