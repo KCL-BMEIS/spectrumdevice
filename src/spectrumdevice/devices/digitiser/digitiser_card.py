@@ -7,7 +7,7 @@ import datetime
 import logging
 from typing import List, Optional, Sequence, cast
 
-from numpy import float_, mod, squeeze, zeros
+from numpy import float_, int16, mod, squeeze, zeros
 from numpy.typing import NDArray
 
 from spectrum_gmbh.py_header.regs import (
@@ -105,8 +105,8 @@ class SpectrumDigitiserCard(
         """
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_WAITREADY)
 
-    def get_waveforms(self) -> List[List[NDArray[float_]]]:
-        """Get a list of the most recently transferred waveforms, in channel order.
+    def get_raw_waveforms(self) -> List[List[NDArray[int16]]]:
+        """Get a list of the most recently transferred waveforms, in channel order, as 16-bit integers.
 
         This method copies and reshapes the samples in the `TransferBuffer` into a list of lists of 1D NumPy arrays
         (waveforms) and returns the list.
@@ -120,7 +120,7 @@ class SpectrumDigitiserCard(
         this would the rate at which your trigger source was running).
 
         Returns:
-             waveforms (List[List[NDArray[float_]]]): A list of lists of 1D numpy arrays, one inner list per acquisition
+             waveforms (List[List[NDArray[int16]]]): A list of lists of 1D numpy arrays, one inner list per acquisition
              and one array per enabled channel, in channel order. To average the acquisitions:
                 `np.array(waveforms).mean(axis=0)`
 
@@ -169,15 +169,32 @@ class SpectrumDigitiserCard(
 
         repeat_acquisitions = []
         for n in range(self._batch_size):
+            repeat_acquisitions.append([waveform for waveform in waveforms_in_columns[n, :, :].T])
+
+        return repeat_acquisitions
+
+    def get_waveforms(self) -> List[List[NDArray[float_]]]:
+        """Get a list of the most recently transferred waveforms, in channel order, in Volts as floats.
+
+        See get_raw_waveforms() for details.
+
+        Returns:
+             waveforms (List[List[NDArray[float_]]]): A list of lists of 1D numpy arrays, one inner list per acquisition
+             and one array per enabled channel, in channel order. To average the acquisitions:
+                `np.array(waveforms).mean(axis=0)`
+
+        """
+        raw_repeat_acquisitions = self.get_raw_waveforms()
+        repeat_acquisitions = []
+        for n in range(self._batch_size):
             repeat_acquisitions.append(
                 [
                     cast(
                         SpectrumDigitiserAnalogChannel, self.analog_channels[ch_num]
                     ).convert_raw_waveform_to_voltage_waveform(squeeze(waveform))
-                    for ch_num, waveform in zip(self.enabled_analog_channel_nums, waveforms_in_columns[n, :, :].T)
+                    for ch_num, waveform in zip(self.enabled_analog_channel_nums, raw_repeat_acquisitions[n])
                 ]
             )
-
         return repeat_acquisitions
 
     def get_timestamp(self) -> Optional[datetime.datetime]:

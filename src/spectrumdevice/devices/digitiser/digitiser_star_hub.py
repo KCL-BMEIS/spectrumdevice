@@ -5,9 +5,9 @@
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 import datetime
 from threading import Thread
-from typing import Dict, List, Optional, Sequence
+from typing import Callable, Dict, List, Optional, Sequence, TypeVar
 
-from numpy import float_
+from numpy import float_, int16
 from numpy.typing import NDArray
 
 from spectrumdevice.devices.abstract_device import (
@@ -23,6 +23,10 @@ from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.device_modes import AcquisitionMode
 
 
+WAVEFORM_TYPE_VAR = TypeVar("WAVEFORM_TYPE_VAR", NDArray[float_], NDArray[int16])
+
+
+# noinspection PyTypeChecker
 class SpectrumDigitiserStarHub(
     AbstractSpectrumStarHub[
         SpectrumDigitiserCard, SpectrumDigitiserAnalogChannelInterface, SpectrumDigitiserIOLineInterface
@@ -70,23 +74,38 @@ class SpectrumDigitiserStarHub(
             card.wait_for_acquisition_to_complete()
 
     def get_waveforms(self) -> List[List[NDArray[float_]]]:
-        """Get a list of the most recently transferred waveforms.
+        """Get a list of the most recently transferred waveforms, as floating point voltages.
 
         This method gets the waveforms from each child card and joins them into a new list, ordered by channel number.
         See `SpectrumDigitiserCard.get_waveforms()` for more information.
-
-        Args:
-            num_acquisitions (int): For FIFO mode:  the number of acquisitions (i.e. trigger events) to wait for and
-            copy. Acquiring in batches (num_acquisitions > 1) can improve performance.
 
         Returns:
             waveforms (List[List[NDArray[float_]]]): A list lists of 1D numpy arrays, one inner list per acquisition,
               and one array per enabled channel, in channel order.
         """
-        card_ids_and_waveform_sets: Dict[str, list[list[NDArray[float_]]]] = {}
+        return self._get_waveforms_in_threads(SpectrumDigitiserCard.get_waveforms)
+
+    def get_raw_waveforms(self) -> List[List[NDArray[int16]]]:
+        """Get a list of the most recently transferred waveforms, as integers.
+
+        This method gets the waveforms from each child card and joins them into a new list, ordered by channel number.
+        See `SpectrumDigitiserCard.get_waveforms()` for more information.
+
+        Returns:
+            waveforms (List[List[NDArray[int16]]]): A list lists of 1D numpy arrays, one inner list per acquisition,
+              and one array per enabled channel, in channel order.
+        """
+        return self._get_waveforms_in_threads(SpectrumDigitiserCard.get_raw_waveforms)
+
+    def _get_waveforms_in_threads(
+        self, get_waveforms_method: Callable[[SpectrumDigitiserCard], List[List[WAVEFORM_TYPE_VAR]]]
+    ) -> List[List[WAVEFORM_TYPE_VAR]]:
+        """Gets waveforms from child cards in separate threads, using the SpectrumDigitiserCard method provided."""
+
+        card_ids_and_waveform_sets: Dict[str, list[list[WAVEFORM_TYPE_VAR]]] = {}
 
         def _get_waveforms(digitiser_card: SpectrumDigitiserCard) -> None:
-            this_cards_waveforms = digitiser_card.get_waveforms()
+            this_cards_waveforms = get_waveforms_method(digitiser_card)
             card_ids_and_waveform_sets[str(digitiser_card)] = this_cards_waveforms
 
         threads = [Thread(target=_get_waveforms, args=(card,)) for card in self._child_cards]

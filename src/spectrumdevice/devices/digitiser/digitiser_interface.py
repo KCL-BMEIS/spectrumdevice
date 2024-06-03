@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import List, Optional
 
-from numpy import float_, ndarray
+from numpy import float_, int16, ndarray
 from numpy.typing import NDArray
 
 from spectrumdevice.devices.abstract_device.device_interface import SpectrumDeviceInterface
@@ -102,6 +102,10 @@ class SpectrumDigitiserInterface(SpectrumDeviceInterface, ABC):
 
     @abstractmethod
     def execute_continuous_fifo_acquisition(self) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_raw_waveforms(self) -> List[List[NDArray[int16]]]:
         raise NotImplementedError()
 
     @abstractmethod
