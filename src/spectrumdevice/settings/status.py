@@ -57,6 +57,4 @@ hub and therefore contain multiple cards)."""
 def decode_status(code: int) -> CARD_STATUS_TYPE:
     """Converts the integer value received by a card when queried about its status to a list of StatusCodes."""
     possible_codes = [code.value for code in StatusCode]
-    return CARD_STATUS_TYPE(
-        [StatusCode(found_code) for found_code in decode_bitmap_using_list_of_ints(code, possible_codes)]
-    )
+    return [StatusCode(found_code) for found_code in decode_bitmap_using_list_of_ints(code, possible_codes)]
