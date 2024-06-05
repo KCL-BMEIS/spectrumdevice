@@ -81,7 +81,7 @@ class AbstractSpectrumStarHub(
         Returns:
             statuses (List[List[`CardStatus`]]): A list of lists of `CardStatus` (each card has a list of statuses).
         """
-        return DEVICE_STATUS_TYPE([card.status[0] for card in self._child_cards])
+        return [card.status[0] for card in self._child_cards]
 
     def start_transfer(self) -> None:
         """Start the transfer of data between the on-device buffer of each child card and its `TransferBuffer`. See
