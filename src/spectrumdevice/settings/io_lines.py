@@ -14,6 +14,8 @@ from spectrumdevice.exceptions import SpectrumIOError
 from spectrumdevice.settings.channel import SpectrumChannelName
 from spectrumdevice.spectrum_wrapper import decode_bitmap_using_list_of_ints
 from spectrum_gmbh.py_header.regs import (
+    SPCM_X2_MODE,
+    SPCM_X3_MODE,
     SPCM_XMODE_DISABLE,
     SPCM_XMODE_ASYNCIN,
     SPCM_XMODE_ASYNCOUT,
@@ -94,6 +96,8 @@ class IOLineMode(Enum):
 IO_LINE_MODE_COMMANDS = (
     SPCM_X0_MODE,
     SPCM_X1_MODE,
+    SPCM_X2_MODE,
+    SPCM_X3_MODE,
     SPCM_X4_MODE,
     SPCM_X5_MODE,
     SPCM_X6_MODE,
