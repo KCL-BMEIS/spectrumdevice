@@ -28,7 +28,7 @@ def pulse_generator_example(mock_mode: bool) -> None:
 
     # Set the card's sample rate. This affects the precision with which pulse timings can be chosen, and the min and max
     # allowed pulse periods
-    card.set_sample_rate_in_hz(100000)
+    card.set_sample_rate_in_hz(8000000)
     # Enable a single channel of the card. Although not used in this example, the number of enabled channels affects
     # the precision with which pulse timings can be chosen and the min and max allowed pulse periods
     card.set_enabled_analog_channels([0])
@@ -62,7 +62,7 @@ def pulse_generator_example(mock_mode: bool) -> None:
     # The period is the length of the whole pulse (high-voltage length + 0V length)
     # The duty cycle is the high-voltage length divided by the period
     pulse_output_settings = PulseGeneratorOutputSettings(
-        period_in_seconds=1e-3, duty_cycle=0.5, num_pulses=2, delay_in_seconds=0.0, output_inversion=False
+        period_in_seconds=1e-3, duty_cycle=0.01, num_pulses=1000, delay_in_seconds=0.0, output_inversion=False
     )
     pulse_gen.configure_output(pulse_output_settings, coerce=False)
 
