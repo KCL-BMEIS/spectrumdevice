@@ -7,7 +7,7 @@
 from abc import ABC
 from typing import List
 
-from spectrumdevice.measurement import Measurement
+from spectrumdevice.measurement import Measurement, RawWaveformType, VoltageWaveformType
 from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice
 from spectrumdevice.devices.digitiser.digitiser_interface import (
     SpectrumDigitiserAnalogChannelInterface,
@@ -76,13 +76,17 @@ class AbstractSpectrumDigitiser(
         if settings.timestamping_enabled:
             self.enable_timestamping()
 
-    def execute_standard_single_acquisition(self) -> Measurement:
+    def execute_standard_single_acquisition(self, raw: bool = False) -> Measurement:
         """Carry out a single measurement in standard single mode and return the acquired waveforms.
 
         This method automatically carries out a standard single mode acquisition, including handling the creation
         of a `TransferBuffer` and the retrieval of the acquired waveforms. After being called, it will wait until a
         trigger event is received before carrying out the acquisition and then transferring and returning the acquired
         waveforms. The device must be configured in SPC_REC_STD_SINGLE acquisition mode.
+
+        Args:
+            raw (bool, optional): Set to true to obtain raw (i.e. 16-bit integer) waveforms, instead of floating point
+            voltage waveforms.
 
         Returns:
             measurement (Measurement): A Measurement object. The `.waveforms` attribute of `measurement` will be a list
@@ -101,11 +105,13 @@ class AbstractSpectrumDigitiser(
         self.define_transfer_buffer()
         self.start_transfer()
         self.wait_for_transfer_chunk_to_complete()
-        waveforms = self.get_waveforms()[0]
+        waveforms: list[RawWaveformType] | list[VoltageWaveformType] = (
+            self.get_raw_waveforms()[0] if raw else self.get_waveforms()[0]
+        )
         self.stop()  # Only strictly required for Mock devices. Should not affect hardware.
         return Measurement(waveforms=waveforms, timestamp=self.get_timestamp())
 
-    def execute_finite_fifo_acquisition(self, num_measurements: int) -> List[Measurement]:
+    def execute_finite_fifo_acquisition(self, num_measurements: int, raw: bool = False) -> List[Measurement]:
         """Carry out a finite number of FIFO mode measurements and then stop the acquisitions.
 
         This method automatically carries out a defined number of measurement in Multi FIFO mode, including handling the
@@ -118,6 +124,8 @@ class AbstractSpectrumDigitiser(
 
         Args:
             num_measurements (int): The number of measurements to carry out.
+            raw (bool, optional): Set to true to obtain raw (i.e. 16-bit integer) waveforms, instead of floating point
+                voltage waveforms.
         Returns:
             measurements (List[Measurement]): A list of Measurement objects with length `num_measurements`. Each
                 Measurement object has a `waveforms` attribute containing a list of 1D NumPy arrays. Each array is a
@@ -133,9 +141,10 @@ class AbstractSpectrumDigitiser(
         self.execute_continuous_fifo_acquisition()
         measurements = []
         for _ in range(num_measurements // self.batch_size):
-            measurements += [
-                Measurement(waveforms=frame, timestamp=self.get_timestamp()) for frame in self.get_waveforms()
-            ]
+            waveforms: list[list[RawWaveformType]] | list[list[VoltageWaveformType]] = (
+                self.get_raw_waveforms() if raw else self.get_waveforms()
+            )
+            measurements += [Measurement(waveforms=frame, timestamp=self.get_timestamp()) for frame in waveforms]
         self.stop()
         return measurements
 
