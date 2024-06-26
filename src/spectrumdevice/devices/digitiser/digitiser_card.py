@@ -7,7 +7,7 @@ import datetime
 import logging
 from typing import List, Optional, Sequence, cast
 
-from numpy import float_, int16, mod, squeeze, zeros
+from numpy import float64, int16, mod, squeeze, zeros
 from numpy.typing import NDArray
 
 from spectrum_gmbh.py_header.regs import (
@@ -173,13 +173,13 @@ class SpectrumDigitiserCard(
 
         return repeat_acquisitions
 
-    def get_waveforms(self) -> List[List[NDArray[float_]]]:
+    def get_waveforms(self) -> List[List[NDArray[float64]]]:
         """Get a list of the most recently transferred waveforms, in channel order, in Volts as floats.
 
         See get_raw_waveforms() for details.
 
         Returns:
-             waveforms (List[List[NDArray[float_]]]): A list of lists of 1D numpy arrays, one inner list per acquisition
+             waveforms (List[List[NDArray[float64]]]): A list of lists of 1D numpy arrays, one inner list per acquisition
              and one array per enabled channel, in channel order. To average the acquisitions:
                 `np.array(waveforms).mean(axis=0)`
 

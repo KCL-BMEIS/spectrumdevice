@@ -2,11 +2,11 @@ from datetime import datetime
 from dataclasses import dataclass
 from typing import List, Optional
 
-from numpy import float_, int16
+from numpy import int16, float64
 from numpy.typing import NDArray
 
 
-VoltageWaveformType = NDArray[float_]
+VoltageWaveformType = NDArray[float64]
 RawWaveformType = NDArray[int16]
 
 

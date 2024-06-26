@@ -7,7 +7,7 @@ import datetime
 from threading import Thread
 from typing import Callable, Dict, List, Optional, Sequence, TypeVar
 
-from numpy import float_, int16
+from numpy import float64, int16
 from numpy.typing import NDArray
 
 from spectrumdevice.devices.abstract_device import (
@@ -23,7 +23,7 @@ from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.device_modes import AcquisitionMode
 
 
-WAVEFORM_TYPE_VAR = TypeVar("WAVEFORM_TYPE_VAR", NDArray[float_], NDArray[int16])
+WAVEFORM_TYPE_VAR = TypeVar("WAVEFORM_TYPE_VAR", NDArray[float64], NDArray[int16])
 
 
 # noinspection PyTypeChecker
@@ -73,14 +73,14 @@ class SpectrumDigitiserStarHub(
         for card in self._child_cards:
             card.wait_for_acquisition_to_complete()
 
-    def get_waveforms(self) -> List[List[NDArray[float_]]]:
+    def get_waveforms(self) -> List[List[NDArray[float64]]]:
         """Get a list of the most recently transferred waveforms, as floating point voltages.
 
         This method gets the waveforms from each child card and joins them into a new list, ordered by channel number.
         See `SpectrumDigitiserCard.get_waveforms()` for more information.
 
         Returns:
-            waveforms (List[List[NDArray[float_]]]): A list lists of 1D numpy arrays, one inner list per acquisition,
+            waveforms (List[List[NDArray[float64]]]): A list lists of 1D numpy arrays, one inner list per acquisition,
               and one array per enabled channel, in channel order.
         """
         return self._get_waveforms_in_threads(SpectrumDigitiserCard.get_waveforms)
