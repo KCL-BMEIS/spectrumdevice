@@ -8,14 +8,14 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import List, Optional
 
-from numpy import float_, int16, ndarray
-from numpy.typing import NDArray
+from numpy import ndarray
 
 from spectrumdevice.devices.abstract_device.device_interface import SpectrumDeviceInterface
 from spectrumdevice.devices.abstract_device.channel_interfaces import (
     SpectrumAnalogChannelInterface,
     SpectrumIOLineInterface,
 )
+from spectrumdevice.measurement import VoltageWaveformType, RawWaveformType
 from spectrumdevice.settings import AcquisitionMode, AcquisitionSettings
 from spectrumdevice import Measurement
 from spectrumdevice.settings.channel import InputImpedance, InputCoupling, InputPath
@@ -105,11 +105,11 @@ class SpectrumDigitiserInterface(SpectrumDeviceInterface, ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_raw_waveforms(self) -> List[List[NDArray[int16]]]:
+    def get_raw_waveforms(self) -> List[List[RawWaveformType]]:
         raise NotImplementedError()
 
     @abstractmethod
-    def get_waveforms(self) -> List[List[NDArray[float_]]]:
+    def get_waveforms(self) -> List[List[VoltageWaveformType]]:
         raise NotImplementedError()
 
     @abstractmethod
