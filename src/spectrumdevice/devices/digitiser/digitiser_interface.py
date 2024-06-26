@@ -1,7 +1,7 @@
 """Defines public interfaces for controlling Spectrum digitiser devices and their channels."""
 
 # Christian Baker, King's College London
-# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
+# Copyright (c) 2024 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
 from abc import ABC, abstractmethod
@@ -93,11 +93,11 @@ class SpectrumDigitiserInterface(SpectrumDeviceInterface, ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def execute_standard_single_acquisition(self) -> Measurement:
+    def execute_standard_single_acquisition(self, raw: bool = False) -> Measurement:
         raise NotImplementedError()
 
     @abstractmethod
-    def execute_finite_fifo_acquisition(self, num_measurements: int) -> List[Measurement]:
+    def execute_finite_fifo_acquisition(self, num_measurements: int, raw: bool = False) -> List[Measurement]:
         raise NotImplementedError()
 
     @abstractmethod

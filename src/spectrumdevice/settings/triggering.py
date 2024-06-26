@@ -3,7 +3,7 @@ API commands used to configure each external trigger input. Also provides a func
 received by a device when queried about its enabled trigger sources."""
 
 # Christian Baker, King's College London
-# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
+# Copyright (c) 2024 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
 from enum import Enum

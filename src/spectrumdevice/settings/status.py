@@ -3,7 +3,7 @@ the list of statuses returned by a card, and the list of lists of statuses retur
 function for decoding the integer value received by a card when queried about its status."""
 
 # Christian Baker, King's College London
-# Copyright (c) 2021 School of Biomedical Engineering & Imaging Sciences, King's College London
+# Copyright (c) 2024 School of Biomedical Engineering & Imaging Sciences, King's College London
 # Licensed under the MIT. You may obtain a copy at https://opensource.org/licenses/MIT.
 
 from enum import Enum
