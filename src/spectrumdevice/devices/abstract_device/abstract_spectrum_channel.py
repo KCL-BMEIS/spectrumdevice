@@ -1,6 +1,6 @@
 """Provides a partially-implemented abstract class common to individual channels of Spectrum devices."""
 from abc import abstractmethod, ABC
-from typing import Any, TypeVar, Generic
+from typing import Any, List, TypeVar, Generic
 
 # Christian Baker, King's College London
 # Copyright (c) 2024 School of Biomedical Engineering & Imaging Sciences, King's College London
@@ -13,7 +13,7 @@ from spectrumdevice.devices.abstract_device.channel_interfaces import (
 from spectrumdevice.devices.abstract_device.device_interface import SpectrumDeviceInterface
 from spectrumdevice.settings import SpectrumRegisterLength
 from spectrumdevice.settings.channel import SpectrumAnalogChannelName, SpectrumChannelName
-
+from spectrumdevice.spectrum_wrapper import decode_bitmap_using_list_of_ints
 
 ChannelNameType = TypeVar("ChannelNameType", bound=SpectrumChannelName)
 
@@ -89,3 +89,9 @@ class AbstractSpectrumAnalogChannel(
 
     def _make_name(self, channel_number: int) -> SpectrumAnalogChannelName:
         return SpectrumAnalogChannelName[f"{self._name_prefix}{channel_number}"]
+
+
+def decode_enabled_channels(value: int) -> List[int]:
+    """Converts the integer values provided by a device when queried about its enabled trigger source to a list of
+    TriggerSources."""
+    return decode_bitmap_using_list_of_ints(value, list(range(16)))
