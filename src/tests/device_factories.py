@@ -1,8 +1,15 @@
 from spectrumdevice import SpectrumDigitiserStarHub
 from spectrumdevice.devices.awg.awg_card import SpectrumAWGCard
 from spectrumdevice.devices.awg.awg_interface import SpectrumAWGInterface
-from spectrumdevice.devices.digitiser import SpectrumDigitiserCard, SpectrumDigitiserInterface
-from spectrumdevice.devices.mocks import MockSpectrumAWGCard, MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub
+from spectrumdevice.devices.digitiser import (
+    SpectrumDigitiserCard,
+    SpectrumDigitiserInterface,
+)
+from spectrumdevice.devices.mocks import (
+    MockSpectrumAWGCard,
+    MockSpectrumDigitiserCard,
+    MockSpectrumDigitiserStarHub,
+)
 from spectrumdevice.settings import AdvancedCardFeature, CardFeature, ModelNumber
 from tests.configuration import (
     MOCK_DEVICE_TEST_FRAME_RATE_HZ,
@@ -27,7 +34,9 @@ def create_digitiser_card_for_testing() -> SpectrumDigitiserInterface:
     """Configure a real or mock device for unit testing using the global constant values defined in
     tests/configuration.py"""
     if SINGLE_DIGITISER_CARD_TEST_MODE == SpectrumTestMode.REAL_HARDWARE:
-        return SpectrumDigitiserCard(device_number=TEST_DIGITISER_NUMBER, ip_address=TEST_DIGITISER_IP)
+        return SpectrumDigitiserCard(
+            device_number=TEST_DIGITISER_NUMBER, ip_address=TEST_DIGITISER_IP
+        )
     else:
         return MockSpectrumDigitiserCard(
             device_number=TEST_DIGITISER_NUMBER,
@@ -68,9 +77,13 @@ def create_spectrum_star_hub_for_testing() -> SpectrumDigitiserStarHub:
     if DIGITISER_STAR_HUB_TEST_MODE == SpectrumTestMode.REAL_HARDWARE:
         child_cards = []
         for n in range(NUM_CARDS_IN_STAR_HUB):
-            child_cards.append(SpectrumDigitiserCard(device_number=n, ip_address=TEST_DIGITISER_IP))
+            child_cards.append(
+                SpectrumDigitiserCard(device_number=n, ip_address=TEST_DIGITISER_IP)
+            )
         return SpectrumDigitiserStarHub(
-            device_number=0, child_cards=tuple(child_cards), master_card_index=STAR_HUB_MASTER_CARD_INDEX
+            device_number=0,
+            child_cards=tuple(child_cards),
+            master_card_index=STAR_HUB_MASTER_CARD_INDEX,
         )
     else:
         mock_child_cards = []
@@ -85,5 +98,7 @@ def create_spectrum_star_hub_for_testing() -> SpectrumDigitiserStarHub:
                 )
             )
         return MockSpectrumDigitiserStarHub(
-            device_number=0, child_cards=mock_child_cards, master_card_index=STAR_HUB_MASTER_CARD_INDEX
+            device_number=0,
+            child_cards=mock_child_cards,
+            master_card_index=STAR_HUB_MASTER_CARD_INDEX,
         )

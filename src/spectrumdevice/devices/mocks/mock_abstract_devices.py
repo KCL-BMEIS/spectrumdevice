@@ -99,11 +99,22 @@ from spectrum_gmbh.py_header.regs import (
     SPC_XIO_PULSEGEN_CLOCK,
     SPC_XIO_PULSEGEN_ENABLE,
 )
-from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice, AbstractSpectrumCard, AbstractSpectrumStarHub
+from spectrumdevice.devices.abstract_device import (
+    AbstractSpectrumDevice,
+    AbstractSpectrumCard,
+    AbstractSpectrumStarHub,
+)
 from spectrumdevice.devices.awg.abstract_spectrum_awg import AbstractSpectrumAWG
-from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
-from spectrumdevice.devices.mocks.mock_waveform_source import mock_waveform_source_factory
-from spectrumdevice.exceptions import MockRegisterNotImplemented, SpectrumDeviceNotConnected
+from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import (
+    AbstractSpectrumDigitiser,
+)
+from spectrumdevice.devices.mocks.mock_waveform_source import (
+    mock_waveform_source_factory,
+)
+from spectrumdevice.exceptions import (
+    MockRegisterNotImplemented,
+    SpectrumDeviceNotConnected,
+)
 from spectrumdevice.settings import (
     AcquisitionMode,
     AdvancedCardFeature,
@@ -127,7 +138,10 @@ class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
         super().__init__(**kwargs)  # required for proper MRO resolution
 
     def write_to_spectrum_device_register(
-        self, spectrum_register: int, value: int, length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO
+        self,
+        spectrum_register: int,
+        value: int,
+        length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> None:
         """Simulates the setting of a parameter or command (register) on Spectrum hardware by storing its value
         internally.
@@ -149,7 +163,9 @@ class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
             raise SpectrumDeviceNotConnected("Mock device has been disconnected.")
 
     def read_spectrum_device_register(
-        self, spectrum_register: int, length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO
+        self,
+        spectrum_register: int,
+        length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> int:
         """Read the current value of a mock Spectrum register. Registers that are not set to the internal
          parameter store during __init__() will need to be set using set_spectrum_api_param() before they can be
@@ -197,9 +213,13 @@ class MockAbstractSpectrumCard(MockAbstractSpectrumDevice, AbstractSpectrumCard,
         **kwargs: Any,
     ) -> None:
         param_dict: dict[int, int] = {}
-        param_dict[SPC_PCIFEATURES] = reduce(or_, [f.value for f in card_features]) if card_features else 0
+        param_dict[SPC_PCIFEATURES] = (
+            reduce(or_, [f.value for f in card_features]) if card_features else 0
+        )
         param_dict[SPC_PCIEXTFEATURES] = (
-            reduce(or_, [f.value for f in advanced_card_features]) if advanced_card_features else 0
+            reduce(or_, [f.value for f in advanced_card_features])
+            if advanced_card_features
+            else 0
         )
         param_dict[SPCM_X0_AVAILMODES] = SPCM_XMODE_DISABLE
         param_dict[SPCM_X1_AVAILMODES] = SPCM_XMODE_DISABLE
@@ -213,7 +233,9 @@ class MockAbstractSpectrumCard(MockAbstractSpectrumDevice, AbstractSpectrumCard,
         param_dict[SPC_MEMSIZE] = 1000
         param_dict[SPC_PCITYP] = model.value
         param_dict[SPC_FNCTYPE] = card_type.value
-        param_dict[SPC_CARDMODE] = cast(int, mode.value)  # cast suppresses a pycharm warning
+        param_dict[SPC_CARDMODE] = cast(
+            int, mode.value
+        )  # cast suppresses a pycharm warning
         param_dict[SPC_MIINST_MODULES] = num_modules
         param_dict[SPC_MIINST_CHPERMODULE] = num_channels_per_module
         param_dict[SPC_MIINST_BYTESPERSAMPLE] = 2
@@ -254,9 +276,15 @@ class MockAbstractSpectrumCard(MockAbstractSpectrumDevice, AbstractSpectrumCard,
         param_dict[SPC_XIO_PULSEGEN2_LOOPS] = 0
         param_dict[SPC_XIO_PULSEGEN3_LOOPS] = 0
         # ...trigger delay
-        param_dict[602007] = 0  # SPC_XIO_PULSEGEN_AVAILDELAY_MIN not in regs for some reason
-        param_dict[602008] = 1000000  # SPC_XIO_PULSEGEN_AVAILDELAY_MAX not in regs for some reason
-        param_dict[602009] = 1  # SPC_XIO_PULSEGEN_AVAILDELAY_STEP not in regs for some reason
+        param_dict[
+            602007
+        ] = 0  # SPC_XIO_PULSEGEN_AVAILDELAY_MIN not in regs for some reason
+        param_dict[
+            602008
+        ] = 1000000  # SPC_XIO_PULSEGEN_AVAILDELAY_MAX not in regs for some reason
+        param_dict[
+            602009
+        ] = 1  # SPC_XIO_PULSEGEN_AVAILDELAY_STEP not in regs for some reason
         param_dict[601003] = 0  # SPC_XIO_PULSEGEN0_DELAY not in regs for some reason
         param_dict[601103] = 0  # SPC_XIO_PULSEGEN1_DELAY not in regs for some reason
         param_dict[601203] = 0  # SPC_XIO_PULSEGEN2_DELAY not in regs for some reason
@@ -303,11 +331,15 @@ class MockAbstractSpectrumCard(MockAbstractSpectrumDevice, AbstractSpectrumCard,
         self._visa_string = "/mock" + self._visa_string
 
 
-class MockAbstractSpectrumStarHub(MockAbstractSpectrumDevice, AbstractSpectrumStarHub, ABC):
+class MockAbstractSpectrumStarHub(
+    MockAbstractSpectrumDevice, AbstractSpectrumStarHub, ABC
+):
     pass
 
 
-class MockAbstractSpectrumDigitiser(MockAbstractSpectrumDevice, AbstractSpectrumDigitiser, ABC):
+class MockAbstractSpectrumDigitiser(
+    MockAbstractSpectrumDevice, AbstractSpectrumDigitiser, ABC
+):
     """Overrides methods of `AbstractSpectrumDigitiser` that communicate with hardware with mocked implementations, allowing
     software to be tested without Spectrum hardware connected or drivers installed, e.g. during CI. Instances of this
     class cannot be constructed directly - instantiate `MockAbstractSpectrumDigitiser` and `MockSpectrumStarHub` objects instead,
@@ -333,8 +365,12 @@ class MockAbstractSpectrumDigitiser(MockAbstractSpectrumDevice, AbstractSpectrum
         number of currently enabled channels and the acquisition length, and places them in the transfer buffer.
         """
         self.define_transfer_buffer()
-        notify_size = self.transfer_buffers[0].notify_size_in_pages  # this will be 0 in STD_SINGLE_MODE
-        waveform_source = mock_waveform_source_factory(self.acquisition_mode, self._param_dict, notify_size)
+        notify_size = self.transfer_buffers[
+            0
+        ].notify_size_in_pages  # this will be 0 in STD_SINGLE_MODE
+        waveform_source = mock_waveform_source_factory(
+            self.acquisition_mode, self._param_dict, notify_size
+        )
         amplitude = self.read_spectrum_device_register(SPC_MIINST_MAXADCVALUE)
         print(f"STARTING MOCK WAVEFORMS SOURCE WITH AMPLITUDE {amplitude}")
         self._acquisition_stop_event.clear()
@@ -345,7 +381,8 @@ class MockAbstractSpectrumDigitiser(MockAbstractSpectrumDevice, AbstractSpectrum
                 self._source_frame_rate_hz,
                 amplitude,
                 self.transfer_buffers[0].data_array,
-                self.acquisition_length_in_samples * len(self.enabled_analog_channel_nums),
+                self.acquisition_length_in_samples
+                * len(self.enabled_analog_channel_nums),
                 self._buffer_lock,
             ),
         )

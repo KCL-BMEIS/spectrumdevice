@@ -22,7 +22,9 @@ class PulseGeneratorMultiplexerInterface(Generic[MultiplexerTriggerSourceTypeVar
         raise NotImplementedError()
 
     def read_parent_device_register(
-        self, spectrum_register: int, length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO
+        self,
+        spectrum_register: int,
+        length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> int:
         raise NotImplementedError()
 
@@ -47,7 +49,9 @@ class PulseGeneratorMultiplexerInterface(Generic[MultiplexerTriggerSourceTypeVar
         raise NotImplementedError()
 
     @abstractmethod
-    def set_trigger_source(self, trigger_source: MultiplexerTriggerSourceTypeVar) -> None:
+    def set_trigger_source(
+        self, trigger_source: MultiplexerTriggerSourceTypeVar
+    ) -> None:
         raise NotImplementedError()
 
 
@@ -73,7 +77,9 @@ class PulseGeneratorInterface(ABC):
 
     @abstractmethod
     def read_parent_device_register(
-        self, spectrum_register: int, length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO
+        self,
+        spectrum_register: int,
+        length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> int:
         raise NotImplementedError()
 
@@ -134,7 +140,9 @@ class PulseGeneratorInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def set_trigger_detection_mode(self, mode: PulseGeneratorTriggerDetectionMode) -> None:
+    def set_trigger_detection_mode(
+        self, mode: PulseGeneratorTriggerDetectionMode
+    ) -> None:
         raise NotImplementedError()
 
     @property
@@ -249,5 +257,7 @@ class PulseGeneratorInterface(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def set_delay_in_seconds(self, delay_in_seconds: float, coerce: bool = False) -> float:
+    def set_delay_in_seconds(
+        self, delay_in_seconds: float, coerce: bool = False
+    ) -> float:
         raise NotImplementedError()

@@ -224,4 +224,6 @@ def get_memsize_step_size(model: ModelNumber) -> int:
     try:
         return MEMSIZE_STEP_SIZES[model.value & TYP_FAMILYMASK]
     except KeyError:
-        raise ValueError(f"Cannot determined MEMSIZE for device model {ModelNumber}. Perhaps it is not a digitiser.")
+        raise ValueError(
+            f"Cannot determined MEMSIZE for device model {ModelNumber}. Perhaps it is not a digitiser."
+        )

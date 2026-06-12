@@ -1,7 +1,12 @@
 from abc import ABC
 from typing import Optional
 
-from spectrum_gmbh.py_header.regs import M2CMD_CARD_WRITESETUP, SPC_CARDMODE, SPC_LOOPS, SPC_M2CMD
+from spectrum_gmbh.py_header.regs import (
+    M2CMD_CARD_WRITESETUP,
+    SPC_CARDMODE,
+    SPC_LOOPS,
+    SPC_M2CMD,
+)
 from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice
 from spectrumdevice.devices.awg.awg_interface import (
     SpectrumAWGAnalogChannelInterface,
@@ -13,7 +18,11 @@ from spectrumdevice.settings.device_modes import GenerationMode
 
 
 class AbstractSpectrumAWG(
-    AbstractSpectrumDevice[SpectrumAWGAnalogChannelInterface, SpectrumAWGIOLineInterface], SpectrumAWGInterface, ABC
+    AbstractSpectrumDevice[
+        SpectrumAWGAnalogChannelInterface, SpectrumAWGIOLineInterface
+    ],
+    SpectrumAWGInterface,
+    ABC,
 ):
     def configure_generation(self, generation_settings: GenerationSettings) -> None:
         """Apply all the settings contained in an `GenerationSettings` dataclass to the device.
@@ -28,7 +37,9 @@ class AbstractSpectrumAWG(
         self.set_num_loops(generation_settings.num_loops)
         self.set_enabled_analog_channels(generation_settings.enabled_channels)
         if generation_settings.custom_stop_levels is None:
-            custom_stop_levels: list[Optional[int]] = [None] * len(self.enabled_analog_channel_nums)
+            custom_stop_levels: list[Optional[int]] = [None] * len(
+                self.enabled_analog_channel_nums
+            )
         else:
             custom_stop_levels = generation_settings.custom_stop_levels
         for channel_num, amp, dc, filt, stop_mode, stop_level in zip(

@@ -36,7 +36,9 @@ from spectrum_gmbh.py_header.regs import (
 
 # Devices return same value for SPCM_FEAT_STARHUB4, SPCM_FEAT_STARHUB4, SPCM_FEAT_STARHUB6_EXTM and
 # SPCM_FEAT_STARHUB8_EXTM card features
-SPCM_FEAT_STARHUB_4_5_6EXTM_8EXTM = SPCM_FEAT_STARHUB4  # Devices return same value for SPCM_FEAT_STARHUB4
+SPCM_FEAT_STARHUB_4_5_6EXTM_8EXTM = (
+    SPCM_FEAT_STARHUB4  # Devices return same value for SPCM_FEAT_STARHUB4
+)
 
 # Devices return same value for SPCM_FEAT_STARHUB8, SPCM_FEAT_STARHUB16 and SPCM_FEAT_STARHUB16_EXTM card features
 SPCM_FEAT_STARHUB_8_16_16EXTM = SPCM_FEAT_STARHUB8
@@ -70,7 +72,10 @@ def decode_card_features(value: int) -> List[CardFeature]:
     """Converts the integer value received by a Spectrum device when queried about its features into a list of
     CardFeatures."""
     possibe_values = [feature.value for feature in CardFeature]
-    return [CardFeature(found_value) for found_value in decode_bitmap_using_list_of_ints(value, possibe_values)]
+    return [
+        CardFeature(found_value)
+        for found_value in decode_bitmap_using_list_of_ints(value, possibe_values)
+    ]
 
 
 class AdvancedCardFeature(Enum):
@@ -89,5 +94,6 @@ def decode_advanced_card_features(value: int) -> List[AdvancedCardFeature]:
     AdvancedCardFeatures."""
     possible_values = [feature.value for feature in AdvancedCardFeature]
     return [
-        AdvancedCardFeature(found_value) for found_value in decode_bitmap_using_list_of_ints(value, possible_values)
+        AdvancedCardFeature(found_value)
+        for found_value in decode_bitmap_using_list_of_ints(value, possible_values)
     ]

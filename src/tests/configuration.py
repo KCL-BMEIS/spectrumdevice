@@ -44,17 +44,26 @@ MOCK_DEVICE_TEST_FRAME_RATE_HZ = 10.0
 INTEGRATION_TEST_TRIGGER_SOURCE = TriggerSource.SPC_TMASK_SOFTWARE
 
 
-if SINGLE_DIGITISER_CARD_TEST_MODE == SpectrumTestMode.REAL_HARDWARE and not SPECTRUM_DRIVERS_FOUND:
+if (
+    SINGLE_DIGITISER_CARD_TEST_MODE == SpectrumTestMode.REAL_HARDWARE
+    and not SPECTRUM_DRIVERS_FOUND
+):
     raise SpectrumIOError(
         "Cannot run single card tests in REAL_HARDWARE mode because no Spectrum drivers were found."
         "Set SINGLE_DIGITISER_CARD_TEST_MODE = SpectrumTestMode.MOCK_HARDWARE in configuration.py."
     )
-if SINGLE_AWG_CARD_TEST_MODE == SpectrumTestMode.REAL_HARDWARE and not SPECTRUM_DRIVERS_FOUND:
+if (
+    SINGLE_AWG_CARD_TEST_MODE == SpectrumTestMode.REAL_HARDWARE
+    and not SPECTRUM_DRIVERS_FOUND
+):
     raise SpectrumIOError(
         "Cannot run single card tests in REAL_HARDWARE mode because no Spectrum drivers were found."
         "Set SINGLE_AWG_CARD_TEST_MODE = SpectrumTestMode.MOCK_HARDWARE in configuration.py."
     )
-if DIGITISER_STAR_HUB_TEST_MODE == SpectrumTestMode.REAL_HARDWARE and not SPECTRUM_DRIVERS_FOUND:
+if (
+    DIGITISER_STAR_HUB_TEST_MODE == SpectrumTestMode.REAL_HARDWARE
+    and not SPECTRUM_DRIVERS_FOUND
+):
     raise SpectrumIOError(
         "Cannot run star-hub tests in REAL_HARDWARE mode because no Spectrum drivers were found"
         "Set DIGITISER_STAR_HUB_TEST_MODE = SpectrumTestMode.MOCK_HARDWARE in configuration.py."

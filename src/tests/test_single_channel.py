@@ -5,14 +5,22 @@ from numpy import iinfo, int16
 from spectrumdevice import SpectrumDigitiserAnalogChannel
 from spectrumdevice.devices.awg.awg_channel import SpectrumAWGAnalogChannel
 from spectrumdevice.settings import InputImpedance
-from spectrumdevice.settings.channel import OutputChannelFilter, OutputChannelStopLevelMode
-from tests.device_factories import create_awg_card_for_testing, create_digitiser_card_for_testing
+from spectrumdevice.settings.channel import (
+    OutputChannelFilter,
+    OutputChannelStopLevelMode,
+)
+from tests.device_factories import (
+    create_awg_card_for_testing,
+    create_digitiser_card_for_testing,
+)
 
 
 class SingleDigitiserAnalogChannelTest(TestCase):
     def setUp(self) -> None:
         self._device = create_digitiser_card_for_testing()
-        self._channel = SpectrumDigitiserAnalogChannel(channel_number=0, parent_device=self._device)
+        self._channel = SpectrumDigitiserAnalogChannel(
+            channel_number=0, parent_device=self._device
+        )
 
     def tearDown(self) -> None:
         self._channel._parent_device.disconnect()
@@ -36,7 +44,9 @@ class SingleDigitiserAnalogChannelTest(TestCase):
 class SingleAWGAnalogChannelTest(TestCase):
     def setUp(self) -> None:
         self._device = create_awg_card_for_testing()
-        self._channel = SpectrumAWGAnalogChannel(channel_number=0, parent_device=self._device)
+        self._channel = SpectrumAWGAnalogChannel(
+            channel_number=0, parent_device=self._device
+        )
 
     def tearDown(self) -> None:
         self._channel._parent_device.disconnect()
@@ -55,11 +65,15 @@ class SingleAWGAnalogChannelTest(TestCase):
 
     def test_output_filter(self) -> None:
         self._channel.set_output_filter(OutputChannelFilter.LOW_PASS_1_MHZ)
-        self.assertEqual(OutputChannelFilter.LOW_PASS_1_MHZ, self._channel.output_filter)
+        self.assertEqual(
+            OutputChannelFilter.LOW_PASS_1_MHZ, self._channel.output_filter
+        )
 
     def test_stop_level_mode(self) -> None:
         self._channel.set_stop_level_mode(OutputChannelStopLevelMode.SPCM_STOPLVL_HIGH)
-        self.assertEqual(OutputChannelStopLevelMode.SPCM_STOPLVL_HIGH, self._channel.stop_level_mode)
+        self.assertEqual(
+            OutputChannelStopLevelMode.SPCM_STOPLVL_HIGH, self._channel.stop_level_mode
+        )
 
     def test_stop_level_custom_value(self) -> None:
         max_value = int16(iinfo(int16).max)

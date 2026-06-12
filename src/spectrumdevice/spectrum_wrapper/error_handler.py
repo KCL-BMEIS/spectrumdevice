@@ -63,10 +63,14 @@ def error_handler(func: Callable) -> Callable:
             pass
         elif error_code in ERROR_CODES_TO_REPORT_BUT_NOT_RAISE:
             logger.warning(
-                f"Unraised spectrum error from {func.__name__}: {description} " f"({error_code})", stack_info=True
+                f"Unraised spectrum error from {func.__name__}: {description} "
+                f"({error_code})",
+                stack_info=True,
             )
         elif error_code in ERROR_CODES_WITH_EXCEPTIONS:
-            raise ERROR_CODES_WITH_EXCEPTIONS[error_code](func.__name__, error_code, description)
+            raise ERROR_CODES_WITH_EXCEPTIONS[error_code](
+                func.__name__, error_code, description
+            )
         else:
             raise SpectrumApiCallFailed(func.__name__, error_code, description)
 

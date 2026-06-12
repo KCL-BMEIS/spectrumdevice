@@ -93,10 +93,16 @@ if __name__ == "__main__":
             plot(wfm)
 
     ts_format = "%Y-%m-%d %H:%M:%S.%f"
-    print(f"Completed {len(measurements)} measurements each containing {len(measurements[0].waveforms)} waveforms.")
+    print(
+        f"Completed {len(measurements)} measurements each containing {len(measurements[0].waveforms)} waveforms."
+    )
     print(f"Waveforms had the following shape: {measurements[0].waveforms[0].shape}")
     print(f"and the following timestamps:")
     for measurement in measurements:
-        print(measurement.timestamp.strftime(ts_format) if measurement.timestamp else "Timestamping disabled")
+        print(
+            measurement.timestamp.strftime(ts_format)
+            if measurement.timestamp
+            else "Timestamping disabled"
+        )
 
     show()

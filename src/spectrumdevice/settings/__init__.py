@@ -21,13 +21,21 @@ from spectrumdevice.settings.channel import (
     OutputChannelFilter,
     OutputChannelStopLevelMode,
 )
-from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode, GenerationMode
+from spectrumdevice.settings.device_modes import (
+    AcquisitionMode,
+    ClockMode,
+    GenerationMode,
+)
 from spectrumdevice.settings.io_lines import IOLineMode, AvailableIOModes
 from spectrumdevice.settings.transfer_buffer import (
     TransferBuffer,
 )
 from spectrumdevice.settings.triggering import TriggerSource, ExternalTriggerMode
-from spectrumdevice.settings.status import CARD_STATUS_TYPE, DEVICE_STATUS_TYPE, StatusCode
+from spectrumdevice.settings.status import (
+    CARD_STATUS_TYPE,
+    DEVICE_STATUS_TYPE,
+    StatusCode,
+)
 from spectrumdevice.settings.pulse_generator import (
     PulseGeneratorTriggerSettings,
     PulseGeneratorTriggerMode,

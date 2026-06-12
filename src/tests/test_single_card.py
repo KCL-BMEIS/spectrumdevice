@@ -7,7 +7,9 @@ from numpy.testing import assert_array_equal
 
 from spectrum_gmbh.py_header.regs import SPC_CHENABLE
 from spectrumdevice import SpectrumDigitiserAnalogChannel
-from spectrumdevice.devices.abstract_device.device_interface import SpectrumDeviceInterface
+from spectrumdevice.devices.abstract_device.device_interface import (
+    SpectrumDeviceInterface,
+)
 from spectrumdevice.devices.awg.awg_channel import SpectrumAWGAnalogChannel
 from spectrumdevice.devices.awg.awg_interface import SpectrumAWGInterface
 from spectrumdevice.devices.digitiser import SpectrumDigitiserInterface
@@ -24,7 +26,11 @@ from spectrumdevice.settings import (
     OutputChannelStopLevelMode,
 )
 from spectrumdevice.settings.channel import SpectrumAnalogChannelName
-from spectrumdevice.settings.device_modes import AcquisitionMode, ClockMode, GenerationMode
+from spectrumdevice.settings.device_modes import (
+    AcquisitionMode,
+    ClockMode,
+    GenerationMode,
+)
 from spectrumdevice.settings.transfer_buffer import (
     create_samples_acquisition_transfer_buffer,
     transfer_buffer_factory,
@@ -39,7 +45,10 @@ from tests.configuration import (
     NUM_MODULES_PER_AWG,
     NUM_CHANNELS_PER_AWG_MODULE,
 )
-from tests.device_factories import create_awg_card_for_testing, create_digitiser_card_for_testing
+from tests.device_factories import (
+    create_awg_card_for_testing,
+    create_digitiser_card_for_testing,
+)
 
 
 CardInterfaceVar = TypeVar("CardInterfaceVar", bound=SpectrumDeviceInterface)
@@ -50,7 +59,9 @@ class SingleCardTest(TestCase, Generic[CardInterfaceVar], ABC):
 
     def setUp(self) -> None:
         self._device: CardInterfaceVar = self._create_test_card()
-        self._all_spectrum_channel_identifiers = [c.value for c in SpectrumAnalogChannelName]
+        self._all_spectrum_channel_identifiers = [
+            c.value for c in SpectrumAnalogChannelName
+        ]
         self._all_spectrum_channel_identifiers.sort()  # Enums are unordered so ensure channels are in ascending order
         self._expected_num_channels = self._determine_expected_num_channels()
 
@@ -72,14 +83,21 @@ class SingleCardTest(TestCase, Generic[CardInterfaceVar], ABC):
     def test_enable_one_channel(self) -> None:
         self._device.set_enabled_analog_channels([0])
         self.assertEqual(
-            self._all_spectrum_channel_identifiers[0], self._device.read_spectrum_device_register(SPC_CHENABLE)
+            self._all_spectrum_channel_identifiers[0],
+            self._device.read_spectrum_device_register(SPC_CHENABLE),
         )
 
     def test_enable_two_channels(self) -> None:
         if len(self._device.analog_channels) > 1:
             self._device.set_enabled_analog_channels([0, 1])
-            expected_command = self._all_spectrum_channel_identifiers[0] | self._all_spectrum_channel_identifiers[1]
-            self.assertEqual(expected_command, self._device.read_spectrum_device_register(SPC_CHENABLE))
+            expected_command = (
+                self._all_spectrum_channel_identifiers[0]
+                | self._all_spectrum_channel_identifiers[1]
+            )
+            self.assertEqual(
+                expected_command,
+                self._device.read_spectrum_device_register(SPC_CHENABLE),
+            )
 
     def test_timeout(self) -> None:
         timeout = 1000
@@ -164,7 +182,9 @@ class DigitiserCardTest(SingleCardTest[SpectrumDigitiserInterface]):
 
         expected_channels = tuple(
             [
-                SpectrumDigitiserAnalogChannel(channel_number=i, parent_device=self._device)
+                SpectrumDigitiserAnalogChannel(
+                    channel_number=i, parent_device=self._device
+                )
                 for i in range(self._expected_num_channels)
             ]
         )
@@ -180,7 +200,9 @@ class DigitiserCardTest(SingleCardTest[SpectrumDigitiserInterface]):
         post_trigger_length = ACQUISITION_LENGTH
         self._device.set_acquisition_mode(AcquisitionMode.SPC_REC_STD_SINGLE)
         self._device.set_post_trigger_length_in_samples(post_trigger_length)
-        self.assertEqual(post_trigger_length, self._device.post_trigger_length_in_samples)
+        self.assertEqual(
+            post_trigger_length, self._device.post_trigger_length_in_samples
+        )
 
     def test_acquisition_mode(self) -> None:
         acquisition_mode = AcquisitionMode.SPC_REC_STD_SINGLE
@@ -189,7 +211,8 @@ class DigitiserCardTest(SingleCardTest[SpectrumDigitiserInterface]):
 
     def test_transfer_buffer(self) -> None:
         buffer = create_samples_acquisition_transfer_buffer(
-            size_in_samples=ACQUISITION_LENGTH, bytes_per_sample=self._device.bytes_per_sample
+            size_in_samples=ACQUISITION_LENGTH,
+            bytes_per_sample=self._device.bytes_per_sample,
         )
         self._device.define_transfer_buffer([buffer])
         self.assertEqual(buffer, self._device.transfer_buffers[0])
@@ -211,15 +234,28 @@ class DigitiserCardTest(SingleCardTest[SpectrumDigitiserInterface]):
         self._device.configure_acquisition(acquisition_settings)
 
         expected_posttrigger_len = (
-            acquisition_settings.acquisition_length_in_samples - acquisition_settings.pre_trigger_length_in_samples
+            acquisition_settings.acquisition_length_in_samples
+            - acquisition_settings.pre_trigger_length_in_samples
         )
 
-        self.assertEqual(acquisition_settings.acquisition_mode, self._device.acquisition_mode)
-        self.assertEqual(acquisition_settings.sample_rate_in_hz, self._device.sample_rate_in_hz)
-        self.assertEqual(acquisition_settings.acquisition_length_in_samples, self._device.acquisition_length_in_samples)
-        self.assertEqual(expected_posttrigger_len, self._device.post_trigger_length_in_samples)
+        self.assertEqual(
+            acquisition_settings.acquisition_mode, self._device.acquisition_mode
+        )
+        self.assertEqual(
+            acquisition_settings.sample_rate_in_hz, self._device.sample_rate_in_hz
+        )
+        self.assertEqual(
+            acquisition_settings.acquisition_length_in_samples,
+            self._device.acquisition_length_in_samples,
+        )
+        self.assertEqual(
+            expected_posttrigger_len, self._device.post_trigger_length_in_samples
+        )
         self.assertEqual(acquisition_settings.timeout_in_ms, self._device.timeout_in_ms)
-        self.assertEqual(acquisition_settings.enabled_channels, self._device.enabled_analog_channel_nums)
+        self.assertEqual(
+            acquisition_settings.enabled_channels,
+            self._device.enabled_analog_channel_nums,
+        )
         self.assertEqual(
             acquisition_settings.vertical_ranges_in_mv[0],
             self._device.analog_channels[channel_to_enable].vertical_range_in_mv,
@@ -229,7 +265,8 @@ class DigitiserCardTest(SingleCardTest[SpectrumDigitiserInterface]):
             self._device.analog_channels[channel_to_enable].vertical_offset_in_percent,
         )
         self.assertEqual(
-            acquisition_settings.input_impedances[0], self._device.analog_channels[channel_to_enable].input_impedance
+            acquisition_settings.input_impedances[0],
+            self._device.analog_channels[channel_to_enable].input_impedance,
         )
 
 
@@ -264,7 +301,26 @@ class AWGCardTest(SingleCardTest[SpectrumAWGInterface]):
 
     def test_transfer_waveform(self) -> None:
         wfm = (
-            array([0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8])
+            array(
+                [
+                    0.05,
+                    0.1,
+                    0.15,
+                    0.2,
+                    0.25,
+                    0.3,
+                    0.35,
+                    0.4,
+                    0.45,
+                    0.5,
+                    0.55,
+                    0.6,
+                    0.65,
+                    0.7,
+                    0.75,
+                    0.8,
+                ]
+            )
             * iinfo(int16).max
         ).astype(int16)
         self._device.transfer_waveform(wfm)
@@ -299,14 +355,33 @@ class AWGCardTest(SingleCardTest[SpectrumAWGInterface]):
             stop_level_modes=[OutputChannelStopLevelMode.SPCM_STOPLVL_ZERO],
         )
         self._device.configure_generation(generation_settings)
-        self.assertEqual(generation_settings.generation_mode, self._device.generation_mode)
-        assert_array_equal(generation_settings.waveform, self._device.transfer_buffers[0].data_array)
-        self.assertEqual(generation_settings.sample_rate_in_hz, self._device.sample_rate_in_hz)
-        self.assertEqual(generation_settings.num_loops, self._device.num_loops)
-        self.assertEqual(generation_settings.enabled_channels, self._device.enabled_analog_channel_nums)
         self.assertEqual(
-            generation_settings.signal_amplitudes_in_mv[0], self._device.analog_channels[0].signal_amplitude_in_mv
+            generation_settings.generation_mode, self._device.generation_mode
         )
-        self.assertEqual(generation_settings.dc_offsets_in_mv[0], self._device.analog_channels[0].dc_offset_in_mv)
-        self.assertEqual(generation_settings.output_filters[0], self._device.analog_channels[0].output_filter)
-        self.assertEqual(generation_settings.stop_level_modes[0], self._device.analog_channels[0].stop_level_mode)
+        assert_array_equal(
+            generation_settings.waveform, self._device.transfer_buffers[0].data_array
+        )
+        self.assertEqual(
+            generation_settings.sample_rate_in_hz, self._device.sample_rate_in_hz
+        )
+        self.assertEqual(generation_settings.num_loops, self._device.num_loops)
+        self.assertEqual(
+            generation_settings.enabled_channels,
+            self._device.enabled_analog_channel_nums,
+        )
+        self.assertEqual(
+            generation_settings.signal_amplitudes_in_mv[0],
+            self._device.analog_channels[0].signal_amplitude_in_mv,
+        )
+        self.assertEqual(
+            generation_settings.dc_offsets_in_mv[0],
+            self._device.analog_channels[0].dc_offset_in_mv,
+        )
+        self.assertEqual(
+            generation_settings.output_filters[0],
+            self._device.analog_channels[0].output_filter,
+        )
+        self.assertEqual(
+            generation_settings.stop_level_modes[0],
+            self._device.analog_channels[0].stop_level_mode,
+        )

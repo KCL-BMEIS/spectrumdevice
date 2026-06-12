@@ -13,11 +13,17 @@ from numpy.typing import NDArray
 from spectrumdevice.devices.abstract_device import (
     AbstractSpectrumStarHub,
 )
-from spectrumdevice.devices.abstract_device.abstract_spectrum_hub import check_settings_constant_across_devices
+from spectrumdevice.devices.abstract_device.abstract_spectrum_hub import (
+    check_settings_constant_across_devices,
+)
 from spectrumdevice.devices.digitiser import SpectrumDigitiserAnalogChannelInterface
 from spectrumdevice.devices.digitiser.digitiser_card import SpectrumDigitiserCard
-from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
-from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserIOLineInterface
+from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import (
+    AbstractSpectrumDigitiser,
+)
+from spectrumdevice.devices.digitiser.digitiser_interface import (
+    SpectrumDigitiserIOLineInterface,
+)
 from spectrumdevice.settings import ModelNumber, TransferBuffer
 from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.device_modes import AcquisitionMode
@@ -29,7 +35,9 @@ WAVEFORM_TYPE_VAR = TypeVar("WAVEFORM_TYPE_VAR", NDArray[float64], NDArray[int16
 # noinspection PyTypeChecker
 class SpectrumDigitiserStarHub(
     AbstractSpectrumStarHub[
-        SpectrumDigitiserCard, SpectrumDigitiserAnalogChannelInterface, SpectrumDigitiserIOLineInterface
+        SpectrumDigitiserCard,
+        SpectrumDigitiserAnalogChannelInterface,
+        SpectrumDigitiserIOLineInterface,
     ],
     AbstractSpectrumDigitiser,
 ):
@@ -38,7 +46,12 @@ class SpectrumDigitiserStarHub(
     child cards of a StarHub is synchronised, aggregating the channels of all child cards. This class enables the
     control of a StarHub device as if it were a single Spectrum card."""
 
-    def __init__(self, device_number: int, child_cards: tuple[SpectrumDigitiserCard, ...], master_card_index: int):
+    def __init__(
+        self,
+        device_number: int,
+        child_cards: tuple[SpectrumDigitiserCard, ...],
+        master_card_index: int,
+    ):
         """
         Args:
             device_number (int): The index of the StarHub to connect to. If only one StarHub is present, set to 0.
@@ -47,10 +60,16 @@ class SpectrumDigitiserStarHub(
             master_card_index (int): The position within child_cards where the master card (the card which controls the
                 clock) is located.
         """
-        super().__init__(device_number=device_number, child_cards=child_cards, master_card_index=master_card_index)
+        super().__init__(
+            device_number=device_number,
+            child_cards=child_cards,
+            master_card_index=master_card_index,
+        )
         self._acquisition_mode = self.acquisition_mode
 
-    def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
+    def define_transfer_buffer(
+        self, buffer: Optional[Sequence[TransferBuffer]] = None
+    ) -> None:
         """Create or provide `CardToPCDataTransferBuffer` objects for receiving acquired samples from the child cards.
         If no buffers are provided, they will be created with the correct size and a board_memory_offset_bytes of 0. See
         `SpectrumDigitiserCard.define_transfer_buffer()` for more information
@@ -98,7 +117,10 @@ class SpectrumDigitiserStarHub(
         return self._get_waveforms_in_threads(SpectrumDigitiserCard.get_raw_waveforms)
 
     def _get_waveforms_in_threads(
-        self, get_waveforms_method: Callable[[SpectrumDigitiserCard], List[List[WAVEFORM_TYPE_VAR]]]
+        self,
+        get_waveforms_method: Callable[
+            [SpectrumDigitiserCard], List[List[WAVEFORM_TYPE_VAR]]
+        ],
     ) -> List[List[WAVEFORM_TYPE_VAR]]:
         """Gets waveforms from child cards in separate threads, using the SpectrumDigitiserCard method provided."""
 
@@ -108,7 +130,9 @@ class SpectrumDigitiserStarHub(
             this_cards_waveforms = get_waveforms_method(digitiser_card)
             card_ids_and_waveform_sets[str(digitiser_card)] = this_cards_waveforms
 
-        threads = [Thread(target=_get_waveforms, args=(card,)) for card in self._child_cards]
+        threads = [
+            Thread(target=_get_waveforms, args=(card,)) for card in self._child_cards
+        ]
 
         for thread in threads:
             thread.start()
@@ -188,7 +212,9 @@ class SpectrumDigitiserStarHub(
         modes = []
         for d in self._child_cards:
             modes.append(d.acquisition_mode)
-        return AcquisitionMode(check_settings_constant_across_devices([m.value for m in modes], __name__))
+        return AcquisitionMode(
+            check_settings_constant_across_devices([m.value for m in modes], __name__)
+        )
 
     def set_acquisition_mode(self, mode: AcquisitionMode) -> None:
         """Change the acquisition mode for all child cards. See `SpectrumDigitiserCard.set_acquisition_mode()` for more

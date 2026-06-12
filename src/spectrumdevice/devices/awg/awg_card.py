@@ -13,8 +13,14 @@ from spectrum_gmbh.py_header.regs import (
 )
 from spectrumdevice.devices.abstract_device import AbstractSpectrumCard
 from spectrumdevice.devices.awg.abstract_spectrum_awg import AbstractSpectrumAWG
-from spectrumdevice.devices.awg.awg_channel import SpectrumAWGAnalogChannel, SpectrumAWGIOLine
-from spectrumdevice.devices.awg.awg_interface import SpectrumAWGAnalogChannelInterface, SpectrumAWGIOLineInterface
+from spectrumdevice.devices.awg.awg_channel import (
+    SpectrumAWGAnalogChannel,
+    SpectrumAWGIOLine,
+)
+from spectrumdevice.devices.awg.awg_interface import (
+    SpectrumAWGAnalogChannelInterface,
+    SpectrumAWGIOLineInterface,
+)
 from spectrumdevice.settings import TransferBuffer
 from spectrumdevice.settings.card_dependent_properties import get_memsize_step_size
 from spectrumdevice.settings.transfer_buffer import (
@@ -28,21 +34,36 @@ logger = logging.getLogger(__name__)
 
 
 class SpectrumAWGCard(
-    AbstractSpectrumCard[SpectrumAWGAnalogChannelInterface, SpectrumAWGIOLineInterface], AbstractSpectrumAWG
+    AbstractSpectrumCard[SpectrumAWGAnalogChannelInterface, SpectrumAWGIOLineInterface],
+    AbstractSpectrumAWG,
 ):
     """Class for controlling individual Spectrum AWG cards."""
 
     def _init_analog_channels(self) -> Sequence[SpectrumAWGAnalogChannelInterface]:
         num_modules = self.read_spectrum_device_register(SPC_MIINST_MODULES)
-        num_channels_per_module = self.read_spectrum_device_register(SPC_MIINST_CHPERMODULE)
+        num_channels_per_module = self.read_spectrum_device_register(
+            SPC_MIINST_CHPERMODULE
+        )
         total_channels = num_modules * num_channels_per_module
-        return tuple([SpectrumAWGAnalogChannel(channel_number=n, parent_device=self) for n in range(total_channels)])
+        return tuple(
+            [
+                SpectrumAWGAnalogChannel(channel_number=n, parent_device=self)
+                for n in range(total_channels)
+            ]
+        )
 
     def _init_io_lines(self) -> Sequence[SpectrumAWGIOLineInterface]:
         if (self.model_number.value & TYP_SERIESMASK) == TYP_M2PEXPSERIES:
-            return tuple([SpectrumAWGIOLine(channel_number=n, parent_device=self) for n in range(4)])
+            return tuple(
+                [
+                    SpectrumAWGIOLine(channel_number=n, parent_device=self)
+                    for n in range(4)
+                ]
+            )
         else:
-            raise NotImplementedError("Don't know how many IO lines other types of card have. Only M2P series.")
+            raise NotImplementedError(
+                "Don't know how many IO lines other types of card have. Only M2P series."
+            )
 
     def transfer_waveform(self, waveform: NDArray[int16]) -> None:
         """ "Write an arbitrary waveform to the card's on-board memory.
@@ -64,7 +85,9 @@ class SpectrumAWGCard(
                 "Length of waveform transmitted to AWG is not a multiple of 8 samples. Waveform in card memory will be "
                 "zero-padded to the next multiple of 8."
             )
-        coerced_mem_size = len(waveform) if remainder == 0 else len(waveform) + (step_size - remainder)
+        coerced_mem_size = (
+            len(waveform) if remainder == 0 else len(waveform) + (step_size - remainder)
+        )
 
         buffer = transfer_buffer_factory(
             buffer_type=BufferType.SPCM_BUF_DATA,
@@ -72,13 +95,17 @@ class SpectrumAWGCard(
             size_in_samples=coerced_mem_size,
             bytes_per_sample=self.bytes_per_sample,
         )
-        buffer.data_array[:] = concatenate([waveform, zeros(coerced_mem_size - len(waveform), dtype=int16)])
+        buffer.data_array[:] = concatenate(
+            [waveform, zeros(coerced_mem_size - len(waveform), dtype=int16)]
+        )
         self.define_transfer_buffer((buffer,))
         self.write_to_spectrum_device_register(SPC_MEMSIZE, coerced_mem_size)
         self.start_transfer()
         self.wait_for_transfer_chunk_to_complete()
 
-    def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
+    def define_transfer_buffer(
+        self, buffer: Optional[Sequence[TransferBuffer]] = None
+    ) -> None:
         """Provide a `TransferBuffer` object for transferring samples to the card. This is called internally when
         transfer_waveform is used to send a single waveform to the card.
 

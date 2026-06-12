@@ -124,7 +124,10 @@ def decode_trigger_sources(value: int) -> List[TriggerSource]:
     """Converts the integer values provided by a device when queried about its enabled trigger source to a list of
     TriggerSources."""
     possible_values = [source.value for source in TriggerSource]
-    return [TriggerSource(found_value) for found_value in decode_bitmap_using_list_of_ints(value, possible_values)]
+    return [
+        TriggerSource(found_value)
+        for found_value in decode_bitmap_using_list_of_ints(value, possible_values)
+    ]
 
 
 EXTERNAL_TRIGGER_MODE_COMMANDS = {

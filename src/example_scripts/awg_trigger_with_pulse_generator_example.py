@@ -113,7 +113,11 @@ if __name__ == "__main__":
     print(f"SAMPLE RATE IS {card.sample_rate_in_hz} Hz")
 
     pulse_output_settings = PulseGeneratorOutputSettings(
-        period_in_seconds=1e-3, duty_cycle=0.1, num_pulses=NUM_GENERATIONS, delay_in_seconds=0.0, output_inversion=False
+        period_in_seconds=1e-3,
+        duty_cycle=0.1,
+        num_pulses=NUM_GENERATIONS,
+        delay_in_seconds=0.0,
+        output_inversion=False,
     )
     pulse_gen.configure_output(pulse_output_settings, coerce=False)
 
@@ -131,7 +135,9 @@ if __name__ == "__main__":
 
     # Note that there is a delay between a trigger being received and the AWG generating a signal.
     # This is in the technical data section of the manual, and for my device is apparently 73 samples + 7 ns
-    print(f"Expected delay between pulse and signal: {(73 * 1 / SAMPLE_RATE_IN_HZ + 7e-9) * 1e6} microseconds")
+    print(
+        f"Expected delay between pulse and signal: {(73 * 1 / SAMPLE_RATE_IN_HZ + 7e-9) * 1e6} microseconds"
+    )
 
     card.stop()
     card.disconnect()

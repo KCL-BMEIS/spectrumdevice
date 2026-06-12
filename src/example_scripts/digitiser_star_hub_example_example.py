@@ -1,4 +1,7 @@
-from spectrumdevice.devices.mocks import MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub
+from spectrumdevice.devices.mocks import (
+    MockSpectrumDigitiserCard,
+    MockSpectrumDigitiserStarHub,
+)
 from spectrumdevice.devices.digitiser import SpectrumDigitiserCard
 from spectrumdevice.devices.digitiser import SpectrumDigitiserStarHub
 from spectrumdevice.settings import (
@@ -20,10 +23,14 @@ def connect_to_star_hub_example(
         child_cards = []
         for n in range(num_cards):
             # Connect to each card in the hub.
-            child_cards.append(SpectrumDigitiserCard(device_number=n, ip_address=ip_address))
+            child_cards.append(
+                SpectrumDigitiserCard(device_number=n, ip_address=ip_address)
+            )
         # Connect to the hub itself
         return SpectrumDigitiserStarHub(
-            device_number=0, child_cards=tuple(child_cards), master_card_index=master_card_index
+            device_number=0,
+            child_cards=tuple(child_cards),
+            master_card_index=master_card_index,
         )
     else:
         mock_child_cards = []
@@ -40,7 +47,9 @@ def connect_to_star_hub_example(
             )
         # Create a mock hub containing the above devices
         return MockSpectrumDigitiserStarHub(
-            device_number=0, child_cards=mock_child_cards, master_card_index=master_card_index
+            device_number=0,
+            child_cards=mock_child_cards,
+            master_card_index=master_card_index,
         )
 
 
@@ -49,7 +58,9 @@ if __name__ == "__main__":
     from matplotlib.pyplot import figure, title, plot, show
 
     num_measurements = 5
-    hub = connect_to_star_hub_example(mock_mode=False, num_cards=2, master_card_index=1, ip_address="169.254.13.35")
+    hub = connect_to_star_hub_example(
+        mock_mode=False, num_cards=2, master_card_index=1, ip_address="169.254.13.35"
+    )
 
     print(f"{hub} contains {len(hub.analog_channels)} channels in total:")
     for channel in hub.analog_channels:
@@ -69,7 +80,10 @@ if __name__ == "__main__":
         acquisition_length_in_samples=400,
         pre_trigger_length_in_samples=0,
         timeout_in_ms=1000,
-        enabled_channels=[0, 8],  # at least 1 channel from each child card must be enabled
+        enabled_channels=[
+            0,
+            8,
+        ],  # at least 1 channel from each child card must be enabled
         vertical_ranges_in_mv=[200, 200],
         vertical_offsets_in_percent=[0, 0],
         input_impedances=[InputImpedance.ONE_MEGA_OHM, InputImpedance.ONE_MEGA_OHM],
@@ -92,11 +106,17 @@ if __name__ == "__main__":
             plot(wfm)
 
     ts_format = "%Y-%m-%d %H:%M:%S.%f"
-    print(f"Completed {len(measurements)} measurements each containing {len(measurements[0].waveforms)} waveforms.")
+    print(
+        f"Completed {len(measurements)} measurements each containing {len(measurements[0].waveforms)} waveforms."
+    )
     print(f"Waveforms had the following shape: {measurements[0].waveforms[0].shape}")
     print(f"and the following timestamps:")
     for measurement in measurements:
-        print(measurement.timestamp.strftime(ts_format) if measurement.timestamp else "Timestamping disabled")
+        print(
+            measurement.timestamp.strftime(ts_format)
+            if measurement.timestamp
+            else "Timestamping disabled"
+        )
 
     hub.reset()
     hub.disconnect()

@@ -23,7 +23,12 @@ from spectrumdevice.exceptions import (
     SpectrumNoTransferBufferDefined,
     SpectrumSettingsMismatchError,
 )
-from spectrumdevice.settings import AdvancedCardFeature, CardFeature, ModelNumber, TransferBuffer
+from spectrumdevice.settings import (
+    AdvancedCardFeature,
+    CardFeature,
+    ModelNumber,
+    TransferBuffer,
+)
 from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.device_modes import AcquisitionMode
 
@@ -31,7 +36,9 @@ logger = logging.getLogger(__name__)
 MOCK_TRANSFER_TIMEOUT_IN_S = 10
 
 
-class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, MockAbstractSpectrumCard, SpectrumDigitiserCard):
+class MockSpectrumDigitiserCard(
+    MockAbstractSpectrumDigitiser, MockAbstractSpectrumCard, SpectrumDigitiserCard
+):
     """A mock spectrum card, for testing software written to use the `SpectrumDigitiserCard` class.
 
     This class overrides methods of `SpectrumDigitiserCard` that communicate with hardware with mocked implementations,
@@ -75,7 +82,9 @@ class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, MockAbstractSpect
             num_channels_per_module=num_channels_per_module,
             card_type=CardType.SPCM_TYPE_AI,
             card_features=card_features if card_features is not None else [],
-            advanced_card_features=advanced_card_features if advanced_card_features is not None else [],
+            advanced_card_features=advanced_card_features
+            if advanced_card_features is not None
+            else [],
         )
         self._connect(self._visa_string)
         self._acquisition_mode = self.acquisition_mode
@@ -114,12 +123,18 @@ class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, MockAbstractSpect
             channels_nums (List[int]): List of mock channel indices to enable, e.g. [0, 1, 2].
 
         """
-        if len(list(filter(lambda x: 0 <= x < len(self.analog_channels), channels_nums))) == len(channels_nums):
+        if len(
+            list(filter(lambda x: 0 <= x < len(self.analog_channels), channels_nums))
+        ) == len(channels_nums):
             super().set_enabled_analog_channels(channels_nums)
         else:
-            raise SpectrumSettingsMismatchError("Not enough channels in mock device configuration.")
+            raise SpectrumSettingsMismatchError(
+                "Not enough channels in mock device configuration."
+            )
 
-    def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
+    def define_transfer_buffer(
+        self, buffer: Optional[Sequence[TransferBuffer]] = None
+    ) -> None:
         """Create or provide a `TransferBuffer` object for receiving acquired samples from the device.
 
         See SpectrumDigitiserCard.define_transfer_buffer(). This mock implementation is identical apart from that it
@@ -141,11 +156,14 @@ class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, MockAbstractSpect
             t0 = perf_counter()
             t_elapsed = 0.0
             while (
-                self._previous_transfer_chunk_count == self._param_dict[TRANSFER_CHUNK_COUNTER]
+                self._previous_transfer_chunk_count
+                == self._param_dict[TRANSFER_CHUNK_COUNTER]
             ) and t_elapsed < MOCK_TRANSFER_TIMEOUT_IN_S:
                 sleep(0.1)
                 t_elapsed = perf_counter() - t0
-            self._previous_transfer_chunk_count = self._param_dict[TRANSFER_CHUNK_COUNTER]
+            self._previous_transfer_chunk_count = self._param_dict[
+                TRANSFER_CHUNK_COUNTER
+            ]
         else:
             raise SpectrumNoTransferBufferDefined("No transfer in progress.")
 
@@ -156,12 +174,18 @@ class MockSpectrumDigitiserCard(MockAbstractSpectrumDigitiser, MockAbstractSpect
         if self._acquisition_thread is not None:
             self._acquisition_thread.join(timeout=1e-3 * self.timeout_in_ms)
             if self._acquisition_thread.is_alive():
-                logger.warning("A timeout occurred while waiting for mock acquisition to complete.")
+                logger.warning(
+                    "A timeout occurred while waiting for mock acquisition to complete."
+                )
         else:
-            logger.warning("No acquisition in progress. Wait for acquisition to complete has no effect")
+            logger.warning(
+                "No acquisition in progress. Wait for acquisition to complete has no effect"
+            )
 
 
-class MockSpectrumAWGCard(MockAbstractSpectrumAWG, MockAbstractSpectrumCard, SpectrumAWGCard):
+class MockSpectrumAWGCard(
+    MockAbstractSpectrumAWG, MockAbstractSpectrumCard, SpectrumAWGCard
+):
     """A mock AWG card."""
 
     def __init__(
@@ -193,11 +217,15 @@ class MockSpectrumAWGCard(MockAbstractSpectrumAWG, MockAbstractSpectrumCard, Spe
             num_modules=num_modules,
             num_channels_per_module=num_channels_per_module,
             card_features=card_features if card_features is not None else [],
-            advanced_card_features=advanced_card_features if advanced_card_features is not None else [],
+            advanced_card_features=advanced_card_features
+            if advanced_card_features is not None
+            else [],
         )
         self._connect(self._visa_string)
 
-    def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
+    def define_transfer_buffer(
+        self, buffer: Optional[Sequence[TransferBuffer]] = None
+    ) -> None:
         """Create or provide a `TransferBuffer` object for transferring samples from the device.
 
         See SpectrumAWGCard.define_transfer_buffer(). This mock implementation is identical apart from that it
@@ -210,7 +238,9 @@ class MockSpectrumAWGCard(MockAbstractSpectrumAWG, MockAbstractSpectrumCard, Spe
         self._transfer_buffer = buffer[0]
 
 
-class MockSpectrumDigitiserStarHub(MockAbstractSpectrumStarHub, SpectrumDigitiserStarHub):
+class MockSpectrumDigitiserStarHub(
+    MockAbstractSpectrumStarHub, SpectrumDigitiserStarHub
+):
     """A mock spectrum StarHub, for testing software written to use the `SpectrumStarHub` class.
 
     Overrides methods of `SpectrumStarHub` and `AbstractSpectrumDigitiser` that communicate with hardware with mocked

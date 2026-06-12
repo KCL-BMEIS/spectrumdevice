@@ -19,13 +19,20 @@ from spectrumdevice.settings import (
     TriggerSource,
 )
 from spectrumdevice.settings.card_dependent_properties import CardType
-from spectrumdevice.settings.output_channel_pairing import ChannelPair, ChannelPairingMode
+from spectrumdevice.settings.output_channel_pairing import (
+    ChannelPair,
+    ChannelPairingMode,
+)
 
-AnalogChannelInterfaceType = TypeVar("AnalogChannelInterfaceType", bound=SpectrumAnalogChannelInterface)
+AnalogChannelInterfaceType = TypeVar(
+    "AnalogChannelInterfaceType", bound=SpectrumAnalogChannelInterface
+)
 IOLineInterfaceType = TypeVar("IOLineInterfaceType", bound=SpectrumIOLineInterface)
 
 
-class SpectrumDeviceInterface(Generic[AnalogChannelInterfaceType, IOLineInterfaceType], ABC):
+class SpectrumDeviceInterface(
+    Generic[AnalogChannelInterfaceType, IOLineInterfaceType], ABC
+):
     """Defines the common public interface for control of all digitiser and AWG devices, be they StarHub composite
     devices (e.g. the NetBox) or individual cards. All properties are read-only and must be set with their respective
     setter methods."""
@@ -77,7 +84,9 @@ class SpectrumDeviceInterface(Generic[AnalogChannelInterfaceType, IOLineInterfac
         raise NotImplementedError()
 
     @abstractmethod
-    def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
+    def define_transfer_buffer(
+        self, buffer: Optional[Sequence[TransferBuffer]] = None
+    ) -> None:
         raise NotImplementedError()
 
     @property
@@ -171,7 +180,9 @@ class SpectrumDeviceInterface(Generic[AnalogChannelInterfaceType, IOLineInterfac
         raise NotImplementedError()
 
     @abstractmethod
-    def configure_channel_pairing(self, channel_pair: ChannelPair, mode: ChannelPairingMode) -> None:
+    def configure_channel_pairing(
+        self, channel_pair: ChannelPair, mode: ChannelPairingMode
+    ) -> None:
         raise NotImplementedError()
 
     @abstractmethod

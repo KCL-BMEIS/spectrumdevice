@@ -1,7 +1,10 @@
 from unittest import TestCase
 
 from spectrumdevice import MockSpectrumDigitiserCard
-from spectrumdevice.exceptions import SpectrumFeatureNotSupportedByCard, SpectrumInvalidParameterValue
+from spectrumdevice.exceptions import (
+    SpectrumFeatureNotSupportedByCard,
+    SpectrumInvalidParameterValue,
+)
 from spectrumdevice.settings import ModelNumber
 from spectrumdevice.settings.pulse_generator import (
     PulseGeneratorMultiplexer1TriggerSource,
@@ -66,18 +69,31 @@ class PulseGeneratorTest(TestCase):
 
     def test_trigger_detection_mode(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
-        self.assertEqual(PulseGeneratorTriggerDetectionMode.RISING_EDGE, pg.trigger_detection_mode)
-        pg.set_trigger_detection_mode(PulseGeneratorTriggerDetectionMode.SPCM_PULSEGEN_CONFIG_HIGH)
-        self.assertEqual(PulseGeneratorTriggerDetectionMode.SPCM_PULSEGEN_CONFIG_HIGH, pg.trigger_detection_mode)
+        self.assertEqual(
+            PulseGeneratorTriggerDetectionMode.RISING_EDGE, pg.trigger_detection_mode
+        )
+        pg.set_trigger_detection_mode(
+            PulseGeneratorTriggerDetectionMode.SPCM_PULSEGEN_CONFIG_HIGH
+        )
+        self.assertEqual(
+            PulseGeneratorTriggerDetectionMode.SPCM_PULSEGEN_CONFIG_HIGH,
+            pg.trigger_detection_mode,
+        )
         pg.set_trigger_detection_mode(PulseGeneratorTriggerDetectionMode.RISING_EDGE)
-        self.assertEqual(PulseGeneratorTriggerDetectionMode.RISING_EDGE, pg.trigger_detection_mode)
+        self.assertEqual(
+            PulseGeneratorTriggerDetectionMode.RISING_EDGE, pg.trigger_detection_mode
+        )
 
     def test_trigger_mode(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
         pg.set_trigger_mode(PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_TRIGGERED)
-        self.assertEqual(PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_TRIGGERED, pg.trigger_mode)
+        self.assertEqual(
+            PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_TRIGGERED, pg.trigger_mode
+        )
         pg.set_trigger_mode(PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_GATED)
-        self.assertEqual(PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_GATED, pg.trigger_mode)
+        self.assertEqual(
+            PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_GATED, pg.trigger_mode
+        )
 
     def test_pulse_period(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
@@ -87,7 +103,9 @@ class PulseGeneratorTest(TestCase):
     def test_coerce_pulse_period(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
         pg.set_period_in_seconds(pg.max_allowed_period_in_seconds + 1, coerce=True)
-        self.assertAlmostEqual(pg.max_allowed_period_in_seconds, pg.period_in_seconds, places=5)
+        self.assertAlmostEqual(
+            pg.max_allowed_period_in_seconds, pg.period_in_seconds, places=5
+        )
 
     def test_invalid_pulse_period(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
@@ -97,7 +115,9 @@ class PulseGeneratorTest(TestCase):
     def test_duty_cycle(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
         pg.set_period_in_seconds(pg.max_allowed_period_in_seconds)
-        duty_cycle = pg.min_allowed_high_voltage_duration_in_seconds / pg.period_in_seconds
+        duty_cycle = (
+            pg.min_allowed_high_voltage_duration_in_seconds / pg.period_in_seconds
+        )
         pg.set_duty_cycle(duty_cycle)
         self.assertAlmostEqual(duty_cycle, pg.duty_cycle, places=5)
 
@@ -106,7 +126,9 @@ class PulseGeneratorTest(TestCase):
         pg.set_period_in_seconds(pg.max_allowed_period_in_seconds)
         pg.set_duty_cycle(1.1, coerce=True)
         self.assertAlmostEqual(
-            pg.max_allowed_high_voltage_duration_in_seconds, pg.duration_of_high_voltage_in_seconds, places=5
+            pg.max_allowed_high_voltage_duration_in_seconds,
+            pg.duration_of_high_voltage_in_seconds,
+            places=5,
         )
 
     def test_invalid_duty_cycle(self) -> None:
@@ -138,7 +160,9 @@ class PulseGeneratorTest(TestCase):
     def test_coerce_delay(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
         pg.set_delay_in_seconds(pg.max_allowed_delay_in_seconds + 1, coerce=True)
-        self.assertAlmostEqual(pg.max_allowed_delay_in_seconds, pg.delay_in_seconds, places=5)
+        self.assertAlmostEqual(
+            pg.max_allowed_delay_in_seconds, pg.delay_in_seconds, places=5
+        )
 
     def test_invalid_delay(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
@@ -157,20 +181,29 @@ class PulseGeneratorTest(TestCase):
         pg = self._awg.io_lines[0].pulse_generator
         pg.configure_trigger(trigger_settings)
 
-        self.assertEqual(PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_TRIGGERED, pg.trigger_mode)
-        self.assertEqual(PulseGeneratorTriggerDetectionMode.RISING_EDGE, pg.trigger_detection_mode)
         self.assertEqual(
-            PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_UNUSED, pg.multiplexer_1.trigger_source
+            PulseGeneratorTriggerMode.SPCM_PULSEGEN_MODE_TRIGGERED, pg.trigger_mode
+        )
+        self.assertEqual(
+            PulseGeneratorTriggerDetectionMode.RISING_EDGE, pg.trigger_detection_mode
+        )
+        self.assertEqual(
+            PulseGeneratorMultiplexer1TriggerSource.SPCM_PULSEGEN_MUX1_SRC_UNUSED,
+            pg.multiplexer_1.trigger_source,
         )
         self.assertFalse(pg.multiplexer_1.output_inversion)
         self.assertEqual(
-            PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_SOFTWARE, pg.multiplexer_2.trigger_source
+            PulseGeneratorMultiplexer2TriggerSource.SPCM_PULSEGEN_MUX2_SRC_SOFTWARE,
+            pg.multiplexer_2.trigger_source,
         )
         self.assertFalse(pg.multiplexer_2.output_inversion)
 
     def test_configure_output(self) -> None:
         pg = self._awg.io_lines[0].pulse_generator
-        duty_cycle = pg.min_allowed_high_voltage_duration_in_seconds / pg.max_allowed_period_in_seconds
+        duty_cycle = (
+            pg.min_allowed_high_voltage_duration_in_seconds
+            / pg.max_allowed_period_in_seconds
+        )
         output_settings = PulseGeneratorOutputSettings(
             period_in_seconds=pg.max_allowed_period_in_seconds,
             duty_cycle=duty_cycle,

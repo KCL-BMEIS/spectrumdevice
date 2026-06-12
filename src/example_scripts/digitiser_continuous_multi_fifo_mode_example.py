@@ -76,7 +76,8 @@ def continuous_multi_fifo_example(
         while (monotonic() - start_time) < time_to_keep_acquiring_for_in_seconds:
 
             measurements_list += [
-                Measurement(waveforms=frame, timestamp=card.get_timestamp()) for frame in card.get_waveforms()
+                Measurement(waveforms=frame, timestamp=card.get_timestamp())
+                for frame in card.get_waveforms()
             ]
 
             if measurements_list[-1].timestamp is not None:
@@ -95,7 +96,15 @@ def continuous_multi_fifo_example(
 
 if __name__ == "__main__":
 
-    from matplotlib.pyplot import plot, show, figure, title, xlabel, ylabel, tight_layout
+    from matplotlib.pyplot import (
+        plot,
+        show,
+        figure,
+        title,
+        xlabel,
+        ylabel,
+        tight_layout,
+    )
 
     measurements = continuous_multi_fifo_example(
         mock_mode=False,

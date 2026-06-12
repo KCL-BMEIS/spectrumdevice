@@ -34,9 +34,16 @@ from spectrum_gmbh.py_header.regs import (
     M2CMD_CARD_FORCETRIGGER,
     SPC_MIINST_BYTESPERSAMPLE,
 )
-from spectrumdevice.devices.abstract_device.abstract_spectrum_channel import decode_enabled_channels
-from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
-from spectrumdevice.devices.abstract_device.device_interface import AnalogChannelInterfaceType, IOLineInterfaceType
+from spectrumdevice.devices.abstract_device.abstract_spectrum_channel import (
+    decode_enabled_channels,
+)
+from spectrumdevice.devices.abstract_device.abstract_spectrum_device import (
+    AbstractSpectrumDevice,
+)
+from spectrumdevice.devices.abstract_device.device_interface import (
+    AnalogChannelInterfaceType,
+    IOLineInterfaceType,
+)
 from spectrumdevice.exceptions import (
     SpectrumExternalTriggerNotEnabled,
     SpectrumInvalidNumberOfEnabledChannels,
@@ -55,7 +62,10 @@ from spectrumdevice.settings import (
     TriggerSource,
 )
 from spectrumdevice.settings.card_dependent_properties import CardType
-from spectrumdevice.settings.card_features import decode_advanced_card_features, decode_card_features
+from spectrumdevice.settings.card_features import (
+    decode_advanced_card_features,
+    decode_card_features,
+)
 from spectrumdevice.settings.device_modes import ClockMode
 from spectrumdevice.settings.io_lines import decode_available_io_modes
 from spectrumdevice.settings.status import decode_status
@@ -74,7 +84,9 @@ logger = logging.getLogger(__name__)
 # channels or Digitiser analog channels and IO lines
 
 
-class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IOLineInterfaceType], ABC):
+class AbstractSpectrumCard(
+    AbstractSpectrumDevice[AnalogChannelInterfaceType, IOLineInterfaceType], ABC
+):
     """Abstract superclass implementing methods common to all individual "card" devices (as opposed to "hub" devices)."""
 
     def __init__(
@@ -100,7 +112,9 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
 
         if handle is None:
             if (ip_address is not None) and (device_number is not None):
-                self._visa_string = _create_visa_string_from_ip(ip_address, device_number)
+                self._visa_string = _create_visa_string_from_ip(
+                    ip_address, device_number
+                )
             else:
                 self._visa_string = f"/dev/spcm{device_number}"
             self._connect(self._visa_string)
@@ -113,7 +127,9 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
         self._trigger_sources: List[TriggerSource] = self.trigger_sources
         self._analog_channels = self._init_analog_channels()
         self._io_lines = self._init_io_lines()
-        self._enabled_analog_channels: List[int] = self._read_enabled_channels_from_card()
+        self._enabled_analog_channels: List[
+            int
+        ] = self._read_enabled_channels_from_card()
         self._transfer_buffer: Optional[TransferBuffer] = None
         self.apply_channel_enabling()
 
@@ -214,7 +230,9 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
         if isinstance(other, self.__class__):
             return self._handle == other._handle
         else:
-            raise NotImplementedError(f"Cannot compare {self.__class__} with {other.__class__}")
+            raise NotImplementedError(
+                f"Cannot compare {self.__class__} with {other.__class__}"
+            )
 
     @property
     def analog_channels(self) -> Sequence[AnalogChannelInterfaceType]:
@@ -260,7 +278,9 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
             self._enabled_analog_channels = channels_nums
             self.apply_channel_enabling()
         else:
-            raise SpectrumInvalidNumberOfEnabledChannels(f"{len(channels_nums)} cannot be enabled at once.")
+            raise SpectrumInvalidNumberOfEnabledChannels(
+                f"{len(channels_nums)} cannot be enabled at once."
+            )
 
     @property
     def trigger_sources(self) -> List[TriggerSource]:
@@ -296,10 +316,14 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
             first_trig_source = self._active_external_triggers[0]
             try:
                 return ExternalTriggerMode(
-                    self.read_spectrum_device_register(EXTERNAL_TRIGGER_MODE_COMMANDS[first_trig_source.value])
+                    self.read_spectrum_device_register(
+                        EXTERNAL_TRIGGER_MODE_COMMANDS[first_trig_source.value]
+                    )
                 )
             except KeyError:
-                raise SpectrumTriggerOperationNotImplemented(f"Cannot get trigger mode of {first_trig_source.name}.")
+                raise SpectrumTriggerOperationNotImplemented(
+                    f"Cannot get trigger mode of {first_trig_source.name}."
+                )
 
     def set_external_trigger_mode(self, mode: ExternalTriggerMode) -> None:
         """Change the currently enabled trigger mode. An external trigger source must be enabled.
@@ -316,14 +340,17 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
                         EXTERNAL_TRIGGER_MODE_COMMANDS[trigger_source.value], mode.value
                     )
                 except KeyError:
-                    raise SpectrumTriggerOperationNotImplemented(f"Cannot set trigger mode of {trigger_source.name}.")
+                    raise SpectrumTriggerOperationNotImplemented(
+                        f"Cannot set trigger mode of {trigger_source.name}."
+                    )
 
     @property
     def _active_external_triggers(self) -> List[TriggerSource]:
         return [
             TriggerSource(val)
             for val in list(
-                set(EXTERNAL_TRIGGER_MODE_COMMANDS.keys()) & set([source.value for source in self._trigger_sources])
+                set(EXTERNAL_TRIGGER_MODE_COMMANDS.keys())
+                & set([source.value for source in self._trigger_sources])
             )
         ]
 
@@ -336,13 +363,19 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
             level (int): The currently set trigger level in mV.
         """
         if len(self._active_external_triggers) == 0:
-            raise SpectrumExternalTriggerNotEnabled("Cannot get external trigger level.")
+            raise SpectrumExternalTriggerNotEnabled(
+                "Cannot get external trigger level."
+            )
         else:
             first_trig_source = self._active_external_triggers[0]
             try:
-                return self.read_spectrum_device_register(EXTERNAL_TRIGGER_LEVEL_COMMANDS[first_trig_source.value])
+                return self.read_spectrum_device_register(
+                    EXTERNAL_TRIGGER_LEVEL_COMMANDS[first_trig_source.value]
+                )
             except KeyError:
-                raise SpectrumTriggerOperationNotImplemented(f"Cannot get trigger level of {first_trig_source.name}.")
+                raise SpectrumTriggerOperationNotImplemented(
+                    f"Cannot get trigger level of {first_trig_source.name}."
+                )
 
     def set_external_trigger_level_in_mv(self, level: int) -> None:
         """Change the signal level (mV) needed to trigger an event using an external trigger source. An external
@@ -352,13 +385,19 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
             level (int): The trigger level to set in mV.
         """
         if len(self._active_external_triggers) == 0:
-            raise SpectrumExternalTriggerNotEnabled("Cannot set external trigger level.")
+            raise SpectrumExternalTriggerNotEnabled(
+                "Cannot set external trigger level."
+            )
         else:
             for trigger_source in self._active_external_triggers:
                 try:
-                    self.write_to_spectrum_device_register(EXTERNAL_TRIGGER_LEVEL_COMMANDS[trigger_source.value], level)
+                    self.write_to_spectrum_device_register(
+                        EXTERNAL_TRIGGER_LEVEL_COMMANDS[trigger_source.value], level
+                    )
                 except KeyError:
-                    raise SpectrumTriggerOperationNotImplemented(f"Cannot set trigger level of {trigger_source.name}.")
+                    raise SpectrumTriggerOperationNotImplemented(
+                        f"Cannot set trigger level of {trigger_source.name}."
+                    )
 
     @property
     def external_trigger_pulse_width_in_samples(self) -> int:
@@ -370,7 +409,9 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
             width (int): The current trigger pulse width in samples.
         """
         if len(self._active_external_triggers) == 0:
-            raise SpectrumExternalTriggerNotEnabled("Cannot get external trigger pulse width.")
+            raise SpectrumExternalTriggerNotEnabled(
+                "Cannot get external trigger pulse width."
+            )
         else:
             first_trig_source = self._active_external_triggers[0]
             try:
@@ -378,7 +419,9 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
                     EXTERNAL_TRIGGER_PULSE_WIDTH_COMMANDS[first_trig_source.value]
                 )
             except KeyError:
-                raise SpectrumTriggerOperationNotImplemented(f"Cannot get pulse width of {first_trig_source.name}.")
+                raise SpectrumTriggerOperationNotImplemented(
+                    f"Cannot get pulse width of {first_trig_source.name}."
+                )
 
     def set_external_trigger_pulse_width_in_samples(self, width: int) -> None:
         """Change the pulse width (samples) needed to trigger an event using an external trigger source if
@@ -388,26 +431,38 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
         Args:
             width (int): The trigger pulse width to set, in samples."""
         if len(self._active_external_triggers) == 0:
-            raise SpectrumExternalTriggerNotEnabled("Cannot set external trigger pulse width.")
+            raise SpectrumExternalTriggerNotEnabled(
+                "Cannot set external trigger pulse width."
+            )
         else:
             for trigger_source in self._active_external_triggers:
                 try:
                     self.write_to_spectrum_device_register(
-                        EXTERNAL_TRIGGER_PULSE_WIDTH_COMMANDS[trigger_source.value], width
+                        EXTERNAL_TRIGGER_PULSE_WIDTH_COMMANDS[trigger_source.value],
+                        width,
                     )
                 except KeyError:
-                    raise SpectrumTriggerOperationNotImplemented(f"Cannot set pulse width of {trigger_source.name}.")
+                    raise SpectrumTriggerOperationNotImplemented(
+                        f"Cannot set pulse width of {trigger_source.name}."
+                    )
 
     def apply_channel_enabling(self) -> None:
         """Apply the enabled channels chosen using set_enable_channels(). This happens automatically and does not
         usually need to be called."""
-        enabled_channel_spectrum_values = [self.analog_channels[i].name.value for i in self._enabled_analog_channels]
+        enabled_channel_spectrum_values = [
+            self.analog_channels[i].name.value for i in self._enabled_analog_channels
+        ]
         if len(enabled_channel_spectrum_values) in [1, 2, 4, 8]:
-            bitwise_or_of_enabled_channels = reduce(or_, enabled_channel_spectrum_values)
-            self.write_to_spectrum_device_register(SPC_CHENABLE, bitwise_or_of_enabled_channels)
+            bitwise_or_of_enabled_channels = reduce(
+                or_, enabled_channel_spectrum_values
+            )
+            self.write_to_spectrum_device_register(
+                SPC_CHENABLE, bitwise_or_of_enabled_channels
+            )
         else:
             raise SpectrumInvalidNumberOfEnabledChannels(
-                f"Cannot enable {len(enabled_channel_spectrum_values)} " f"channels on one card."
+                f"Cannot enable {len(enabled_channel_spectrum_values)} "
+                f"channels on one card."
             )
 
     def _read_enabled_channels_from_card(self) -> List[int]:
@@ -465,10 +520,18 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
         Returns:
             modes (`AvailableIOModes`): An `AvailableIOModes` dataclass containing the modes for each IO line."""
         return AvailableIOModes(
-            X0=decode_available_io_modes(self.read_spectrum_device_register(SPCM_X0_AVAILMODES)),
-            X1=decode_available_io_modes(self.read_spectrum_device_register(SPCM_X1_AVAILMODES)),
-            X2=decode_available_io_modes(self.read_spectrum_device_register(SPCM_X2_AVAILMODES)),
-            X3=decode_available_io_modes(self.read_spectrum_device_register(SPCM_X3_AVAILMODES)),
+            X0=decode_available_io_modes(
+                self.read_spectrum_device_register(SPCM_X0_AVAILMODES)
+            ),
+            X1=decode_available_io_modes(
+                self.read_spectrum_device_register(SPCM_X1_AVAILMODES)
+            ),
+            X2=decode_available_io_modes(
+                self.read_spectrum_device_register(SPCM_X2_AVAILMODES)
+            ),
+            X3=decode_available_io_modes(
+                self.read_spectrum_device_register(SPCM_X3_AVAILMODES)
+            ),
         )
 
     @property
@@ -480,8 +543,12 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
             features (List[Tuple[List[`CardFeature`], List[`AdvancedCardFeature`]]]): A tuple of two lists - of features
                 and advanced features respectively - wrapped in a list.
         """
-        normal_features = decode_card_features(self.read_spectrum_device_register(SPC_PCIFEATURES))
-        advanced_features = decode_advanced_card_features(self.read_spectrum_device_register(SPC_PCIEXTFEATURES))
+        normal_features = decode_card_features(
+            self.read_spectrum_device_register(SPC_PCIFEATURES)
+        )
+        advanced_features = decode_advanced_card_features(
+            self.read_spectrum_device_register(SPC_PCIEXTFEATURES)
+        )
         return [(normal_features, advanced_features)]
 
     @property
@@ -491,14 +558,18 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
         Returns:
             rate (int): The currently set sample rate in Hz.
         """
-        return self.read_spectrum_device_register(SPC_SAMPLERATE, SpectrumRegisterLength.SIXTY_FOUR)
+        return self.read_spectrum_device_register(
+            SPC_SAMPLERATE, SpectrumRegisterLength.SIXTY_FOUR
+        )
 
     def set_sample_rate_in_hz(self, rate: int) -> None:
         """Change the rate at which samples will be acquired or generated, in Hz.
         Args:
             rate (int): The desired sample rate in Hz.
         """
-        self.write_to_spectrum_device_register(SPC_SAMPLERATE, rate, SpectrumRegisterLength.SIXTY_FOUR)
+        self.write_to_spectrum_device_register(
+            SPC_SAMPLERATE, rate, SpectrumRegisterLength.SIXTY_FOUR
+        )
 
     def __str__(self) -> str:
         return f"Card {self._visa_string} (model {self.model_number.name})."
