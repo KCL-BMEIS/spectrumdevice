@@ -92,6 +92,6 @@ class AbstractSpectrumAnalogChannel(
 
 
 def decode_enabled_channels(value: int) -> List[int]:
-    """Converts the integer values provided by a device when queried about its enabled trigger source to a list of
-    TriggerSources."""
-    return decode_bitmap_using_list_of_ints(value, list(range(16)))
+    """Converts the integer values provided by a device when queried about its enabled channels to a list of
+    channel indices."""
+    return [i for i in range(16) if (value & (1 << i))]

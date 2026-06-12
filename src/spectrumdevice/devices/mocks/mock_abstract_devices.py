@@ -28,6 +28,9 @@ from spectrum_gmbh.py_header.regs import (
     SPC_TIMEOUT,
     SPC_MIINST_MODULES,
     SPC_MIINST_CHPERMODULE,
+    SPC_TRIG_ORMASK,
+    SPC_TRIG_ANDMASK,
+    SPC_CHENABLE,
 )
 
 from spectrum_gmbh.py_header.regs import (
@@ -118,6 +121,9 @@ class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
             self._param_dict: Dict[int, int] = {}
         else:
             self._param_dict = param_dict
+        self._param_dict.setdefault(SPC_TRIG_ORMASK, 0)
+        self._param_dict.setdefault(SPC_TRIG_ANDMASK, 0)
+        self._param_dict.setdefault(SPC_CHENABLE, 1)
         super().__init__(**kwargs)  # required for proper MRO resolution
 
     def write_to_spectrum_device_register(
@@ -199,6 +205,9 @@ class MockAbstractSpectrumCard(MockAbstractSpectrumDevice, AbstractSpectrumCard,
         param_dict[SPCM_X1_AVAILMODES] = SPCM_XMODE_DISABLE
         param_dict[SPCM_X2_AVAILMODES] = SPCM_XMODE_DISABLE
         param_dict[SPCM_X3_AVAILMODES] = SPCM_XMODE_DISABLE
+        param_dict[SPC_TRIG_ORMASK] = 0
+        param_dict[SPC_TRIG_ANDMASK] = 0
+        param_dict[SPC_CHENABLE] = 1
         param_dict[SPC_TIMEOUT] = 1000
         param_dict[SPC_SEGMENTSIZE] = 1000
         param_dict[SPC_MEMSIZE] = 1000
