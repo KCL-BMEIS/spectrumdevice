@@ -13,7 +13,6 @@ from spectrumdevice.devices.abstract_device.channel_interfaces import (
 from spectrumdevice.devices.abstract_device.device_interface import SpectrumDeviceInterface
 from spectrumdevice.settings import SpectrumRegisterLength
 from spectrumdevice.settings.channel import SpectrumAnalogChannelName, SpectrumChannelName
-from spectrumdevice.spectrum_wrapper import decode_bitmap_using_list_of_ints
 
 ChannelNameType = TypeVar("ChannelNameType", bound=SpectrumChannelName)
 

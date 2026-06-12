@@ -1,5 +1,4 @@
-import numpy as np
-from numpy import clip, int16
+from numpy import clip
 
 from spectrum_gmbh.py_header.regs import (
     SPCM_PULSEGEN_CONFIG_INVERT,
