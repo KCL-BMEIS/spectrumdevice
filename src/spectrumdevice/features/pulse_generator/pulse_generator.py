@@ -1,5 +1,5 @@
 import numpy as np
-from numpy import clip, int16, iinfo
+from numpy import clip, int16
 
 from spectrum_gmbh.py_header.regs import (
     SPCM_PULSEGEN_CONFIG_INVERT,
@@ -227,7 +227,7 @@ class PulseGenerator(PulseGeneratorInterface):
     def max_allowed_period_in_seconds(self) -> float:
         """Maximum allowed pulse period in seconds, given the current clock rate."""
         reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLEN_MAX)
-        reg_val = iinfo(int16).max if reg_val < 0 else reg_val
+        reg_val = (2**32) - 1 if reg_val < 0 else reg_val
         return self._convert_clock_cycles_to_seconds(reg_val)
 
     @property
@@ -282,7 +282,7 @@ class PulseGenerator(PulseGeneratorInterface):
     def max_allowed_high_voltage_duration_in_seconds(self) -> float:
         """Maximum allowed duration of the high-voltage part of the pulse in seconds, given the current clock rate."""
         reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILHIGH_MAX)
-        reg_val = iinfo(int16).max if reg_val < 0 else reg_val
+        reg_val = (2**32) - 1 if reg_val < 0 else reg_val
         return self._convert_clock_cycles_to_seconds(reg_val)
 
     @property
@@ -347,7 +347,7 @@ class PulseGenerator(PulseGeneratorInterface):
         """Maximum allowed number of pulses to transmit."""
         reg_val = self.read_parent_device_register(SPC_XIO_PULSEGEN_AVAILLOOPS_MAX)
         # my card has this register set to -2, which I assume means no limit (can't work it out from the docs)
-        return reg_val if reg_val > 0 else iinfo(int16).max
+        return reg_val if reg_val > 0 else (2**32) - 1
 
     @property
     def allowed_num_pulses_step_size(self) -> int:
@@ -396,7 +396,7 @@ class PulseGenerator(PulseGeneratorInterface):
         """Maximum allowed delay between the trigger event and pulse generation, in seconds, given the current clock
         rate."""
         reg_value = self.read_parent_device_register(602008)  # SPC_XIO_PULSEGEN_AVAILDELAY_MAX not in regs.py
-        reg_value = iinfo(int16).max if reg_value == -1 else reg_value
+        reg_value = (2**32) - 1 if reg_value == -1 else reg_value
         return self._convert_clock_cycles_to_seconds(reg_value)
 
     @property
@@ -451,5 +451,5 @@ def _coerce_fractional_value_to_allowed_integer(
     if min_allowed == -1:
         min_allowed = 0
     if max_allowed == -1:
-        max_allowed = np.iinfo(int16).max
+        max_allowed = (2**32) - 1
     return int(clip(coerced, min_allowed, max_allowed))
