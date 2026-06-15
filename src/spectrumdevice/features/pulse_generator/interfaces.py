@@ -22,7 +22,9 @@ class PulseGeneratorMultiplexerInterface(Generic[MultiplexerTriggerSourceTypeVar
         raise NotImplementedError()
 
     def read_parent_device_register(
-        self, spectrum_register: int, length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO
+        self,
+        spectrum_register: int,
+        length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> int:
         raise NotImplementedError()
 
@@ -73,7 +75,9 @@ class PulseGeneratorInterface(ABC):
 
     @abstractmethod
     def read_parent_device_register(
-        self, spectrum_register: int, length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO
+        self,
+        spectrum_register: int,
+        length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> int:
         raise NotImplementedError()
 

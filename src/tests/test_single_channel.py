@@ -5,8 +5,14 @@ from numpy import iinfo, int16
 from spectrumdevice import SpectrumDigitiserAnalogChannel
 from spectrumdevice.devices.awg.awg_channel import SpectrumAWGAnalogChannel
 from spectrumdevice.settings import InputImpedance
-from spectrumdevice.settings.channel import OutputChannelFilter, OutputChannelStopLevelMode
-from tests.device_factories import create_awg_card_for_testing, create_digitiser_card_for_testing
+from spectrumdevice.settings.channel import (
+    OutputChannelFilter,
+    OutputChannelStopLevelMode,
+)
+from tests.device_factories import (
+    create_awg_card_for_testing,
+    create_digitiser_card_for_testing,
+)
 
 
 class SingleDigitiserAnalogChannelTest(TestCase):

@@ -23,7 +23,12 @@ from spectrumdevice.exceptions import (
     SpectrumNoTransferBufferDefined,
     SpectrumSettingsMismatchError,
 )
-from spectrumdevice.settings import AdvancedCardFeature, CardFeature, ModelNumber, TransferBuffer
+from spectrumdevice.settings import (
+    AdvancedCardFeature,
+    CardFeature,
+    ModelNumber,
+    TransferBuffer,
+)
 from spectrumdevice.settings.card_dependent_properties import CardType
 from spectrumdevice.settings.device_modes import AcquisitionMode
 

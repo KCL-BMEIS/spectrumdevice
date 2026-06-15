@@ -62,7 +62,11 @@ def pulse_generator_example(mock_mode: bool) -> None:
     # The period is the length of the whole pulse (high-voltage length + 0V length)
     # The duty cycle is the high-voltage length divided by the period
     pulse_output_settings = PulseGeneratorOutputSettings(
-        period_in_seconds=1e-3, duty_cycle=0.01, num_pulses=1000, delay_in_seconds=0.0, output_inversion=False
+        period_in_seconds=1e-3,
+        duty_cycle=0.01,
+        num_pulses=1000,
+        delay_in_seconds=0.0,
+        output_inversion=False,
     )
     pulse_gen.configure_output(pulse_output_settings, coerce=False)
 

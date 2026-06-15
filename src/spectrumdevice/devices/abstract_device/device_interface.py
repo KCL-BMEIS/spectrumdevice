@@ -19,7 +19,10 @@ from spectrumdevice.settings import (
     TriggerSource,
 )
 from spectrumdevice.settings.card_dependent_properties import CardType
-from spectrumdevice.settings.output_channel_pairing import ChannelPair, ChannelPairingMode
+from spectrumdevice.settings.output_channel_pairing import (
+    ChannelPair,
+    ChannelPairingMode,
+)
 
 AnalogChannelInterfaceType = TypeVar("AnalogChannelInterfaceType", bound=SpectrumAnalogChannelInterface)
 IOLineInterfaceType = TypeVar("IOLineInterfaceType", bound=SpectrumIOLineInterface)

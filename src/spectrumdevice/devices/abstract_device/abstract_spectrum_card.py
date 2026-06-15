@@ -34,8 +34,16 @@ from spectrum_gmbh.py_header.regs import (
     M2CMD_CARD_FORCETRIGGER,
     SPC_MIINST_BYTESPERSAMPLE,
 )
-from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
-from spectrumdevice.devices.abstract_device.device_interface import AnalogChannelInterfaceType, IOLineInterfaceType
+from spectrumdevice.devices.abstract_device.abstract_spectrum_channel import (
+    decode_enabled_channels,
+)
+from spectrumdevice.devices.abstract_device.abstract_spectrum_device import (
+    AbstractSpectrumDevice,
+)
+from spectrumdevice.devices.abstract_device.device_interface import (
+    AnalogChannelInterfaceType,
+    IOLineInterfaceType,
+)
 from spectrumdevice.exceptions import (
     SpectrumExternalTriggerNotEnabled,
     SpectrumInvalidNumberOfEnabledChannels,
@@ -54,7 +62,10 @@ from spectrumdevice.settings import (
     TriggerSource,
 )
 from spectrumdevice.settings.card_dependent_properties import CardType
-from spectrumdevice.settings.card_features import decode_advanced_card_features, decode_card_features
+from spectrumdevice.settings.card_features import (
+    decode_advanced_card_features,
+    decode_card_features,
+)
 from spectrumdevice.settings.device_modes import ClockMode
 from spectrumdevice.settings.io_lines import decode_available_io_modes
 from spectrumdevice.settings.status import decode_status
@@ -64,7 +75,7 @@ from spectrumdevice.settings.triggering import (
     EXTERNAL_TRIGGER_PULSE_WIDTH_COMMANDS,
     decode_trigger_sources,
 )
-from spectrumdevice.spectrum_wrapper import destroy_handle
+from spectrumdevice.spectrum_wrapper import DEVICE_HANDLE_TYPE, destroy_handle
 
 logger = logging.getLogger(__name__)
 
@@ -76,24 +87,43 @@ logger = logging.getLogger(__name__)
 class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IOLineInterfaceType], ABC):
     """Abstract superclass implementing methods common to all individual "card" devices (as opposed to "hub" devices)."""
 
-    def __init__(self, device_number: int, ip_address: Optional[str] = None, **kwargs: Any):
+    def __init__(
+        self,
+        device_number: Optional[int] = None,
+        ip_address: Optional[str] = None,
+        handle: Optional[DEVICE_HANDLE_TYPE] = None,
+        **kwargs: Any,
+    ):
         """
         Args:
-            device_number (int): Index of the card to control. If only one card is present, set to 0.
+            device_number (Optional[int]): Index of the card to control. If only one card is present, set to 0.
             ip_address (Optional[str]): If connecting to a networked card, provide the IP address here as a string.
+              Also provide the device number.
+            handle (Optional[DEVICE_HANDLE_TYPE]): A handle to an already connected device. device_number and ip_address
+              wil be ignored. You can start and stop data transfer, but you won't be able to access the transfer buffer.
 
         """
         super().__init__()  # required for proper MRO resolution
-        if ip_address is not None:
-            self._visa_string = _create_visa_string_from_ip(ip_address, device_number)
+
+        if (ip_address is not None) and (device_number is None):
+            raise ValueError("An ip address also requires a device number.")
+
+        if handle is None:
+            if (ip_address is not None) and (device_number is not None):
+                self._visa_string = _create_visa_string_from_ip(ip_address, device_number)
+            else:
+                self._visa_string = f"/dev/spcm{device_number}"
+            self._connect(self._visa_string)
         else:
-            self._visa_string = f"/dev/spcm{device_number}"
-        self._connect(self._visa_string)
+            self._connect(handle)
+        self._card_init()
+
+    def _card_init(self) -> None:
         self._model_number = ModelNumber(self.read_spectrum_device_register(SPC_PCITYP))
-        self._trigger_sources: List[TriggerSource] = []
+        self._trigger_sources: List[TriggerSource] = self.trigger_sources
         self._analog_channels = self._init_analog_channels()
         self._io_lines = self._init_io_lines()
-        self._enabled_analog_channels: List[int] = [0]
+        self._enabled_analog_channels: List[int] = self._read_enabled_channels_from_card()
         self._transfer_buffer: Optional[TransferBuffer] = None
         self.apply_channel_enabling()
 
@@ -373,7 +403,8 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
             for trigger_source in self._active_external_triggers:
                 try:
                     self.write_to_spectrum_device_register(
-                        EXTERNAL_TRIGGER_PULSE_WIDTH_COMMANDS[trigger_source.value], width
+                        EXTERNAL_TRIGGER_PULSE_WIDTH_COMMANDS[trigger_source.value],
+                        width,
                     )
                 except KeyError:
                     raise SpectrumTriggerOperationNotImplemented(f"Cannot set pulse width of {trigger_source.name}.")
@@ -389,6 +420,9 @@ class AbstractSpectrumCard(AbstractSpectrumDevice[AnalogChannelInterfaceType, IO
             raise SpectrumInvalidNumberOfEnabledChannels(
                 f"Cannot enable {len(enabled_channel_spectrum_values)} " f"channels on one card."
             )
+
+    def _read_enabled_channels_from_card(self) -> List[int]:
+        return decode_enabled_channels(self.read_spectrum_device_register(SPC_CHENABLE))
 
     @abstractmethod
     def _init_analog_channels(self) -> Sequence[AnalogChannelInterfaceType]:

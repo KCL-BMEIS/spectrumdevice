@@ -30,7 +30,10 @@ def awg_single_restart_mode_example(mock_mode: bool) -> None:
         card = SpectrumAWGCard(device_number=0)
     else:
         card = MockSpectrumAWGCard(
-            device_number=0, model=ModelNumber.TYP_M2P6560_X4, num_modules=1, num_channels_per_module=1
+            device_number=0,
+            model=ModelNumber.TYP_M2P6560_X4,
+            num_modules=1,
+            num_channels_per_module=1,
         )
 
     sample_rate_in_hz = SAMPLE_RATE

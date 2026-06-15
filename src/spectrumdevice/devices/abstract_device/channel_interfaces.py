@@ -12,7 +12,10 @@ from spectrumdevice.settings import (
     SpectrumRegisterLength,
     IOLineMode,
 )
-from spectrumdevice.settings.channel import SpectrumAnalogChannelName, SpectrumChannelName
+from spectrumdevice.settings.channel import (
+    SpectrumAnalogChannelName,
+    SpectrumChannelName,
+)
 from spectrumdevice.settings.io_lines import SpectrumIOLineName
 
 ChannelNameType = TypeVar("ChannelNameType", bound=SpectrumChannelName)

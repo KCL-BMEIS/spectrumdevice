@@ -12,7 +12,10 @@ from typing import Dict
 from numpy import ndarray
 from numpy.random import uniform
 
-from spectrum_gmbh.py_header.regs import SPC_DATA_AVAIL_USER_LEN, SPC_DATA_AVAIL_USER_POS
+from spectrum_gmbh.py_header.regs import (
+    SPC_DATA_AVAIL_USER_LEN,
+    SPC_DATA_AVAIL_USER_POS,
+)
 from spectrumdevice.settings import AcquisitionMode
 from spectrumdevice.settings.transfer_buffer import PAGE_SIZE_IN_BYTES
 
@@ -132,7 +135,10 @@ def mock_waveform_source_factory(
     param_dict: Dict[int, int],
     notify_size_in_pages: float = 0,
 ) -> MockWaveformSource:
-    if acquisition_mode in (AcquisitionMode.SPC_REC_FIFO_MULTI, AcquisitionMode.SPC_REC_FIFO_AVERAGE):
+    if acquisition_mode in (
+        AcquisitionMode.SPC_REC_FIFO_MULTI,
+        AcquisitionMode.SPC_REC_FIFO_AVERAGE,
+    ):
         return MultiFIFOModeMockWaveformSource(param_dict, notify_size_in_pages)
     elif acquisition_mode == AcquisitionMode.SPC_REC_STD_SINGLE:
         return SingleModeMockWaveformSource(param_dict)

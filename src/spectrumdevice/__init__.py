@@ -63,11 +63,18 @@ Spectrum API, to be used for configuring hardware and interpreting responses rec
 
 from .measurement import Measurement
 from .devices.digitiser.digitiser_card import SpectrumDigitiserCard
-from .devices.digitiser.digitiser_channel import SpectrumDigitiserAnalogChannel, SpectrumDigitiserIOLine
+from .devices.digitiser.digitiser_channel import (
+    SpectrumDigitiserAnalogChannel,
+    SpectrumDigitiserIOLine,
+)
 from .devices.digitiser.digitiser_star_hub import SpectrumDigitiserStarHub
 from .devices.awg.awg_card import SpectrumAWGCard
 from .devices.awg.awg_channel import SpectrumAWGAnalogChannel, SpectrumAWGIOLine
-from .devices.mocks import MockSpectrumDigitiserCard, MockSpectrumDigitiserStarHub, MockSpectrumAWGCard
+from .devices.mocks import (
+    MockSpectrumDigitiserCard,
+    MockSpectrumDigitiserStarHub,
+    MockSpectrumAWGCard,
+)
 from .devices.abstract_device import (
     AbstractSpectrumDevice,
     AbstractSpectrumCard,

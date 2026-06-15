@@ -23,7 +23,9 @@ class PulseGeneratorMultiplexer(PulseGeneratorMultiplexerInterface[MultiplexerTr
         self._parent_pulse_gen = parent
 
     def read_parent_device_register(
-        self, spectrum_register: int, length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO
+        self,
+        spectrum_register: int,
+        length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> int:
         return self._parent_pulse_gen.read_parent_device_register(spectrum_register, length)
 
@@ -47,7 +49,9 @@ class PulseGeneratorMultiplexer(PulseGeneratorMultiplexerInterface[MultiplexerTr
             PULSE_GEN_CONFIG_COMMANDS[self._parent_pulse_gen.number]
         )
         new_register_value = toggle_bitmap_value(
-            current_register_value, PULSE_GEN_MUX_INVERSION_COMMANDS[self.number], inverted
+            current_register_value,
+            PULSE_GEN_MUX_INVERSION_COMMANDS[self.number],
+            inverted,
         )
         self.write_to_parent_device_register(
             PULSE_GEN_CONFIG_COMMANDS[self._parent_pulse_gen.number], new_register_value

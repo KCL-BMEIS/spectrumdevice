@@ -111,7 +111,11 @@ class SamplesTransferBuffer(TransferBuffer):
         notify_size_in_pages: float = 1,
     ) -> None:
         super().__init__(
-            BufferType.SPCM_BUF_DATA, direction, board_memory_offset_bytes, data_array, notify_size_in_pages
+            BufferType.SPCM_BUF_DATA,
+            direction,
+            board_memory_offset_bytes,
+            data_array,
+            notify_size_in_pages,
         )
 
     def read_chunk(self, chunk_position_in_bytes: int, chunk_size_in_bytes: int) -> ndarray:
@@ -176,7 +180,10 @@ def transfer_buffer_factory(
     if buffer_type == BufferType.SPCM_BUF_DATA:
         if size_in_samples is not None:
             return SamplesTransferBuffer(
-                direction, board_memory_offset_bytes, zeros(size_in_samples, sample_data_type), notify_size_in_pages
+                direction,
+                board_memory_offset_bytes,
+                zeros(size_in_samples, sample_data_type),
+                notify_size_in_pages,
             )
         else:
             raise ValueError("You must provide a buffer size_in_samples to create a BufferType.SPCM_BUF_DATA buffer.")
@@ -207,11 +214,15 @@ def _check_notify_size_validity(notify_size_in_pages: float) -> None:
 
 
 create_samples_acquisition_transfer_buffer = partial(
-    transfer_buffer_factory, buffer_type=BufferType.SPCM_BUF_DATA, direction=BufferDirection.SPCM_DIR_CARDTOPC
+    transfer_buffer_factory,
+    buffer_type=BufferType.SPCM_BUF_DATA,
+    direction=BufferDirection.SPCM_DIR_CARDTOPC,
 )
 
 create_timestamp_acquisition_transfer_buffer = partial(
-    transfer_buffer_factory, buffer_type=BufferType.SPCM_BUF_TIMESTAMP, direction=BufferDirection.SPCM_DIR_CARDTOPC
+    transfer_buffer_factory,
+    buffer_type=BufferType.SPCM_BUF_TIMESTAMP,
+    direction=BufferDirection.SPCM_DIR_CARDTOPC,
 )
 
 
@@ -231,4 +242,13 @@ def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffe
 
 DEFAULT_NOTIFY_SIZE_IN_PAGES = 10
 PAGE_SIZE_IN_BYTES = 4096
-ALLOWED_FRACTIONAL_NOTIFY_SIZES_IN_PAGES = [1 / 2, 1 / 4, 1 / 8, 1 / 16, 1 / 32, 1 / 64, 1 / 128, 1 / 256]
+ALLOWED_FRACTIONAL_NOTIFY_SIZES_IN_PAGES = [
+    1 / 2,
+    1 / 4,
+    1 / 8,
+    1 / 16,
+    1 / 32,
+    1 / 64,
+    1 / 128,
+    1 / 256,
+]

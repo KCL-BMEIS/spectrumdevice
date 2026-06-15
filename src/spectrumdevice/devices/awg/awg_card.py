@@ -13,8 +13,14 @@ from spectrum_gmbh.py_header.regs import (
 )
 from spectrumdevice.devices.abstract_device import AbstractSpectrumCard
 from spectrumdevice.devices.awg.abstract_spectrum_awg import AbstractSpectrumAWG
-from spectrumdevice.devices.awg.awg_channel import SpectrumAWGAnalogChannel, SpectrumAWGIOLine
-from spectrumdevice.devices.awg.awg_interface import SpectrumAWGAnalogChannelInterface, SpectrumAWGIOLineInterface
+from spectrumdevice.devices.awg.awg_channel import (
+    SpectrumAWGAnalogChannel,
+    SpectrumAWGIOLine,
+)
+from spectrumdevice.devices.awg.awg_interface import (
+    SpectrumAWGAnalogChannelInterface,
+    SpectrumAWGIOLineInterface,
+)
 from spectrumdevice.settings import TransferBuffer
 from spectrumdevice.settings.card_dependent_properties import get_memsize_step_size
 from spectrumdevice.settings.transfer_buffer import (
@@ -28,7 +34,8 @@ logger = logging.getLogger(__name__)
 
 
 class SpectrumAWGCard(
-    AbstractSpectrumCard[SpectrumAWGAnalogChannelInterface, SpectrumAWGIOLineInterface], AbstractSpectrumAWG
+    AbstractSpectrumCard[SpectrumAWGAnalogChannelInterface, SpectrumAWGIOLineInterface],
+    AbstractSpectrumAWG,
 ):
     """Class for controlling individual Spectrum AWG cards."""
 

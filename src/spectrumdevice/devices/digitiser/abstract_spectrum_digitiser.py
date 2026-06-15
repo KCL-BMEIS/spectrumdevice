@@ -157,7 +157,10 @@ class AbstractSpectrumDigitiser(
         `get_waveforms()` method. Waveforms must be read at least as fast as they are being acquired.
         The FIFO acquisition and streaming will continue until `stop_acquisition()` is called. The device
         must be configured in SPC_REC_FIFO_MULTI or SPC_REC_FIFO_AVERAGE acquisition mode."""
-        if self._acquisition_mode not in (AcquisitionMode.SPC_REC_FIFO_MULTI, AcquisitionMode.SPC_REC_FIFO_AVERAGE):
+        if self._acquisition_mode not in (
+            AcquisitionMode.SPC_REC_FIFO_MULTI,
+            AcquisitionMode.SPC_REC_FIFO_AVERAGE,
+        ):
             raise SpectrumWrongAcquisitionMode(
                 "Set the acquisition mode to SPC_REC_FIFO_MULTI or SPC_REC_FIFO_AVERAGE using "
                 "configure_acquisition() or set_acquisition_mode() before executing "

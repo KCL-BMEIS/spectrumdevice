@@ -20,7 +20,9 @@ from spectrum_gmbh.py_header.regs import (
     SPC_TS_AVAIL_USER_POS,
     M2CMD_CARD_WRITESETUP,
 )
-from spectrumdevice.devices.digitiser.digitiser_interface import SpectrumDigitiserInterface
+from spectrumdevice.devices.digitiser.digitiser_interface import (
+    SpectrumDigitiserInterface,
+)
 from spectrumdevice.exceptions import (
     SpectrumTimestampsPollingTimeout,
 )

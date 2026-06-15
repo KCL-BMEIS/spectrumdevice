@@ -10,7 +10,9 @@ from typing import List, Optional
 
 from numpy import ndarray
 
-from spectrumdevice.devices.abstract_device.device_interface import SpectrumDeviceInterface
+from spectrumdevice.devices.abstract_device.device_interface import (
+    SpectrumDeviceInterface,
+)
 from spectrumdevice.devices.abstract_device.channel_interfaces import (
     SpectrumAnalogChannelInterface,
     SpectrumIOLineInterface,

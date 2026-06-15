@@ -1,10 +1,16 @@
-from numpy import float64, iinfo, issubdtype, signedinteger, pi, sin, linspace, int_, ones, int16
+from numpy import iinfo, issubdtype, signedinteger, pi, sin, linspace, ones, int16
 from numpy.typing import NDArray
 
 
+from typing import Any
+
+
 def make_full_scale_sine_waveform(
-    frequency_in_hz: float, sample_rate_in_hz: int, num_cycles: float, dtype: type = int16
-) -> tuple[NDArray[float64], NDArray[int_]]:
+    frequency_in_hz: float,
+    sample_rate_in_hz: int,
+    num_cycles: float,
+    dtype: type = int16,
+) -> tuple[NDArray[Any], NDArray[Any]]:
     """Create a sine waveform covering the full range of the given data type. The resulting waveform is intended to
     be transferred to the AWG's on-board memory for generation.
 
@@ -25,7 +31,7 @@ def make_full_scale_sine_waveform(
 
 def make_full_scale_rect_waveform(
     sample_rate_in_hz: int, duration_in_seconds: float, dtype: type = int16
-) -> tuple[NDArray[float64], NDArray[int_]]:
+) -> tuple[NDArray[Any], NDArray[Any]]:
     """Create a rectangular waveform covering the full range of the given data type. The resulting waveform is intended
     to be transferred to the AWG's on-board memory for generation.
 

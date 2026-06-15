@@ -12,7 +12,10 @@ from spectrumdevice.devices.abstract_device.device_interface import (
     AnalogChannelInterfaceType,
     IOLineInterfaceType,
 )
-from spectrumdevice.exceptions import SpectrumDeviceNotConnected, SpectrumDriversNotFound
+from spectrumdevice.exceptions import (
+    SpectrumDeviceNotConnected,
+    SpectrumDriversNotFound,
+)
 from spectrumdevice.settings import SpectrumRegisterLength, TriggerSettings
 from spectrumdevice.settings.output_channel_pairing import (
     ChannelPair,
@@ -30,6 +33,7 @@ from spectrum_gmbh.py_header.regs import (
     SPC_M2CMD,
 )
 from spectrumdevice.spectrum_wrapper import (
+    DEVICE_HANDLE_TYPE,
     SPECTRUM_DRIVERS_FOUND,
     get_spectrum_i32_api_param,
     get_spectrum_i64_api_param,
@@ -45,8 +49,11 @@ class AbstractSpectrumDevice(SpectrumDeviceInterface[AnalogChannelInterfaceType,
     spectrumdevice/__init__.py, which inherit the methods defined here. Note that the concrete mock devices override
     several of the methods defined here."""
 
-    def _connect(self, visa_string: str) -> None:
-        self._handle = spectrum_handle_factory(visa_string)
+    def _connect(self, visa_string_or_handle: str | DEVICE_HANDLE_TYPE) -> None:
+        if isinstance(visa_string_or_handle, str):
+            self._handle = spectrum_handle_factory(visa_string_or_handle)
+        else:
+            self._handle = visa_string_or_handle
         self._connected = True
 
     def reset(self) -> None:
@@ -112,7 +119,10 @@ class AbstractSpectrumDevice(SpectrumDeviceInterface[AnalogChannelInterfaceType,
         doubling_enabled = int(mode == ChannelPairingMode.DOUBLE)
         differential_mode_enabled = int(mode == ChannelPairingMode.DIFFERENTIAL)
 
-        if doubling_enabled and channel_pair in (channel_pair.CHANNEL_4_AND_5, channel_pair.CHANNEL_6_AND_7):
+        if doubling_enabled and channel_pair in (
+            channel_pair.CHANNEL_4_AND_5,
+            channel_pair.CHANNEL_6_AND_7,
+        ):
             raise ValueError("Doubling can only be enabled for channel pairs CHANNEL_0_AND_1 or CHANNEL_2_AND_3.")
 
         if doubling_enabled or differential_mode_enabled:

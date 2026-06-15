@@ -6,7 +6,9 @@ from spectrumdevice import SpectrumDigitiserAnalogChannel, SpectrumDigitiserStar
 from spectrumdevice.exceptions import SpectrumInvalidNumberOfEnabledChannels
 from spectrumdevice.settings import AcquisitionSettings, InputImpedance, AcquisitionMode
 from spectrumdevice.settings.channel import SpectrumAnalogChannelName
-from spectrumdevice.settings.transfer_buffer import create_samples_acquisition_transfer_buffer
+from spectrumdevice.settings.transfer_buffer import (
+    create_samples_acquisition_transfer_buffer,
+)
 from tests.configuration import (
     ACQUISITION_LENGTH,
     NUM_CARDS_IN_STAR_HUB,
@@ -56,10 +58,16 @@ class StarHubTest(DigitiserCardTest):
 
         self.assertEqual(acquisition_settings.acquisition_mode, self._device.acquisition_mode)
         self.assertEqual(acquisition_settings.sample_rate_in_hz, self._device.sample_rate_in_hz)
-        self.assertEqual(acquisition_settings.acquisition_length_in_samples, self._device.acquisition_length_in_samples)
+        self.assertEqual(
+            acquisition_settings.acquisition_length_in_samples,
+            self._device.acquisition_length_in_samples,
+        )
         self.assertEqual(expected_posttrigger_len, self._device.post_trigger_length_in_samples)
         self.assertEqual(acquisition_settings.timeout_in_ms, self._device.timeout_in_ms)
-        self.assertEqual(acquisition_settings.enabled_channels, self._device.enabled_analog_channel_nums)
+        self.assertEqual(
+            acquisition_settings.enabled_channels,
+            self._device.enabled_analog_channel_nums,
+        )
         self.assertEqual(
             acquisition_settings.vertical_ranges_in_mv[0],
             self._device.analog_channels[channels_to_enable[0]].vertical_range_in_mv,
@@ -99,10 +107,12 @@ class StarHubTest(DigitiserCardTest):
         card_one_expected_command = self._all_spectrum_channel_identifiers[0]
         card_two_expected_command = self._all_spectrum_channel_identifiers[0]
         self.assertEqual(
-            card_one_expected_command, self._device._child_cards[0].read_spectrum_device_register(SPC_CHENABLE)
+            card_one_expected_command,
+            self._device._child_cards[0].read_spectrum_device_register(SPC_CHENABLE),
         )
         self.assertEqual(
-            card_two_expected_command, self._device._child_cards[0].read_spectrum_device_register(SPC_CHENABLE)
+            card_two_expected_command,
+            self._device._child_cards[0].read_spectrum_device_register(SPC_CHENABLE),
         )
 
     def test_get_channels(self) -> None:
@@ -121,7 +131,8 @@ class StarHubTest(DigitiserCardTest):
 
         buffer = [
             create_samples_acquisition_transfer_buffer(
-                size_in_samples=ACQUISITION_LENGTH, bytes_per_sample=self._device.bytes_per_sample
+                size_in_samples=ACQUISITION_LENGTH,
+                bytes_per_sample=self._device.bytes_per_sample,
             )
             for _ in range(NUM_CARDS_IN_STAR_HUB)
         ]

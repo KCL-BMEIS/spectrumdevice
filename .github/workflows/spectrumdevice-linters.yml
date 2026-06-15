@@ -34,7 +34,13 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 src --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Cache mypy cache
-      uses: AustinScola/mypy-cache-github-action@v1
+      uses: actions/cache@v3
+      with:
+        path: .mypy_cache
+        key: ${{ runner.os }}-mypy-${{ hashFiles('**/setup.py', '**/pyproject.toml') }}-${{ github.run_id }}
+        restore-keys: |
+          ${{ runner.os }}-mypy-${{ hashFiles('**/setup.py', '**/pyproject.toml') }}
+          ${{ runner.os }}-mypy-
     - name: Check typing with mypy
       run: |
         mypy src/spectrumdevice

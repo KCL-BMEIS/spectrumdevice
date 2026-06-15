@@ -1,7 +1,10 @@
 """Defines exceptions raised by spectrumdevice device classes."""
 from typing import Optional
 
-from spectrumdevice.settings.card_dependent_properties import CARD_TYPE_DESCRIPTIONS, CardType
+from spectrumdevice.settings.card_dependent_properties import (
+    CARD_TYPE_DESCRIPTIONS,
+    CardType,
+)
 
 
 # Christian Baker, King's College London
@@ -110,7 +113,12 @@ class SpectrumCardIsNotAnAWG(SpectrumWrongCardType):
 
 class SpectrumInvalidParameterValue(ValueError):
     def __init__(
-        self, param_name: str, requested_value: float, param_min: float, param_max: float, param_step: float
+        self,
+        param_name: str,
+        requested_value: float,
+        param_min: float,
+        param_max: float,
+        param_step: float,
     ) -> None:
         super().__init__(
             f"The requested {param_name} value of {requested_value} is invalid. At the current sample rate, it must be"

@@ -47,7 +47,10 @@ DEVICE_HANDLE_TYPE = NewType("DEVICE_HANDLE_TYPE", c_void_p)
 def decode_bitmap_using_list_of_ints(bitmap_value: int, test_values: List[int]) -> List[int]:
     possible_values = sorted(test_values)
     values_in_bitmap = list(
-        filter(lambda x: x > 0, [possible_value & bitmap_value for possible_value in possible_values])
+        filter(
+            lambda x: x > 0,
+            [possible_value & bitmap_value for possible_value in possible_values],
+        )
     )
     return values_in_bitmap
 

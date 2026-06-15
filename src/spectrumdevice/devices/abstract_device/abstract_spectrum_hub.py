@@ -10,10 +10,11 @@ from functools import reduce
 from operator import or_
 from typing import Any, List, Sequence, Tuple, TypeVar, Generic
 
-from numpy import arange
 
 from spectrum_gmbh.py_header.regs import SPC_SYNC_ENABLEMASK
-from spectrumdevice.devices.abstract_device.abstract_spectrum_device import AbstractSpectrumDevice
+from spectrumdevice.devices.abstract_device.abstract_spectrum_device import (
+    AbstractSpectrumDevice,
+)
 from spectrumdevice.devices.abstract_device.device_interface import (
     SpectrumDeviceInterface,
     IOLineInterfaceType,
@@ -37,13 +38,21 @@ CardType = TypeVar("CardType", bound=SpectrumDeviceInterface)
 
 
 class AbstractSpectrumStarHub(
-    AbstractSpectrumDevice, Generic[CardType, AnalogChannelInterfaceType, IOLineInterfaceType], ABC
+    AbstractSpectrumDevice,
+    Generic[CardType, AnalogChannelInterfaceType, IOLineInterfaceType],
+    ABC,
 ):
     """Composite abstract class of `AbstractSpectrumCard` implementing methods common to all StarHubs. StarHubs are
     composites of more than one Spectrum card. Acquisition and generation from the child cards of a StarHub
     is synchronised, aggregating the channels of all child cards."""
 
-    def __init__(self, device_number: int, child_cards: Sequence[CardType], master_card_index: int, **kwargs: Any):
+    def __init__(
+        self,
+        device_number: int,
+        child_cards: Sequence[CardType],
+        master_card_index: int,
+        **kwargs: Any,
+    ):
         """
         Args:
             device_number (int): The index of the StarHub to connect to. If only one StarHub is present, set to 0.
@@ -259,7 +268,7 @@ class AbstractSpectrumStarHub(
 
         for child_card in self._child_cards:
             n_channels_in_card = len(child_card.analog_channels)
-            channels_to_enable_this_card = list(set(arange(n_channels_in_card)) & set(channels_to_enable_all_cards))
+            channels_to_enable_this_card = list(set(range(n_channels_in_card)) & set(channels_to_enable_all_cards))
             num_channels_to_enable_this_card = len(channels_to_enable_this_card)
             child_card.set_enabled_analog_channels(channels_to_enable_this_card)
             channels_to_enable_all_cards = [

@@ -3,8 +3,12 @@ from typing import Any
 from numpy import int16
 
 from spectrumdevice.devices.abstract_device import AbstractSpectrumCard
-from spectrumdevice.devices.abstract_device.abstract_spectrum_channel import AbstractSpectrumAnalogChannel
-from spectrumdevice.devices.abstract_device.abstract_spectrum_io_line import AbstractSpectrumIOLine
+from spectrumdevice.devices.abstract_device.abstract_spectrum_channel import (
+    AbstractSpectrumAnalogChannel,
+)
+from spectrumdevice.devices.abstract_device.abstract_spectrum_io_line import (
+    AbstractSpectrumIOLine,
+)
 from spectrumdevice.devices.awg.awg_interface import (
     SpectrumAWGAnalogChannelInterface,
     SpectrumAWGIOLineInterface,
@@ -12,7 +16,10 @@ from spectrumdevice.devices.awg.awg_interface import (
 )
 from spectrumdevice.exceptions import SpectrumCardIsNotAnAWG
 from spectrumdevice.settings import IOLineMode
-from spectrumdevice.settings.card_dependent_properties import CardType, OUTPUT_AMPLITUDE_LIMITS_IN_MV
+from spectrumdevice.settings.card_dependent_properties import (
+    CardType,
+    OUTPUT_AMPLITUDE_LIMITS_IN_MV,
+)
 from spectrumdevice.settings.channel import (
     OUTPUT_AMPLITUDE_COMMANDS,
     OUTPUT_CHANNEL_ENABLED_COMMANDS,

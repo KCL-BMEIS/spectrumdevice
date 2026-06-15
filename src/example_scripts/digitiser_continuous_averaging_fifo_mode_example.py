@@ -96,7 +96,15 @@ def continuous_averaging_multi_fifo_example(
 
 if __name__ == "__main__":
 
-    from matplotlib.pyplot import plot, show, figure, title, xlabel, ylabel, tight_layout
+    from matplotlib.pyplot import (
+        plot,
+        show,
+        figure,
+        title,
+        xlabel,
+        ylabel,
+        tight_layout,
+    )
 
     measurements = continuous_averaging_multi_fifo_example(
         mock_mode=True,

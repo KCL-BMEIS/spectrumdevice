@@ -28,6 +28,9 @@ from spectrum_gmbh.py_header.regs import (
     SPC_TIMEOUT,
     SPC_MIINST_MODULES,
     SPC_MIINST_CHPERMODULE,
+    SPC_TRIG_ORMASK,
+    SPC_TRIG_ANDMASK,
+    SPC_CHENABLE,
 )
 
 from spectrum_gmbh.py_header.regs import (
@@ -96,11 +99,22 @@ from spectrum_gmbh.py_header.regs import (
     SPC_XIO_PULSEGEN_CLOCK,
     SPC_XIO_PULSEGEN_ENABLE,
 )
-from spectrumdevice.devices.abstract_device import AbstractSpectrumDevice, AbstractSpectrumCard, AbstractSpectrumStarHub
+from spectrumdevice.devices.abstract_device import (
+    AbstractSpectrumDevice,
+    AbstractSpectrumCard,
+    AbstractSpectrumStarHub,
+)
 from spectrumdevice.devices.awg.abstract_spectrum_awg import AbstractSpectrumAWG
-from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import AbstractSpectrumDigitiser
-from spectrumdevice.devices.mocks.mock_waveform_source import mock_waveform_source_factory
-from spectrumdevice.exceptions import MockRegisterNotImplemented, SpectrumDeviceNotConnected
+from spectrumdevice.devices.digitiser.abstract_spectrum_digitiser import (
+    AbstractSpectrumDigitiser,
+)
+from spectrumdevice.devices.mocks.mock_waveform_source import (
+    mock_waveform_source_factory,
+)
+from spectrumdevice.exceptions import (
+    MockRegisterNotImplemented,
+    SpectrumDeviceNotConnected,
+)
 from spectrumdevice.settings import (
     AcquisitionMode,
     AdvancedCardFeature,
@@ -118,10 +132,16 @@ class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
             self._param_dict: Dict[int, int] = {}
         else:
             self._param_dict = param_dict
+        self._param_dict.setdefault(SPC_TRIG_ORMASK, 0)
+        self._param_dict.setdefault(SPC_TRIG_ANDMASK, 0)
+        self._param_dict.setdefault(SPC_CHENABLE, 1)
         super().__init__(**kwargs)  # required for proper MRO resolution
 
     def write_to_spectrum_device_register(
-        self, spectrum_register: int, value: int, length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO
+        self,
+        spectrum_register: int,
+        value: int,
+        length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> None:
         """Simulates the setting of a parameter or command (register) on Spectrum hardware by storing its value
         internally.
@@ -143,7 +163,9 @@ class MockAbstractSpectrumDevice(AbstractSpectrumDevice, ABC):
             raise SpectrumDeviceNotConnected("Mock device has been disconnected.")
 
     def read_spectrum_device_register(
-        self, spectrum_register: int, length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO
+        self,
+        spectrum_register: int,
+        length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> int:
         """Read the current value of a mock Spectrum register. Registers that are not set to the internal
          parameter store during __init__() will need to be set using set_spectrum_api_param() before they can be
@@ -199,6 +221,9 @@ class MockAbstractSpectrumCard(MockAbstractSpectrumDevice, AbstractSpectrumCard,
         param_dict[SPCM_X1_AVAILMODES] = SPCM_XMODE_DISABLE
         param_dict[SPCM_X2_AVAILMODES] = SPCM_XMODE_DISABLE
         param_dict[SPCM_X3_AVAILMODES] = SPCM_XMODE_DISABLE
+        param_dict[SPC_TRIG_ORMASK] = 0
+        param_dict[SPC_TRIG_ANDMASK] = 0
+        param_dict[SPC_CHENABLE] = 1
         param_dict[SPC_TIMEOUT] = 1000
         param_dict[SPC_SEGMENTSIZE] = 1000
         param_dict[SPC_MEMSIZE] = 1000

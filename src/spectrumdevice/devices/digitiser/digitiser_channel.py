@@ -9,8 +9,12 @@ from numpy import ndarray
 
 from spectrum_gmbh.py_header.regs import SPC_MIINST_MAXADCVALUE
 from spectrumdevice.devices.abstract_device import AbstractSpectrumCard
-from spectrumdevice.devices.abstract_device.abstract_spectrum_channel import AbstractSpectrumAnalogChannel
-from spectrumdevice.devices.abstract_device.abstract_spectrum_io_line import AbstractSpectrumIOLine
+from spectrumdevice.devices.abstract_device.abstract_spectrum_channel import (
+    AbstractSpectrumAnalogChannel,
+)
+from spectrumdevice.devices.abstract_device.abstract_spectrum_io_line import (
+    AbstractSpectrumIOLine,
+)
 from spectrumdevice.devices.digitiser.digitiser_interface import (
     SpectrumDigitiserInterface,
     SpectrumDigitiserAnalogChannelInterface,

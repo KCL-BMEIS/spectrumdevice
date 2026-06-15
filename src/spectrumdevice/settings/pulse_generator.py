@@ -57,7 +57,12 @@ from spectrum_gmbh.py_header.regs import (
 )
 from spectrumdevice.spectrum_wrapper import decode_bitmap_using_list_of_ints
 
-PULSE_GEN_ENABLE_COMMANDS = (SPCM_PULSEGEN_ENABLE0, SPCM_PULSEGEN_ENABLE1, SPCM_PULSEGEN_ENABLE2, SPCM_PULSEGEN_ENABLE3)
+PULSE_GEN_ENABLE_COMMANDS = (
+    SPCM_PULSEGEN_ENABLE0,
+    SPCM_PULSEGEN_ENABLE1,
+    SPCM_PULSEGEN_ENABLE2,
+    SPCM_PULSEGEN_ENABLE3,
+)
 
 
 def decode_enabled_pulse_gens(value: int) -> list[int]:
@@ -158,7 +163,10 @@ PULSE_GEN_CONFIG_COMMANDS = (
 )
 
 
-PULSE_GEN_MUX_INVERSION_COMMANDS = (SPCM_PULSEGEN_CONFIG_MUX1_INVERT, SPCM_PULSEGEN_CONFIG_MUX2_INVERT)
+PULSE_GEN_MUX_INVERSION_COMMANDS = (
+    SPCM_PULSEGEN_CONFIG_MUX1_INVERT,
+    SPCM_PULSEGEN_CONFIG_MUX2_INVERT,
+)
 
 
 def decode_pulse_gen_config(value: int) -> list[int]:

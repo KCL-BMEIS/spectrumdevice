@@ -5,12 +5,24 @@ from unittest import TestCase
 import pytest
 from numpy import array, concatenate
 
-from example_scripts.awg_standard_single_restart_mode_example import awg_single_restart_mode_example
-from example_scripts.digitiser_star_hub_example_example import connect_to_star_hub_example
-from example_scripts.digitiser_continuous_averaging_fifo_mode_example import continuous_averaging_multi_fifo_example
-from example_scripts.digitiser_continuous_multi_fifo_mode_example import continuous_multi_fifo_example
-from example_scripts.digitiser_finite_multi_fifo_mode_example import finite_multi_fifo_example
-from example_scripts.digitiser_standard_single_mode_example import digitiser_standard_single_mode_example
+from example_scripts.awg_standard_single_restart_mode_example import (
+    awg_single_restart_mode_example,
+)
+from example_scripts.digitiser_star_hub_example_example import (
+    connect_to_star_hub_example,
+)
+from example_scripts.digitiser_continuous_averaging_fifo_mode_example import (
+    continuous_averaging_multi_fifo_example,
+)
+from example_scripts.digitiser_continuous_multi_fifo_mode_example import (
+    continuous_multi_fifo_example,
+)
+from example_scripts.digitiser_finite_multi_fifo_mode_example import (
+    finite_multi_fifo_example,
+)
+from example_scripts.digitiser_standard_single_mode_example import (
+    digitiser_standard_single_mode_example,
+)
 from example_scripts.pulse_generator_example import pulse_generator_example
 from spectrumdevice.measurement import Measurement
 from spectrumdevice.exceptions import SpectrumDriversNotFound
@@ -50,7 +62,9 @@ class SingleCardIntegrationTests(TestCase):
             # mock waveform source generates random values covering full ADC range, which is set to += 0.2 V
             expected_pk_to_pk_volts = 0.4
             self.assertAlmostEqual(
-                measurement.waveforms[0].max() - measurement.waveforms[0].min(), expected_pk_to_pk_volts, 1
+                measurement.waveforms[0].max() - measurement.waveforms[0].min(),
+                expected_pk_to_pk_volts,
+                1,
             )
             self.assertAlmostEqual(measurement.waveforms[0].mean(), 0.0, 1)
 
@@ -143,5 +157,7 @@ class NoDriversTest(TestCase):
     def test_fails_with_no_driver_without_mock_mode(self) -> None:
         with self.assertRaises(SpectrumDriversNotFound):
             digitiser_standard_single_mode_example(
-                mock_mode=False, trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE, device_number=TEST_DIGITISER_NUMBER
+                mock_mode=False,
+                trigger_source=INTEGRATION_TEST_TRIGGER_SOURCE,
+                device_number=TEST_DIGITISER_NUMBER,
             )
