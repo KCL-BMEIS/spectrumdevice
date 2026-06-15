@@ -92,10 +92,6 @@ if __name__ == "__main__":
     print(f"Acquired {len(meas.waveforms)} waveforms with the following shapes:")
     print([wfm.shape for wfm in meas.waveforms])
     print("and the following timestamp:")
-    print(
-        meas.timestamp.strftime(ts_format)
-        if meas.timestamp
-        else "Timestamping disabled"
-    )
+    print(meas.timestamp.strftime(ts_format) if meas.timestamp else "Timestamping disabled")
 
     show()

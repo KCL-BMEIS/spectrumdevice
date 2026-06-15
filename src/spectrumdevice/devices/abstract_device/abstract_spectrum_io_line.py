@@ -16,18 +16,14 @@ from spectrumdevice.settings.io_lines import (
 )
 
 
-class AbstractSpectrumIOLine(
-    SpectrumIOLineInterface, AbstractSpectrumChannel[SpectrumIOLineName], ABC
-):
+class AbstractSpectrumIOLine(SpectrumIOLineInterface, AbstractSpectrumChannel[SpectrumIOLineName], ABC):
     """Partially implemented abstract superclass contain code common for controlling an individual IO Line of all
     spectrum devices."""
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         try:
-            self._pulse_generator: Optional[PulseGenerator] = PulseGenerator(
-                parent=self
-            )
+            self._pulse_generator: Optional[PulseGenerator] = PulseGenerator(parent=self)
         except SpectrumFeatureNotSupportedByCard:
             self._pulse_generator = None
 
@@ -45,16 +41,12 @@ class AbstractSpectrumIOLine(
     @property
     def mode(self) -> IOLineMode:
         return decode_enabled_io_line_mode(
-            self._parent_device.read_spectrum_device_register(
-                IO_LINE_MODE_COMMANDS[self._number]
-            )
+            self._parent_device.read_spectrum_device_register(IO_LINE_MODE_COMMANDS[self._number])
         )
 
     def set_mode(self, mode: IOLineMode) -> None:
         value_to_write = self._get_io_line_mode_settings_mask(mode) | mode.value
-        self._parent_device.write_to_spectrum_device_register(
-            IO_LINE_MODE_COMMANDS[self._number], value_to_write
-        )
+        self._parent_device.write_to_spectrum_device_register(IO_LINE_MODE_COMMANDS[self._number], value_to_write)
 
     @property
     def pulse_generator(self) -> PulseGeneratorInterface:

@@ -69,10 +69,7 @@ def decode_enabled_pulse_gens(value: int) -> list[int]:
     """Converts the integer value received by a Spectrum device when queried about its enabled pulse gens into a list of
     ids of the enable pulse generators."""
     possible_values = [v for v in PULSE_GEN_ENABLE_COMMANDS]
-    return [
-        found_value
-        for found_value in decode_bitmap_using_list_of_ints(value, possible_values)
-    ]
+    return [found_value for found_value in decode_bitmap_using_list_of_ints(value, possible_values)]
 
 
 class PulseGeneratorTriggerMode(Enum):
@@ -101,9 +98,7 @@ class PulseGeneratorMultiplexerTriggerSource:
     pass
 
 
-class PulseGeneratorMultiplexer1TriggerSource(
-    PulseGeneratorMultiplexerTriggerSource, Enum
-):
+class PulseGeneratorMultiplexer1TriggerSource(PulseGeneratorMultiplexerTriggerSource, Enum):
     SPCM_PULSEGEN_MUX1_SRC_UNUSED = SPCM_PULSEGEN_MUX1_SRC_UNUSED
     """Inputs of MUX1 are not used in creating the trigger condition and instead a static logic HIGH is used for MUX1.
     """
@@ -124,9 +119,7 @@ PULSE_GEN_MUX1_COMMANDS = (
 )
 
 
-class PulseGeneratorMultiplexer2TriggerSource(
-    PulseGeneratorMultiplexerTriggerSource, Enum
-):
+class PulseGeneratorMultiplexer2TriggerSource(PulseGeneratorMultiplexerTriggerSource, Enum):
     SPCM_PULSEGEN_MUX2_SRC_UNUSED = SPCM_PULSEGEN_MUX2_SRC_UNUSED
     SPCM_PULSEGEN_MUX2_SRC_SOFTWARE = SPCM_PULSEGEN_MUX2_SRC_SOFTWARE
     SPCM_PULSEGEN_MUX2_SRC_PULSEGEN0 = SPCM_PULSEGEN_MUX2_SRC_PULSEGEN0
@@ -148,9 +141,7 @@ PULSE_GEN_MUX2_COMMANDS = (
 
 
 class PulseGeneratorTriggerDetectionMode(Enum):
-    RISING_EDGE = (
-        0  # this value is not defined in reg as really its just "HIGH" mode on or off
-    )
+    RISING_EDGE = 0  # this value is not defined in reg as really its just "HIGH" mode on or off
     SPCM_PULSEGEN_CONFIG_HIGH = SPCM_PULSEGEN_CONFIG_HIGH
 
 
@@ -187,10 +178,7 @@ def decode_pulse_gen_config(value: int) -> list[int]:
         SPCM_PULSEGEN_CONFIG_INVERT,
         int(PulseGeneratorTriggerDetectionMode.SPCM_PULSEGEN_CONFIG_HIGH.value),
     ]
-    return [
-        found_value
-        for found_value in decode_bitmap_using_list_of_ints(value, possible_values)
-    ]
+    return [found_value for found_value in decode_bitmap_using_list_of_ints(value, possible_values)]
 
 
 PULSE_GEN_PULSE_PERIOD_COMMANDS = (

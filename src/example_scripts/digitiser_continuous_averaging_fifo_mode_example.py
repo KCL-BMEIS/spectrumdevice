@@ -75,8 +75,7 @@ def continuous_averaging_multi_fifo_example(
         while (monotonic() - start_time) < acquisition_duration_in_seconds:
             print(f"Asking for waveforms at {monotonic() - start_time}")
             measurements_list += [
-                Measurement(waveforms=frame, timestamp=card.get_timestamp())
-                for frame in card.get_waveforms()
+                Measurement(waveforms=frame, timestamp=card.get_timestamp()) for frame in card.get_waveforms()
             ]
             print(f"got {measurements_list} measurements")
             if measurements_list[-1].timestamp is not None:
@@ -125,9 +124,7 @@ if __name__ == "__main__":
             ylabel("Amplitude (Volts)")
             tight_layout()
 
-    print(
-        f"Completed {len(measurements)} measurements each containing {len(measurements[0].waveforms)} waveforms."
-    )
+    print(f"Completed {len(measurements)} measurements each containing {len(measurements[0].waveforms)} waveforms.")
     print(f"Waveforms had the following shape: {measurements[0].waveforms[0].shape}")
 
     show()

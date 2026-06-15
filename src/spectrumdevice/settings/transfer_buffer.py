@@ -73,9 +73,7 @@ class TransferBuffer(ABC):
     """The number of transferred pages (4096 bytes) after which a notification of transfer is sent from the device."""
 
     @abstractmethod
-    def read_chunk(
-        self, chunk_position_in_bytes: int, chunk_size_in_bytes: int
-    ) -> ndarray:
+    def read_chunk(self, chunk_position_in_bytes: int, chunk_size_in_bytes: int) -> ndarray:
         raise NotImplementedError()
 
     @abstractmethod
@@ -120,24 +118,17 @@ class SamplesTransferBuffer(TransferBuffer):
             notify_size_in_pages,
         )
 
-    def read_chunk(
-        self, chunk_position_in_bytes: int, chunk_size_in_bytes: int
-    ) -> ndarray:
+    def read_chunk(self, chunk_position_in_bytes: int, chunk_size_in_bytes: int) -> ndarray:
         chunk_position_in_samples = chunk_position_in_bytes // self.data_array.itemsize
         chunk_size_in_samples = chunk_size_in_bytes // self.data_array.itemsize
-        return self.data_array[
-            chunk_position_in_samples : chunk_position_in_samples
-            + chunk_size_in_samples
-        ]
+        return self.data_array[chunk_position_in_samples : chunk_position_in_samples + chunk_size_in_samples]
 
     def copy_contents(self) -> ndarray:
         return copy(self.data_array)
 
 
 class TimestampsTransferBuffer(TransferBuffer):
-    def __init__(
-        self, direction: BufferDirection, board_memory_offset_bytes: int
-    ) -> None:
+    def __init__(self, direction: BufferDirection, board_memory_offset_bytes: int) -> None:
         # Timestamp buffer uses polling mode which requires the (ignored) notify size to be set to the page size
         super().__init__(
             BufferType.SPCM_BUF_TIMESTAMP,
@@ -147,17 +138,11 @@ class TimestampsTransferBuffer(TransferBuffer):
             PAGE_SIZE_IN_BYTES,
         )
 
-    def read_chunk(
-        self, chunk_position_in_bytes: int, chunk_size_in_bytes: int
-    ) -> ndarray:
-        raise NotImplementedError(
-            "Reading a chunk is not implemented for TimestampsTransferBuffers."
-        )
+    def read_chunk(self, chunk_position_in_bytes: int, chunk_size_in_bytes: int) -> ndarray:
+        raise NotImplementedError("Reading a chunk is not implemented for TimestampsTransferBuffers.")
 
     def copy_contents(self) -> ndarray:
-        return copy(
-            self.data_array[0::2]
-        )  # only every other item in the array has a timestamp written to it
+        return copy(self.data_array[0::2])  # only every other item in the array has a timestamp written to it
 
 
 def transfer_buffer_factory(
@@ -201,15 +186,11 @@ def transfer_buffer_factory(
                 notify_size_in_pages,
             )
         else:
-            raise ValueError(
-                "You must provide a buffer size_in_samples to create a BufferType.SPCM_BUF_DATA buffer."
-            )
+            raise ValueError("You must provide a buffer size_in_samples to create a BufferType.SPCM_BUF_DATA buffer.")
     elif buffer_type == BufferType.SPCM_BUF_TIMESTAMP:
         return TimestampsTransferBuffer(direction, board_memory_offset_bytes)
     else:
-        raise NotImplementedError(
-            f"TransferBuffer type {buffer_type} not yet supported."
-        )
+        raise NotImplementedError(f"TransferBuffer type {buffer_type} not yet supported.")
 
 
 def _check_notify_size_validity(notify_size_in_pages: float) -> None:
@@ -223,10 +204,7 @@ def _check_notify_size_validity(notify_size_in_pages: float) -> None:
     notify_size_greater_than_1_and_not_int = (notify_size_in_pages > 1) and (
         notify_size_in_pages != round(notify_size_in_pages)
     )
-    notify_size_is_invalid = (
-        notify_size_is_an_invalid_fraction_less_than_1
-        or notify_size_greater_than_1_and_not_int
-    )
+    notify_size_is_invalid = notify_size_is_an_invalid_fraction_less_than_1 or notify_size_greater_than_1_and_not_int
 
     if notify_size_is_invalid:
         raise ValueError(
@@ -248,9 +226,7 @@ create_timestamp_acquisition_transfer_buffer = partial(
 )
 
 
-def set_transfer_buffer(
-    device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffer
-) -> None:
+def set_transfer_buffer(device_handle: DEVICE_HANDLE_TYPE, buffer: TransferBuffer) -> None:
     error_handler(spcm_dwDefTransfer_i64)(
         device_handle,
         buffer.type.value,

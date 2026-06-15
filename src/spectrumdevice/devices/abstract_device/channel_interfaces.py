@@ -64,9 +64,7 @@ class SpectrumAnalogChannelInterface(
     """Defines the common public interface for control of the analog channels of Digitiser and AWG devices. All
     properties are read-only and must be set with their respective setter methods."""
 
-    def copy_settings_from_other_channel(
-        self, channel_to_copy: GettableSettingsProtocol
-    ) -> None:
+    def copy_settings_from_other_channel(self, channel_to_copy: GettableSettingsProtocol) -> None:
         self._set_settings_from_dict(channel_to_copy._get_settings_as_dict())
 
 

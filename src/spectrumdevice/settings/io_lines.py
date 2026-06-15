@@ -148,20 +148,14 @@ def decode_available_io_modes(value: int) -> List[IOLineMode]:
     """Converts the integer value received from a Spectrum device when queried about its IO line modes into a list
     of IOLineModes."""
     possible_values = [mode.value for mode in IOLineMode]
-    return [
-        IOLineMode(found_value)
-        for found_value in decode_bitmap_using_list_of_ints(value, possible_values)
-    ]
+    return [IOLineMode(found_value) for found_value in decode_bitmap_using_list_of_ints(value, possible_values)]
 
 
 def decode_enabled_io_line_mode(value: int) -> IOLineMode:
     """DigOutSourceChannel and DigOutSourceBit are bitmapped on to IOLine mode in the IO_LINE_MODE_COMMANDS register,
     so need to extract only the IOLine mode bits for determining the currently enabled mode."""
     possible_values = [mode.value for mode in IOLineMode]
-    active_modes = [
-        IOLineMode(found_value)
-        for found_value in decode_bitmap_using_list_of_ints(value, possible_values)
-    ]
+    active_modes = [IOLineMode(found_value) for found_value in decode_bitmap_using_list_of_ints(value, possible_values)]
     if len(active_modes) != 1:
         raise SpectrumIOError("Could not read enabled IO line mode")
     return active_modes[0]

@@ -23,9 +23,7 @@ def connect_to_star_hub_example(
         child_cards = []
         for n in range(num_cards):
             # Connect to each card in the hub.
-            child_cards.append(
-                SpectrumDigitiserCard(device_number=n, ip_address=ip_address)
-            )
+            child_cards.append(SpectrumDigitiserCard(device_number=n, ip_address=ip_address))
         # Connect to the hub itself
         return SpectrumDigitiserStarHub(
             device_number=0,
@@ -58,9 +56,7 @@ if __name__ == "__main__":
     from matplotlib.pyplot import figure, title, plot, show
 
     num_measurements = 5
-    hub = connect_to_star_hub_example(
-        mock_mode=False, num_cards=2, master_card_index=1, ip_address="169.254.13.35"
-    )
+    hub = connect_to_star_hub_example(mock_mode=False, num_cards=2, master_card_index=1, ip_address="169.254.13.35")
 
     print(f"{hub} contains {len(hub.analog_channels)} channels in total:")
     for channel in hub.analog_channels:
@@ -106,17 +102,11 @@ if __name__ == "__main__":
             plot(wfm)
 
     ts_format = "%Y-%m-%d %H:%M:%S.%f"
-    print(
-        f"Completed {len(measurements)} measurements each containing {len(measurements[0].waveforms)} waveforms."
-    )
+    print(f"Completed {len(measurements)} measurements each containing {len(measurements[0].waveforms)} waveforms.")
     print(f"Waveforms had the following shape: {measurements[0].waveforms[0].shape}")
     print(f"and the following timestamps:")
     for measurement in measurements:
-        print(
-            measurement.timestamp.strftime(ts_format)
-            if measurement.timestamp
-            else "Timestamping disabled"
-        )
+        print(measurement.timestamp.strftime(ts_format) if measurement.timestamp else "Timestamping disabled")
 
     hub.reset()
     hub.disconnect()

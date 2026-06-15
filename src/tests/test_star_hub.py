@@ -26,16 +26,10 @@ class StarHubTest(DigitiserCardTest):
     def setUp(self) -> None:
         self._device: SpectrumDigitiserStarHub = create_spectrum_star_hub_for_testing()
 
-        self._expected_num_channels_each_card = (
-            NUM_CHANNELS_PER_DIGITISER_MODULE * NUM_MODULES_PER_DIGITISER
-        )
-        self._expected_total_num_channels = (
-            self._expected_num_channels_each_card * NUM_CARDS_IN_STAR_HUB
-        )
+        self._expected_num_channels_each_card = NUM_CHANNELS_PER_DIGITISER_MODULE * NUM_MODULES_PER_DIGITISER
+        self._expected_total_num_channels = self._expected_num_channels_each_card * NUM_CARDS_IN_STAR_HUB
 
-        self._all_spectrum_channel_identifiers = [
-            c.value for c in SpectrumAnalogChannelName
-        ]
+        self._all_spectrum_channel_identifiers = [c.value for c in SpectrumAnalogChannelName]
         self._all_spectrum_channel_identifiers.sort()  # Enums are unordered to ensure channels are in ascending order
 
     def tearDown(self) -> None:
@@ -59,23 +53,16 @@ class StarHubTest(DigitiserCardTest):
         self._device.configure_acquisition(acquisition_settings)
 
         expected_posttrigger_len = (
-            acquisition_settings.acquisition_length_in_samples
-            - acquisition_settings.pre_trigger_length_in_samples
+            acquisition_settings.acquisition_length_in_samples - acquisition_settings.pre_trigger_length_in_samples
         )
 
-        self.assertEqual(
-            acquisition_settings.acquisition_mode, self._device.acquisition_mode
-        )
-        self.assertEqual(
-            acquisition_settings.sample_rate_in_hz, self._device.sample_rate_in_hz
-        )
+        self.assertEqual(acquisition_settings.acquisition_mode, self._device.acquisition_mode)
+        self.assertEqual(acquisition_settings.sample_rate_in_hz, self._device.sample_rate_in_hz)
         self.assertEqual(
             acquisition_settings.acquisition_length_in_samples,
             self._device.acquisition_length_in_samples,
         )
-        self.assertEqual(
-            expected_posttrigger_len, self._device.post_trigger_length_in_samples
-        )
+        self.assertEqual(expected_posttrigger_len, self._device.post_trigger_length_in_samples)
         self.assertEqual(acquisition_settings.timeout_in_ms, self._device.timeout_in_ms)
         self.assertEqual(
             acquisition_settings.enabled_channels,
@@ -87,9 +74,7 @@ class StarHubTest(DigitiserCardTest):
         )
         self.assertEqual(
             acquisition_settings.vertical_offsets_in_percent[0],
-            self._device.analog_channels[
-                channels_to_enable[0]
-            ].vertical_offset_in_percent,
+            self._device.analog_channels[channels_to_enable[0]].vertical_offset_in_percent,
         )
         self.assertEqual(
             acquisition_settings.input_impedances[0],
@@ -101,9 +86,7 @@ class StarHubTest(DigitiserCardTest):
         )
         self.assertEqual(
             acquisition_settings.vertical_offsets_in_percent[1],
-            self._device.analog_channels[
-                channels_to_enable[1]
-            ].vertical_offset_in_percent,
+            self._device.analog_channels[channels_to_enable[1]].vertical_offset_in_percent,
         )
         self.assertEqual(
             acquisition_settings.input_impedances[1],
@@ -120,9 +103,7 @@ class StarHubTest(DigitiserCardTest):
 
     def test_enable_two_channels(self) -> None:
 
-        self._device.set_enabled_analog_channels(
-            [0, self._expected_num_channels_each_card]
-        )
+        self._device.set_enabled_analog_channels([0, self._expected_num_channels_each_card])
         card_one_expected_command = self._all_spectrum_channel_identifiers[0]
         card_two_expected_command = self._all_spectrum_channel_identifiers[0]
         self.assertEqual(
@@ -140,9 +121,7 @@ class StarHubTest(DigitiserCardTest):
         expected_channels = []
         for n in range(NUM_CARDS_IN_STAR_HUB):
             expected_channels += [
-                SpectrumDigitiserAnalogChannel(
-                    channel_number=i, parent_device=self._device._child_cards[n]
-                )
+                SpectrumDigitiserAnalogChannel(channel_number=i, parent_device=self._device._child_cards[n])
                 for i in range(self._expected_num_channels_each_card)
             ]
         expected_channels_tuple = tuple(expected_channels)

@@ -135,9 +135,7 @@ if __name__ == "__main__":
 
     # Note that there is a delay between a trigger being received and the AWG generating a signal.
     # This is in the technical data section of the manual, and for my device is apparently 73 samples + 7 ns
-    print(
-        f"Expected delay between pulse and signal: {(73 * 1 / SAMPLE_RATE_IN_HZ + 7e-9) * 1e6} microseconds"
-    )
+    print(f"Expected delay between pulse and signal: {(73 * 1 / SAMPLE_RATE_IN_HZ + 7e-9) * 1e6} microseconds")
 
     card.stop()
     card.disconnect()

@@ -67,9 +67,7 @@ class SpectrumDigitiserStarHub(
         )
         self._acquisition_mode = self.acquisition_mode
 
-    def define_transfer_buffer(
-        self, buffer: Optional[Sequence[TransferBuffer]] = None
-    ) -> None:
+    def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
         """Create or provide `CardToPCDataTransferBuffer` objects for receiving acquired samples from the child cards.
         If no buffers are provided, they will be created with the correct size and a board_memory_offset_bytes of 0. See
         `SpectrumDigitiserCard.define_transfer_buffer()` for more information
@@ -118,9 +116,7 @@ class SpectrumDigitiserStarHub(
 
     def _get_waveforms_in_threads(
         self,
-        get_waveforms_method: Callable[
-            [SpectrumDigitiserCard], List[List[WAVEFORM_TYPE_VAR]]
-        ],
+        get_waveforms_method: Callable[[SpectrumDigitiserCard], List[List[WAVEFORM_TYPE_VAR]]],
     ) -> List[List[WAVEFORM_TYPE_VAR]]:
         """Gets waveforms from child cards in separate threads, using the SpectrumDigitiserCard method provided."""
 
@@ -130,9 +126,7 @@ class SpectrumDigitiserStarHub(
             this_cards_waveforms = get_waveforms_method(digitiser_card)
             card_ids_and_waveform_sets[str(digitiser_card)] = this_cards_waveforms
 
-        threads = [
-            Thread(target=_get_waveforms, args=(card,)) for card in self._child_cards
-        ]
+        threads = [Thread(target=_get_waveforms, args=(card,)) for card in self._child_cards]
 
         for thread in threads:
             thread.start()
@@ -212,9 +206,7 @@ class SpectrumDigitiserStarHub(
         modes = []
         for d in self._child_cards:
             modes.append(d.acquisition_mode)
-        return AcquisitionMode(
-            check_settings_constant_across_devices([m.value for m in modes], __name__)
-        )
+        return AcquisitionMode(check_settings_constant_across_devices([m.value for m in modes], __name__))
 
     def set_acquisition_mode(self, mode: AcquisitionMode) -> None:
         """Change the acquisition mode for all child cards. See `SpectrumDigitiserCard.set_acquisition_mode()` for more

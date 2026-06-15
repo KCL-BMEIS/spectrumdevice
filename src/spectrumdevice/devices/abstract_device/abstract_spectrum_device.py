@@ -43,9 +43,7 @@ from spectrumdevice.spectrum_wrapper import (
 )
 
 
-class AbstractSpectrumDevice(
-    SpectrumDeviceInterface[AnalogChannelInterfaceType, IOLineInterfaceType], ABC
-):
+class AbstractSpectrumDevice(SpectrumDeviceInterface[AnalogChannelInterfaceType, IOLineInterfaceType], ABC):
     """Abstract superclass which implements methods common to all Spectrum devices. Instances of this class
     cannot be constructed directly. Instead, construct instances of the concrete classes listed in
     spectrumdevice/__init__.py, which inherit the methods defined here. Note that the concrete mock devices override
@@ -78,9 +76,7 @@ class AbstractSpectrumDevice(
 
         # todo: docstring for different AWG modes
         """
-        self.write_to_spectrum_device_register(
-            SPC_M2CMD, M2CMD_CARD_START | M2CMD_CARD_ENABLETRIGGER
-        )
+        self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_START | M2CMD_CARD_ENABLETRIGGER)
 
     def stop(self) -> None:
         """Stop the device.
@@ -102,20 +98,14 @@ class AbstractSpectrumDevice(
             if settings.external_trigger_mode is not None:
                 self.set_external_trigger_mode(settings.external_trigger_mode)
             if settings.external_trigger_level_in_mv is not None:
-                self.set_external_trigger_level_in_mv(
-                    settings.external_trigger_level_in_mv
-                )
+                self.set_external_trigger_level_in_mv(settings.external_trigger_level_in_mv)
             if settings.external_trigger_pulse_width_in_samples is not None:
-                self.set_external_trigger_pulse_width_in_samples(
-                    settings.external_trigger_pulse_width_in_samples
-                )
+                self.set_external_trigger_pulse_width_in_samples(settings.external_trigger_pulse_width_in_samples)
 
         # Write the configuration to the card
         self.write_to_spectrum_device_register(SPC_M2CMD, M2CMD_CARD_WRITESETUP)
 
-    def configure_channel_pairing(
-        self, channel_pair: ChannelPair, mode: ChannelPairingMode
-    ) -> None:
+    def configure_channel_pairing(self, channel_pair: ChannelPair, mode: ChannelPairingMode) -> None:
         """Configures a pair of consecutive channels to operate either independently, in differential mode or
         in double  mode. If enabling differential or double mode, then the odd-numbered channel will be automatically
         configured to be identical to the even-numbered channel, and the odd-numbered channel will be disabled as is
@@ -133,9 +123,7 @@ class AbstractSpectrumDevice(
             channel_pair.CHANNEL_4_AND_5,
             channel_pair.CHANNEL_6_AND_7,
         ):
-            raise ValueError(
-                "Doubling can only be enabled for channel pairs CHANNEL_0_AND_1 or CHANNEL_2_AND_3."
-            )
+            raise ValueError("Doubling can only be enabled for channel pairs CHANNEL_0_AND_1 or CHANNEL_2_AND_3.")
 
         if doubling_enabled or differential_mode_enabled:
             self._mirror_even_channel_settings_on_odd_channel(channel_pair)
@@ -144,9 +132,7 @@ class AbstractSpectrumDevice(
         self.write_to_spectrum_device_register(
             DIFFERENTIAL_CHANNEL_PAIR_COMMANDS[channel_pair], differential_mode_enabled
         )
-        self.write_to_spectrum_device_register(
-            DOUBLING_CHANNEL_PAIR_COMMANDS[channel_pair], doubling_enabled
-        )
+        self.write_to_spectrum_device_register(DOUBLING_CHANNEL_PAIR_COMMANDS[channel_pair], doubling_enabled)
 
     def _disable_odd_channel(self, channel_pair: ChannelPair) -> None:
         try:
@@ -156,9 +142,7 @@ class AbstractSpectrumDevice(
         except ValueError:
             pass  # odd numbered channel was not enable, so no need to disable it.
 
-    def _mirror_even_channel_settings_on_odd_channel(
-        self, channel_pair: ChannelPair
-    ) -> None:
+    def _mirror_even_channel_settings_on_odd_channel(self, channel_pair: ChannelPair) -> None:
         self.analog_channels[channel_pair.value + 1].copy_settings_from_other_channel(
             self.analog_channels[channel_pair.value]
         )

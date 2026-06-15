@@ -62,9 +62,7 @@ logger = logging.getLogger(__name__)
 
 
 class SpectrumDigitiserCard(
-    AbstractSpectrumCard[
-        SpectrumDigitiserAnalogChannelInterface, SpectrumDigitiserIOLineInterface
-    ],
+    AbstractSpectrumCard[SpectrumDigitiserAnalogChannelInterface, SpectrumDigitiserIOLineInterface],
     AbstractSpectrumDigitiser,
 ):
     """Class for controlling individual Spectrum digitiser cards."""
@@ -89,29 +87,17 @@ class SpectrumDigitiserCard(
         self,
     ) -> Sequence[SpectrumDigitiserAnalogChannelInterface]:
         num_modules = self.read_spectrum_device_register(SPC_MIINST_MODULES)
-        num_channels_per_module = self.read_spectrum_device_register(
-            SPC_MIINST_CHPERMODULE
-        )
+        num_channels_per_module = self.read_spectrum_device_register(SPC_MIINST_CHPERMODULE)
         total_channels = num_modules * num_channels_per_module
         return tuple(
-            [
-                SpectrumDigitiserAnalogChannel(channel_number=n, parent_device=self)
-                for n in range(total_channels)
-            ]
+            [SpectrumDigitiserAnalogChannel(channel_number=n, parent_device=self) for n in range(total_channels)]
         )
 
     def _init_io_lines(self) -> Sequence[SpectrumDigitiserIOLineInterface]:
         if (self.model_number.value & TYP_SERIESMASK) == TYP_M2PEXPSERIES:
-            return tuple(
-                [
-                    SpectrumDigitiserIOLine(channel_number=n, parent_device=self)
-                    for n in range(4)
-                ]
-            )
+            return tuple([SpectrumDigitiserIOLine(channel_number=n, parent_device=self) for n in range(4)])
         else:
-            raise NotImplementedError(
-                "Don't know how many IO lines other types of card have. Only M2P series."
-            )
+            raise NotImplementedError("Don't know how many IO lines other types of card have. Only M2P series.")
 
     def enable_timestamping(self) -> None:
         self._timestamper = Timestamper(self, self._handle)
@@ -150,17 +136,11 @@ class SpectrumDigitiserCard(
 
         """
         if self._transfer_buffer is None:
-            raise SpectrumNoTransferBufferDefined(
-                "Cannot find a samples transfer buffer"
-            )
+            raise SpectrumNoTransferBufferDefined("Cannot find a samples transfer buffer")
 
         num_read_bytes = 0
-        num_samples_per_frame = self.acquisition_length_in_samples * len(
-            self.enabled_analog_channel_nums
-        )
-        num_expected_bytes_per_frame = (
-            num_samples_per_frame * self._transfer_buffer.data_array.itemsize
-        )
+        num_samples_per_frame = self.acquisition_length_in_samples * len(self.enabled_analog_channel_nums)
+        num_expected_bytes_per_frame = num_samples_per_frame * self._transfer_buffer.data_array.itemsize
         raw_samples = zeros(
             num_samples_per_frame * self._batch_size,
             dtype=self._transfer_buffer.data_array.dtype,
@@ -179,45 +159,26 @@ class SpectrumDigitiserCard(
             self.wait_for_transfer_chunk_to_complete()
 
             while num_read_bytes < (num_expected_bytes_per_frame * self._batch_size):
-                num_available_bytes = self.read_spectrum_device_register(
-                    SPC_DATA_AVAIL_USER_LEN
-                )
-                position_of_available_bytes = self.read_spectrum_device_register(
-                    SPC_DATA_AVAIL_USER_POS
-                )
+                num_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_LEN)
+                position_of_available_bytes = self.read_spectrum_device_register(SPC_DATA_AVAIL_USER_POS)
 
                 # Don't allow reading over the end of the transfer buffer
                 if (
                     position_of_available_bytes + num_available_bytes
                 ) > self._transfer_buffer.data_array_length_in_bytes:
-                    num_available_bytes = (
-                        self._transfer_buffer.data_array_length_in_bytes
-                        - position_of_available_bytes
-                    )
+                    num_available_bytes = self._transfer_buffer.data_array_length_in_bytes - position_of_available_bytes
 
                 # Don't allow reading over the end of the current acquisition:
-                if (num_read_bytes + num_available_bytes) > (
-                    num_expected_bytes_per_frame * self._batch_size
-                ):
-                    num_available_bytes = (
-                        num_expected_bytes_per_frame * self._batch_size
-                    ) - num_read_bytes
+                if (num_read_bytes + num_available_bytes) > (num_expected_bytes_per_frame * self._batch_size):
+                    num_available_bytes = (num_expected_bytes_per_frame * self._batch_size) - num_read_bytes
 
-                num_available_samples = (
-                    num_available_bytes // self._transfer_buffer.data_array.itemsize
-                )
-                num_read_samples = (
-                    num_read_bytes // self._transfer_buffer.data_array.itemsize
-                )
+                num_available_samples = num_available_bytes // self._transfer_buffer.data_array.itemsize
+                num_read_samples = num_read_bytes // self._transfer_buffer.data_array.itemsize
 
                 raw_samples[
                     num_read_samples : num_read_samples + num_available_samples
-                ] = self._transfer_buffer.read_chunk(
-                    position_of_available_bytes, num_available_bytes
-                )
-                self.write_to_spectrum_device_register(
-                    SPC_DATA_AVAIL_CARD_LEN, num_available_bytes
-                )
+                ] = self._transfer_buffer.read_chunk(position_of_available_bytes, num_available_bytes)
+                self.write_to_spectrum_device_register(SPC_DATA_AVAIL_CARD_LEN, num_available_bytes)
 
                 num_read_bytes += num_available_bytes
 
@@ -231,9 +192,7 @@ class SpectrumDigitiserCard(
 
         repeat_acquisitions = []
         for n in range(self._batch_size):
-            repeat_acquisitions.append(
-                [waveform for waveform in waveforms_in_columns[n, :, :].T]
-            )
+            repeat_acquisitions.append([waveform for waveform in waveforms_in_columns[n, :, :].T])
 
         return repeat_acquisitions
 
@@ -256,9 +215,7 @@ class SpectrumDigitiserCard(
                     cast(
                         SpectrumDigitiserAnalogChannel, self.analog_channels[ch_num]
                     ).convert_raw_waveform_to_voltage_waveform(squeeze(waveform))
-                    for ch_num, waveform in zip(
-                        self.enabled_analog_channel_nums, raw_repeat_acquisitions[n]
-                    )
+                    for ch_num, waveform in zip(self.enabled_analog_channel_nums, raw_repeat_acquisitions[n])
                 ]
             )
         return repeat_acquisitions
@@ -306,29 +263,21 @@ class SpectrumDigitiserCard(
             length_in_samples (int): The desired post trigger length in samples."""
         length_in_samples = self._coerce_num_samples_if_fifo(length_in_samples)
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
-            if (
-                self.acquisition_length_in_samples - length_in_samples
-            ) < get_memsize_step_size(self._model_number):
+            if (self.acquisition_length_in_samples - length_in_samples) < get_memsize_step_size(self._model_number):
                 logger.warning(
                     "FIFO mode: coercing post trigger length to maximum allowed value (step-size samples less than "
                     "the acquisition length)."
                 )
-                length_in_samples = (
-                    self.acquisition_length_in_samples
-                    - get_memsize_step_size(self._model_number)
-                )
+                length_in_samples = self.acquisition_length_in_samples - get_memsize_step_size(self._model_number)
         self.write_to_spectrum_device_register(SPC_POSTTRIGGER, length_in_samples)
 
     def _coerce_num_samples_if_fifo(self, value: int) -> int:
         if self.acquisition_mode == AcquisitionMode.SPC_REC_FIFO_MULTI:
             if mod(value, get_memsize_step_size(self._model_number)) != 0:
                 logger.warning(
-                    f"FIFO mode: coercing length to nearest {get_memsize_step_size(self._model_number)}"
-                    f" samples"
+                    f"FIFO mode: coercing length to nearest {get_memsize_step_size(self._model_number)}" f" samples"
                 )
-                value = int(
-                    value - mod(value, get_memsize_step_size(self._model_number))
-                )
+                value = int(value - mod(value, get_memsize_step_size(self._model_number)))
         return value
 
     @property
@@ -365,9 +314,7 @@ class SpectrumDigitiserCard(
     def set_batch_size(self, batch_size: int) -> None:
         self._batch_size = batch_size
 
-    def define_transfer_buffer(
-        self, buffer: Optional[Sequence[TransferBuffer]] = None
-    ) -> None:
+    def define_transfer_buffer(self, buffer: Optional[Sequence[TransferBuffer]] = None) -> None:
         """Create or provide a `TransferBuffer` object for receiving acquired samples from the device.
 
         If no buffer is provided, and no buffer has previously been defined, then one will be created: in FIFO mode,
@@ -385,32 +332,22 @@ class SpectrumDigitiserCard(
         if self._transfer_buffer is not None:
             set_transfer_buffer(self._handle, self._transfer_buffer)
 
-    def _set_or_update_transfer_buffer_attribute(
-        self, buffer: Optional[Sequence[TransferBuffer]]
-    ) -> None:
+    def _set_or_update_transfer_buffer_attribute(self, buffer: Optional[Sequence[TransferBuffer]]) -> None:
         if buffer:
             self._transfer_buffer = buffer[0]
             if self._transfer_buffer.direction != BufferDirection.SPCM_DIR_CARDTOPC:
-                raise ValueError(
-                    "Digitisers need a transfer buffer with direction BufferDirection.SPCM_DIR_CARDTOPC"
-                )
+                raise ValueError("Digitisers need a transfer buffer with direction BufferDirection.SPCM_DIR_CARDTOPC")
             if self._transfer_buffer.type != BufferType.SPCM_BUF_DATA:
-                raise ValueError(
-                    "Digitisers need a transfer buffer with type BufferDirection.SPCM_BUF_DATA"
-                )
+                raise ValueError("Digitisers need a transfer buffer with type BufferDirection.SPCM_BUF_DATA")
         elif self._transfer_buffer is None:
             if self.acquisition_mode in (
                 AcquisitionMode.SPC_REC_FIFO_MULTI,
                 AcquisitionMode.SPC_REC_FIFO_AVERAGE,
             ):
                 samples_per_batch = (
-                    self.acquisition_length_in_samples
-                    * len(self.enabled_analog_channel_nums)
-                    * self._batch_size
+                    self.acquisition_length_in_samples * len(self.enabled_analog_channel_nums) * self._batch_size
                 )
-                pages_per_batch = (
-                    samples_per_batch * self.bytes_per_sample / PAGE_SIZE_IN_BYTES
-                )
+                pages_per_batch = samples_per_batch * self.bytes_per_sample / PAGE_SIZE_IN_BYTES
 
                 if pages_per_batch < DEFAULT_NOTIFY_SIZE_IN_PAGES:
                     notify_size = pages_per_batch
@@ -428,8 +365,7 @@ class SpectrumDigitiserCard(
                 AcquisitionMode.SPC_REC_STD_AVERAGE,
             ):
                 self._transfer_buffer = create_samples_acquisition_transfer_buffer(
-                    size_in_samples=self.acquisition_length_in_samples
-                    * len(self.enabled_analog_channel_nums),
+                    size_in_samples=self.acquisition_length_in_samples * len(self.enabled_analog_channel_nums),
                     notify_size_in_pages=0,
                     bytes_per_sample=self.bytes_per_sample,
                 )

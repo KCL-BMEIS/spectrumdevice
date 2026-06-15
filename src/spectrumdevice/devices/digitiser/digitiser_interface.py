@@ -50,9 +50,7 @@ class SpectrumDigitiserAnalogChannelInterface(SpectrumAnalogChannelInterface, AB
         raise NotImplementedError()
 
     @abstractmethod
-    def convert_raw_waveform_to_voltage_waveform(
-        self, raw_waveform: ndarray
-    ) -> ndarray:
+    def convert_raw_waveform_to_voltage_waveform(self, raw_waveform: ndarray) -> ndarray:
         raise NotImplementedError()
 
     @property
@@ -101,9 +99,7 @@ class SpectrumDigitiserInterface(SpectrumDeviceInterface, ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def execute_finite_fifo_acquisition(
-        self, num_measurements: int, raw: bool = False
-    ) -> List[Measurement]:
+    def execute_finite_fifo_acquisition(self, num_measurements: int, raw: bool = False) -> List[Measurement]:
         raise NotImplementedError()
 
     @abstractmethod

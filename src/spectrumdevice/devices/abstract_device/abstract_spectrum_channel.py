@@ -26,9 +26,7 @@ class AbstractSpectrumChannel(SpectrumChannelInterface, Generic[ChannelNameType]
     """Partially implemented abstract superclass contain code common for controlling an individual channel or IO Line of
     all spectrum devices."""
 
-    def __init__(
-        self, channel_number: int, parent_device: SpectrumDeviceInterface, **kwargs: Any
-    ) -> None:
+    def __init__(self, channel_number: int, parent_device: SpectrumDeviceInterface, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self._name = self._make_name(channel_number)
         self._parent_device = parent_device
@@ -61,24 +59,18 @@ class AbstractSpectrumChannel(SpectrumChannelInterface, Generic[ChannelNameType]
         value: int,
         length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> None:
-        self._parent_device.write_to_spectrum_device_register(
-            spectrum_register, value, length
-        )
+        self._parent_device.write_to_spectrum_device_register(spectrum_register, value, length)
 
     def read_parent_device_register(
         self,
         spectrum_register: int,
         length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> int:
-        return self._parent_device.read_spectrum_device_register(
-            spectrum_register, length
-        )
+        return self._parent_device.read_spectrum_device_register(spectrum_register, length)
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, AbstractSpectrumChannel):
-            return (self.name == other.name) and (
-                self._parent_device == other._parent_device
-            )
+            return (self.name == other.name) and (self._parent_device == other._parent_device)
         else:
             raise NotImplementedError()
 

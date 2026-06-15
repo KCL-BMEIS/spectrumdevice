@@ -20,9 +20,7 @@ from spectrum_gmbh.py_header.regs import M2CMD_CARD_WRITESETUP, SPC_M2CMD
 
 
 class AbstractSpectrumDigitiser(
-    AbstractSpectrumDevice[
-        SpectrumDigitiserAnalogChannelInterface, SpectrumDigitiserIOLineInterface
-    ],
+    AbstractSpectrumDevice[SpectrumDigitiserAnalogChannelInterface, SpectrumDigitiserIOLineInterface],
     SpectrumDigitiserInterface,
     ABC,
 ):
@@ -37,21 +35,15 @@ class AbstractSpectrumDigitiser(
         Args:
             settings (`AcquisitionSettings`): An `AcquisitionSettings` dataclass containing the setting values to apply.
         """
-        if (
-            settings.batch_size > 1
-            and settings.acquisition_mode == AcquisitionMode.SPC_REC_STD_SINGLE
-        ):
-            raise ValueError(
-                "In standard single mode, only 1 acquisition can be downloaded at a time."
-            )
+        if settings.batch_size > 1 and settings.acquisition_mode == AcquisitionMode.SPC_REC_STD_SINGLE:
+            raise ValueError("In standard single mode, only 1 acquisition can be downloaded at a time.")
         self._acquisition_mode = settings.acquisition_mode
         self.set_batch_size(settings.batch_size)
         self.set_acquisition_mode(settings.acquisition_mode)
         self.set_sample_rate_in_hz(settings.sample_rate_in_hz)
         self.set_acquisition_length_in_samples(settings.acquisition_length_in_samples)
         self.set_post_trigger_length_in_samples(
-            settings.acquisition_length_in_samples
-            - settings.pre_trigger_length_in_samples
+            settings.acquisition_length_in_samples - settings.pre_trigger_length_in_samples
         )
         self.set_timeout_in_ms(settings.timeout_in_ms)
         self.set_enabled_analog_channels(settings.enabled_channels)
@@ -70,9 +62,7 @@ class AbstractSpectrumDigitiser(
 
         # Only some hardware has software programmable input coupling, so coupling can be None
         if settings.input_couplings is not None:
-            for channel, coupling in zip(
-                self.analog_channels, settings.input_couplings
-            ):
+            for channel, coupling in zip(self.analog_channels, settings.input_couplings):
                 channel.set_input_coupling(coupling)
 
         # Only some hardware has software programmable input paths, so it can be None
@@ -121,9 +111,7 @@ class AbstractSpectrumDigitiser(
         self.stop()  # Only strictly required for Mock devices. Should not affect hardware.
         return Measurement(waveforms=waveforms, timestamp=self.get_timestamp())
 
-    def execute_finite_fifo_acquisition(
-        self, num_measurements: int, raw: bool = False
-    ) -> List[Measurement]:
+    def execute_finite_fifo_acquisition(self, num_measurements: int, raw: bool = False) -> List[Measurement]:
         """Carry out a finite number of FIFO mode measurements and then stop the acquisitions.
 
         This method automatically carries out a defined number of measurement in Multi FIFO mode, including handling the
@@ -156,10 +144,7 @@ class AbstractSpectrumDigitiser(
             waveforms: list[list[RawWaveformType]] | list[list[VoltageWaveformType]] = (
                 self.get_raw_waveforms() if raw else self.get_waveforms()
             )
-            measurements += [
-                Measurement(waveforms=frame, timestamp=self.get_timestamp())
-                for frame in waveforms
-            ]
+            measurements += [Measurement(waveforms=frame, timestamp=self.get_timestamp()) for frame in waveforms]
         self.stop()
         return measurements
 

@@ -18,9 +18,7 @@ from spectrumdevice.settings.pulse_generator import (
 from spectrumdevice.spectrum_wrapper import toggle_bitmap_value
 
 
-class PulseGeneratorMultiplexer(
-    PulseGeneratorMultiplexerInterface[MultiplexerTriggerSourceTypeVar], ABC
-):
+class PulseGeneratorMultiplexer(PulseGeneratorMultiplexerInterface[MultiplexerTriggerSourceTypeVar], ABC):
     def __init__(self, parent: PulseGeneratorInterface) -> None:
         self._parent_pulse_gen = parent
 
@@ -29,9 +27,7 @@ class PulseGeneratorMultiplexer(
         spectrum_register: int,
         length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> int:
-        return self._parent_pulse_gen.read_parent_device_register(
-            spectrum_register, length
-        )
+        return self._parent_pulse_gen.read_parent_device_register(spectrum_register, length)
 
     def write_to_parent_device_register(
         self,
@@ -39,21 +35,14 @@ class PulseGeneratorMultiplexer(
         value: int,
         length: SpectrumRegisterLength = SpectrumRegisterLength.THIRTY_TWO,
     ) -> None:
-        self._parent_pulse_gen.write_to_parent_device_register(
-            spectrum_register, value, length
-        )
+        self._parent_pulse_gen.write_to_parent_device_register(spectrum_register, value, length)
 
     @property
     def output_inversion(self) -> bool:
         currently_enabled_config_options = decode_pulse_gen_config(
-            self.read_parent_device_register(
-                PULSE_GEN_CONFIG_COMMANDS[self._parent_pulse_gen.number]
-            )
+            self.read_parent_device_register(PULSE_GEN_CONFIG_COMMANDS[self._parent_pulse_gen.number])
         )
-        return (
-            PULSE_GEN_MUX_INVERSION_COMMANDS[self.number]
-            in currently_enabled_config_options
-        )
+        return PULSE_GEN_MUX_INVERSION_COMMANDS[self.number] in currently_enabled_config_options
 
     def set_output_inversion(self, inverted: bool) -> None:
         current_register_value = self.read_parent_device_register(
@@ -69,9 +58,7 @@ class PulseGeneratorMultiplexer(
         )
 
 
-class PulseGeneratorMultiplexer1(
-    PulseGeneratorMultiplexer[PulseGeneratorMultiplexer1TriggerSource]
-):
+class PulseGeneratorMultiplexer1(PulseGeneratorMultiplexer[PulseGeneratorMultiplexer1TriggerSource]):
     @property
     def number(self) -> int:
         return 0  # use zero-indexed value for use getting command from PULSE_GEN_MUX1_COMMANDS tuple
@@ -79,22 +66,16 @@ class PulseGeneratorMultiplexer1(
     @property
     def trigger_source(self) -> PulseGeneratorMultiplexer1TriggerSource:
         return PulseGeneratorMultiplexer1TriggerSource(
-            self.read_parent_device_register(
-                PULSE_GEN_MUX1_COMMANDS[self._parent_pulse_gen.number]
-            )
+            self.read_parent_device_register(PULSE_GEN_MUX1_COMMANDS[self._parent_pulse_gen.number])
         )
 
-    def set_trigger_source(
-        self, trigger_source: PulseGeneratorMultiplexer1TriggerSource
-    ) -> None:
+    def set_trigger_source(self, trigger_source: PulseGeneratorMultiplexer1TriggerSource) -> None:
         self.write_to_parent_device_register(
             PULSE_GEN_MUX1_COMMANDS[self._parent_pulse_gen.number], trigger_source.value
         )
 
 
-class PulseGeneratorMultiplexer2(
-    PulseGeneratorMultiplexer[PulseGeneratorMultiplexer2TriggerSource]
-):
+class PulseGeneratorMultiplexer2(PulseGeneratorMultiplexer[PulseGeneratorMultiplexer2TriggerSource]):
     @property
     def number(self) -> int:
         return 1  # use zero-indexed value for use getting command from PULSE_GEN_MUX1_COMMANDS tuple
@@ -102,14 +83,10 @@ class PulseGeneratorMultiplexer2(
     @property
     def trigger_source(self) -> PulseGeneratorMultiplexer2TriggerSource:
         return PulseGeneratorMultiplexer2TriggerSource(
-            self.read_parent_device_register(
-                PULSE_GEN_MUX2_COMMANDS[self._parent_pulse_gen.number]
-            )
+            self.read_parent_device_register(PULSE_GEN_MUX2_COMMANDS[self._parent_pulse_gen.number])
         )
 
-    def set_trigger_source(
-        self, trigger_source: PulseGeneratorMultiplexer2TriggerSource
-    ) -> None:
+    def set_trigger_source(self, trigger_source: PulseGeneratorMultiplexer2TriggerSource) -> None:
         self.write_to_parent_device_register(
             PULSE_GEN_MUX2_COMMANDS[self._parent_pulse_gen.number], trigger_source.value
         )

@@ -68,9 +68,7 @@ class AbstractSpectrumStarHub(
         self._visa_string = f"sync{device_number}"
         self._connect(self._visa_string)
         all_cards_binary_mask = reduce(or_, child_card_logical_indices)
-        self.write_to_spectrum_device_register(
-            SPC_SYNC_ENABLEMASK, all_cards_binary_mask
-        )
+        self.write_to_spectrum_device_register(SPC_SYNC_ENABLEMASK, all_cards_binary_mask)
 
     def disconnect(self) -> None:
         """Disconnects from each child card and terminates connection to the hub itself."""
@@ -253,8 +251,7 @@ class AbstractSpectrumStarHub(
         n_channels_in_previous_card = 0
         for card in self._child_cards:
             enabled_channels += [
-                channel_num + n_channels_in_previous_card
-                for channel_num in card.enabled_analog_channel_nums
+                channel_num + n_channels_in_previous_card for channel_num in card.enabled_analog_channel_nums
             ]
             n_channels_in_previous_card = len(card.analog_channels)
         return enabled_channels
@@ -271,14 +268,11 @@ class AbstractSpectrumStarHub(
 
         for child_card in self._child_cards:
             n_channels_in_card = len(child_card.analog_channels)
-            channels_to_enable_this_card = list(
-                set(range(n_channels_in_card)) & set(channels_to_enable_all_cards)
-            )
+            channels_to_enable_this_card = list(set(range(n_channels_in_card)) & set(channels_to_enable_all_cards))
             num_channels_to_enable_this_card = len(channels_to_enable_this_card)
             child_card.set_enabled_analog_channels(channels_to_enable_this_card)
             channels_to_enable_all_cards = [
-                num - n_channels_in_card
-                for num in channels_nums[num_channels_to_enable_this_card:]
+                num - n_channels_in_card for num in channels_nums[num_channels_to_enable_this_card:]
             ]
 
     @property
@@ -313,9 +307,7 @@ class AbstractSpectrumStarHub(
         io_lines: List[IOLineInterfaceType] = []
         for device in self._child_cards:
             io_lines += device.io_lines
-        return tuple(
-            io_lines
-        )  # todo: this is probably wrong. I don't think both cards in a netbox have IO lines
+        return tuple(io_lines)  # todo: this is probably wrong. I don't think both cards in a netbox have IO lines
 
     @property
     def timeout_in_ms(self) -> int:
@@ -364,9 +356,7 @@ class AbstractSpectrumStarHub(
         bytes_per_sample_each_card = []
         for d in self._child_cards:
             bytes_per_sample_each_card.append(d.bytes_per_sample)
-        return check_settings_constant_across_devices(
-            bytes_per_sample_each_card, __name__
-        )
+        return check_settings_constant_across_devices(bytes_per_sample_each_card, __name__)
 
     def __str__(self) -> str:
         return f"StarHub {self._visa_string}"
@@ -380,6 +370,4 @@ def check_settings_constant_across_devices(values: List[int], setting_name: str)
     if _are_all_values_equal(values):
         return values[0]
     else:
-        raise SpectrumSettingsMismatchError(
-            f"Devices have different {setting_name} settings"
-        )
+        raise SpectrumSettingsMismatchError(f"Devices have different {setting_name} settings")

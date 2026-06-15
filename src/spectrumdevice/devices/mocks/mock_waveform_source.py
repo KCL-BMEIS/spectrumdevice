@@ -20,9 +20,7 @@ from spectrumdevice.settings import AcquisitionMode
 from spectrumdevice.settings.transfer_buffer import PAGE_SIZE_IN_BYTES
 
 
-TRANSFER_CHUNK_COUNTER = (
-    -1
-)  # this is a custom key used in the _para_dict to count the number of transfers
+TRANSFER_CHUNK_COUNTER = -1  # this is a custom key used in the _para_dict to count the number of transfers
 
 
 class MockWaveformSource(ABC):
@@ -69,9 +67,7 @@ class SingleModeMockWaveformSource(MockWaveformSource):
         """
         start_time = monotonic()
         bytes_per_sample = transfer_buffer_data_array.itemsize
-        while not stop_flag.is_set() and (
-            (monotonic() - start_time) < (1 / frame_rate)
-        ):
+        while not stop_flag.is_set() and ((monotonic() - start_time) < (1 / frame_rate)):
             sleep(0.001)
         if not stop_flag.is_set():
             with buffer_lock:
@@ -79,9 +75,7 @@ class SingleModeMockWaveformSource(MockWaveformSource):
                     low=-1 * amplitude, high=amplitude, size=samples_per_frame
                 )
                 self._param_dict[SPC_DATA_AVAIL_USER_POS] = 0
-                self._param_dict[SPC_DATA_AVAIL_USER_LEN] = (
-                    samples_per_frame * bytes_per_sample
-                )
+                self._param_dict[SPC_DATA_AVAIL_USER_LEN] = samples_per_frame * bytes_per_sample
             self._param_dict[TRANSFER_CHUNK_COUNTER] += 1
 
 
@@ -113,9 +107,7 @@ class MultiFIFOModeMockWaveformSource(MockWaveformSource):
 
         """
         bytes_per_sample = transfer_buffer_data_array.itemsize
-        notify_size_in_samples = int(
-            self._notify_size_in_pages * PAGE_SIZE_IN_BYTES / bytes_per_sample
-        )
+        notify_size_in_samples = int(self._notify_size_in_pages * PAGE_SIZE_IN_BYTES / bytes_per_sample)
         notify_size_in_samples = min((samples_per_frame, notify_size_in_samples))
         samples_per_second = frame_rate * samples_per_frame
         notify_sizes_per_second = samples_per_second / notify_size_in_samples
@@ -130,12 +122,8 @@ class MultiFIFOModeMockWaveformSource(MockWaveformSource):
                 transfer_buffer_data_array[start_sample:stop_sample] = uniform(
                     low=-1 * amplitude, high=amplitude, size=stop_sample - start_sample
                 )
-                self._param_dict[SPC_DATA_AVAIL_USER_POS] = (
-                    start_sample * bytes_per_sample
-                )
-                self._param_dict[SPC_DATA_AVAIL_USER_LEN] = (
-                    stop_sample - start_sample
-                ) * bytes_per_sample
+                self._param_dict[SPC_DATA_AVAIL_USER_POS] = start_sample * bytes_per_sample
+                self._param_dict[SPC_DATA_AVAIL_USER_LEN] = (stop_sample - start_sample) * bytes_per_sample
             sample_count += notify_size_in_samples
             self._param_dict[TRANSFER_CHUNK_COUNTER] += 1
 
@@ -155,6 +143,4 @@ def mock_waveform_source_factory(
     elif acquisition_mode == AcquisitionMode.SPC_REC_STD_SINGLE:
         return SingleModeMockWaveformSource(param_dict)
     else:
-        raise NotImplementedError(
-            f"Mock waveform source not yet implemented for {acquisition_mode} acquisition mode."
-        )
+        raise NotImplementedError(f"Mock waveform source not yet implemented for {acquisition_mode} acquisition mode.")
